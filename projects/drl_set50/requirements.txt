@@ -1,0 +1,14 @@
+torch>=2.0.0
+numpy
+pandas
+gymnasium
+stable-baselines3
+yfinance
+pandas-ta
+transformers
+scikit-learn
+matplotlib
+seaborn
+feedparser
+newspaper3k
+lxml[html_clean]
