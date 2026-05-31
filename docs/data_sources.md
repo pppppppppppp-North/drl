@@ -41,6 +41,15 @@ Every real source added later should record access date, license/access note, sc
 - Series: `USDTHB=X`, `BZ=F`, `CL=F`, `GC=F`, and `^TNX`.
 - Limitation: these are daily market proxies. Official Bank of Thailand or other macro releases still need release-date alignment before final macroeconomic claims.
 
+## SET Sector Index Probe
+
+- Probe command: `python -m src.data.probe_sector_indices --config config/real_ohlcv_sector.yaml`
+- Probe path: `data/raw/sector_index_yahoo_probe.csv`
+- Usable raw path, when candidates are found: `data/raw/prices_sector_indices_yahoo.csv`
+- Latest result: 139 Yahoo Finance/yfinance sector-code candidates were tested on HPC; 138 failed and one was usable.
+- Usable candidate: banking sector symbol `^BANK`, with 1,004 rows dated 2021-01-04 to 2024-12-30.
+- Limitation: this is not broad enough for full sector-relative modeling, so the current sector-context pipeline still uses the five-ticker pilot mapping in `data/reference/sector_mapping_thai_pilot.csv`. A licensed SET/SETSMART, SET export, or other complete sector-index source is still required.
+
 ## Official Macro Source Probe And Merge Scaffold
 
 - Config: `config/real_ohlcv_official_macro.yaml`

@@ -36,6 +36,9 @@ This manifest lists the current pilot artifacts for the Thai stock DRL project o
 | SET market-context data-quality report | `reports/data_quality_market/real_ohlcv_data_quality.md` |
 | SET market-context pilot comparison | `results/real_ohlcv_market_pilot_20260531/comparison_metrics.csv` |
 | Pilot sector mapping | `data/reference/sector_mapping_thai_pilot.csv` |
+| Sector-index source probe note | `docs/sector_index_probe.md` |
+| Sector-index source probe raw output | `data/raw/sector_index_yahoo_probe.csv` |
+| Usable sector-index probe prices | `data/raw/prices_sector_indices_yahoo.csv` |
 | Real OHLCV + SET + sector-context features | `data/processed/features_real_ohlcv_sector.parquet` |
 | Sector-context data-quality report | `reports/data_quality_sector/real_ohlcv_data_quality.md` |
 | Sector-context pilot comparison | `results/real_ohlcv_sector_pilot_20260531/comparison_metrics.csv` |
@@ -110,9 +113,10 @@ The latest final pilot archive is generated on BistKA at:
 /lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot_with_fundamentals.tar.gz
 /lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot_with_sentiment_scaffold.tar.gz
 /lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot_with_official_macro_scaffold.tar.gz
+/lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot_with_sector_index_probe.tar.gz
 ```
 
-Latest archive size: 245 MB. The archive intentionally contains configs, report files, source code, tests, real OHLCV data, SET index data, sector mapping, macro proxy data, BOT official macro source probe data, Yahoo statement fundamentals, Yahoo latest-news probe data, market-context, sector-context, macro-proxy, fundamentals, sentiment-scaffold, and official-macro-scaffold features, data-quality outputs, metric CSVs, summaries, selected figures, and relevant logs. It does not attempt to package every generated training cache, model binary, or TensorBoard event file.
+Latest archive size: 233 MB. The archive intentionally contains configs, report files, source code, tests, real OHLCV data, SET index data, sector-index Yahoo probe output, usable banking sector-index probe data, sector mapping, macro proxy data, BOT official macro source probe data, Yahoo statement fundamentals, Yahoo latest-news probe data, market-context, sector-context, macro-proxy, fundamentals, sentiment-scaffold, and official-macro-scaffold features, data-quality outputs, metric CSVs, summaries, selected figures, and relevant logs. It does not attempt to package every generated training cache, model binary, or TensorBoard event file.
 
 Latest file-separation snapshot:
 

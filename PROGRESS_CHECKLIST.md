@@ -19,7 +19,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Synthetic pilot pipeline runs end-to-end.
 - `[x]` Trading environment, baselines, PPO training, metrics, action logging, and comparison summaries are implemented.
 - `[x]` Latest verified HPC PPO technical run: `results/run_2850`.
-- `[x]` Latest verified HPC tests: `40 passed` on 2026-05-31 after adding official macro ingestion and merge coverage.
+- `[x]` Latest verified HPC tests: `43 passed` on 2026-05-31 after adding the sector-index source probe.
 - `[x]` Buy-and-hold and moving-average crossover baselines are implemented and verified on HPC.
 - `[x]` Mean-variance baseline is implemented and verified on HPC.
 - `[x]` Result plotting utility for equity curves, drawdowns, turnover, and action weights is implemented and verified on HPC.
@@ -36,11 +36,13 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Latest local syntax check after sentiment ingestion/merge edits: `python3 -m compileall -q src tests scripts` passed on 2026-05-31.
 - `[x]` Latest local syntax check after official macro ingestion/merge edits: `python3 -m compileall -q src tests scripts` passed on 2026-05-31.
 - `[x]` Latest local syntax/notebook validation after data-quality notebook addition: `python3 -m compileall -q src tests scripts` and `python3 -m json.tool notebooks/data_quality_overview.ipynb` passed on 2026-05-31.
+- `[x]` Latest HPC validation after sector-index probe addition: `python -m compileall -q src tests scripts` and full `python -m pytest -q` passed with 43 tests on 2026-05-31.
 - `[x]` SET market-index ingestion and market-context feature merge implemented and verified on HPC.
 - `[x]` SET index raw data collected on HPC: `data/raw/prices_market_indices.csv`.
 - `[x]` Real OHLCV + SET market-context feature table built on HPC: `data/processed/features_real_ohlcv_market.parquet`.
 - `[x]` Latest SET market-context pilot completed on HPC: `results/real_ohlcv_market_pilot_20260531`.
 - `[x]` Pilot sector mapping added for the five starter tickers: `data/reference/sector_mapping_thai_pilot.csv`.
+- `[~]` SET sector-index Yahoo candidate probe added and run on HPC: `data/raw/sector_index_yahoo_probe.csv`; only banking symbol `^BANK` was usable.
 - `[x]` Real OHLCV + SET + sector-context feature table built on HPC: `data/processed/features_real_ohlcv_sector.parquet`.
 - `[x]` Latest sector-context pilot completed on HPC: `results/real_ohlcv_sector_pilot_20260531`.
 - `[x]` Yahoo Finance macro proxy ingestion added and verified on HPC: `data/raw/prices_macro_yahoo.csv`.
@@ -91,6 +93,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Updated final pilot archive with fundamentals artifacts: `final_archive/20260531_final_project_pilot_with_fundamentals.tar.gz`.
 - `[x]` Updated final pilot archive with sentiment-scaffold artifacts: `final_archive/20260531_final_project_pilot_with_sentiment_scaffold.tar.gz`.
 - `[x]` Updated final pilot archive with official-macro-scaffold artifacts: `final_archive/20260531_final_project_pilot_with_official_macro_scaffold.tar.gz`.
+- `[x]` Updated final pilot archive with sector-index source probe artifacts: `final_archive/20260531_final_project_pilot_with_sector_index_probe.tar.gz`.
 - `[x]` Latest file-separation snapshot on HPC: `_file_separation/20260531_160247`.
 - `[!]` Real-OHLCV comparison job `2854` is invalid because the old training entrypoint regenerated synthetic data into real config paths; use corrected job `2855`.
 - `[!]` Real OHLCV starter data, SET index context, pilot sector mapping, daily macro proxies, Yahoo statement fundamentals, sentiment merge scaffolding, and official macro merge scaffolding exist, but broad sector indices, historical official release-aligned macro, licensed fundamentals, and historical sentiment data are still incomplete.
@@ -117,7 +120,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Generate synthetic pilot feature table on HPC.
 - `[x]` Add validation so stale pilot feature files are regenerated when config ticker/date/column coverage changes.
 - `[x]` Collect real SET50/SET100 OHLCV data; starter Yahoo Finance download completed for 5 `.BK` tickers.
-- `[~]` Collect SET index and sector index data; SET index collected with Yahoo symbol `^SET.BK`, sector index source still pending.
+- `[~]` Collect SET index and sector index data; SET index collected with Yahoo symbol `^SET.BK`, and the sector-index candidate probe found only banking symbol `^BANK`, so a complete sector-index source is still pending.
 - `[x]` Collect daily macro proxy data from Yahoo Finance.
 - `[~]` Collect official real macro data with release-date alignment; BOT latest table probe works but has no 2021-2024 overlap.
 - `[~]` Collect real news/sentiment source data; Yahoo latest-news probe works but has no 2021-2024 overlap.
@@ -466,6 +469,14 @@ Sector data artifacts:
 - `data/processed/features_real_ohlcv_sector.parquet`: 4,840 stock rows, 38 columns.
 - `reports/data_quality_sector/real_ohlcv_data_quality.md`: complete five-ticker panel coverage and zero missing values.
 
+Latest reproducible sector-index source probe:
+
+```text
+python -m src.data.probe_sector_indices --config config/real_ohlcv_sector.yaml
+```
+
+The probe wrote `data/raw/sector_index_yahoo_probe.csv` on HPC and tested 139 Yahoo Finance sector-code candidates. It found one usable sector index, banking symbol `^BANK`, with 1,004 rows from 2021-01-04 to 2024-12-30. The other 138 candidates failed, so `data/raw/prices_sector_indices_yahoo.csv` is not broad enough to replace the static pilot mapping. A tracked summary is in `docs/sector_index_probe.md`.
+
 Short 1000-timestep validation comparison using `config/real_ohlcv_sector.yaml`:
 
 | policy | cumulative_return | annualized_return | sharpe | max_drawdown | final_portfolio_value |
@@ -548,7 +559,11 @@ Final pilot archives:
 /lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot_with_official_macro_scaffold.tar.gz
 ```
 
-Latest archive size: 245 MB. It contains the final writeups, configs, source code, tests, real OHLCV data, SET index data, pilot sector mapping, macro proxy data, BOT official macro source probe data, Yahoo statement fundamentals, Yahoo latest-news probe data, market-context, sector-context, macro-proxy, fundamentals, sentiment-scaffold, and official-macro-scaffold features, data-quality reports, comparison summaries, Optuna summary, walk-forward aggregates, ablation aggregates, regime/stress-test outputs, selected figures, and relevant run logs.
+```text
+/lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot_with_sector_index_probe.tar.gz
+```
+
+Latest archive size: 233 MB. It contains the final writeups, configs, source code, tests, real OHLCV data, SET index data, sector-index Yahoo probe output, usable banking sector-index probe data, pilot sector mapping, macro proxy data, BOT official macro source probe data, Yahoo statement fundamentals, Yahoo latest-news probe data, market-context, sector-context, macro-proxy, fundamentals, sentiment-scaffold, and official-macro-scaffold features, data-quality reports, comparison summaries, Optuna summary, walk-forward aggregates, ablation aggregates, regime/stress-test outputs, selected figures, and relevant run logs.
 
 Latest HPC file-separation snapshot:
 
