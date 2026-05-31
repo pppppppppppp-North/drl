@@ -1,0 +1,6 @@
+ticker,sector,industry_group,source,source_url,notes
+ADVANC.BK,Information & Communication Technology,Technology,SET listed-company and index constituent classifications,https://www.set.or.th/en/market/information/securities-list/constituents-list-set50-set100,Five-ticker pilot universe mapping.
+AOT.BK,Transportation & Logistics,Services,SET listed-company and index constituent classifications,https://www.set.or.th/en/market/information/securities-list/constituents-list-set50-set100,Five-ticker pilot universe mapping.
+CPALL.BK,Commerce,Services,SET listed-company and index constituent classifications,https://www.set.or.th/en/market/information/securities-list/constituents-list-set50-set100,Five-ticker pilot universe mapping.
+KBANK.BK,Banking,Financials,SET listed-company and index constituent classifications,https://www.set.or.th/en/market/information/securities-list/constituents-list-set50-set100,Five-ticker pilot universe mapping.
+PTT.BK,Energy & Utilities,Resources,SET listed-company and index constituent classifications,https://www.set.or.th/en/market/information/securities-list/constituents-list-set50-set100,Five-ticker pilot universe mapping.

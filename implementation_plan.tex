@@ -1,0 +1,160 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue}
+\setlist{nosep}
+\title{Deep Reinforcement Learning for Long-Term Profit Optimization in Thai Stock Markets Using Multi-Source Data\\Implementation Proposal Plan}
+\author{Prepared as a two-month full-time high school research project plan}
+\date{May 30, 2026}
+\begin{document}
+\maketitle
+
+\section{Executive Summary}
+This project proposes a deep reinforcement learning (DRL) system that learns to optimize long-term trading profit in Thai stock markets using multi-source data. Instead of predicting only the next price or return, the project frames trading as a sequential decision problem. At every time step, an agent observes a market state, chooses a continuous portfolio weight, receives a reward based on profit and risk, and updates its policy to improve future decisions.
+
+The primary universe should begin with SET50 and SET100 equities, then expand only if data coverage is reliable. PPO is the main algorithm because the existing project materials already selected PPO and because PPO is stable for noisy sequential environments. A2C, DDPG, TD3, and SAC are comparison algorithms if time and compute allow. The plan uses local development for coding and unit tests, while BistKA HPC is used for long training, GPU sentiment modeling, and hyperparameter sweeps.
+
+\section{Research Goal and Questions}
+\subsection{Main Goal}
+Build and evaluate a DRL trading framework that optimizes long-term profit and risk-adjusted return in Thai stock markets using technical, fundamental, macroeconomic, sentiment, market index, and market-flow data.
+
+\subsection{Research Questions}
+\begin{enumerate}
+\item Can a continuous-action DRL agent learn profitable long-term portfolio allocation policies for Thai equities?
+\item Does adding multi-source data improve out-of-sample trading performance compared with price-only and technical-indicator-only agents?
+\item Which data sources contribute most to performance?
+\item Which DRL algorithm is most stable under noisy Thai market data and limited compute?
+\item Does the learned policy generalize across different market regimes?
+\item Can BistKA HPC be used efficiently for reproducible training, tuning, and sentiment extraction?
+\end{enumerate}
+
+\section{Project Scope}
+The recommended primary universe is SET50 because it has higher liquidity, better news coverage, and cleaner data than smaller stocks. SET100 is the recommended expansion universe. All SET-listed equities should be considered only after the pipeline works because missing data, low liquidity, and survivorship bias become harder to control.
+
+Use the longest possible period that can be collected consistently. Daily data should ideally span 2010 onward. Intraday data can be used as a secondary experiment if licensed and stable. Macroeconomic and fundamental data must be aligned by release date to avoid look-ahead bias.
+
+\section{Data Plan}
+The project should test OHLCV, technical indicators, SET index data, sector data, investor-flow data, financial statements, macroeconomic indicators, Thai news sentiment, and calendar features. Official and reproducible sources should be preferred. SET SMART Marketplace is a strong candidate for official Thai market and fundamental data, while Bank of Thailand statistics are a strong candidate for macroeconomic indicators.
+
+\begin{longtable}{p{0.22\linewidth}p{0.33\linewidth}p{0.35\linewidth}}
+\toprule
+Data Group & Examples & Main Use \\
+\midrule
+OHLCV & open, high, low, close, volume & base market state \\
+Technical & RSI, MACD, ATR, volatility, moving averages & short and medium-term patterns \\
+Index/Sector & SET, SET50, SET100, sector returns & market regime context \\
+Macro & policy rate, exchange rate, inflation, tourism, exports & macro risk context \\
+Fundamental & earnings, ROE, P/E, debt-to-equity & company quality context \\
+Sentiment & Thai news embeddings or sentiment scores & qualitative market information \\
+Portfolio & cash, position, previous action & current decision constraints \\
+\bottomrule
+\end{longtable}
+
+\section{Modeling Framework}
+The trading problem is modeled as a Markov Decision Process. The state includes market, sentiment, macro, fundamental, and portfolio features. The action is a continuous target portfolio weight or vector of weights. The reward combines profit and risk control.
+
+The main reward variant is:
+\[
+r_t = \alpha \log(1+R_t) + \beta \Delta Sharpe_t - \gamma DrawdownPenalty_t - \lambda Turnover_t
+\]
+This reward should be compared against raw return, log return, drawdown-penalized return, and Sortino-style reward variants.
+
+The main model is PPO with clipped objective, generalized advantage estimation, entropy regularization, and checkpointing. Comparison models include A2C, DDPG, TD3, SAC, and a discrete DQN only if a buy/hold/sell comparison is useful.
+
+\section{Step-by-Step Experimental Procedure}
+\subsection{Step 1: Repository Structure}
+Create a clean repository with \texttt{config}, \texttt{data}, \texttt{logs}, \texttt{models}, \texttt{notebooks}, \texttt{reports}, \texttt{results}, \texttt{scripts}, \texttt{src}, and \texttt{tests}. The expected outputs are a README, environment file, default config, and empty project structure.
+
+\subsection{Step 2: Data Manifest}
+For each source, record the source name, access method, frequency, date range, symbols, columns, license note, raw path, and missing value rate. The expected outputs are \texttt{data\_manifest.csv} and \texttt{data\_sources.md}.
+
+\subsection{Step 3: Pilot Data}
+Collect a pilot dataset with 5 Thai stocks, the SET index, at least 3 years of daily OHLCV, one macro feature, and one sentiment source if possible. Convert to Parquet and run a quality notebook.
+
+\subsection{Step 4: Cleaning and Alignment}
+Parse dates, normalize tickers, adjust corporate actions where possible, remove duplicates, report missing values, align frequencies, and prevent leakage. No feature may use information from the future.
+
+\subsection{Step 5: Feature Engineering}
+Generate returns, rolling volatility, moving averages, RSI, MACD, Bollinger Bands, ATR, volume ratios, index returns, sector-relative returns, macro changes, and sentiment features.
+
+\subsection{Step 6: Trading Environment}
+Implement a Gymnasium-compatible environment with \texttt{reset}, \texttt{step}, observation space, action space, portfolio accounting, reward calculation, termination logic, and an information dictionary.
+
+\subsection{Step 7: Baselines}
+Implement buy-and-hold, equal weight, random policy, momentum, moving-average crossover, mean-variance optimization, and prediction-based LSTM or XGBoost if time allows.
+
+\subsection{Step 8: PPO Implementation}
+Complete the rollout buffer, log probabilities, value estimates, GAE, clipped policy loss, value loss, entropy bonus, minibatch updates, checkpointing, and TensorBoard or MLflow logging.
+
+\subsection{Step 9: Technical-Only Training}
+Train PPO using price and technical features only. Confirm that the action distribution is not always hold and that validation runs complete without NaN errors.
+
+\subsection{Step 10: Multi-Source Training}
+Add features gradually: price only, technical, index, macro, fundamentals, sentiment, and all features. Record ablation metrics for each variant.
+
+\subsection{Step 11: Hyperparameter Tuning}
+Tune learning rate, gamma, GAE lambda, PPO clip range, entropy coefficient, value loss coefficient, rollout length, batch size, network size, and reward weights. Use Optuna or SLURM job arrays.
+
+\subsection{Step 12: Walk-Forward Validation}
+Train on old periods, validate on the next period, test on future periods, roll the window forward, and aggregate out-of-sample equity curves.
+
+\subsection{Step 13: Crisis and Regime Testing}
+Evaluate separately during COVID-19, high-volatility drawdowns, sideways markets, bull markets, and bear markets.
+
+\subsection{Step 14: Final Metrics}
+Report cumulative return, annualized return, annualized volatility, Sharpe ratio, Sortino ratio, maximum drawdown, Calmar ratio, turnover, win rate, profit factor, VaR, CVaR, beta, tracking error, and information ratio.
+
+\section{Two-Month Phase Plan}
+\begin{longtable}{p{0.08\linewidth}p{0.10\linewidth}p{0.38\linewidth}p{0.32\linewidth}}
+\toprule
+Phase & Week & Main Work & Output \\
+\midrule
+1 & 1 & setup, scope, HPC extraction, pilot data & repository, data manifest, HPC notes \\
+2 & 2 & data collection and feature engineering & processed feature table \\
+3 & 3 & trading environment and baselines & tested environment, baseline metrics \\
+4 & 4 & PPO completion and technical-only model & PPO model, technical-only results \\
+5 & 5 & sentiment and multi-source fusion & sentiment cache, ablation v1 \\
+6 & 6 & tuning and algorithm comparison & best configs, model comparison \\
+7 & 7 & walk-forward and stress testing & out-of-sample results \\
+8 & 8 & final proposal and documentation & plan PDF, literature review PDF \\
+\bottomrule
+\end{longtable}
+
+\section{HPC Execution Plan}
+Use the local machine for code editing, tests, tiny experiments, plotting, and report writing. Use BistKA for WangchanBERTa embedding generation, long PPO training, Optuna sweeps, and walk-forward windows.
+
+The practical BistKA strategy is:
+\begin{itemize}
+\item \texttt{compute-devel} for short CPU debugging.
+\item \texttt{compute-normal} for vectorized PPO training.
+\item \texttt{gpu4500-devel} for short GPU tests.
+\item \texttt{gpu4500-normal} for WangchanBERTa jobs.
+\item \texttt{myquota} before and after large data jobs.
+\item \texttt{mycredit} before and after sweeps.
+\end{itemize}
+
+\section{Expected Deliverables}
+The final deliverables are a reproducible code repository, clean data pipeline, tested trading environment, baseline results, trained DRL model results, ablation results, walk-forward validation, crisis analysis, final project proposal report, standalone literature review, HPC appendix, and SLURM scripts.
+
+\section{Success Criteria}
+The project is successful if the pipeline runs end-to-end, the agent trains without NaN or shape errors, baselines and DRL agents are evaluated on the same periods, walk-forward validation is completed, ablation studies identify useful data sources, and final metrics are reproducible from saved configs. The project does not need to prove guaranteed profit; it needs to prove a correct, reproducible, and honest experimental process.
+
+\section{References}
+\begin{thebibliography}{9}
+\bibitem{ppo} J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov, ``Proximal Policy Optimization Algorithms,'' arXiv:1707.06347, 2017. [Online]. Available: \url{https://arxiv.org/abs/1707.06347}
+\bibitem{finrl} X.-Y. Liu, H. Yang, J. Gao, and C. D. Wang, ``FinRL: Deep Reinforcement Learning Framework to Automate Trading in Quantitative Finance,'' ACM ICAIF, 2021. [Online]. Available: \url{https://arxiv.org/abs/2111.09395}
+\bibitem{zhangtrading} Z. Zhang, S. Zohren, and S. Roberts, ``Deep Reinforcement Learning for Trading,'' arXiv:1911.10107, 2019. [Online]. Available: \url{https://arxiv.org/abs/1911.10107}
+\bibitem{wangchanberta} L. Lowphansirikul, C. Polpanumas, N. Jantrakulchai, and S. Nutanong, ``WangchanBERTa: Pretraining transformer-based Thai Language Models,'' arXiv:2101.09635, 2021. [Online]. Available: \url{https://arxiv.org/abs/2101.09635}
+\bibitem{thaiabsa} A. T. Rutherford, S. Chueykamhang, T. Bunditlurdruk, and N. Angsuwichitkul, ``Aspect-Level Obfuscated Sentiment in Thai Financial Disclosures and Its Impact on Abnormal Returns,'' arXiv:2511.13481, 2025. [Online]. Available: \url{https://arxiv.org/abs/2511.13481}
+\bibitem{setsmart} Stock Exchange of Thailand, ``SMART Marketplace.'' [Online]. Available: \url{https://www.set.or.th/th/services/connectivity-and-data/data/smart-marketplace}
+\bibitem{bot} Bank of Thailand, ``Statistics.'' [Online]. Available: \url{https://www.bot.or.th/en/statistics.html}
+\bibitem{hpc} KVIS, ``BistKA Mini-HPC Cluster Documentation,'' local file \texttt{HPC.pdf}.
+\end{thebibliography}
+
+\end{document}

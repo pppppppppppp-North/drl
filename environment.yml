@@ -1,0 +1,19 @@
+name: drl_thai_stock
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - numpy
+  - pandas
+  - scipy
+  - pyyaml
+  - matplotlib
+  - pyarrow
+  - pip
+  - pip:
+      - gymnasium>=0.29
+      - stable-baselines3>=2.3
+      - optuna>=3.6
+      - tensorboard>=2.16
+      - pytest>=8.0
+      - yfinance>=0.2

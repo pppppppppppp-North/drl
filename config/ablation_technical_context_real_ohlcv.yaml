@@ -1,0 +1,55 @@
+project:
+  name: ablation_technical_context_real_ohlcv
+  seed: 42
+
+paths:
+  raw_prices: data/raw/prices_real_ohlcv.csv
+  features: data/processed/features_real_ohlcv.parquet
+  fallback_features_csv: data/processed/features_real_ohlcv.csv
+  results_dir: results/ablation_technical_context_real_ohlcv
+  models_dir: models/ablation_technical_context_real_ohlcv
+
+data:
+  source: yahoo_ohlcv
+  tickers: [PTT.BK, AOT.BK, CPALL.BK, KBANK.BK, ADVANC.BK]
+  start: "2021-01-01"
+  end: "2024-12-31"
+  initial_price: 100.0
+
+features:
+  lookback: 30
+  columns:
+    - return_1d
+    - return_5d
+    - return_20d
+    - volatility_20d
+    - ma_ratio_10
+    - ma_ratio_30
+    - rsi_14
+    - macd
+    - bollinger_z
+    - atr_14
+    - volume_ratio_20
+    - market_return_1d
+    - macro_rate_change
+    - sentiment_score
+
+splits:
+  train_fraction: 0.6
+  validation_fraction: 0.2
+  train_split: train
+  eval_split: validation
+
+environment:
+  initial_cash: 1000000.0
+  transaction_cost: 0.001
+  reward:
+    return_weight: 1.0
+    turnover_penalty: 0.05
+    drawdown_penalty: 0.1
+
+training:
+  algo: ppo
+  total_timesteps: 10000
+  num_envs: 1
+  seed: 42

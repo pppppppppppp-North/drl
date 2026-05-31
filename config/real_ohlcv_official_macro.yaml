@@ -1,0 +1,100 @@
+project:
+  name: drl_thai_stock_real_ohlcv_official_macro
+  seed: 42
+
+paths:
+  raw_prices: data/raw/prices_real_ohlcv.csv
+  base_features: data/processed/features_real_ohlcv_fundamentals.parquet
+  fallback_base_features_csv: data/processed/features_real_ohlcv_fundamentals.csv
+  features: data/processed/features_real_ohlcv_official_macro.parquet
+  fallback_features_csv: data/processed/features_real_ohlcv_official_macro.csv
+  results_dir: results/real_ohlcv_official_macro
+  models_dir: models/real_ohlcv_official_macro
+
+data:
+  source: yahoo_ohlcv
+  tickers: [PTT.BK, AOT.BK, CPALL.BK, KBANK.BK, ADVANC.BK]
+  start: "2021-01-01"
+  end: "2024-12-31"
+  initial_price: 100.0
+
+official_macro_context:
+  raw_path: data/raw/bot_official_macro.csv
+  report_id: 887
+  source_table: EC_EI_002_S2
+  release_rule: last_business_day_following_month
+  metrics:
+    leading_economic_index: bot_leading_economic_index
+    index_change: bot_leading_index_change
+    business_sentiment_index_3_months: bot_bsi_3m
+    export_volume_index_exclude_gold: bot_export_volume_index_ex_gold
+    broad_money_at_2000_prices_million_baht: bot_real_broad_money
+
+features:
+  lookback: 30
+  columns:
+    - return_1d
+    - return_5d
+    - return_20d
+    - volatility_20d
+    - ma_ratio_10
+    - ma_ratio_30
+    - rsi_14
+    - macd
+    - bollinger_z
+    - volume_ratio_20
+    - market_return_1d
+    - set_return_1d
+    - set_return_5d
+    - set_return_20d
+    - set_volatility_20d
+    - set_ma_ratio_20
+    - sector_equal_weight_return_1d
+    - sector_relative_return_1d
+    - sector_peer_count
+    - sector_banking
+    - sector_commerce
+    - sector_energy_utilities
+    - sector_information_communication_technology
+    - sector_transportation_logistics
+    - macro_rate_change
+    - usdthb_return_1d
+    - usdthb_return_5d
+    - brent_return_1d
+    - brent_return_5d
+    - wti_return_1d
+    - gold_return_1d
+    - us10y_change_1d
+    - fundamental_net_margin
+    - fundamental_return_on_equity
+    - fundamental_debt_to_equity
+    - fundamental_fcf_margin
+    - fundamental_revenue_growth_qoq
+    - fundamental_assets_growth_qoq
+    - bot_leading_economic_index
+    - bot_leading_index_change
+    - bot_bsi_3m
+    - bot_export_volume_index_ex_gold
+    - bot_real_broad_money
+    - bot_macro_release_age_days
+    - sentiment_score
+
+splits:
+  train_fraction: 0.6
+  validation_fraction: 0.2
+  train_split: train
+  eval_split: validation
+
+environment:
+  initial_cash: 1000000.0
+  transaction_cost: 0.001
+  reward:
+    return_weight: 1.0
+    turnover_penalty: 0.05
+    drawdown_penalty: 0.1
+
+training:
+  algo: ppo
+  total_timesteps: 1000
+  num_envs: 1
+  seed: 42

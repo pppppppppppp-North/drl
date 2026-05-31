@@ -1,0 +1,74 @@
+# Data Sources
+
+This file tracks source provenance for every dataset used by the project.
+
+## Synthetic Pilot
+
+- Purpose: local and HPC smoke tests before licensed/public Thai market data is connected.
+- Generator: `python -m src.data.synthetic --config config/debug.yaml`
+- Raw path: `data/raw/prices_pilot.csv`
+- Processed path: `data/processed/features_pilot.parquet` or CSV fallback.
+- Limitation: synthetic data must not be used for final conclusions.
+
+## Planned Real Sources
+
+- SET or SETSMART: daily prices, indices, fundamentals, corporate actions.
+- Yahoo Finance via `yfinance`: public daily OHLCV for `.BK` tickers, useful as a reproducible starter source before licensed SET/SETSMART data is available.
+- Yahoo Finance via `yfinance`: public daily macro proxy series for FX, commodities, and yields; useful for pipeline validation but not a substitute for official release-date macroeconomic data.
+- Yahoo Finance via `yfinance`: annual and quarterly statement fundamentals; useful for pipeline validation but not a substitute for licensed SET/SETSMART fundamentals.
+- Yahoo Finance via `yfinance`: latest-news endpoint for source probing only; it does not provide the 2021-2024 historical news coverage needed for a valid sentiment experiment.
+- Bank of Thailand statistics: macroeconomic variables aligned by release date.
+- SET disclosures and financial news sources: Thai text for sentiment features, subject to access and usage rights.
+
+Every real source added later should record access date, license/access note, schema, date coverage, symbol coverage, and missing-value rate in `data/data_manifest.csv`.
+
+## Real OHLCV Starter Ingestion
+
+- Config: `config/real_ohlcv.yaml`
+- Command: `python -m src.data.ingest_ohlcv --config config/real_ohlcv.yaml`
+- Raw path: `data/raw/prices_real_ohlcv.csv`
+- Processed command: `python -m src.features.build_features --config config/real_ohlcv.yaml`
+- Processed path: `data/processed/features_real_ohlcv.parquet` or CSV fallback.
+- Limitation: Yahoo Finance access and adjustment methodology must be checked before final publication; licensed SET/SETSMART remains preferred for final results.
+
+## Macro Proxy Ingestion
+
+- Config: `config/real_ohlcv_macro.yaml`
+- Raw command: `python -m src.data.ingest_macro --config config/real_ohlcv_macro.yaml`
+- Raw path: `data/raw/prices_macro_yahoo.csv`
+- Feature command: `python -m src.features.macro_context --config config/real_ohlcv_macro.yaml`
+- Processed path: `data/processed/features_real_ohlcv_macro.parquet` or CSV fallback.
+- Series: `USDTHB=X`, `BZ=F`, `CL=F`, `GC=F`, and `^TNX`.
+- Limitation: these are daily market proxies. Official Bank of Thailand or other macro releases still need release-date alignment before final macroeconomic claims.
+
+## Official Macro Source Probe And Merge Scaffold
+
+- Config: `config/real_ohlcv_official_macro.yaml`
+- Raw command: `python -m src.data.ingest_bot_macro --config config/real_ohlcv_official_macro.yaml`
+- Raw path: `data/raw/bot_official_macro.csv`
+- Feature command: `python -m src.features.official_macro_context --config config/real_ohlcv_official_macro.yaml`
+- Processed path: `data/processed/features_real_ohlcv_official_macro.parquet` or CSV fallback.
+- Source: Bank of Thailand BOTWEBSTAT public statistics table `EC_EI_002_S2`, Leading Economic Indicator.
+- Merge rule: each monthly observation is assigned an explicit release date using the table's last-business-day-of-following-month release pattern, then merged backward-only by release date to each stock trading date.
+- Current limitation: the web table probe returned 54 rows across nine indicators dated 2025-11-01 to 2026-04-01. This does not overlap the 2021-2024 modeling table, so merged historical BOT official macro columns are all zero. A historical BOT export/API source or downloaded historical file is still required before official macro results can be interpreted.
+
+## Fundamentals Ingestion
+
+- Config: `config/real_ohlcv_fundamentals.yaml`
+- Raw command: `python -m src.data.ingest_fundamentals --config config/real_ohlcv_fundamentals.yaml`
+- Raw path: `data/raw/fundamentals_yahoo_quarterly.csv`
+- Feature command: `python -m src.features.fundamental_context --config config/real_ohlcv_fundamentals.yaml`
+- Processed path: `data/processed/features_real_ohlcv_fundamentals.parquet` or CSV fallback.
+- Merge rule: annual and quarterly statement rows are converted to ratios and growth fields, then merged into stock features after a 60-day reporting lag.
+- Limitation: Yahoo statement availability is uneven, and annual rows are used as fallback coverage. Licensed SET/SETSMART fundamentals remain preferred for final results.
+
+## Sentiment Source Probe And Merge Scaffold
+
+- Config: `config/real_ohlcv_sentiment.yaml`
+- Latest-news probe command: `python -m src.data.ingest_news_yahoo --config config/real_ohlcv_sentiment.yaml`
+- Raw path: `data/raw/news_yahoo_latest.csv`
+- Daily sentiment command: `python -m src.sentiment.extract_embeddings --input data/raw/news_yahoo_latest.csv --output data/processed/sentiment_daily.parquet`
+- Feature command: `python -m src.features.sentiment_context --config config/real_ohlcv_sentiment.yaml`
+- Processed path: `data/processed/features_real_ohlcv_sentiment.parquet` or CSV fallback.
+- Merge rule: daily ticker sentiment is merged backward-only to stock dates with a seven-day maximum age, so future news cannot be used.
+- Current limitation: the Yahoo latest-news probe returned 11 rows across four tickers dated 2025-06-24 to 2026-03-31. This does not overlap the 2021-2024 modeling table, so the merged historical sentiment columns are all zero. A licensed or otherwise accessible historical news/disclosure source is still required before sentiment results can be interpreted.

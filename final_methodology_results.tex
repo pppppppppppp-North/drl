@@ -1,0 +1,360 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{xurl}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue}
+\setlist{nosep}
+
+\title{Deep Reinforcement Learning for Thai Stock Portfolio Allocation\\Final Pilot Methodology and Results}
+\author{Final Project Plan}
+\date{May 31, 2026}
+
+\begin{document}
+\maketitle
+
+\section{Objective}
+This project implements a reproducible pilot pipeline for deep reinforcement learning portfolio allocation in Thai stocks. The current implementation validates the end-to-end experimental workflow on a five-stock Thai OHLCV starter universe and on a deterministic synthetic pilot universe. Both use the same trading environment, metrics, baseline policies, and chronological train/validation/test split logic.
+
+The reported results are pilot results. They validate the research pipeline, but they should not be interpreted as a complete Thai-market performance claim because only starter SET index, sector-context, daily macro-proxy, and Yahoo statement fundamental features are integrated with overlapping history. Sentiment and official macro ingestion/merge scaffolding are implemented, but the available Yahoo latest-news probe and BOT web-table probe do not overlap the 2021--2024 modeling window. Historical official macro releases, licensed fundamentals, historical sentiment, and a broader Thai universe remain incomplete.
+
+\section{Data}
+The real-data starter run uses Yahoo Finance OHLCV data for \texttt{ADVANC.BK}, \texttt{AOT.BK}, \texttt{CPALL.BK}, \texttt{KBANK.BK}, and \texttt{PTT.BK}. The real feature table is:
+
+\begin{quote}
+\path{/lustrefs/project/25sfcs03/drl_thai_stock/data/processed/features_real_ohlcv.parquet}
+\end{quote}
+
+It contains 4,840 rows, five tickers, and 21 columns from 2021-01-04 to 2024-12-30. The latest verified real comparison used the split in Table~\ref{tab:real-split}.
+
+\begin{table}[h]
+\centering
+\caption{Real OHLCV chronological split.}
+\label{tab:real-split}
+\begin{tabular}{llrrr}
+\toprule
+Split & Date range & Rows & Unique dates & Tickers \\
+\midrule
+Train & 2021-01-04 to 2023-05-29 & 2,900 & 580 & 5 \\
+Validation & 2023-05-30 to 2024-03-12 & 970 & 194 & 5 \\
+Test & 2024-03-13 to 2024-12-30 & 970 & 194 & 5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The generated data-quality report shows 968 unique trading dates per ticker, zero missing panel dates for each ticker, and zero missing values across the active feature columns. It is stored at:
+
+\begin{quote}
+\path{/lustrefs/project/25sfcs03/drl_thai_stock/reports/data_quality/real_ohlcv_data_quality.md}
+\end{quote}
+
+\section{Features}
+The active technical feature set includes one-day, five-day, and twenty-day returns; twenty-day volatility; ten-day and thirty-day moving-average ratios; RSI; MACD; Bollinger z-score; volume ratio; and ATR. Expanded pilot feature tables add SET index features, sector-context features, daily macro-proxy features, and lagged Yahoo statement fundamentals. Sentiment and official macro feature tables are also buildable through no-lookahead merge scaffolds, but current Yahoo latest-news and BOT web-table rows are outside the historical validation window.
+
+\section{Environment}
+The trading environment is a Gymnasium-compatible long-only portfolio allocator. Actions are continuous portfolio weights over the stock universe. The environment applies transaction costs and tracks cash, portfolio value, net return, turnover, drawdown, and per-ticker weights.
+
+The reward combines portfolio return with turnover and drawdown penalties:
+
+\[
+r_t = w_r R_t - \lambda_{\mathrm{turnover}} T_t - \lambda_{\mathrm{drawdown}} D_t
+\]
+
+The current real-data configs use return weight $w_r=1.0$, turnover penalty $\lambda_{\mathrm{turnover}}=0.05$, and drawdown penalty $\lambda_{\mathrm{drawdown}}=0.1$.
+
+\section{Models and Baselines}
+The implemented DRL models are PPO and A2C, with support paths for DDPG, TD3, and SAC. The implemented baselines are equal weight, random allocation, momentum, per-ticker buy-and-hold, moving-average crossover, and mean-variance allocation.
+
+Hyperparameter search uses SLURM job arrays and the trial runner in \path{src/experiments/run_trial.py}. The search space covers learning rate, gamma, GAE lambda, entropy coefficient, rollout length, PPO clip range, and PPO batch size.
+
+\section{Verified Runs}
+\begin{longtable}{p{0.26\linewidth}p{0.52\linewidth}p{0.12\linewidth}}
+\caption{Verified and invalidated HPC runs.}
+\label{tab:runs}\\
+\toprule
+Purpose & HPC path & Status \\
+\midrule
+\endfirsthead
+\toprule
+Purpose & HPC path & Status \\
+\midrule
+\endhead
+Synthetic split-aware comparison & \texttt{results/algo\_compare\_2853} & Valid \\
+Real OHLCV PPO/A2C comparison & \texttt{results/real\_ohlcv\_compare\_2855} & Valid \\
+Optuna sanity array & \texttt{results/optuna\_sanity\_2856} & Valid \\
+Fixed Optuna search & \texttt{results/optuna\_search\_fixed\_2863} & Valid \\
+Longer best-parameter PPO run & \texttt{results/best\_ppo\_real\_ohlcv\_2868} & Valid \\
+Real OHLCV comparison & \texttt{results/real\_ohlcv\_compare\_2854} & Invalidated \\
+Optuna search & \texttt{results/optuna\_search\_2858} & Invalidated \\
+\bottomrule
+\end{longtable}
+
+Run \texttt{2854} was invalidated because an earlier training entrypoint regenerated synthetic data into real-data paths. Run \texttt{2858} was invalidated because the pre-fix sampler repeated parameters across repeated algorithm trials.
+
+\section{Synthetic Pilot Results}
+The latest valid split-aware synthetic comparison is \texttt{algo\_compare\_2853}. The synthetic result confirms that the pipeline can run end-to-end, but the synthetic generator creates simplified market structure and should not be used for market conclusions.
+
+\begin{table}[h]
+\centering
+\caption{Selected synthetic validation results.}
+\label{tab:synthetic-results}
+\begin{tabular}{lrrrr}
+\toprule
+Policy & Cum. return & Ann. return & Sharpe & Max drawdown \\
+\midrule
+\texttt{buy\_hold\_KBANK.BK} & 0.580296 & 0.904531 & 3.218974 & -0.143165 \\
+\texttt{ma\_crossover} & 0.257937 & 0.381344 & 1.880703 & -0.091600 \\
+\texttt{equal\_weight} & 0.152812 & 0.221644 & 1.397638 & -0.095300 \\
+\texttt{a2c} & 0.167278 & 0.243282 & 1.372647 & -0.103622 \\
+\texttt{mean\_variance} & 0.122426 & 0.176558 & 0.860456 & -0.109790 \\
+\texttt{ppo} & -0.012888 & -0.018096 & -0.108208 & -0.100581 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Real OHLCV Validation Results}
+The latest valid real-OHLCV comparison is \texttt{real\_ohlcv\_compare\_2855}. On this validation split, the best policy was buy-and-hold \texttt{PTT.BK}. PPO and A2C underperformed equal weight and the strongest single-stock buy-and-hold baselines. PPO had a smaller maximum drawdown than A2C and equal weight in the comparison run.
+
+\begin{table}[h]
+\centering
+\caption{Selected real OHLCV validation results.}
+\label{tab:real-results}
+\begin{tabular}{lrrrr}
+\toprule
+Policy & Cum. return & Ann. return & Sharpe & Max drawdown \\
+\midrule
+\texttt{buy\_hold\_PTT.BK} & 0.043523 & 0.067653 & 0.405480 & -0.103448 \\
+\texttt{buy\_hold\_ADVANC.BK} & 0.009999 & 0.015405 & 0.097452 & -0.098919 \\
+\texttt{equal\_weight} & -0.030573 & -0.046591 & -0.416554 & -0.103240 \\
+\texttt{a2c} & -0.038061 & -0.057884 & -0.434028 & -0.120042 \\
+\texttt{ppo} & -0.035900 & -0.054629 & -0.439532 & -0.066219 \\
+\texttt{mean\_variance} & -0.099682 & -0.149008 & -1.097376 & -0.166737 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Hyperparameter Search Results}
+The fixed five-task Optuna search is \texttt{optuna\_search\_fixed\_2863}. The best short search trial was PPO trial \texttt{4}; however, a longer 20,000-timestep run using those parameters produced a cumulative return of -0.030269, annualized return of -0.046132, Sharpe ratio of -0.403028, and maximum drawdown of -0.099395.
+
+\begin{table}[h]
+\centering
+\caption{Fixed Optuna search ranking.}
+\label{tab:optuna}
+\begin{tabular}{rlrrrr}
+\toprule
+Trial & Algorithm & Sharpe & Cum. return & Max drawdown & Learning rate \\
+\midrule
+4 & PPO & 0.279954 & 0.020408 & -0.068810 & 0.000389 \\
+0 & PPO & -0.305640 & -0.002649 & -0.008809 & 0.000017 \\
+1 & A2C & -0.519583 & -0.042686 & -0.127149 & 0.001210 \\
+2 & PPO & -1.079920 & -0.088712 & -0.115319 & 0.002160 \\
+3 & A2C & -1.708120 & -0.003138 & -0.004297 & 0.000029 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The tuned PPO parameters are not yet robust. The short trial improved validation Sharpe, but the longer run regressed. This indicates that the next work should emphasize broader data, walk-forward validation, and larger searches rather than only increasing training time.
+
+\section{Walk-Forward Extension}
+The project now includes configurable walk-forward window generation. The starter real-OHLCV config uses 504 training dates, 126 validation dates, 126 test dates, and a 126-date step size. This produces rolling windows suitable for future one-job-per-window SLURM runs and out-of-sample aggregation.
+
+The first walk-forward pilot is \texttt{results/walk\_forward\_pilot\_2869}. It ran two 1,000-timestep PPO jobs through a SLURM array, one task for each generated window. Both error logs were empty. Aggregation wrote combined metrics, a policy summary, and test equity curves.
+
+\begin{table}[h]
+\centering
+\caption{Mean test-window results from the walk-forward pilot.}
+\label{tab:walk-forward}
+\begin{tabular}{lrrrr}
+\toprule
+Policy & Windows & Mean cum. return & Mean Sharpe & Mean max drawdown \\
+\midrule
+\texttt{buy\_hold\_ADVANC.BK} & 2 & 0.083927 & 1.467928 & -0.064073 \\
+\texttt{buy\_hold\_KBANK.BK} & 2 & 0.064203 & 1.157021 & -0.096110 \\
+\texttt{buy\_hold\_PTT.BK} & 2 & 0.040690 & 0.672495 & -0.081828 \\
+\texttt{equal\_weight} & 2 & 0.021133 & 0.633491 & -0.068208 \\
+\texttt{ppo} & 2 & 0.004260 & 0.057644 & -0.026071 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Ablation Pilot}
+The first real-OHLCV ablation pilot is \texttt{results/ablation\_pilot\_2871}. It ran three short 1,000-timestep PPO ablations through a SLURM array: returns only, technical indicators, and technical indicators plus available context placeholders. Aggregation wrote metrics, best-policy, PPO-summary, and bar-chart artifacts.
+
+\begin{table}[h]
+\centering
+\caption{PPO feature ablation pilot.}
+\label{tab:ablation}
+\begin{tabular}{lrrrr}
+\toprule
+Feature group & Cum. return & Ann. return & Sharpe & Max drawdown \\
+\midrule
+\texttt{returns} & -0.010482 & -0.016061 & -0.453371 & -0.040127 \\
+\texttt{technical+context} & -0.055886 & -0.084574 & -0.823513 & -0.099160 \\
+\texttt{technical} & -0.078913 & -0.118657 & -1.611158 & -0.109727 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The best policy in each pilot ablation comparison remained \texttt{buy\_hold\_PTT.BK}, with validation Sharpe 0.405480. The ablation machinery is now verified, but stronger claims should wait for broader sector, official macro, sentiment, and fundamentals features.
+
+\section{Regime and Stress Tests}
+The first real-OHLCV regime/stress test is \texttt{results/regime\_tests\_real\_ohlcv\_20260531}. It evaluates baselines plus the saved PPO/A2C models from \texttt{results/real\_ohlcv\_compare\_2855} across named slices and two auto-selected 63-trading-date high-volatility windows.
+
+The acute 2020 COVID crash is explicitly recorded as unavailable because the current starter OHLCV table begins on 2021-01-04. The available COVID-related slice is therefore \texttt{covid\_recovery\_2021}.
+
+\begin{table}[h]
+\centering
+\caption{Best policy by evaluated stress regime.}
+\label{tab:regime}
+\begin{tabular}{llrrr}
+\toprule
+Regime & Policy & Cum. return & Sharpe & Max drawdown \\
+\midrule
+\texttt{covid\_recovery\_2021} & \texttt{buy\_hold\_ADVANC.BK} & 0.377423 & 2.375753 & -0.061453 \\
+\texttt{high\_volatility\_1} & \texttt{buy\_hold\_ADVANC.BK} & -0.016542 & -0.735410 & -0.055866 \\
+\texttt{high\_volatility\_2} & \texttt{a2c} & 0.093690 & 7.220885 & -0.027634 \\
+\texttt{inflation\_hike\_drawdown\_2022} & \texttt{buy\_hold\_AOT.BK} & 0.160483 & 1.366575 & -0.047458 \\
+\texttt{test\_period} & \texttt{buy\_hold\_ADVANC.BK} & 0.483925 & 3.681822 & -0.074324 \\
+\texttt{validation\_period} & \texttt{buy\_hold\_PTT.BK} & 0.043523 & 0.405480 & -0.103448 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{SET Market-Context Features}
+The first verified market-context extension uses Yahoo Finance symbol \texttt{\string^SET.BK} for the SET index. The ingestion output has 965 rows from 2021-01-04 to 2024-12-30 and no missing values. The merged feature table has 4,840 stock rows and 26 columns.
+
+The merged table adds SET returns, SET 20-day realized volatility, and a SET moving-average ratio. It also replaces the placeholder \texttt{market\_return\_1d} with the SET index daily return. The first short validation run is \texttt{results/real\_ohlcv\_market\_pilot\_20260531}.
+
+\begin{table}[h]
+\centering
+\caption{Short validation run with SET market-context features.}
+\label{tab:set-context}
+\begin{tabular}{lrrrr}
+\toprule
+Policy & Cum. return & Ann. return & Sharpe & Max drawdown \\
+\midrule
+\texttt{buy\_hold\_PTT.BK} & 0.043523 & 0.067653 & 0.405480 & -0.103448 \\
+\texttt{buy\_hold\_ADVANC.BK} & 0.009999 & 0.015405 & 0.097452 & -0.098919 \\
+\texttt{equal\_weight} & -0.030573 & -0.046591 & -0.416554 & -0.103240 \\
+\texttt{ppo} & -0.054013 & -0.081783 & -0.952524 & -0.104711 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This verifies the real SET-index feature path end to end. It does not yet satisfy a broad sector-index requirement because the Yahoo SET50/SET100 candidates probed from HPC did not return usable rows; a more reliable sector-index source is still needed.
+
+\section{Sector Context Features}
+Because Yahoo SET50/SET100 and sector-index candidates were not reliable through the HPC yfinance check, the first sector extension uses a static pilot mapping from SET public listed-company and index constituent classifications. The mapping file is \texttt{data/reference/sector\_mapping\_thai\_pilot.csv} and covers the five starter tickers: \texttt{ADVANC.BK}, \texttt{AOT.BK}, \texttt{CPALL.BK}, \texttt{KBANK.BK}, and \texttt{PTT.BK}.
+
+The sector feature builder writes a 4,840-row, 38-column feature table. The sector data-quality report shows complete panel coverage and zero missing values. Added numeric training columns are sector equal-weight return, sector-relative return, sector peer count, and sector one-hot flags.
+
+\begin{table}[h]
+\centering
+\caption{Short validation run with SET and sector-context features.}
+\label{tab:sector-context}
+\begin{tabular}{lrrrr}
+\toprule
+Policy & Cum. return & Ann. return & Sharpe & Max drawdown \\
+\midrule
+\texttt{buy\_hold\_PTT.BK} & 0.043523 & 0.067653 & 0.405480 & -0.103448 \\
+\texttt{buy\_hold\_ADVANC.BK} & 0.009999 & 0.015405 & 0.097452 & -0.098919 \\
+\texttt{equal\_weight} & -0.030573 & -0.046591 & -0.416554 & -0.103240 \\
+\texttt{ppo} & -0.031097 & -0.047383 & -0.626349 & -0.068484 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The sector-context PPO pilot improves over the SET-market-context PPO pilot on cumulative return, Sharpe, and max drawdown, but it still does not beat the PTT buy-and-hold baseline.
+
+\section{Macro Proxy Features}
+The first macro extension uses daily Yahoo Finance proxy series rather than official release-date macroeconomic data. The raw macro proxy file has 5,059 rows across USD/THB, Brent crude, WTI crude, gold, and the U.S. 10-year yield. The merge uses forward fill from each proxy's latest available observation to each Thai stock trading date, so no future macro proxy observations are used.
+
+The macro feature table has 4,840 stock rows and 68 columns. The data-quality report shows complete panel coverage and zero missing values. The first short validation run is the 2026-05-31 macro-proxy pilot.
+
+\begin{table}[h]
+\centering
+\caption{Short validation run with SET, sector, and macro-proxy features.}
+\label{tab:macro-context}
+\begin{tabular}{lrrrr}
+\toprule
+Policy & Cum. return & Ann. return & Sharpe & Max drawdown \\
+\midrule
+\texttt{buy\_hold\_PTT.BK} & 0.043523 & 0.067653 & 0.405480 & -0.103448 \\
+\texttt{buy\_hold\_ADVANC.BK} & 0.009999 & 0.015405 & 0.097452 & -0.098919 \\
+\texttt{ppo} & -0.022360 & -0.034152 & -0.344318 & -0.085930 \\
+\texttt{equal\_weight} & -0.030573 & -0.046591 & -0.416554 & -0.103240 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The macro-proxy PPO pilot improves over the sector-context PPO pilot and beats equal weight on this short validation run. It still does not beat the PTT or ADVANC buy-and-hold baselines, so it remains a pipeline validation result rather than a model-performance claim.
+
+\section{Fundamentals Features}
+The first fundamentals extension uses Yahoo Finance annual and quarterly financial statements. Quarterly statements are preferred when both annual and quarterly rows exist for the same ticker, period, and metric; annual statements provide older fallback coverage. Features are available only after a 60-day reporting lag.
+
+The raw fundamentals file has 8,701 statement rows across five tickers and 13 period ends. The merged feature table has 4,840 stock rows and 82 columns. Numeric fundamental features are zero-filled before the first lagged report; period markers are missing for 27.7\% of rows before coverage begins.
+
+\begin{table}[h]
+\centering
+\caption{Short validation run with fundamentals features.}
+\label{tab:fundamentals-context}
+\begin{tabular}{lrrrr}
+\toprule
+Policy & Cum. return & Ann. return & Sharpe & Max drawdown \\
+\midrule
+\texttt{buy\_hold\_PTT.BK} & 0.043523 & 0.067653 & 0.405480 & -0.103448 \\
+\texttt{buy\_hold\_ADVANC.BK} & 0.009999 & 0.015405 & 0.097452 & -0.098919 \\
+\texttt{equal\_weight} & -0.030573 & -0.046591 & -0.416554 & -0.103240 \\
+\texttt{ppo} & -0.025996 & -0.039666 & -0.416967 & -0.067777 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The fundamentals PPO pilot has lower max drawdown than equal weight and nearly identical Sharpe, but it still does not beat the PTT or ADVANC buy-and-hold baselines. It also underperforms the macro-proxy-only pilot, so these fundamentals should be treated as a pipeline validation source until a broader licensed history is available.
+
+\section{Official Macro Scaffold}
+The official macro extension now has a Bank of Thailand source probe and release-date-aware feature merge:
+\begin{itemize}
+\item Raw BOT probe: \path{data/raw/bot_official_macro.csv}
+\item Merged feature table: \path{data/processed/features_real_ohlcv_official_macro.parquet}
+\item Data-quality report: \path{reports/data_quality_official_macro/real_ohlcv_data_quality.md}
+\end{itemize}
+
+The source probe targets the BOTWEBSTAT \texttt{EC\_EI\_002\_S2} Leading Economic Indicator table. Monthly observations are assigned release dates using a last-business-day-of-following-month rule, then merged backward-only to stock trading dates. On the current HPC probe, the public web table returned 54 rows across nine indicators, dated 2025-11-01 to 2026-04-01. The modeling table spans 2021-01-04 to 2024-12-30, so there is no overlap. The merged 4,840-row official macro feature table therefore has BOT macro training columns equal to zero throughout the validation period.
+
+Because of that date mismatch, no official macro model-performance claim is made from this probe. The code path is verified by 40 passing HPC tests, but a historical BOT export/API source or downloaded historical file is still required before running a valid official macro ablation.
+
+\section{Sentiment Scaffold}
+The sentiment extension now has source probing, daily scoring, and feature merging paths:
+\begin{itemize}
+\item Raw latest-news probe: \path{data/raw/news_yahoo_latest.csv}
+\item Daily sentiment table: \path{data/processed/sentiment_daily.parquet}
+\item Merged feature table: \path{data/processed/features_real_ohlcv_sentiment.parquet}
+\item Data-quality report: \path{reports/data_quality_sentiment/real_ohlcv_data_quality.md}
+\end{itemize}
+
+The merge is backward-only by ticker/date with a seven-day maximum news age. This prevents future news from being used by earlier stock rows. On the current HPC probe, Yahoo Finance returned 11 latest-news rows across four starter tickers, dated 2025-06-24 to 2026-03-31. The modeling feature table spans 2021-01-04 to 2024-12-30, so there is no overlap. The merged 4,840-row sentiment feature table therefore has \texttt{sentiment\_score}, \texttt{news\_count}, and \texttt{sentiment\_news\_age\_days} equal to zero throughout the validation period.
+
+Because of that date mismatch, no sentiment model-performance claim is made from this source. The code path is verified by 38 passing HPC tests, but a licensed or otherwise accessible historical Thai news/disclosure source is still required before running a valid sentiment ablation.
+
+\section{Conclusion}
+The implementation is strong enough for a reproducible pilot: ingestion, feature building, leakage checks, chronological splits, DRL training, baselines, plots, hyperparameter arrays, result aggregation, data-quality reporting, sentiment merge scaffolding, official macro release-date merge scaffolding, and walk-forward window configuration all run through a consistent project structure.
+
+The current real-data results do not show PPO or A2C beating the strongest simple buy-and-hold baseline. That is a useful research outcome because it sets a realistic benchmark and shows that the next work should focus on data coverage, multi-source features, walk-forward validation jobs, and ablations.
+
+\section{Remaining Work}
+\begin{itemize}
+\item Expand the universe beyond five starter \texttt{.BK} tickers.
+\item Replace the pilot sector mapping with a broader, licensed sector-index or constituent source.
+\item Add historical official macro data with release-date alignment.
+\item Replace Yahoo statement fundamentals with licensed SET/SETSMART fundamentals where possible.
+\item Add historical real news and sentiment features with coverage inside the modeling window.
+\item Run walk-forward training/evaluation jobs on BistKA.
+\item Run ablation experiments for price-only, technical, index, macro, sentiment, and all-feature configs.
+\end{itemize}
+
+\end{document}

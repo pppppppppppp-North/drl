@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.pycache_compile/
+
+# Local environments
+.venv/
+venv/
+env/
+
+# LaTeX build intermediates
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Runtime outputs are generated on HPC and summarized in manifests.
+logs/
+models/
+results/
+reports/
+
+# Large raw/processed datasets should stay on HPC or external storage.
+data/raw/
+data/processed/
+
+# OS/editor noise
+.DS_Store

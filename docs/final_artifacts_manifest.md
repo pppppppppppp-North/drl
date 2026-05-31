@@ -1,0 +1,121 @@
+# Final Artifact Manifest
+
+Last updated: 2026-05-31
+
+This manifest lists the current pilot artifacts for the Thai stock DRL project on BistKA.
+
+## Main Project Directory
+
+```text
+/lustrefs/project/25sfcs03/drl_thai_stock
+```
+
+## Progress And Writeups
+
+| artifact | path |
+| --- | --- |
+| Progress checklist | `PROGRESS_CHECKLIST.md` |
+| Final methodology/results writeup | `docs/final_methodology_results.md` |
+| Final methodology/results LaTeX report | `final_methodology_results.tex` |
+| Data source notes | `docs/data_sources.md` |
+| Real OHLCV data-quality report | `reports/data_quality/real_ohlcv_data_quality.md` |
+| Ticker coverage CSV | `reports/data_quality/ticker_coverage.csv` |
+| Column missingness CSV | `reports/data_quality/column_missingness.csv` |
+| Walk-forward summary CSV | `results/walk_forward_summary_check/walk_forward_summary.csv` |
+| Walk-forward pilot policy summary | `results/walk_forward_pilot_2869/aggregate/walk_forward_policy_summary.csv` |
+| Walk-forward pilot all metrics | `results/walk_forward_pilot_2869/aggregate/walk_forward_all_metrics.csv` |
+| Walk-forward pilot test equity curves | `results/walk_forward_pilot_2869/aggregate/walk_forward_test_equity_curves.csv` |
+| Ablation pilot metrics | `results/ablation_pilot_2871/aggregate/ablation_metrics.csv` |
+| Ablation pilot PPO summary | `results/ablation_pilot_2871/aggregate/ablation_ppo_summary.csv` |
+| Ablation pilot bar chart | `results/ablation_pilot_2871/aggregate/ablation_ppo_sharpe.png` |
+| Regime/stress-test slices | `results/regime_tests_real_ohlcv_20260531/regime_slices.csv` |
+| Regime/stress-test metrics | `results/regime_tests_real_ohlcv_20260531/regime_metrics.csv` |
+| Regime/stress-test summary | `results/regime_tests_real_ohlcv_20260531/regime_summary.md` |
+| SET index raw prices | `data/raw/prices_market_indices.csv` |
+| Real OHLCV + SET market-context features | `data/processed/features_real_ohlcv_market.parquet` |
+| SET market-context data-quality report | `reports/data_quality_market/real_ohlcv_data_quality.md` |
+| SET market-context pilot comparison | `results/real_ohlcv_market_pilot_20260531/comparison_metrics.csv` |
+| Pilot sector mapping | `data/reference/sector_mapping_thai_pilot.csv` |
+| Real OHLCV + SET + sector-context features | `data/processed/features_real_ohlcv_sector.parquet` |
+| Sector-context data-quality report | `reports/data_quality_sector/real_ohlcv_data_quality.md` |
+| Sector-context pilot comparison | `results/real_ohlcv_sector_pilot_20260531/comparison_metrics.csv` |
+| Yahoo macro proxy raw prices | `data/raw/prices_macro_yahoo.csv` |
+| Real OHLCV + SET + sector + macro-proxy features | `data/processed/features_real_ohlcv_macro.parquet` |
+| Macro-proxy data-quality report | `reports/data_quality_macro/real_ohlcv_data_quality.md` |
+| Macro-proxy pilot comparison | `results/real_ohlcv_macro_pilot_20260531/comparison_metrics.csv` |
+| BOT official macro source probe | `data/raw/bot_official_macro.csv` |
+| Real OHLCV + SET + sector + macro + fundamentals + official macro scaffold features | `data/processed/features_real_ohlcv_official_macro.parquet` |
+| Official macro scaffold data-quality report | `reports/data_quality_official_macro/real_ohlcv_data_quality.md` |
+| Yahoo annual/quarterly fundamentals | `data/raw/fundamentals_yahoo_quarterly.csv` |
+| Real OHLCV + SET + sector + macro + fundamentals features | `data/processed/features_real_ohlcv_fundamentals.parquet` |
+| Fundamentals data-quality report | `reports/data_quality_fundamentals/real_ohlcv_data_quality.md` |
+| Fundamentals pilot comparison | `results/real_ohlcv_fundamentals_pilot_20260531/comparison_metrics.csv` |
+| Yahoo latest-news source probe | `data/raw/news_yahoo_latest.csv` |
+| Daily sentiment scaffold table | `data/processed/sentiment_daily.parquet` |
+| Real OHLCV + SET + sector + macro + fundamentals + sentiment scaffold features | `data/processed/features_real_ohlcv_sentiment.parquet` |
+| Sentiment scaffold data-quality report | `reports/data_quality_sentiment/real_ohlcv_data_quality.md` |
+
+## Configs
+
+| artifact | path |
+| --- | --- |
+| Real OHLCV comparison config | `config/real_ohlcv.yaml` |
+| Optuna search config | `config/optuna_search.yaml` |
+| Best PPO real-OHLCV config | `config/best_ppo_real_ohlcv.yaml` |
+| Synthetic technical config | `config/ppo_technical.yaml` |
+| Real OHLCV returns ablation config | `config/ablation_returns_real_ohlcv.yaml` |
+| Real OHLCV technical ablation config | `config/ablation_technical_real_ohlcv.yaml` |
+| Real OHLCV technical+context ablation config | `config/ablation_technical_context_real_ohlcv.yaml` |
+| Real OHLCV regime/stress-test config | `config/regime_tests_real_ohlcv.yaml` |
+| Real OHLCV + SET market-context config | `config/real_ohlcv_market.yaml` |
+| Real OHLCV + SET + sector-context config | `config/real_ohlcv_sector.yaml` |
+| Real OHLCV + SET + sector + macro-proxy config | `config/real_ohlcv_macro.yaml` |
+| Real OHLCV + SET + sector + macro + fundamentals + official macro scaffold config | `config/real_ohlcv_official_macro.yaml` |
+| Real OHLCV + SET + sector + macro + fundamentals config | `config/real_ohlcv_fundamentals.yaml` |
+| Real OHLCV + SET + sector + macro + fundamentals + sentiment scaffold config | `config/real_ohlcv_sentiment.yaml` |
+
+## Verified Result Directories
+
+| purpose | path |
+| --- | --- |
+| Synthetic split-aware comparison | `results/algo_compare_2853` |
+| Real OHLCV PPO/A2C comparison | `results/real_ohlcv_compare_2855` |
+| Optuna sanity run | `results/optuna_sanity_2856` |
+| Fixed Optuna search | `results/optuna_search_fixed_2863` |
+| Longer best-parameter PPO validation | `results/best_ppo_real_ohlcv_2868` |
+| Walk-forward pilot | `results/walk_forward_pilot_2869` |
+| Ablation pilot | `results/ablation_pilot_2871` |
+| Regime/stress-test pilot | `results/regime_tests_real_ohlcv_20260531` |
+| SET market-context pilot | `results/real_ohlcv_market_pilot_20260531` |
+| Sector-context pilot | `results/real_ohlcv_sector_pilot_20260531` |
+| Macro-proxy pilot | `results/real_ohlcv_macro_pilot_20260531` |
+| Fundamentals pilot | `results/real_ohlcv_fundamentals_pilot_20260531` |
+
+## Invalidated Result Directories
+
+| path | reason |
+| --- | --- |
+| `results/real_ohlcv_compare_2854` | Old training entrypoint regenerated synthetic data into real config paths. |
+| `results/optuna_search_2858` | Pre-fix sampler repeated the same hyperparameters across repeated algorithm trials. |
+
+## Archive
+
+The latest final pilot archive is generated on BistKA at:
+
+```text
+/lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot.tar.gz
+/lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot_with_set_context.tar.gz
+/lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot_with_sector_context.tar.gz
+/lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot_with_macro_context.tar.gz
+/lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot_with_fundamentals.tar.gz
+/lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot_with_sentiment_scaffold.tar.gz
+/lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot_with_official_macro_scaffold.tar.gz
+```
+
+Latest archive size: 245 MB. The archive intentionally contains configs, report files, source code, tests, real OHLCV data, SET index data, sector mapping, macro proxy data, BOT official macro source probe data, Yahoo statement fundamentals, Yahoo latest-news probe data, market-context, sector-context, macro-proxy, fundamentals, sentiment-scaffold, and official-macro-scaffold features, data-quality outputs, metric CSVs, summaries, selected figures, and relevant logs. It does not attempt to package every generated training cache, model binary, or TensorBoard event file.
+
+Latest file-separation snapshot:
+
+```text
+/lustrefs/project/25sfcs03/drl_thai_stock/_file_separation/20260531_160247
+```
