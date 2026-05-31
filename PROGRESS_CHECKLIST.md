@@ -35,6 +35,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Latest local syntax check after market-context config activation: `python3 -m compileall -q src tests scripts` passed on 2026-05-31.
 - `[x]` Latest local syntax check after sentiment ingestion/merge edits: `python3 -m compileall -q src tests scripts` passed on 2026-05-31.
 - `[x]` Latest local syntax check after official macro ingestion/merge edits: `python3 -m compileall -q src tests scripts` passed on 2026-05-31.
+- `[x]` Latest local syntax/notebook validation after data-quality notebook addition: `python3 -m compileall -q src tests scripts` and `python3 -m json.tool notebooks/data_quality_overview.ipynb` passed on 2026-05-31.
 - `[x]` SET market-index ingestion and market-context feature merge implemented and verified on HPC.
 - `[x]` SET index raw data collected on HPC: `data/raw/prices_market_indices.csv`.
 - `[x]` Real OHLCV + SET market-context feature table built on HPC: `data/processed/features_real_ohlcv_market.parquet`.
@@ -120,7 +121,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Collect daily macro proxy data from Yahoo Finance.
 - `[~]` Collect official real macro data with release-date alignment; BOT latest table probe works but has no 2021-2024 overlap.
 - `[~]` Collect real news/sentiment source data; Yahoo latest-news probe works but has no 2021-2024 overlap.
-- `[ ]` Create data-quality notebook.
+- `[x]` Create data-quality notebook: `notebooks/data_quality_overview.ipynb`.
 - `[x]` Add missing value and coverage reports for real data.
 
 ## Phase 3: Feature Engineering
