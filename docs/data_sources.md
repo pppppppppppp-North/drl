@@ -55,11 +55,13 @@ Every real source added later should record access date, license/access note, sc
 - Config: `config/real_ohlcv_official_macro.yaml`
 - Raw command: `python -m src.data.ingest_bot_macro --config config/real_ohlcv_official_macro.yaml`
 - Raw path: `data/raw/bot_official_macro.csv`
+- Historical CSV import command: `python -m src.data.ingest_official_macro_csv --config config/real_ohlcv_official_macro.yaml --input <historical_macro.csv> --output data/raw/bot_official_macro.csv`
 - Feature command: `python -m src.features.official_macro_context --config config/real_ohlcv_official_macro.yaml`
 - Processed path: `data/processed/features_real_ohlcv_official_macro.parquet` or CSV fallback.
 - Source: Bank of Thailand BOTWEBSTAT public statistics table `EC_EI_002_S2`, Leading Economic Indicator.
 - Merge rule: each monthly observation is assigned an explicit release date using the table's last-business-day-of-following-month release pattern, then merged backward-only by release date to each stock trading date.
-- Current limitation: the web table probe returned 54 rows across nine indicators dated 2025-11-01 to 2026-04-01. This does not overlap the 2021-2024 modeling table, so merged historical BOT official macro columns are all zero. A historical BOT export/API source or downloaded historical file is still required before official macro results can be interpreted.
+- CSV import helper: `docs/official_macro_csv_import.md`
+- Current limitation: the web table probe returned 54 rows across nine indicators dated 2025-11-01 to 2026-04-01. This does not overlap the 2021-2024 modeling table, so merged historical BOT official macro columns are all zero. The CSV importer can normalize a downloaded historical export, but the historical source file is still required before official macro results can be interpreted.
 
 ## Fundamentals Ingestion
 
