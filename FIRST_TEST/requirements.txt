@@ -1,0 +1,11 @@
+torch>=2.0.0
+numpy
+pandas
+gymnasium
+stable-baselines3
+yfinance
+transformers
+scikit-learn
+matplotlib
+seaborn
+pytest

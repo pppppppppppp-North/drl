@@ -1,3 +1,21 @@
+# Dotfiles and local agent/tool state
+.*
+!.gitignore
+!.github/
+
+.agents/
+.codex/
+.cache/
+.conda/
+.config/
+.local/
+.mamba/
+.npm/
+.npm-cache/
+.npm-global/
+.nv/
+.ssh/
+
 # Python
 __pycache__/
 *.py[cod]
@@ -7,26 +25,46 @@ __pycache__/
 # Local environments
 .venv/
 venv/
+/env/
 env/
+bench_env/
+bench_conda_v2/
+local/
+tmp/
 
-# LaTeX build intermediates
+# LaTeX build intermediates and runtime logs
 *.aux
 *.log
 *.out
+*.err
 *.toc
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+*.swp
+._*
 
 # Runtime outputs are generated on HPC and summarized in manifests.
 logs/
 models/
 results/
 reports/
+checkpoints/
+**/checkpoints/
 
 # Large raw/processed datasets should stay on HPC or external storage.
 data/raw/
 data/processed/
+data/cached/
+**/data/cached/
+test/data/
+
+# Model/archive artifacts
+*.zip
+*.tar.gz
+*.pth
+*.pt
+*.ckpt
 
 # OS/editor noise
 .DS_Store

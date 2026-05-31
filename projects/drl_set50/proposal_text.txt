@@ -1,0 +1,190 @@
+Bi-LSTM and Deep Reinforcement Learning
+Strategy for Long-Term Profit Optimization in
+the Financial Subgroup of Thailand’s SET50
+Index Using LLM-Derived Contextual Features
+Kunach Kijsanayothin, Nathawat Youngyim, and Prompong Pakawanwong
+December 9, 2025
+
+1
+
+Introduction and Problem Statement
+
+The rapid advancement of machine learning (ML) has introduced data-driven techniques
+that are capable of adapting to complex financial market dynamics [1]. Deep learning models, such as Recurrent Neural Networks (RNNs) and Long Short-Term Memory
+(LSTM), have shown superior performance in capturing sequential data like stock prices
+compared to traditional statistical methods [2], [3]. This capability is further enhanced
+by the use of Bi-Directional Long Short-Term Memory (Bi-LSTM), which analyzes input data in both forward and backward directions, thereby improving prediction
+accuracy and offering a more comprehensive understanding of market trends [2], [4], [5],
+[6].
+The original proposal addresses a research gap where current models often focus on
+short-term trading or rely on limited data types, which weakens robustness in real-world,
+long-term investment strategies within Thailand’s SET50 Index [4], [7], [6], [8]. This
+project leverages the complexity of Bi-LSTM combined with multi-source data integration to develop a robust, adaptive trading strategy focused on long-term profit
+maximization [9], [10], [11].
+The project has been enhanced to address complexity and accuracy by:
+1. Narrowing the Scope: Focusing the analysis on 5-10 major financial stocks
+within the SET50 Index (based on conversation history) [4].
+2. Upgrading Feature Engineering (NLP/LLM): Moving beyond basic keywordbased sentiment scoring [12] to utilize a full Large Language Model (LLM)
+approach for generating sophisticated, contextual risk and event features from financial news (based on conversation history) [4].
+3. Shifting to Decision-Making (DRL): Implementing a Deep Reinforcement
+Learning (DRL) agent to optimize the trading strategy directly, maximizing riskadjusted financial returns rather than focusing solely on return forecasts (based on
+conversation history) [4].
+
+2
+
+Objectives
+
+The refined objective is to design, implement, and validate a highly adaptive trading strategy that maximizes long-term, risk-adjusted profitability in the chosen financial subgroup
+of the SET50 Index [5].
+The specific objectives are:
+• To design and build an advanced feature extraction mechanism using an LLMbased model to generate contextual risk and event feature vectors from multisource data (Thai financial news, Google News API) for the selected 5-10 major
+financial stocks [5].
+• To integrate the LLM-derived features and Bi-LSTM time-series features into the
+state space of a Deep Reinforcement Learning (DRL) agent [5].
+• To train the DRL agent to execute an optimal trading sequence aimed at maximizing
+key financial performance metrics, such as the Sharpe Ratio and Sortino Ratio,
+over a ten-year backtesting period [5], [13].
+
+3
+
+Methodology and Data Sources
+
+The project will use multi-source data collected over a 10-year span [12], [13].
+Table 1: Project Data Sources
+Data Source Category
+Price History
+Technical Indicators
+Contextual/Behavioral
+Data
+
+Macroeconomic
+cators
+
+3.1
+
+Indi-
+
+Specific Inputs
+OHLCV data for 5-10 major financial stocks
+(subset of SET50 Index)
+SMA, EMA, RSI, MACD, Bollinger Bands,
+and Stochastic Oscillator
+LLM-Derived Risk/Event Vectors from Thai
+financial news headlines and Google News
+API
+
+Exchanged rates and global indices
+
+Citation
+[14]
+[14]
+[14],
+(Enhanced
+from
+keyword
+scoring
+[12])
+[14]
+
+Key Procedures
+
+1. Feature Engineering (LLM/Bi-LSTM): The LLM component will process textual data to extract contextual features, generating highly relevant "sentiment signals" [10], [14]. The Bi-LSTM model will process sequential data (price and technical indicators) to capture long-term temporal dependencies [3].
+2. Model Architecture (DRL): The DRL agent will utilize the combined output
+of the LLM and Bi-LSTM as its state vector input to make discrete or fractional
+2
+
+trading decisions (actions). This shifts the primary focus from continuous return
+forecasts [6] to direct decision-making [9].
+3. Strategy Simulation: The DRL agent’s policy will be optimized within a simulated environment focused on long-term profit maximization [10].
+4. Evaluation and Optimization: Performance will be rigorously tested via backtesting (e.g., training 2014–2021, testing 2022–2024) [13]. Hyperparameter optimization will use Grid search or Bayesian optimization with walk-forward validation
+[13], [15].
+5. Benchmarking: The DRL strategy will be benchmarked against baseline models,
+including traditional ML models (Random Forest, XGBoost), technical-rule-based
+strategies, and the passive buy-and-hold strategy [15].
+
+4
+
+Computational Resource Utilization (KVIS Mini-HPC
+Cluster)
+
+The integration of advanced deep learning (Bi-LSTM, LLM feature extraction) and Deep
+Reinforcement Learning (DRL) requires substantial computational power, which will be
+provided by the KVIS Mini-HPC Cluster (BistKA) [8]. The cluster is designed to
+support computationally demanding research projects, utilizing CPU, GPU, and highmemory resources [8].
+Table 2: BistKA Resource Requirements and Usage Policy
+Component
+LLM and DRL
+Neural
+Network
+Training
+
+DRL Environment
+Simulation
+
+BistKA Resource
+Requirement
+GPU Accelerators
+
+High-Core
+CPU
+Compute Nodes
+
+3
+
+Specific Use/Policy
+Training Transformer-based models
+(LLM feature extraction) and DRL
+neural components requires the
+RTX PRO 4500 GPUs [11], [16].
+Jobs must be submitted to GPU
+partitions (e.g., gpu4500-normal, 2
+days walltime) [17], [18]. The group
+limit is 2 GPUs [17].
+DRL agents rely on massive parallel simulations.
+Jobs should
+utilize high-core compute nodes
+(e.g., bistka-compute-01 with 64
+cores/512 GiB RAM) [19] by requesting resources (max 32 CPU
+cores/group) via SLURM [17].
+Continued on next page
+
+Table 2: BistKA Resource Requirements and Usage Policy (continued)
+Component
+Software Management
+
+Initial Resources
+
+5
+
+BistKA Resource Specific Use/Policy
+Requirement
+Miniforge3/SLURM Python/ML frameworks must be
+installed in isolated environments
+using Miniforge3 (which provides
+conda/mamba) after loading the appropriate module [20], [21]. All execution must occur inside SLURM
+jobs; heavy computation is prohibited on the master node [22],
+[23].
+Credit and Storage The project is allocated an initial
+credit of 10,000 SHr [22], [24].
+Multi-source data storage is limited
+to **300 GiB** in the project directory [25]. Users can check resource
+usage with the $ mycredit and $
+myquota commands [26], [27].
+
+Expected Outcomes and Evaluation
+
+The integration of LLM features and DRL is expected to effectively improve longterm profit optimization [28]. The project will demonstrate that combining technical
+and behavioral (LLM-derived) data enhances the model’s ability to extract complex signals from various data domains, resulting in a more predictive and adaptive strategy for
+volatile emerging markets like Thailand’s SET50 Index [29], [30].
+The success of the strategy will be validated by superior performance in terms of
+drawdown control and risk-adjusted returns (Sharpe Ratio and Sortino Ratio) compared to baseline models [31]. The final output will serve as a foundation for developing
+semi-automated trading tools and decision support systems in local financial markets
+[28], [31].
+
+Acknowledgement
+The authors acknowledge KVIS Mini-HPC Cluster (BistKA) and AI & Mechatronics
+Center for their support of computing facilities.
+
+4
+
+

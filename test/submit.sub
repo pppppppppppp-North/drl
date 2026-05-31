@@ -1,0 +1,58 @@
+#!/bin/bash
+
+#SBATCH --job-name="stable_fix"
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=4
+#SBATCH --partition=gpu4500-normal
+#SBATCH --account=s00658
+#SBATCH --mem=32GB
+#SBATCH --gpus=1
+#SBATCH --time=01:30:00
+#SBATCH --output=stable_fix_%j.out
+
+# ==========================================
+# 1. SETUP ENVIRONMENT
+# ==========================================
+module purge
+module load Miniforge3/25.3.0-3
+
+# Initialize Conda
+source "$EBROOTMINIFORGE3/etc/profile.d/conda.sh"
+
+# Create a FRESH environment for this test to avoid conflicts
+ENV_PATH="$HOME/bench_stable"
+
+if [ ! -d "$ENV_PATH" ]; then
+    echo "Creating fresh environment..."
+    conda create -p "$ENV_PATH" python=3.10 -y
+fi
+
+conda activate "$ENV_PATH"
+
+# ==========================================
+# 2. DIAGNOSTICS (Important!)
+# ==========================================
+echo "=== NVIDIA-SMI OUTPUT ==="
+nvidia-smi
+echo "========================="
+
+# ==========================================
+# 3. INSTALL STABLE PYTORCH (2.1.2 + CUDA 11.8)
+# ==========================================
+echo "Installing stable PyTorch..."
+# We force install version 2.1.2 which works better with older drivers
+pip install torch==2.1.2 torchvision==0.16.2 --index-url https://download.pytorch.org/whl/cu118 --no-cache-dir
+
+# ==========================================
+# 4. RUN TRAINING
+# ==========================================
+echo "=== Starting Training ==="
+
+# Check if script exists
+if [ -f "test_resnet.py" ]; then
+    python test_resnet.py
+else
+    echo "Error: test_resnet.py not found!"
+fi
+
+echo "=== Job Complete ==="
