@@ -19,7 +19,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Synthetic pilot pipeline runs end-to-end.
 - `[x]` Trading environment, baselines, PPO training, metrics, action logging, and comparison summaries are implemented.
 - `[x]` Latest verified HPC PPO technical run: `results/run_2850`.
-- `[x]` Latest verified HPC tests: `46 passed` on 2026-05-31 after adding the official macro CSV importer.
+- `[x]` Latest verified HPC tests: `49 passed` on 2026-05-31 after adding the historical sentiment CSV importer.
 - `[x]` Buy-and-hold and moving-average crossover baselines are implemented and verified on HPC.
 - `[x]` Mean-variance baseline is implemented and verified on HPC.
 - `[x]` Result plotting utility for equity curves, drawdowns, turnover, and action weights is implemented and verified on HPC.
@@ -36,8 +36,10 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Latest local syntax check after sentiment ingestion/merge edits: `python3 -m compileall -q src tests scripts` passed on 2026-05-31.
 - `[x]` Latest local syntax check after official macro ingestion/merge edits: `python3 -m compileall -q src tests scripts` passed on 2026-05-31.
 - `[x]` Latest local syntax/notebook validation after data-quality notebook addition: `python3 -m compileall -q src tests scripts` and `python3 -m json.tool notebooks/data_quality_overview.ipynb` passed on 2026-05-31.
+- `[x]` Latest local syntax check after historical sentiment CSV importer addition: `python3 -m compileall -q src tests scripts` passed on 2026-05-31.
 - `[x]` Latest HPC validation after sector-index probe addition: `python -m compileall -q src tests scripts` and full `python -m pytest -q` passed with 43 tests on 2026-05-31.
 - `[x]` Latest HPC validation after official macro CSV importer addition: `python -m compileall -q src tests scripts` and full `python -m pytest -q` passed with 46 tests on 2026-05-31.
+- `[x]` Latest HPC validation after historical sentiment CSV importer addition: focused importer tests passed with 3 tests, CLI smoke test passed, and full `python -m pytest -q` passed with 49 tests on 2026-05-31.
 - `[x]` SET market-index ingestion and market-context feature merge implemented and verified on HPC.
 - `[x]` SET index raw data collected on HPC: `data/raw/prices_market_indices.csv`.
 - `[x]` Real OHLCV + SET market-context feature table built on HPC: `data/processed/features_real_ohlcv_market.parquet`.
@@ -54,8 +56,9 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Latest fundamentals pilot completed on HPC: `results/real_ohlcv_fundamentals_pilot_20260531`.
 - `[x]` Yahoo Finance latest-news probe added and run on HPC: `data/raw/news_yahoo_latest.csv`.
 - `[x]` Daily sentiment extraction and no-lookahead sentiment merge scaffold implemented and verified on HPC.
+- `[x]` Historical sentiment/news CSV importer added and verified on HPC: `src/data/ingest_sentiment_csv.py`.
 - `[x]` Real OHLCV + SET + sector + macro-proxy + fundamentals + sentiment scaffold feature table built on HPC: `data/processed/features_real_ohlcv_sentiment.parquet`.
-- `[!]` Yahoo latest-news probe returned only 11 rows dated 2025-06-24 to 2026-03-31, so it does not overlap the 2021-2024 modeling window and cannot support a valid historical sentiment pilot.
+- `[!]` Yahoo latest-news probe returned only 11 rows dated 2025-06-24 to 2026-03-31, so it does not overlap the 2021-2024 modeling window and cannot support a valid historical sentiment pilot. A historical CSV import path is now implemented and verified on HPC.
 - `[x]` Bank of Thailand official macro source probe and release-date merge scaffold implemented and verified on HPC.
 - `[x]` BOT Leading Economic Indicator probe collected on HPC: `data/raw/bot_official_macro.csv`.
 - `[x]` Real OHLCV + SET + sector + macro-proxy + fundamentals + official macro scaffold feature table built on HPC: `data/processed/features_real_ohlcv_official_macro.parquet`.
@@ -97,9 +100,10 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Updated final pilot archive with official-macro-scaffold artifacts: `final_archive/20260531_final_project_pilot_with_official_macro_scaffold.tar.gz`.
 - `[x]` Updated final pilot archive with sector-index source probe artifacts: `final_archive/20260531_final_project_pilot_with_sector_index_probe.tar.gz`.
 - `[x]` Updated final pilot archive with official macro CSV importer artifacts: `final_archive/20260531_final_project_pilot_with_official_macro_csv_import.tar.gz`.
-- `[x]` Latest file-separation snapshot on HPC: `_file_separation/20260531_160247`.
+- `[x]` Updated final pilot archive with historical sentiment CSV importer artifacts: `final_archive/20260531_final_project_pilot_with_sentiment_csv_import.tar.gz`.
+- `[x]` Latest file-separation snapshot on HPC: `_file_separation/20260531_230418`.
 - `[!]` Real-OHLCV comparison job `2854` is invalid because the old training entrypoint regenerated synthetic data into real config paths; use corrected job `2855`.
-- `[!]` Real OHLCV starter data, SET index context, pilot sector mapping, daily macro proxies, Yahoo statement fundamentals, sentiment merge scaffolding, and official macro merge scaffolding exist, but broad sector indices, historical official release-aligned macro, licensed fundamentals, and historical sentiment data are still incomplete.
+- `[!]` Real OHLCV starter data, SET index context, pilot sector mapping, daily macro proxies, Yahoo statement fundamentals, sentiment merge/import scaffolding, and official macro merge/import scaffolding exist, but broad sector indices, historical official release-aligned macro source data, licensed fundamentals, and historical sentiment source data are still incomplete.
 
 ## Phase 1: Foundation And Repository Setup
 
@@ -126,7 +130,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[~]` Collect SET index and sector index data; SET index collected with Yahoo symbol `^SET.BK`, and the sector-index candidate probe found only banking symbol `^BANK`, so a complete sector-index source is still pending.
 - `[x]` Collect daily macro proxy data from Yahoo Finance.
 - `[~]` Collect official real macro data with release-date alignment; BOT latest table probe works but has no 2021-2024 overlap, and a historical CSV import path is implemented for a downloaded export.
-- `[~]` Collect real news/sentiment source data; Yahoo latest-news probe works but has no 2021-2024 overlap.
+- `[~]` Collect real news/sentiment source data; Yahoo latest-news probe works but has no 2021-2024 overlap, and a historical CSV import path is implemented locally.
 - `[x]` Create data-quality notebook: `notebooks/data_quality_overview.ipynb`.
 - `[x]` Add missing value and coverage reports for real data.
 
@@ -146,7 +150,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Add daily macro proxy features.
 - `[~]` Add official release-aligned macro features; BOT release-date merge scaffold and historical CSV importer are implemented, but a historical official export/API source file is still needed.
 - `[x]` Add Yahoo annual/quarterly statement fundamentals with reporting lag.
-- `[~]` Add real sentiment embeddings or scores; daily extraction and merge scaffolding are implemented, but a historical licensed/news source is still needed.
+- `[~]` Add real sentiment embeddings or scores; daily extraction, historical CSV import, and merge scaffolding are implemented, but a historical licensed/news source is still needed.
 - `[x]` Add train/validation/test split utilities.
 - `[x]` Wire train/validation/test splits into training and baseline evaluation entrypoints.
 - `[x]` Add leakage checks for real mixed-frequency data.
@@ -212,9 +216,9 @@ Use this file as the single running checklist for what has been completed and wh
 ## Phase 8: Multi-Source Features And Ablations
 
 - `[~]` Synthetic placeholders exist for macro and sentiment.
-- `[~]` Build real sentiment extraction input dataset; Yahoo latest-news probe produced `data/raw/news_yahoo_latest.csv` with no historical overlap.
+- `[~]` Build real sentiment extraction input dataset; Yahoo latest-news probe produced `data/raw/news_yahoo_latest.csv` with no historical overlap, and `src/data/ingest_sentiment_csv.py` can normalize a user-provided historical export.
 - `[~]` Run WangchanBERTa embedding or sentiment extraction on GPU; deterministic sentiment scorer is verified as a pipeline placeholder, GPU transformer extraction still pending.
-- `[~]` Merge real sentiment features by date/ticker; no-lookahead merge scaffold is verified, but merged 2021-2024 sentiment values are zero because source news is outside the modeling window.
+- `[~]` Merge real sentiment features by date/ticker; no-lookahead merge scaffold is verified, but merged 2021-2024 sentiment values are zero until a historical news/sentiment CSV is provided.
 - `[x]` Merge daily macro proxy features by no-lookahead forward fill.
 - `[~]` Merge official real macro features by release date; no-lookahead merge scaffold is verified, but merged 2021-2024 BOT values are zero because the web-table probe is outside the modeling window.
 - `[x]` Merge Yahoo annual/quarterly statement fundamentals with reporting lag.

@@ -78,8 +78,10 @@ Every real source added later should record access date, license/access note, sc
 - Config: `config/real_ohlcv_sentiment.yaml`
 - Latest-news probe command: `python -m src.data.ingest_news_yahoo --config config/real_ohlcv_sentiment.yaml`
 - Raw path: `data/raw/news_yahoo_latest.csv`
+- Historical CSV import command: `python -m src.data.ingest_sentiment_csv --config config/real_ohlcv_sentiment.yaml --input <historical_news.csv> --output data/raw/news_historical.csv --daily-output data/processed/sentiment_daily.parquet`
 - Daily sentiment command: `python -m src.sentiment.extract_embeddings --input data/raw/news_yahoo_latest.csv --output data/processed/sentiment_daily.parquet`
 - Feature command: `python -m src.features.sentiment_context --config config/real_ohlcv_sentiment.yaml`
 - Processed path: `data/processed/features_real_ohlcv_sentiment.parquet` or CSV fallback.
 - Merge rule: daily ticker sentiment is merged backward-only to stock dates with a seven-day maximum age, so future news cannot be used.
-- Current limitation: the Yahoo latest-news probe returned 11 rows across four tickers dated 2025-06-24 to 2026-03-31. This does not overlap the 2021-2024 modeling table, so the merged historical sentiment columns are all zero. A licensed or otherwise accessible historical news/disclosure source is still required before sentiment results can be interpreted.
+- CSV import helper: `docs/sentiment_csv_import.md`
+- Current limitation: the Yahoo latest-news probe returned 11 rows across four tickers dated 2025-06-24 to 2026-03-31. This does not overlap the 2021-2024 modeling table, so the merged historical sentiment columns are all zero. The CSV importer can normalize a licensed historical news/disclosure or sentiment-score export, but the historical source file is still required before sentiment results can be interpreted.
