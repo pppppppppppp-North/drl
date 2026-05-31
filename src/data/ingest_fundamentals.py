@@ -6,6 +6,7 @@ from pathlib import Path
 import pandas as pd
 
 from src.data.ingest_ohlcv import _import_yfinance
+from src.data.ticker_universe import resolve_tickers_from_config
 from src.utils.config import ensure_dirs, load_config
 
 
@@ -88,7 +89,7 @@ def main() -> None:
     config = load_config(args.config)
     output = Path(args.output or config.get("fundamentals", {}).get("raw_path", "data/raw/fundamentals_yahoo_quarterly.csv"))
     ensure_dirs(output.parent)
-    fundamentals = download_fundamentals(list(config["data"]["tickers"]))
+    fundamentals = download_fundamentals(resolve_tickers_from_config(config))
     fundamentals.to_csv(output, index=False)
     write_fundamentals_manifest_row(Path(args.manifest), fundamentals=fundamentals, raw_file_path=output)
     print(

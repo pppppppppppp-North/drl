@@ -19,7 +19,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Synthetic pilot pipeline runs end-to-end.
 - `[x]` Trading environment, baselines, PPO training, metrics, action logging, and comparison summaries are implemented.
 - `[x]` Latest verified HPC PPO technical run: `results/run_2850`.
-- `[x]` Latest verified HPC tests: `49 passed` on 2026-05-31 after adding the historical sentiment CSV importer.
+- `[x]` Latest verified HPC tests: `53 passed` on 2026-05-31 after adding ticker-universe CSV support.
 - `[x]` Buy-and-hold and moving-average crossover baselines are implemented and verified on HPC.
 - `[x]` Mean-variance baseline is implemented and verified on HPC.
 - `[x]` Result plotting utility for equity curves, drawdowns, turnover, and action weights is implemented and verified on HPC.
@@ -40,6 +40,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Latest HPC validation after sector-index probe addition: `python -m compileall -q src tests scripts` and full `python -m pytest -q` passed with 43 tests on 2026-05-31.
 - `[x]` Latest HPC validation after official macro CSV importer addition: `python -m compileall -q src tests scripts` and full `python -m pytest -q` passed with 46 tests on 2026-05-31.
 - `[x]` Latest HPC validation after historical sentiment CSV importer addition: focused importer tests passed with 3 tests, CLI smoke test passed, and full `python -m pytest -q` passed with 49 tests on 2026-05-31.
+- `[x]` Latest HPC validation after ticker-universe CSV support: focused ticker-universe tests passed with 4 tests, config resolver smoke test passed, and full `python -m pytest -q` passed with 53 tests on 2026-05-31.
 - `[x]` SET market-index ingestion and market-context feature merge implemented and verified on HPC.
 - `[x]` SET index raw data collected on HPC: `data/raw/prices_market_indices.csv`.
 - `[x]` Real OHLCV + SET market-context feature table built on HPC: `data/processed/features_real_ohlcv_market.parquet`.
@@ -73,6 +74,8 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Latest split-aware PPO/A2C validation comparison completed on HPC: `results/algo_compare_2853`.
 - `[x]` Leakage check utilities added for date/ticker duplicates, split boundaries, and future release dates; verified on HPC.
 - `[x]` Real Thai OHLCV starter ingestion added via Yahoo Finance/yfinance schema and verified on HPC.
+- `[x]` Ticker-universe CSV resolver added and verified on HPC for real OHLCV, fundamentals, and latest-news ingestion: `src/data/ticker_universe.py`.
+- `[x]` Starter ticker-universe CSV and example config added and verified on HPC: `data/reference/thai_starter_universe.csv`, `config/real_ohlcv_universe_csv.yaml`.
 - `[x]` Real OHLCV feature table built on HPC: `data/processed/features_real_ohlcv.parquet`.
 - `[x]` Real OHLCV feature table passed leakage and split-boundary checks on HPC.
 - `[x]` Synthetic-regeneration guard added and verified so non-synthetic configs cannot overwrite real feature tables.
@@ -101,9 +104,10 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Updated final pilot archive with sector-index source probe artifacts: `final_archive/20260531_final_project_pilot_with_sector_index_probe.tar.gz`.
 - `[x]` Updated final pilot archive with official macro CSV importer artifacts: `final_archive/20260531_final_project_pilot_with_official_macro_csv_import.tar.gz`.
 - `[x]` Updated final pilot archive with historical sentiment CSV importer artifacts: `final_archive/20260531_final_project_pilot_with_sentiment_csv_import.tar.gz`.
-- `[x]` Latest file-separation snapshot on HPC: `_file_separation/20260531_230418`.
+- `[x]` Updated final pilot archive with ticker-universe CSV support: `final_archive/20260531_final_project_pilot_with_ticker_universe_csv.tar.gz`.
+- `[x]` Latest file-separation snapshot on HPC: `_file_separation/20260531_231548`.
 - `[!]` Real-OHLCV comparison job `2854` is invalid because the old training entrypoint regenerated synthetic data into real config paths; use corrected job `2855`.
-- `[!]` Real OHLCV starter data, SET index context, pilot sector mapping, daily macro proxies, Yahoo statement fundamentals, sentiment merge/import scaffolding, and official macro merge/import scaffolding exist, but broad sector indices, historical official release-aligned macro source data, licensed fundamentals, and historical sentiment source data are still incomplete.
+- `[!]` Real OHLCV starter data, configurable ticker-universe loading, SET index context, pilot sector mapping, daily macro proxies, Yahoo statement fundamentals, sentiment merge/import scaffolding, and official macro merge/import scaffolding exist, but broad sector indices, historical official release-aligned macro source data, licensed fundamentals, and historical sentiment source data are still incomplete.
 
 ## Phase 1: Foundation And Repository Setup
 
@@ -126,7 +130,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Generate synthetic pilot raw prices on HPC.
 - `[x]` Generate synthetic pilot feature table on HPC.
 - `[x]` Add validation so stale pilot feature files are regenerated when config ticker/date/column coverage changes.
-- `[x]` Collect real SET50/SET100 OHLCV data; starter Yahoo Finance download completed for 5 `.BK` tickers.
+- `[~]` Collect real SET50/SET100 OHLCV data; starter Yahoo Finance download completed for 5 `.BK` tickers, and the ingesters can now load a broader ticker list from CSV once a curated/licensed universe file is available.
 - `[~]` Collect SET index and sector index data; SET index collected with Yahoo symbol `^SET.BK`, and the sector-index candidate probe found only banking symbol `^BANK`, so a complete sector-index source is still pending.
 - `[x]` Collect daily macro proxy data from Yahoo Finance.
 - `[~]` Collect official real macro data with release-date alignment; BOT latest table probe works but has no 2021-2024 overlap, and a historical CSV import path is implemented for a downloaded export.

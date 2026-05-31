@@ -16,6 +16,7 @@ from src.data.splits import (
     walk_forward_summary,
 )
 from src.data.synthetic import make_synthetic_prices
+from src.data.ticker_universe import resolve_tickers_from_config
 from src.envs.trading_env import RewardConfig, ThaiStockTradingEnv, load_feature_table
 from src.evaluation.metrics import equity_metrics
 from src.features.build_features import write_features
@@ -24,7 +25,7 @@ from src.utils.config import ensure_dirs, load_config
 
 
 def _pilot_features_match_config(features: pd.DataFrame, config: dict) -> bool:
-    expected_tickers = set(config["data"]["tickers"])
+    expected_tickers = set(resolve_tickers_from_config(config))
     actual_tickers = set(features["ticker"].dropna().astype(str).unique()) if "ticker" in features else set()
     if actual_tickers != expected_tickers:
         return False

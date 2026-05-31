@@ -25,10 +25,13 @@ Every real source added later should record access date, license/access note, sc
 ## Real OHLCV Starter Ingestion
 
 - Config: `config/real_ohlcv.yaml`
+- CSV-universe config example: `config/real_ohlcv_universe_csv.yaml`
 - Command: `python -m src.data.ingest_ohlcv --config config/real_ohlcv.yaml`
 - Raw path: `data/raw/prices_real_ohlcv.csv`
 - Processed command: `python -m src.features.build_features --config config/real_ohlcv.yaml`
 - Processed path: `data/processed/features_real_ohlcv.parquet` or CSV fallback.
+- Starter universe CSV: `data/reference/thai_starter_universe.csv`
+- Ticker-universe helper: `docs/ticker_universe_csv.md`
 - Limitation: Yahoo Finance access and adjustment methodology must be checked before final publication; licensed SET/SETSMART remains preferred for final results.
 
 ## Macro Proxy Ingestion

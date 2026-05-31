@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from src.data.ticker_universe import resolve_tickers_from_config
 from src.utils.config import ensure_dirs, load_config
 
 
@@ -142,7 +143,7 @@ def main() -> None:
     output = Path(args.output or config["paths"]["raw_prices"])
     ensure_dirs(output.parent)
     prices = download_ohlcv(
-        tickers=list(config["data"]["tickers"]),
+        tickers=resolve_tickers_from_config(config),
         start=str(config["data"]["start"]),
         end=str(config["data"]["end"]),
     )

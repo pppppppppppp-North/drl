@@ -8,6 +8,7 @@ from typing import Any
 
 import pandas as pd
 
+from src.data.ticker_universe import resolve_tickers_from_config
 from src.utils.config import ensure_dirs, load_config
 
 
@@ -151,7 +152,7 @@ def main() -> None:
     sentiment_config = config.get("sentiment", {})
     output = Path(args.output or sentiment_config.get("raw_news_path", "data/raw/news_yahoo_latest.csv"))
     ensure_dirs(output.parent)
-    news = download_yahoo_news(list(config["data"]["tickers"]))
+    news = download_yahoo_news(resolve_tickers_from_config(config))
     news.to_csv(output, index=False)
     write_news_manifest_row(Path(args.manifest), news=news, raw_file_path=output)
     print(f"wrote {output} rows={len(news)} tickers={news['ticker'].nunique() if not news.empty else 0}")

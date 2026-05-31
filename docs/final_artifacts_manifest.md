@@ -51,6 +51,9 @@ This manifest lists the current pilot artifacts for the Thai stock DRL project o
 | Official macro historical CSV importer notes | `docs/official_macro_csv_import.md` |
 | Real OHLCV + SET + sector + macro + fundamentals + official macro scaffold features | `data/processed/features_real_ohlcv_official_macro.parquet` |
 | Official macro scaffold data-quality report | `reports/data_quality_official_macro/real_ohlcv_data_quality.md` |
+| Starter ticker universe CSV | `data/reference/thai_starter_universe.csv` |
+| Ticker universe CSV config example | `config/real_ohlcv_universe_csv.yaml` |
+| Ticker universe CSV notes | `docs/ticker_universe_csv.md` |
 | Yahoo annual/quarterly fundamentals | `data/raw/fundamentals_yahoo_quarterly.csv` |
 | Real OHLCV + SET + sector + macro + fundamentals features | `data/processed/features_real_ohlcv_fundamentals.parquet` |
 | Fundamentals data-quality report | `reports/data_quality_fundamentals/real_ohlcv_data_quality.md` |
@@ -67,6 +70,7 @@ This manifest lists the current pilot artifacts for the Thai stock DRL project o
 | artifact | path |
 | --- | --- |
 | Real OHLCV comparison config | `config/real_ohlcv.yaml` |
+| Real OHLCV CSV-universe config | `config/real_ohlcv_universe_csv.yaml` |
 | Optuna search config | `config/optuna_search.yaml` |
 | Best PPO real-OHLCV config | `config/best_ppo_real_ohlcv.yaml` |
 | Synthetic technical config | `config/ppo_technical.yaml` |
@@ -120,9 +124,10 @@ The latest final pilot archive is generated on BistKA at:
 /lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot_with_sector_index_probe.tar.gz
 /lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot_with_official_macro_csv_import.tar.gz
 /lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot_with_sentiment_csv_import.tar.gz
+/lustrefs/project/25sfcs03/drl_thai_stock/final_archive/20260531_final_project_pilot_with_ticker_universe_csv.tar.gz
 ```
 
-Latest archive size: about 200 MB. The archive intentionally contains configs, report files, source code, tests, real OHLCV data, SET index data, sector-index Yahoo probe output, usable banking sector-index probe data, sector mapping, macro proxy data, BOT official macro source probe data, the official macro historical CSV importer, the historical sentiment CSV importer, Yahoo statement fundamentals, Yahoo latest-news probe data, market-context, sector-context, macro-proxy, fundamentals, sentiment-scaffold, and official-macro-scaffold features, data-quality outputs, metric CSVs, summaries, selected figures, and relevant logs. It does not attempt to package every generated training cache, model binary, or TensorBoard event file.
+The latest archive intentionally contains configs, report files, source code, tests, real OHLCV data, SET index data, sector-index Yahoo probe output, usable banking sector-index probe data, sector mapping, ticker-universe CSV support, macro proxy data, BOT official macro source probe data, the official macro historical CSV importer, the historical sentiment CSV importer, Yahoo statement fundamentals, Yahoo latest-news probe data, market-context, sector-context, macro-proxy, fundamentals, sentiment-scaffold, and official-macro-scaffold features, data-quality outputs, metric CSVs, summaries, selected figures, and relevant logs. It does not attempt to package every generated training cache, model binary, or TensorBoard event file.
 
 Latest file-separation snapshot:
 
