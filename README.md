@@ -69,6 +69,7 @@ python -m src.evaluation.plot_results --run-dir results/run_2850
 - `docs/external_data_handoff.md` - exact handoff guide for the external files needed to move beyond the five-ticker pilot.
 - `hpc/local_vs_hpc_jobs.md` - detailed guide for deciding which project jobs run locally and which run on BistKA HPC.
 - `hpc/job_routing_checklist.md` - short checklist for routing jobs to local, HPC CPU, or HPC GPU.
+- `hpc/hpc_sync_status.md` - latest verified BistKA connection, sync method, and external-data boundary.
 - `slurm/SLURM.md` - explanation of the provided SLURM scripts.
 - `slurm/train_drl_cpu.sbatch` - CPU/vectorized RL training template.
 - `slurm/train_sentiment_gpu.sbatch` - GPU WangchanBERTa fine-tuning or embedding extraction template.

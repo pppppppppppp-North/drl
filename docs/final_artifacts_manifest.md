@@ -23,6 +23,7 @@ This manifest lists the current pilot artifacts for the Thai stock DRL project o
 | Comprehensive 100-frame Beamer presentation PDF | `final_project_beamer_100_pages.pdf` |
 | Data source notes | `docs/data_sources.md` |
 | External data handoff guide | `docs/external_data_handoff.md` |
+| BistKA sync status and verified handoff | `hpc/hpc_sync_status.md` |
 | External source-readiness report | `reports/source_readiness.csv` |
 | Real OHLCV data-quality report | `reports/data_quality/real_ohlcv_data_quality.md` |
 | Ticker coverage CSV | `reports/data_quality/ticker_coverage.csv` |

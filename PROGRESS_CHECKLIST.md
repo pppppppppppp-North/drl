@@ -100,6 +100,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Comprehensive introduction and literature review written in LaTeX and compiled locally: `comprehensive_introduction_literature_review.pdf` has 11 pages.
 - `[x]` Latest local documentation/source-readiness artifacts synced to BistKA on 2026-06-09 by pulling the pushed GitHub `main` archive into `/lustrefs/project/25sfcs03/drl_thai_stock`.
 - `[x]` HPC source-readiness check ran on 2026-06-09 and wrote `reports/source_readiness.csv`; it correctly reports the five expected missing external source files.
+- `[x]` BistKA sync status and verified GitHub-archive refresh method documented: `hpc/hpc_sync_status.md`.
 - `[x]` Comprehensive 100-frame Beamer presentation drafted locally and synced to HPC: `final_project_beamer_100_pages.tex`.
 - `[x]` Comprehensive 100-frame Beamer presentation compiled locally: `final_project_beamer_100_pages.pdf`.
 - `[x]` Final pilot archive created on HPC: `final_archive/20260530_final_project_pilot.tar.gz`.
