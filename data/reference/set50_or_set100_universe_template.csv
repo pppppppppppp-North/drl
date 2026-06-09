@@ -1,0 +1,3 @@
+ticker,name,sector,notes
+PTT.BK,PTT Public Company Limited,Energy & Utilities,Example row; replace with complete SET50 or SET100 licensed/exported universe.
+AOT.BK,Airports of Thailand Public Company Limited,Transportation & Logistics,Example row; keep one row per modeled ticker.

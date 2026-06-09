@@ -22,6 +22,28 @@ This file tracks source provenance for every dataset used by the project.
 
 Every real source added later should record access date, license/access note, schema, date coverage, symbol coverage, and missing-value rate in `data/data_manifest.csv`.
 
+## Remaining Source Readiness
+
+The implementation is wired for broader real-data runs, but the full research version is blocked until these source files are provided or exported from licensed/public systems:
+
+| source gap | template | minimum file expected | required fields | command after file is available |
+| --- | --- | --- | --- | --- |
+| Broader SET50/SET100 OHLCV universe | `data/reference/set50_or_set100_universe_template.csv` | `data/reference/set50_or_set100_universe.csv` | `ticker` values such as `PTT.BK`, or bare `symbol` values with `.BK` suffix configured | Update `data.ticker_universe.path` in a real-data config, then run `python -m src.data.ingest_ohlcv --config <config>` |
+| Complete sector membership or sector index history | `data/reference/sector_mapping_template.csv` | licensed/exported sector mapping or sector-index price file | ticker-to-sector labels for all modeled tickers, or daily sector index OHLCV/history | Replace `data/reference/sector_mapping_thai_pilot.csv` usage, then rebuild sector features with `python -m src.features.sector_context --config config/real_ohlcv_sector.yaml` |
+| Historical official macro releases | `data/reference/official_macro_long_template.csv` | historical BOT/export CSV | observation date, value, indicator name/code, and release date or enough metadata to derive release date | `python -m src.data.ingest_official_macro_csv --config config/real_ohlcv_official_macro.yaml --input <historical_macro.csv> --output data/raw/bot_official_macro.csv` |
+| Historical news/sentiment | `data/reference/historical_news_sentiment_template.csv` | licensed news/disclosure or sentiment-score CSV | ticker or symbol, publication timestamp/date, headline/text or precomputed score | `python -m src.data.ingest_sentiment_csv --config config/real_ohlcv_sentiment.yaml --input <historical_news.csv> --output data/raw/news_historical.csv --daily-output data/processed/sentiment_daily.parquet` |
+| Licensed fundamentals | `data/reference/fundamentals_template.csv` | SET/SETSMART or equivalent statements | ticker, period end, report date/effective date, and statement metrics | Normalize to the fundamentals raw schema, then rebuild with `python -m src.features.fundamental_context --config config/real_ohlcv_fundamentals.yaml` |
+
+Until those files exist, the current results should be described as a reproducible five-ticker pilot with implemented import scaffolding, not as a complete SET50/SET100 study.
+
+Check source readiness before claiming full real-data coverage:
+
+```bash
+python -m src.data.source_readiness --output reports/source_readiness.csv
+```
+
+The command exits nonzero while any required external source file is missing, empty, or missing required columns.
+
 ## Real OHLCV Starter Ingestion
 
 - Config: `config/real_ohlcv.yaml`

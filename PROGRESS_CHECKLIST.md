@@ -41,6 +41,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Latest HPC validation after official macro CSV importer addition: `python -m compileall -q src tests scripts` and full `python -m pytest -q` passed with 46 tests on 2026-05-31.
 - `[x]` Latest HPC validation after historical sentiment CSV importer addition: focused importer tests passed with 3 tests, CLI smoke test passed, and full `python -m pytest -q` passed with 49 tests on 2026-05-31.
 - `[x]` Latest HPC validation after ticker-universe CSV support: focused ticker-universe tests passed with 4 tests, config resolver smoke test passed, and full `python -m pytest -q` passed with 53 tests on 2026-05-31.
+- `[x]` Latest local full test validation: `.venv/bin/python -m pytest -q` passed with 53 tests on 2026-06-09 after creating a Python 3.11 local environment.
 - `[x]` SET market-index ingestion and market-context feature merge implemented and verified on HPC.
 - `[x]` SET index raw data collected on HPC: `data/raw/prices_market_indices.csv`.
 - `[x]` Real OHLCV + SET market-context feature table built on HPC: `data/processed/features_real_ohlcv_market.parquet`.
@@ -76,6 +77,8 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Real Thai OHLCV starter ingestion added via Yahoo Finance/yfinance schema and verified on HPC.
 - `[x]` Ticker-universe CSV resolver added and verified on HPC for real OHLCV, fundamentals, and latest-news ingestion: `src/data/ticker_universe.py`.
 - `[x]` Starter ticker-universe CSV and example config added and verified on HPC: `data/reference/thai_starter_universe.csv`, `config/real_ohlcv_universe_csv.yaml`.
+- `[x]` External-data handoff templates added for broad ticker universe, sector mapping, official macro, historical sentiment/news, and fundamentals: `data/reference/*_template.csv`.
+- `[x]` External-source readiness checker added: `python -m src.data.source_readiness --output reports/source_readiness.csv`.
 - `[x]` Real OHLCV feature table built on HPC: `data/processed/features_real_ohlcv.parquet`.
 - `[x]` Real OHLCV feature table passed leakage and split-boundary checks on HPC.
 - `[x]` Synthetic-regeneration guard added and verified so non-synthetic configs cannot overwrite real feature tables.
@@ -93,6 +96,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` File-separation snapshot helper added: `scripts/file_separation_snapshot.py`.
 - `[x]` Final artifact manifest uploaded: `docs/final_artifacts_manifest.md`.
 - `[x]` Final methodology/results report converted to LaTeX locally: `final_methodology_results.tex`.
+- `[x]` Comprehensive introduction and literature review written in LaTeX and compiled locally: `comprehensive_introduction_literature_review.pdf` has 11 pages.
 - `[x]` Comprehensive 100-frame Beamer presentation drafted locally and synced to HPC: `final_project_beamer_100_pages.tex`.
 - `[x]` Comprehensive 100-frame Beamer presentation compiled locally: `final_project_beamer_100_pages.pdf`.
 - `[x]` Final pilot archive created on HPC: `final_archive/20260530_final_project_pilot.tar.gz`.
@@ -668,11 +672,10 @@ Main comparison from `run_2850`:
 
 ## Current Blockers
 
-- `[!]` Local Python is missing `numpy` and `pytest`, so local validation is limited to syntax compilation.
-- `[!]` Real OHLCV starter results exist, but they use only five `.BK` tickers and should be treated as pilot results.
+- `[!]` Full SET50/SET100 conclusions are still blocked by missing external datasets: a broad ticker universe, complete sector membership or sector-index history, historical official macro exports, historical news/sentiment, and licensed fundamentals. The repo now documents the exact missing files, required fields, and follow-up commands in `docs/data_sources.md`.
 
 ## Immediate Next Actions
 
-1. Replace the static five-ticker pilot sector mapping with a broader, licensed sector-index or constituent source.
-2. Expand real data sources: official macro releases, licensed fundamentals, and sentiment.
-3. Run broader ablations once real sector, official macro, sentiment, and licensed fundamentals are available.
+1. Provide `data/reference/set50_or_set100_universe.csv`, then point `data.ticker_universe.path` at it and rerun OHLCV ingestion/build steps.
+2. Export or license the sector, official macro, historical sentiment/news, and fundamentals files listed in `docs/data_sources.md`.
+3. Rebuild the affected feature tables, rerun leakage checks and `pytest`, then run broader ablations once those inputs are present.

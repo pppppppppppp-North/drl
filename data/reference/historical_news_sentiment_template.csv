@@ -1,0 +1,3 @@
+date,published_at,ticker,title,summary,text,sentiment_score,publisher,url
+2021-01-04,2021-01-04 08:30:00+07:00,PTT.BK,Example headline,Example summary,,0.15,Licensed News Provider,provider-record-id-or-url
+2021-01-05,2021-01-05 09:00:00+07:00,AOT.BK,Example disclosure,,Full article or disclosure text may be placed here,,SET disclosure export,provider-record-id-or-url

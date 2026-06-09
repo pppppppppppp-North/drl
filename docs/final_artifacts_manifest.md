@@ -17,6 +17,8 @@ This manifest lists the current pilot artifacts for the Thai stock DRL project o
 | Progress checklist | `PROGRESS_CHECKLIST.md` |
 | Final methodology/results writeup | `docs/final_methodology_results.md` |
 | Final methodology/results LaTeX report | `final_methodology_results.tex` |
+| Comprehensive introduction/literature-review source | `comprehensive_introduction_literature_review.tex` |
+| Comprehensive introduction/literature-review PDF | `comprehensive_introduction_literature_review.pdf` |
 | Comprehensive 100-frame Beamer presentation source | `final_project_beamer_100_pages.tex` |
 | Comprehensive 100-frame Beamer presentation PDF | `final_project_beamer_100_pages.pdf` |
 | Data source notes | `docs/data_sources.md` |

@@ -1,0 +1,235 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=0.9in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{xurl}
+\usepackage{hyperref}
+
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue}
+\setlist{itemsep=2pt, topsep=4pt}
+\onehalfspacing
+
+\title{\textbf{Comprehensive Introduction and Literature Review}\\
+Deep Reinforcement Learning for Long-Term Profit Optimization in Thai Stock Markets Using Multi-Source Data}
+\author{Final Project Plan}
+\date{June 9, 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This document provides a comprehensive introduction and literature review for a research project on deep reinforcement learning (DRL) for long-term profit optimization in Thai equity markets. The project studies whether an automated portfolio allocation agent can learn useful trading policies from multi-source financial data, including price history, technical indicators, market and sector context, macroeconomic variables, fundamentals, and Thai-language sentiment signals. The review explains why financial trading should be treated as a sequential decision-making problem rather than only a one-step prediction problem, surveys relevant reinforcement learning algorithms and financial machine learning practices, discusses the special challenges of Thai market data and Thai financial language processing, and identifies the research gap addressed by the project. The central conclusion is that the project should be evaluated as a reproducible research system with chronological validation, leakage controls, transaction costs, baseline comparisons, and ablation studies, not as a trading recommendation system.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+\subsection{Background and Motivation}
+Financial markets are dynamic systems in which prices, liquidity, macroeconomic conditions, investor expectations, and firm-specific information interact over time. In an equity market, the result of an investment decision is not determined only by whether a model can forecast the next return. The result also depends on portfolio allocation, risk exposure, transaction cost, holding period, drawdown tolerance, and the sequence of future decisions. This makes stock trading and portfolio management naturally sequential.
+
+Traditional quantitative trading systems often separate prediction from decision making. A supervised learning model may predict a return, volatility estimate, or directional label, and a separate rule then converts the prediction into a trade. This separation is simple and interpretable, but it can be misaligned with the final objective. A model can be accurate in direction but unprofitable after costs; it can generate attractive average returns while suffering unacceptable drawdowns; or it can overfit short-term patterns that disappear outside the training period. A research system designed for long-term profit optimization therefore needs to evaluate decisions directly, not only predictions.
+
+Reinforcement learning (RL) offers a framework for this setting because it learns a policy: a mapping from observed states to actions. In portfolio allocation, an action can be a vector of target portfolio weights. The reward can combine return, risk, transaction cost, and drawdown. Deep reinforcement learning extends this idea by using neural networks to approximate policies or value functions, making it possible to learn from high-dimensional market states. However, financial markets are difficult environments for DRL because data is noisy, nonstationary, limited in length, and vulnerable to look-ahead bias. The purpose of this project is not to assume that DRL will automatically outperform simpler baselines, but to build and test a rigorous pipeline for evaluating whether DRL can learn useful Thai equity allocation policies.
+
+\subsection{Thai Equity Market Context}
+The Stock Exchange of Thailand (SET) is a meaningful setting for this research because it combines a real emerging-market environment with practical data and language challenges. Thai equities are affected by domestic economic policy, global commodity cycles, tourism, exchange rates, banking conditions, sector composition, and company-specific news. A purely price-based model may miss information contained in macroeconomic releases, corporate disclosures, sector movements, or Thai-language financial text.
+
+The Thai setting also creates a research gap. Much published DRL trading work evaluates U.S. equities, international futures, cryptocurrencies, or broad global datasets. Fewer studies focus on Thai equities with Thai-language news and disclosure information. This project therefore has a localized contribution: it examines how a DRL portfolio pipeline should be designed for Thai market constraints, including available data sources, realistic long-only allocation, chronological splits, and Thai natural language processing.
+
+\subsection{Problem Statement}
+The core problem is to design and evaluate a DRL-based portfolio allocation system that optimizes long-term performance for Thai stocks using multi-source data. The project asks whether a continuous-action DRL agent can learn allocation decisions that improve risk-adjusted return compared with transparent baselines such as equal weight, momentum, mean-variance allocation, and buy-and-hold.
+
+The problem is difficult for several reasons:
+\begin{enumerate}
+    \item Financial time series are nonstationary, so patterns that appear in training may not persist in validation or test periods.
+    \item Trading decisions are path-dependent: earlier actions affect future portfolio value, cash, turnover, and risk.
+    \item Transaction costs and turnover can erase apparent predictive gains.
+    \item Multi-source features can introduce look-ahead bias if releases, disclosures, or news are merged incorrectly.
+    \item Thai-language sentiment modeling requires language-specific tools and may not transfer from English financial NLP.
+    \item A DRL model can overfit more easily than simple baselines because it has many parameters and interacts with the environment during training.
+\end{enumerate}
+
+\subsection{Research Objectives}
+The project has five primary objectives:
+\begin{enumerate}
+    \item Build a reproducible DRL trading environment for long-only Thai equity portfolio allocation.
+    \item Represent trading as a Markov decision process with states, actions, rewards, transaction costs, and chronological validation.
+    \item Integrate multi-source data, including OHLCV, technical indicators, market index context, sector context, macroeconomic variables, fundamentals, and sentiment scaffolding.
+    \item Compare PPO and other DRL algorithms against simple and finance-relevant baselines.
+    \item Evaluate the effect of feature groups through ablation studies and leakage-aware validation.
+\end{enumerate}
+
+\subsection{Research Questions}
+The literature and project design motivate the following research questions:
+\begin{enumerate}
+    \item Can a continuous-action DRL agent learn a profitable long-only allocation policy for a Thai equity universe?
+    \item Does the DRL policy improve risk-adjusted performance compared with equal weight, momentum, mean-variance allocation, and buy-and-hold baselines?
+    \item Which feature groups contribute useful information: technical indicators, market index context, sector context, macro proxies, fundamentals, official macro data, and sentiment?
+    \item How sensitive is DRL performance to reward design, transaction costs, drawdown penalties, and turnover penalties?
+    \item What validation protocol is necessary to avoid overstating performance in Thai stock market experiments?
+\end{enumerate}
+
+\subsection{Scope and Current Evidence}
+The current implementation validates an end-to-end pilot pipeline using a five-ticker Thai starter universe: \texttt{ADVANC.BK}, \texttt{AOT.BK}, \texttt{CPALL.BK}, \texttt{KBANK.BK}, and \texttt{PTT.BK}. It includes real OHLCV ingestion, technical features, SET index context, pilot sector mapping, macro proxy data, Yahoo statement fundamentals, sentiment import scaffolding, official macro import scaffolding, baselines, PPO/A2C training, walk-forward utilities, ablation jobs, and data-quality checks.
+
+This scope is intentionally described as a pilot. It is not yet a complete SET50 or SET100 study because broad historical sector data, official macro exports overlapping the modeling window, licensed fundamentals, and historical Thai news or sentiment data are still external-data blockers. The literature review therefore supports both the current pilot interpretation and the future full-data research design.
+
+\section{Conceptual Foundation}
+
+\subsection{Prediction Versus Decision Making}
+In supervised financial machine learning, the common task is to predict a label such as next-day return, positive or negative direction, volatility, or a ranking score. The model is usually optimized with a statistical loss such as mean squared error, cross-entropy, or ranking loss. This can be useful, but a low prediction error does not guarantee a strong trading policy. Trading performance depends on the conversion from prediction to position, and that conversion must consider risk, cost, and portfolio constraints.
+
+RL directly models the decision process. Instead of asking ``what will the return be tomorrow?'', the agent asks ``what action should be taken now, given the current portfolio and market state?'' This distinction matters because a small forecasted return may not justify a trade after transaction cost, and a high expected return may still be unattractive if it increases drawdown or concentration risk. RL is therefore conceptually aligned with portfolio allocation, even though it is harder to validate.
+
+\subsection{Trading as a Markov Decision Process}
+Most DRL trading systems formulate the market interaction as a Markov decision process (MDP). At each time step $t$, the environment provides a state $s_t$, the agent chooses an action $a_t$, the environment transitions to a new state $s_{t+1}$, and the agent receives reward $r_t$. For this project:
+\begin{itemize}
+    \item The state contains market observations such as returns, indicators, context variables, and possibly current portfolio information.
+    \item The action is a continuous allocation vector over available stocks and cash.
+    \item The transition is determined by realized market prices and portfolio accounting.
+    \item The reward measures return after cost, with optional penalties for turnover and drawdown.
+\end{itemize}
+
+The MDP framing is useful, but financial markets are not perfectly Markovian. Hidden variables, delayed information, market microstructure, and macro shocks mean that the observed state is only a partial representation of the true market condition. This limitation motivates richer state features and robust out-of-sample validation.
+
+\subsection{Reward Design}
+Reward design is one of the most important parts of a DRL trading project. A raw return reward is easy to compute, but it may encourage excessive risk. A Sharpe-like reward captures risk-adjusted return, but it can be unstable over short windows. A drawdown penalty discourages large losses, but if it is too strong the agent may learn to hold cash or avoid trading. A turnover penalty is necessary for realism, but if it is too large it can create a hold-only policy.
+
+A practical reward for this project is a hybrid:
+\[
+r_t = \alpha R_t - \lambda_{\mathrm{turnover}}T_t - \lambda_{\mathrm{drawdown}}D_t,
+\]
+where $R_t$ is portfolio return, $T_t$ is turnover, and $D_t$ is a drawdown penalty. More advanced variants can add changes in rolling Sharpe or downside-risk penalties. The literature suggests that the reward should be tested through ablations rather than chosen only by intuition.
+
+\section{Literature Review}
+
+\subsection{Classical Portfolio Theory and Baseline Methods}
+Modern portfolio theory begins with the idea that investors should evaluate portfolios by both expected return and risk. Markowitz's mean-variance framework formalized portfolio selection as an optimization problem that trades off return and variance \cite{markowitz}. Although mean-variance optimization has limitations, including sensitivity to estimation error and assumptions about return distributions, it remains a useful baseline because it is transparent and directly related to portfolio weights.
+
+Sharpe introduced the Sharpe ratio as a measure of excess return per unit of volatility \cite{sharpe}. Many trading papers report Sharpe ratio because it captures risk-adjusted performance better than raw return alone. However, Sharpe ratio is not sufficient by itself. A strategy can have a reasonable Sharpe ratio but still experience severe drawdowns, high turnover, or poor tail risk. For this project, cumulative return, annualized return, volatility, Sharpe, Sortino, maximum drawdown, Calmar ratio, turnover, and baseline-relative metrics should be reported together.
+
+Simple baselines are essential. Equal weight is a surprisingly strong benchmark because it avoids estimation error. Buy-and-hold tests whether the agent adds value beyond passive exposure. Momentum captures a common trading heuristic. Mean-variance allocation represents a classical optimization baseline. A DRL model should not be considered successful merely because it trains without crashing; it should improve on these simpler approaches in a leakage-controlled evaluation.
+
+\subsection{Deep Learning and Reinforcement Learning Foundations}
+Deep learning became prominent in RL partly through the Deep Q-Network (DQN), which used neural networks to approximate value functions from high-dimensional observations \cite{dqn}. DQN was designed for discrete actions, making it less directly suitable for continuous portfolio weights, but it demonstrated that deep networks could learn policies from sequential interaction.
+
+Policy-gradient and actor-critic methods are more relevant for portfolio allocation because they can handle continuous actions. In actor-critic methods, the actor learns a policy while the critic estimates value. This structure is useful in trading because the action space can be a continuous vector of portfolio weights rather than a small set of labels.
+
+Proximal Policy Optimization (PPO) is especially important for this project. Schulman et al. introduced PPO as a practical policy-gradient algorithm that constrains policy updates through a clipped objective \cite{ppo}. PPO is widely used because it is simpler than earlier trust-region methods while remaining relatively stable. In noisy financial environments, stability is valuable because overly aggressive updates can quickly overfit or collapse to poor behavior.
+
+Other continuous-control algorithms may also be relevant. DDPG, TD3, and SAC are commonly used for continuous action spaces. SAC's entropy-regularized objective can encourage exploration, which may help avoid premature convergence to cash or hold-only behavior. However, each additional algorithm increases experimental complexity. For a focused project, PPO can be the main algorithm, while A2C, SAC, TD3, or DDPG serve as comparisons if compute and tuning time are available.
+
+\subsection{DRL for Trading and Portfolio Allocation}
+Zhang, Zohren, and Roberts studied deep reinforcement learning for trading and considered both discrete and continuous action spaces \cite{zhangtrading}. Their work is relevant because it frames trading as an RL problem rather than a pure prediction problem. It also shows that action-space design matters. Discrete buy, sell, and hold actions are simple, but continuous actions are closer to real allocation decisions.
+
+FinRL is another central reference. Liu et al. describe FinRL as a full-stack DRL framework for quantitative finance, organized around data, environment, and agent layers \cite{finrl}. This structure matches the architecture needed in the present project: data ingestion and feature construction should be separate from the environment, and the environment should be separate from the learning algorithm. This separation improves reproducibility and makes it easier to add new data sources or algorithms.
+
+Huang, Zhou, and Song investigated long-short portfolio optimization using DRL and Sharpe-ratio oriented rewards \cite{longshort}. Their focus on portfolio weights is relevant, but Thai market constraints suggest that a long-only or long-cash setup is more realistic for the main experiment. A long-short variant can be useful academically, but it must be clearly separated from practical Thai market assumptions.
+
+The broader DRL trading literature shows both promise and risk. DRL can learn flexible policies, but it can also exploit simulation assumptions, overfit small datasets, or fail against simple baselines. Therefore, this project should treat DRL as a hypothesis to test, not a guaranteed superior method.
+
+\subsection{Financial Data Sources and Feature Groups}
+Financial trading decisions can be informed by many sources. Price and volume data provide the basic time series. Technical indicators summarize trends, volatility, momentum, and mean reversion. Market index features describe broad market direction. Sector features help distinguish stock-specific behavior from sector-wide movement. Macroeconomic variables capture interest rates, exchange rates, commodities, inflation, and economic activity. Fundamentals describe firm quality and financial condition. News and disclosures may reveal information before it is fully reflected in prices.
+
+The Stock Exchange of Thailand SMART Marketplace is a preferred source for official Thai market and company data when access is available \cite{setsmart}. It can support historical equity data and company-level information. Yahoo Finance is useful as a reproducible starter source, but its methodology, availability, and license constraints must be treated carefully. For final claims, official or licensed data is preferable.
+
+Bank of Thailand statistics provide macroeconomic data that can be linked to market behavior \cite{bot}. However, official macro data must be merged by release date, not by observation period alone. For example, a monthly economic statistic for January may not be released until February or later. If a model uses the January value before it was actually available, the experiment has look-ahead bias. This project's official macro scaffold is therefore important because it emphasizes release-date alignment.
+
+The correct question for multi-source data is not simply whether more features improve training performance. The correct question is which feature groups improve out-of-sample performance after leakage controls. This motivates feature ablations: returns-only, technical, technical plus market context, sector context, macro proxy, fundamentals, sentiment, official macro, and all-source variants.
+
+\subsection{Thai-Language Sentiment and Financial NLP}
+Financial text can affect stock prices because news, disclosures, analyst commentary, and social discussion influence investor beliefs. In Thai markets, much relevant text is in Thai, which creates a language-specific challenge. English financial sentiment models may not handle Thai tokenization, syntax, idioms, or disclosure style well.
+
+WangchanBERTa is a strong foundation model for Thai NLP. Lowphansirikul et al. pretrained a transformer-based Thai language model and reported strong performance relative to multilingual baselines on Thai NLP tasks \cite{wangchanberta}. This supports the use of Thai-specific embeddings for financial news or disclosures.
+
+Thai financial sentiment can also be subtle. Rutherford et al. studied aspect-level obfuscated sentiment in Thai financial disclosures and its relationship to abnormal returns \cite{thaiabsa}. This is relevant because market-moving language may not appear as simple positive or negative words. It may depend on financial aspects such as revenue, cost, liquidity, debt, guidance, or risk factors.
+
+For this project, sentiment should be introduced carefully. A first stage can normalize historical news or disclosure CSV files and aggregate daily ticker-level sentiment. A second stage can replace deterministic placeholder scores with WangchanBERTa embeddings or a supervised Thai financial sentiment model. The experimental report should distinguish clearly between a sentiment scaffold, a deterministic placeholder, a pretrained embedding, and a validated financial sentiment model.
+
+\subsection{Evaluation, Leakage, and Reproducibility}
+Financial machine learning experiments are especially vulnerable to leakage. Random train/test splits are usually invalid because future data can leak into the training set. Feature engineering can also create leakage if rolling indicators use future values, if fundamentals are merged before report dates, or if macro variables are aligned by observation date rather than release date.
+
+Chronological validation is therefore required. A basic split trains on an earlier period, validates on a later period, and tests on a final unseen period. Walk-forward validation is stronger because it repeats this process across multiple rolling windows. The model should be evaluated on out-of-sample windows and compared with baselines under identical cost and accounting assumptions.
+
+Reproducibility also requires logging code versions, configs, random seeds, data manifests, feature columns, split dates, and output metrics. FinRL's emphasis on modular data, environment, and agent layers supports this requirement \cite{finrl}. In the current project, the use of configs, SLURM scripts, data-quality reports, source-readiness checks, and artifact manifests helps make the research auditable.
+
+\section{Synthesis of Research Gap}
+The literature suggests that DRL is a plausible method for portfolio allocation, but it does not remove the need for careful experimental design. The research gap addressed by this project has six parts:
+\begin{enumerate}
+    \item Thai equity market focus rather than only U.S. or global benchmark assets.
+    \item Continuous-action portfolio allocation rather than only buy/sell classification.
+    \item Multi-source financial features, including Thai-specific data and language signals.
+    \item Long-term profit and risk optimization rather than one-step price prediction.
+    \item Leakage-aware validation using chronological splits, walk-forward testing, and release-date alignment.
+    \item A reproducible implementation pipeline that can be extended from a five-ticker pilot to a broader SET50 or SET100 universe.
+\end{enumerate}
+
+This gap is valuable even if the final DRL model does not dominate every baseline. A negative or mixed result can still be scientifically useful if it shows which feature groups, reward designs, or validation settings fail under realistic conditions. The project's contribution is therefore both methodological and empirical.
+
+\section{Implications for Project Design}
+The reviewed literature leads to the following design decisions:
+\begin{enumerate}
+    \item Use PPO as the main DRL algorithm because it is stable, well documented, and already fits the implemented environment.
+    \item Use a long-only continuous action space for the main Thai market experiment.
+    \item Include transaction cost, turnover tracking, and drawdown tracking in the environment.
+    \item Use chronological splits and walk-forward validation rather than random splits.
+    \item Use simple baselines as serious competitors, not as afterthoughts.
+    \item Treat multi-source data as testable feature groups and run ablations.
+    \item Merge official macro data, fundamentals, and sentiment by availability date to avoid look-ahead bias.
+    \item Separate pilot claims from full-market claims until broader licensed or official data is available.
+\end{enumerate}
+
+\section{Conclusion}
+Deep reinforcement learning is a promising but high-risk method for financial trading research. It is promising because portfolio allocation is naturally sequential and because DRL can optimize decisions directly under cost and risk constraints. It is high-risk because financial data is noisy, nonstationary, and easy to overfit. The literature therefore supports a cautious research strategy: build a transparent environment, compare against strong baselines, validate chronologically, test feature groups through ablations, and avoid claiming more than the data supports.
+
+For Thai equities, the project is especially interesting because it combines emerging-market structure, Thai-language information, macroeconomic context, and practical data-access constraints. The current five-ticker implementation should be interpreted as a reproducible pilot. The next stage requires broader SET50 or SET100 data, complete sector information, historical official macro releases, licensed fundamentals, and historical Thai news or sentiment. Once those inputs are available, the same pipeline can support a stronger full-data study.
+
+\begin{thebibliography}{99}
+
+\bibitem{markowitz}
+H. Markowitz, ``Portfolio Selection,'' \textit{The Journal of Finance}, vol. 7, no. 1, pp. 77--91, 1952.
+
+\bibitem{sharpe}
+W. F. Sharpe, ``Mutual Fund Performance,'' \textit{The Journal of Business}, vol. 39, no. 1, pp. 119--138, 1966.
+
+\bibitem{dqn}
+V. Mnih et al., ``Human-level control through deep reinforcement learning,'' \textit{Nature}, vol. 518, pp. 529--533, 2015.
+
+\bibitem{ppo}
+J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov, ``Proximal Policy Optimization Algorithms,'' arXiv:1707.06347, 2017. Available: \url{https://arxiv.org/abs/1707.06347}
+
+\bibitem{finrl}
+X.-Y. Liu, H. Yang, J. Gao, and C. D. Wang, ``FinRL: Deep Reinforcement Learning Framework to Automate Trading in Quantitative Finance,'' ACM ICAIF, 2021. Available: \url{https://arxiv.org/abs/2111.09395}
+
+\bibitem{zhangtrading}
+Z. Zhang, S. Zohren, and S. Roberts, ``Deep Reinforcement Learning for Trading,'' arXiv:1911.10107, 2019. Available: \url{https://arxiv.org/abs/1911.10107}
+
+\bibitem{longshort}
+G. Huang, X. Zhou, and Q. Song, ``Deep Reinforcement Learning for Long-Short Portfolio Optimization,'' arXiv:2012.13773, 2020. Available: \url{https://arxiv.org/abs/2012.13773}
+
+\bibitem{setsmart}
+Stock Exchange of Thailand, ``SMART Marketplace.'' Available: \url{https://www.set.or.th/th/services/connectivity-and-data/data/smart-marketplace}
+
+\bibitem{bot}
+Bank of Thailand, ``Statistics.'' Available: \url{https://www.bot.or.th/en/statistics.html}
+
+\bibitem{wangchanberta}
+L. Lowphansirikul, C. Polpanumas, N. Jantrakulchai, and S. Nutanong, ``WangchanBERTa: Pretraining transformer-based Thai Language Models,'' arXiv:2101.09635, 2021. Available: \url{https://arxiv.org/abs/2101.09635}
+
+\bibitem{thaiabsa}
+A. T. Rutherford, S. Chueykamhang, T. Bunditlurdruk, and N. Angsuwichitkul, ``Aspect-Level Obfuscated Sentiment in Thai Financial Disclosures and Its Impact on Abnormal Returns,'' arXiv:2511.13481, 2025. Available: \url{https://arxiv.org/abs/2511.13481}
+
+\end{thebibliography}
+
+\end{document}

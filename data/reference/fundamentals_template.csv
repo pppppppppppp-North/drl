@@ -1,0 +1,7 @@
+ticker,statement_type,metric,period_end,value
+PTT.BK,income_quarterly,Total Revenue,2021-03-31,1000000000
+PTT.BK,income_quarterly,Net Income,2021-03-31,100000000
+PTT.BK,balance_quarterly,Total Assets,2021-03-31,5000000000
+PTT.BK,balance_quarterly,Stockholders Equity,2021-03-31,2500000000
+PTT.BK,balance_quarterly,Total Debt,2021-03-31,1000000000
+PTT.BK,cashflow_quarterly,Free Cash Flow,2021-03-31,75000000

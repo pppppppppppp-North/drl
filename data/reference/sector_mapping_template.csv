@@ -1,0 +1,3 @@
+ticker,sector,industry_group,source,source_url,notes
+PTT.BK,Energy & Utilities,Resources,SET/SETSMART/exported constituent classification,https://example.com/source,Example row; replace with complete mapping for all modeled tickers.
+AOT.BK,Transportation & Logistics,Services,SET/SETSMART/exported constituent classification,https://example.com/source,Example row; sector values should be stable through the modeled window or include dated history in a separate source.
