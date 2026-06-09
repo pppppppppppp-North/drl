@@ -67,6 +67,7 @@ python -m src.evaluation.plot_results --run-dir results/run_2850
 - `comprehensive_introduction_literature_review.pdf` - compiled expanded introduction and literature review PDF.
 - `hpc/HPC.md` - extracted practical guide from `HPC.pdf` for this project.
 - `docs/external_data_handoff.md` - exact handoff guide for the external files needed to move beyond the five-ticker pilot.
+- `docs/external_data_provider_request.md` - provider-facing request packet and email template for the missing external files.
 - `docs/full_external_rebuild.md` - rebuild order and validation notes for the full external-data feature table.
 - `hpc/local_vs_hpc_jobs.md` - detailed guide for deciding which project jobs run locally and which run on BistKA HPC.
 - `hpc/job_routing_checklist.md` - short checklist for routing jobs to local, HPC CPU, or HPC GPU.

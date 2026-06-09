@@ -103,6 +103,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` BistKA sync status and verified GitHub-archive refresh method documented: `hpc/hpc_sync_status.md`.
 - `[x]` Full external-data config and rebuild-order guide added: `config/real_ohlcv_full_external.yaml`, `docs/full_external_rebuild.md`.
 - `[x]` Full external-data config and rebuild guide synced to BistKA on 2026-06-09; HPC source-readiness still correctly reports the five missing provider files.
+- `[x]` External data provider request packet and email template added: `docs/external_data_provider_request.md`.
 - `[x]` Comprehensive 100-frame Beamer presentation drafted locally and synced to HPC: `final_project_beamer_100_pages.tex`.
 - `[x]` Comprehensive 100-frame Beamer presentation compiled locally: `final_project_beamer_100_pages.pdf`.
 - `[x]` Final pilot archive created on HPC: `final_archive/20260530_final_project_pilot.tar.gz`.

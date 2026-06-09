@@ -4,6 +4,8 @@ Last updated: 2026-06-09
 
 This guide turns the remaining project blockers into a concrete data handoff workflow. The current implementation is a reproducible five-ticker pilot. A full SET50/SET100 study requires external files that are not currently available in the repository.
 
+For a provider-facing request packet and email template, see `docs/external_data_provider_request.md`.
+
 ## Required Files
 
 Place the real exported or licensed files at these default paths before claiming full real-data coverage:
