@@ -23,6 +23,7 @@ This manifest lists the current pilot artifacts for the Thai stock DRL project o
 | Comprehensive 100-frame Beamer presentation PDF | `final_project_beamer_100_pages.pdf` |
 | Data source notes | `docs/data_sources.md` |
 | External data handoff guide | `docs/external_data_handoff.md` |
+| Full external-data rebuild guide | `docs/full_external_rebuild.md` |
 | BistKA sync status and verified handoff | `hpc/hpc_sync_status.md` |
 | External source-readiness report | `reports/source_readiness.csv` |
 | Real OHLCV data-quality report | `reports/data_quality/real_ohlcv_data_quality.md` |
@@ -91,6 +92,7 @@ This manifest lists the current pilot artifacts for the Thai stock DRL project o
 | Real OHLCV + SET + sector + macro + fundamentals + official macro scaffold config | `config/real_ohlcv_official_macro.yaml` |
 | Real OHLCV + SET + sector + macro + fundamentals config | `config/real_ohlcv_fundamentals.yaml` |
 | Real OHLCV + SET + sector + macro + fundamentals + sentiment scaffold config | `config/real_ohlcv_sentiment.yaml` |
+| Full external-data config | `config/real_ohlcv_full_external.yaml` |
 
 ## Verified Result Directories
 

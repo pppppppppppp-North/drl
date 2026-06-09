@@ -46,6 +46,7 @@ The command exits with status `1` while any required file is missing, empty, or 
 ## Rebuild Commands
 
 After the readiness check passes, rerun the affected ingestion and feature steps.
+For the consolidated full external-data config and stage order, see `docs/full_external_rebuild.md`.
 
 Broader OHLCV universe:
 
