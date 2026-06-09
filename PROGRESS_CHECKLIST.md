@@ -79,6 +79,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Starter ticker-universe CSV and example config added and verified on HPC: `data/reference/thai_starter_universe.csv`, `config/real_ohlcv_universe_csv.yaml`.
 - `[x]` External-data handoff templates added for broad ticker universe, sector mapping, official macro, historical sentiment/news, and fundamentals: `data/reference/*_template.csv`.
 - `[x]` External-source readiness checker added: `python -m src.data.source_readiness --output reports/source_readiness.csv`.
+- `[x]` External-data handoff guide added: `docs/external_data_handoff.md`.
 - `[x]` Real OHLCV feature table built on HPC: `data/processed/features_real_ohlcv.parquet`.
 - `[x]` Real OHLCV feature table passed leakage and split-boundary checks on HPC.
 - `[x]` Synthetic-regeneration guard added and verified so non-synthetic configs cannot overwrite real feature tables.

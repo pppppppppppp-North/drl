@@ -66,6 +66,7 @@ python -m src.evaluation.plot_results --run-dir results/run_2850
 - `comprehensive_introduction_literature_review.tex` - expanded standalone introduction and literature review LaTeX source.
 - `comprehensive_introduction_literature_review.pdf` - compiled expanded introduction and literature review PDF.
 - `hpc/HPC.md` - extracted practical guide from `HPC.pdf` for this project.
+- `docs/external_data_handoff.md` - exact handoff guide for the external files needed to move beyond the five-ticker pilot.
 - `hpc/local_vs_hpc_jobs.md` - detailed guide for deciding which project jobs run locally and which run on BistKA HPC.
 - `hpc/job_routing_checklist.md` - short checklist for routing jobs to local, HPC CPU, or HPC GPU.
 - `slurm/SLURM.md` - explanation of the provided SLURM scripts.
