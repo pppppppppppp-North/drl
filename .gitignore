@@ -38,6 +38,8 @@ tmp/
 *.out
 *.err
 *.toc
+*.nav
+*.snm
 *.fls
 *.fdb_latexmk
 *.synctex.gz

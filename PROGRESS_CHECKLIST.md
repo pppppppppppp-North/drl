@@ -1,6 +1,6 @@
 # Project Progress Checklist
 
-Last updated: 2026-05-31
+Last updated: 2026-06-09
 
 Use this file as the single running checklist for what has been completed and what remains. Update it whenever code, data, HPC jobs, results, or report artifacts change.
 
@@ -93,6 +93,8 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` File-separation snapshot helper added: `scripts/file_separation_snapshot.py`.
 - `[x]` Final artifact manifest uploaded: `docs/final_artifacts_manifest.md`.
 - `[x]` Final methodology/results report converted to LaTeX locally: `final_methodology_results.tex`.
+- `[x]` Comprehensive 100-frame Beamer presentation drafted locally and synced to HPC: `final_project_beamer_100_pages.tex`.
+- `[x]` Comprehensive 100-frame Beamer presentation compiled locally: `final_project_beamer_100_pages.pdf`.
 - `[x]` Final pilot archive created on HPC: `final_archive/20260530_final_project_pilot.tar.gz`.
 - `[x]` Updated final pilot archive with walk-forward, ablation, and regime/stress-test artifacts: `final_archive/20260531_final_project_pilot.tar.gz`.
 - `[x]` Updated final pilot archive with SET market-context artifacts: `final_archive/20260531_final_project_pilot_with_set_context.tar.gz`.
@@ -105,7 +107,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` Updated final pilot archive with official macro CSV importer artifacts: `final_archive/20260531_final_project_pilot_with_official_macro_csv_import.tar.gz`.
 - `[x]` Updated final pilot archive with historical sentiment CSV importer artifacts: `final_archive/20260531_final_project_pilot_with_sentiment_csv_import.tar.gz`.
 - `[x]` Updated final pilot archive with ticker-universe CSV support: `final_archive/20260531_final_project_pilot_with_ticker_universe_csv.tar.gz`.
-- `[x]` Latest file-separation snapshot on HPC: `_file_separation/20260531_231548`.
+- `[x]` Latest file-separation snapshot on HPC: `_file_separation/20260601_100216`.
 - `[!]` Real-OHLCV comparison job `2854` is invalid because the old training entrypoint regenerated synthetic data into real config paths; use corrected job `2855`.
 - `[!]` Real OHLCV starter data, configurable ticker-universe loading, SET index context, pilot sector mapping, daily macro proxies, Yahoo statement fundamentals, sentiment merge/import scaffolding, and official macro merge/import scaffolding exist, but broad sector indices, historical official release-aligned macro source data, licensed fundamentals, and historical sentiment source data are still incomplete.
 

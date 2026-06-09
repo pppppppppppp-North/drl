@@ -1,6 +1,6 @@
 # Final Artifact Manifest
 
-Last updated: 2026-05-31
+Last updated: 2026-06-09
 
 This manifest lists the current pilot artifacts for the Thai stock DRL project on BistKA.
 
@@ -17,6 +17,8 @@ This manifest lists the current pilot artifacts for the Thai stock DRL project o
 | Progress checklist | `PROGRESS_CHECKLIST.md` |
 | Final methodology/results writeup | `docs/final_methodology_results.md` |
 | Final methodology/results LaTeX report | `final_methodology_results.tex` |
+| Comprehensive 100-frame Beamer presentation source | `final_project_beamer_100_pages.tex` |
+| Comprehensive 100-frame Beamer presentation PDF | `final_project_beamer_100_pages.pdf` |
 | Data source notes | `docs/data_sources.md` |
 | Real OHLCV data-quality report | `reports/data_quality/real_ohlcv_data_quality.md` |
 | Ticker coverage CSV | `reports/data_quality/ticker_coverage.csv` |
@@ -132,5 +134,5 @@ The latest archive intentionally contains configs, report files, source code, te
 Latest file-separation snapshot:
 
 ```text
-/lustrefs/project/25sfcs03/drl_thai_stock/_file_separation/20260531_160247
+/lustrefs/project/25sfcs03/drl_thai_stock/_file_separation/20260601_100216
 ```

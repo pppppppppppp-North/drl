@@ -1,0 +1,1110 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\title[Thai Stock DRL Project]{Deep Reinforcement Learning for Thai Stock Portfolio Allocation}
+\subtitle{Comprehensive 100-Slide Project Summary}
+\author{Final Project Progress Report}
+\institute{BistKA HPC Project: \texttt{/lustrefs/project/25sfcs03/drl\_thai\_stock}}
+\date{June 9, 2026}
+
+\begin{document}
+
+% 1
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% 2
+\begin{frame}{How To Read This Deck}
+\begin{itemize}
+  \item This deck explains what has been built, tested, and learned.
+  \item It uses simple language first, then adds technical details.
+  \item The results are pilot results, not final market-performance claims.
+  \item The deck is organized from motivation to data, model, results, and next steps.
+\end{itemize}
+\end{frame}
+
+% 3
+\begin{frame}{Project In One Sentence}
+\begin{itemize}
+  \item The project builds a reproducible research pipeline for testing reinforcement learning portfolio allocation on Thai stocks.
+  \item It compares DRL agents with simple baselines.
+  \item It adds multi-source features step by step.
+  \item It runs and validates the work on BistKA HPC.
+\end{itemize}
+\end{frame}
+
+% 4
+\begin{frame}{Main Research Question}
+\begin{itemize}
+  \item Can a DRL portfolio agent improve long-term profit and risk control for Thai stocks?
+  \item Can it beat simple baselines such as equal weight and buy-and-hold?
+  \item Can extra information such as index, sector, macro, fundamentals, and sentiment help?
+  \item Can the experiment be made reproducible enough to trust the result?
+\end{itemize}
+\end{frame}
+
+% 5
+\begin{frame}{Why This Project Matters}
+\begin{itemize}
+  \item Financial ML experiments can look good if data leakage or weak baselines are ignored.
+  \item This project focuses on careful experimental wiring.
+  \item It records data provenance and validation status.
+  \item It shows what works now and what still needs better data.
+\end{itemize}
+\end{frame}
+
+% 6
+\begin{frame}{Final Status At A Glance}
+\begin{itemize}
+  \item Local repository scaffold is complete.
+  \item HPC project directory and conda environment are complete.
+  \item Latest verified HPC test suite passed with 53 tests.
+  \item Final archive with ticker-universe CSV support has been created on HPC.
+\end{itemize}
+\end{frame}
+
+% 7
+\begin{frame}{Important Caveat}
+\begin{itemize}
+  \item The current real-data experiments use a five-stock starter universe.
+  \item These results validate the pipeline, not the whole Thai market.
+  \item Historical sentiment and official macro data do not yet overlap the 2021-2024 model window.
+  \item Stronger performance claims require broader and licensed data.
+\end{itemize}
+\end{frame}
+
+% 8
+\begin{frame}{What Has Been Built}
+\begin{itemize}
+  \item Data ingestion for synthetic and real OHLCV data.
+  \item Feature engineering for technical and contextual features.
+  \item A Gymnasium-compatible trading environment.
+  \item DRL training, baselines, evaluation, plots, and result aggregation.
+  \item HPC job scripts and repeatable validation commands.
+\end{itemize}
+\end{frame}
+
+% 9
+\begin{frame}{Main Project Folder}
+\begin{itemize}
+  \item HPC working folder:
+  \item \texttt{/lustrefs/project/25sfcs03/drl\_thai\_stock}
+  \item Local working folder:
+  \item \texttt{/Users/nathawat/Documents/final\_project\_plan}
+  \item GitHub remote:
+  \item \texttt{github.com/pppppppppppp-North/drl}
+\end{itemize}
+\end{frame}
+
+% 10
+\begin{frame}{Current Repository Shape}
+\begin{itemize}
+  \item \texttt{config/}: experiment settings.
+  \item \texttt{src/}: ingestion, features, environment, training, experiments.
+  \item \texttt{tests/}: unit and pipeline tests.
+  \item \texttt{docs/}: methodology, data sources, and artifact notes.
+  \item \texttt{slurm/}: HPC job templates.
+\end{itemize}
+\end{frame}
+
+% 11
+\begin{frame}{HPC Setup Completed}
+\begin{itemize}
+  \item BistKA project directory was created.
+  \item Python environment was created at \texttt{/lustrefs/project/25sfcs03/envs/drl\_env}.
+  \item Code, configs, docs, tests, and selected outputs were synced to HPC.
+  \item File-separation snapshots track uploaded files versus generated files.
+\end{itemize}
+\end{frame}
+
+% 12
+\begin{frame}{Latest HPC Validation}
+\begin{itemize}
+  \item Latest full HPC test suite: 53 tests passed.
+  \item Ticker-universe focused tests: 4 tests passed.
+  \item Historical sentiment importer tests: 3 tests passed.
+  \item Official macro CSV importer tests: 3 tests passed.
+  \item This means recent code additions are covered by automated tests.
+\end{itemize}
+\end{frame}
+
+% 13
+\begin{frame}{Project Phases}
+\begin{enumerate}
+  \item Build a reproducible scaffold.
+  \item Add synthetic pilot data.
+  \item Add real OHLCV starter data.
+  \item Build trading environment and baselines.
+  \item Train and compare DRL agents.
+  \item Add multi-source features and validation studies.
+\end{enumerate}
+\end{frame}
+
+% 14
+\begin{frame}{Synthetic Pilot Purpose}
+\begin{itemize}
+  \item Synthetic data was used first to test the code safely.
+  \item It avoids waiting for real data before checking the pipeline.
+  \item It verifies that training, evaluation, and plots can run end to end.
+  \item It is not used for final market conclusions.
+\end{itemize}
+\end{frame}
+
+% 15
+\begin{frame}{Synthetic Data Generator}
+\begin{itemize}
+  \item Implemented deterministic synthetic price generation.
+  \item Generates daily stock-like OHLCV rows.
+  \item Includes placeholder market return, macro change, and sentiment score.
+  \item Useful for tests and smoke runs.
+\end{itemize}
+\end{frame}
+
+% 16
+\begin{frame}{Real Starter Universe}
+\begin{itemize}
+  \item The real OHLCV starter universe has five Thai tickers.
+  \item \texttt{ADVANC.BK}, \texttt{AOT.BK}, \texttt{CPALL.BK}, \texttt{KBANK.BK}, \texttt{PTT.BK}.
+  \item Data source is Yahoo Finance through \texttt{yfinance}.
+  \item Licensed SET or SETSMART data is still preferred for final publication.
+\end{itemize}
+\end{frame}
+
+% 17
+\begin{frame}{Real OHLCV Feature Table}
+\begin{itemize}
+  \item Feature file: \texttt{data/processed/features\_real\_ohlcv.parquet}.
+  \item Rows: 4,840.
+  \item Tickers: 5.
+  \item Columns: 21.
+  \item Date range: 2021-01-04 to 2024-12-30.
+\end{itemize}
+\end{frame}
+
+% 18
+\begin{frame}{Train Validation Test Split}
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Split & Date range & Rows & Dates \\
+\midrule
+Train & 2021-01-04 to 2023-05-29 & 2900 & 580 \\
+Validation & 2023-05-30 to 2024-03-12 & 970 & 194 \\
+Test & 2024-03-13 to 2024-12-30 & 970 & 194 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+  \item The split is chronological.
+  \item Future data is not mixed into earlier training periods.
+\end{itemize}
+\end{frame}
+
+% 19
+\begin{frame}{Data Quality Checks}
+\begin{itemize}
+  \item Data-quality reports were generated for the real feature tables.
+  \item Ticker coverage and missingness are tracked.
+  \item The real OHLCV starter table has complete five-ticker panel coverage.
+  \item Leakage checks verify duplicate rows and split boundaries.
+\end{itemize}
+\end{frame}
+
+% 20
+\begin{frame}{Data Manifest}
+\begin{itemize}
+  \item \texttt{data/data\_manifest.csv} records source provenance.
+  \item It records access method, frequency, date range, symbols, columns, and missing-value rate.
+  \item It separates synthetic, Yahoo, BOT, and user-provided import paths.
+  \item This improves reproducibility and honesty about source limits.
+\end{itemize}
+\end{frame}
+
+% 21
+\begin{frame}{Ticker Universe CSV Support}
+\begin{itemize}
+  \item Added \texttt{src/data/ticker\_universe.py}.
+  \item Real ingesters can now read tickers from a CSV or text file.
+  \item This avoids hard-coding all tickers in YAML.
+  \item It prepares the project for a broader SET50 or licensed universe file.
+\end{itemize}
+\end{frame}
+
+% 22
+\begin{frame}{Starter Universe CSV}
+\begin{itemize}
+  \item Added \texttt{data/reference/thai\_starter\_universe.csv}.
+  \item It contains the current five starter tickers.
+  \item Added example config \texttt{config/real\_ohlcv\_universe\_csv.yaml}.
+  \item The same mechanism can load a larger curated ticker list later.
+\end{itemize}
+\end{frame}
+
+% 23
+\begin{frame}{Technical Features}
+\begin{itemize}
+  \item 1-day, 5-day, and 20-day returns.
+  \item 20-day rolling volatility.
+  \item 10-day and 30-day moving-average ratios.
+  \item RSI, MACD, Bollinger z-score, ATR, and volume ratio.
+\end{itemize}
+\end{frame}
+
+% 24
+\begin{frame}{Why Technical Features Are Used}
+\begin{itemize}
+  \item Raw prices alone are hard for a model to interpret.
+  \item Returns describe recent price movement.
+  \item Volatility describes risk.
+  \item Momentum indicators describe trend and overbought or oversold behavior.
+\end{itemize}
+\end{frame}
+
+% 25
+\begin{frame}{SET Market Context}
+\begin{itemize}
+  \item Added SET index ingestion using \texttt{\^{}SET.BK}.
+  \item Raw file: \texttt{data/raw/prices\_market\_indices.csv}.
+  \item Merged file: \texttt{features\_real\_ohlcv\_market.parquet}.
+  \item This gives each stock a market-wide context.
+\end{itemize}
+\end{frame}
+
+% 26
+\begin{frame}{SET Index Features}
+\begin{itemize}
+  \item \texttt{set\_return\_1d}.
+  \item \texttt{set\_return\_5d}.
+  \item \texttt{set\_return\_20d}.
+  \item \texttt{set\_volatility\_20d}.
+  \item \texttt{set\_ma\_ratio\_20}.
+\end{itemize}
+\end{frame}
+
+% 27
+\begin{frame}{Sector Context}
+\begin{itemize}
+  \item Added pilot sector mapping for the five starter tickers.
+  \item Mapping file: \texttt{data/reference/sector\_mapping\_thai\_pilot.csv}.
+  \item Features include peer return, relative return, peer count, and sector flags.
+  \item This is a pilot fallback until better sector-index data is available.
+\end{itemize}
+\end{frame}
+
+% 28
+\begin{frame}{Sector Mapping}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Ticker & Sector \\
+\midrule
+ADVANC.BK & ICT \\
+AOT.BK & Transportation \\
+CPALL.BK & Commerce \\
+KBANK.BK & Banking \\
+PTT.BK & Energy \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+% 29
+\begin{frame}{Sector Index Probe}
+\begin{itemize}
+  \item Added Yahoo sector-index candidate probe.
+  \item Tested 139 candidate symbols on HPC.
+  \item Only banking symbol \texttt{\^{}BANK} was usable.
+  \item This proved that a complete public Yahoo sector-index source was not available.
+\end{itemize}
+\end{frame}
+
+% 30
+\begin{frame}{Macro Proxy Features}
+\begin{itemize}
+  \item Added Yahoo Finance macro proxy ingestion.
+  \item Series: USDTHB, Brent, WTI, gold, and US 10-year yield.
+  \item Raw file: \texttt{data/raw/prices\_macro\_yahoo.csv}.
+  \item These are proxies, not official Thai macro releases.
+\end{itemize}
+\end{frame}
+
+% 31
+\begin{frame}{Macro Proxy Merge}
+\begin{itemize}
+  \item Macro proxy values are merged by date.
+  \item Merge uses forward fill from the latest known observation.
+  \item This avoids using future observations.
+  \item Merged feature table has 4,840 rows and 68 columns.
+\end{itemize}
+\end{frame}
+
+% 32
+\begin{frame}{Fundamental Features}
+\begin{itemize}
+  \item Added Yahoo annual and quarterly financial statement ingestion.
+  \item Raw file has 8,701 statement rows.
+  \item Coverage spans five tickers and 13 period ends.
+  \item Features are merged only after a 60-day reporting lag.
+\end{itemize}
+\end{frame}
+
+% 33
+\begin{frame}{Why A Reporting Lag Matters}
+\begin{itemize}
+  \item A financial statement is not known on the exact period-end date.
+  \item Using it too early would create lookahead bias.
+  \item The project delays fundamentals by 60 days.
+  \item This is a conservative rule for pilot experiments.
+\end{itemize}
+\end{frame}
+
+% 34
+\begin{frame}{Official Macro Source Probe}
+\begin{itemize}
+  \item Added Bank of Thailand source probe.
+  \item Targeted BOTWEBSTAT Leading Economic Indicator table.
+  \item Raw file: \texttt{data/raw/bot\_official\_macro.csv}.
+  \item Release-date-aware feature merge is implemented.
+\end{itemize}
+\end{frame}
+
+% 35
+\begin{frame}{Official Macro Limitation}
+\begin{itemize}
+  \item BOT web table probe returned rows dated 2025-11-01 to 2026-04-01.
+  \item The modeling window is 2021-2024.
+  \item Therefore the probe has no historical overlap.
+  \item No official macro performance claim is made yet.
+\end{itemize}
+\end{frame}
+
+% 36
+\begin{frame}{Official Macro CSV Importer}
+\begin{itemize}
+  \item Added \texttt{src/data/ingest\_official\_macro\_csv.py}.
+  \item Supports long and wide CSV formats.
+  \item Can assign release dates when a source file lacks them.
+  \item This lets a downloaded historical BOT export enter the pipeline later.
+\end{itemize}
+\end{frame}
+
+% 37
+\begin{frame}{Sentiment Source Probe}
+\begin{itemize}
+  \item Added Yahoo latest-news probe.
+  \item Raw file: \texttt{data/raw/news\_yahoo\_latest.csv}.
+  \item It returned only 11 rows.
+  \item Dates were 2025-06-24 to 2026-03-31, outside the model window.
+\end{itemize}
+\end{frame}
+
+% 38
+\begin{frame}{Sentiment Merge Scaffold}
+\begin{itemize}
+  \item Daily sentiment extraction is implemented.
+  \item Sentiment is merged backward-only by ticker and date.
+  \item Maximum news age is seven days.
+  \item This prevents future news from leaking into earlier stock rows.
+\end{itemize}
+\end{frame}
+
+% 39
+\begin{frame}{Historical Sentiment CSV Importer}
+\begin{itemize}
+  \item Added \texttt{src/data/ingest\_sentiment\_csv.py}.
+  \item It normalizes user-provided historical news or sentiment CSV files.
+  \item It can produce event-level news and daily ticker sentiment.
+  \item It waits for a valid historical source instead of fabricating data.
+\end{itemize}
+\end{frame}
+
+% 40
+\begin{frame}{No-Lookahead Principle}
+\begin{itemize}
+  \item Features must only use information known at or before the trading date.
+  \item Market and macro proxies are backward or forward-filled from known history.
+  \item Fundamentals use a reporting lag.
+  \item News and official macro data use release dates.
+\end{itemize}
+\end{frame}
+
+% 41
+\begin{frame}{Trading Environment}
+\begin{itemize}
+  \item Implemented \texttt{ThaiStockTradingEnv}.
+  \item It follows the Gymnasium API.
+  \item The agent chooses long-only portfolio weights.
+  \item The environment tracks portfolio value through time.
+\end{itemize}
+\end{frame}
+
+% 42
+\begin{frame}{Action Space}
+\begin{itemize}
+  \item The action is a vector of weights, one per stock.
+  \item Weights are normalized into a long-only budget.
+  \item Short selling is not used in this pilot.
+  \item Cash weight is tracked separately.
+\end{itemize}
+\end{frame}
+
+% 43
+\begin{frame}{Observation Space}
+\begin{itemize}
+  \item The environment gives the model a lookback window.
+  \item The window contains the selected feature columns.
+  \item This creates a stable tensor shape for DRL algorithms.
+  \item Tests verify reset and step observation shapes.
+\end{itemize}
+\end{frame}
+
+% 44
+\begin{frame}{Portfolio Accounting}
+\begin{itemize}
+  \item The environment applies transaction costs.
+  \item It tracks net return, turnover, and drawdown.
+  \item It records per-ticker action weights.
+  \item These values are saved for evaluation and plots.
+\end{itemize}
+\end{frame}
+
+% 45
+\begin{frame}{Reward Function}
+\begin{itemize}
+  \item Reward combines return, turnover penalty, and drawdown penalty.
+  \item Current real-data settings:
+  \item \texttt{return\_weight = 1.0}
+  \item \texttt{turnover\_penalty = 0.05}
+  \item \texttt{drawdown\_penalty = 0.1}
+\end{itemize}
+\end{frame}
+
+% 46
+\begin{frame}{Why Penalize Turnover}
+\begin{itemize}
+  \item High turnover means frequent portfolio changes.
+  \item Frequent trading causes transaction costs.
+  \item A turnover penalty discourages noisy trading.
+  \item It makes the reward more realistic.
+\end{itemize}
+\end{frame}
+
+% 47
+\begin{frame}{Why Penalize Drawdown}
+\begin{itemize}
+  \item Drawdown measures loss from a previous peak.
+  \item Investors care about large losses, not only final return.
+  \item A drawdown penalty encourages risk control.
+  \item This is important for long-term portfolio optimization.
+\end{itemize}
+\end{frame}
+
+% 48
+\begin{frame}{Implemented DRL Algorithms}
+\begin{itemize}
+  \item PPO is the main algorithm.
+  \item A2C is implemented and compared.
+  \item Support paths exist for DDPG, TD3, and SAC.
+  \item PPO and A2C were the main validated comparison models.
+\end{itemize}
+\end{frame}
+
+% 49
+\begin{frame}{Why PPO}
+\begin{itemize}
+  \item PPO is widely used for continuous-control RL problems.
+  \item It is more stable than many older policy-gradient methods.
+  \item It works well with vectorized environments.
+  \item It is a reasonable first DRL baseline for portfolio allocation.
+\end{itemize}
+\end{frame}
+
+% 50
+\begin{frame}{Baselines Implemented}
+\begin{itemize}
+  \item Equal weight.
+  \item Random allocation.
+  \item Momentum.
+  \item Buy-and-hold per ticker.
+  \item Moving-average crossover.
+  \item Mean-variance.
+\end{itemize}
+\end{frame}
+
+% 51
+\begin{frame}{Why Baselines Matter}
+\begin{itemize}
+  \item A DRL model is only useful if it beats simple alternatives.
+  \item Buy-and-hold is a strong and honest benchmark.
+  \item Equal weight is simple, transparent, and hard to overfit.
+  \item Baselines keep the research conclusion grounded.
+\end{itemize}
+\end{frame}
+
+% 52
+\begin{frame}{Training Outputs}
+\begin{itemize}
+  \item Saved model files.
+  \item Equity curves.
+  \item Metric CSV files.
+  \item Action-weight logs.
+  \item TensorBoard logs and plot-ready outputs.
+\end{itemize}
+\end{frame}
+
+% 53
+\begin{frame}{Evaluation Metrics}
+\begin{itemize}
+  \item Cumulative return.
+  \item Annualized return.
+  \item Sharpe ratio.
+  \item Maximum drawdown.
+  \item Final portfolio value.
+  \item Turnover and active trading steps.
+\end{itemize}
+\end{frame}
+
+% 54
+\begin{frame}{Plotting Utility}
+\begin{itemize}
+  \item Implemented result plotting utility.
+  \item It generates equity-curve plots.
+  \item It generates drawdown plots.
+  \item It generates turnover and action-weight plots.
+  \item These are useful for report-ready figures.
+\end{itemize}
+\end{frame}
+
+% 55
+\begin{frame}{Synthetic Comparison Result}
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+Policy & Cum. return & Sharpe \\
+\midrule
+buy\_hold\_KBANK.BK & 0.580 & 3.219 \\
+ma\_crossover & 0.258 & 1.881 \\
+equal\_weight & 0.153 & 1.398 \\
+a2c & 0.167 & 1.373 \\
+ppo & -0.013 & -0.108 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+% 56
+\begin{frame}{Synthetic Result Interpretation}
+\begin{itemize}
+  \item Synthetic data confirmed the whole pipeline runs.
+  \item Some simple baselines beat PPO in the synthetic comparison.
+  \item This is acceptable because synthetic data is only a test bed.
+  \item The important result is that training, evaluation, and aggregation worked.
+\end{itemize}
+\end{frame}
+
+% 57
+\begin{frame}{Real OHLCV Main Comparison}
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Policy & Cum. return & Sharpe & Max DD \\
+\midrule
+buy\_hold\_PTT.BK & 0.044 & 0.405 & -0.103 \\
+buy\_hold\_ADVANC.BK & 0.010 & 0.097 & -0.099 \\
+equal\_weight & -0.031 & -0.417 & -0.103 \\
+a2c & -0.038 & -0.434 & -0.120 \\
+ppo & -0.036 & -0.440 & -0.066 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+% 58
+\begin{frame}{Real OHLCV Interpretation}
+\begin{itemize}
+  \item Best validation policy was buy-and-hold PTT.
+  \item PPO and A2C did not beat the strongest simple baseline.
+  \item PPO had smaller max drawdown than A2C and equal weight.
+  \item This is a useful and honest pilot outcome.
+\end{itemize}
+\end{frame}
+
+% 59
+\begin{frame}{Invalidated Run}
+\begin{itemize}
+  \item Run \texttt{real\_ohlcv\_compare\_2854} was invalidated.
+  \item Reason: an old training entrypoint regenerated synthetic data into real paths.
+  \item Corrected valid run is \texttt{real\_ohlcv\_compare\_2855}.
+  \item This was recorded clearly in the checklist and manifest.
+\end{itemize}
+\end{frame}
+
+% 60
+\begin{frame}{Hyperparameter Search}
+\begin{itemize}
+  \item Added Optuna-style trial runner and SLURM array workflow.
+  \item Search space includes learning rate, gamma, GAE lambda, entropy coefficient, rollout length, clip range, and batch size.
+  \item Fixed search run: \texttt{optuna\_search\_fixed\_2863}.
+  \item Earlier repeated-parameter search was invalidated.
+\end{itemize}
+\end{frame}
+
+% 61
+\begin{frame}{Best Short Optuna Trial}
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Trial & Algo & Sharpe & Cum. return & Max DD \\
+\midrule
+4 & PPO & 0.280 & 0.020 & -0.069 \\
+0 & PPO & -0.306 & -0.003 & -0.009 \\
+1 & A2C & -0.520 & -0.043 & -0.127 \\
+2 & PPO & -1.080 & -0.089 & -0.115 \\
+3 & A2C & -1.708 & -0.003 & -0.004 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+% 62
+\begin{frame}{Longer Tuned PPO Run}
+\begin{itemize}
+  \item Best short PPO trial was promoted into a longer config.
+  \item Longer run used 20,000 timesteps.
+  \item Result: cumulative return -0.030 and Sharpe -0.403.
+  \item The tuned parameters were not robust enough yet.
+\end{itemize}
+\end{frame}
+
+% 63
+\begin{frame}{Walk-Forward Validation}
+\begin{itemize}
+  \item Added rolling-window split generation.
+  \item Starter settings: 504 training dates, 126 validation dates, 126 test dates.
+  \item Step size is 126 dates.
+  \item First pilot ran two short PPO windows on HPC.
+\end{itemize}
+\end{frame}
+
+% 64
+\begin{frame}{Walk-Forward Pilot Results}
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+Policy & Mean cum. return & Mean Sharpe \\
+\midrule
+buy\_hold\_ADVANC.BK & 0.084 & 1.468 \\
+buy\_hold\_KBANK.BK & 0.064 & 1.157 \\
+buy\_hold\_PTT.BK & 0.041 & 0.672 \\
+equal\_weight & 0.021 & 0.633 \\
+ppo & 0.004 & 0.058 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+% 65
+\begin{frame}{Walk-Forward Interpretation}
+\begin{itemize}
+  \item Walk-forward machinery is verified.
+  \item The first PPO pilot produced small positive average test return.
+  \item Simple buy-and-hold policies still performed better.
+  \item More windows and richer data are needed for stronger conclusions.
+\end{itemize}
+\end{frame}
+
+% 66
+\begin{frame}{Ablation Study Purpose}
+\begin{itemize}
+  \item Ablations test which feature groups help.
+  \item They prevent guessing about feature value.
+  \item The pilot compared returns-only, technical, and technical-plus-context configs.
+  \item It used short 1,000-timestep PPO jobs.
+\end{itemize}
+\end{frame}
+
+% 67
+\begin{frame}{PPO Ablation Summary}
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+Feature group & Cum. return & Sharpe \\
+\midrule
+Returns only & -0.010 & -0.453 \\
+Technical + context & -0.056 & -0.824 \\
+Technical only & -0.079 & -1.611 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+% 68
+\begin{frame}{Ablation Interpretation}
+\begin{itemize}
+  \item Ablation machinery is verified.
+  \item Short PPO ablations did not beat buy-and-hold PTT.
+  \item Returns-only PPO was least negative among the three PPO ablations.
+  \item Stronger claims need broader data and longer validation.
+\end{itemize}
+\end{frame}
+
+% 69
+\begin{frame}{Regime And Stress Testing}
+\begin{itemize}
+  \item Added regime/stress-test runner.
+  \item It evaluates baselines plus saved PPO/A2C models.
+  \item It uses named market slices and high-volatility windows.
+  \item Output includes slices, metrics, equity curves, and summary report.
+\end{itemize}
+\end{frame}
+
+% 70
+\begin{frame}{Regime Test Caveat}
+\begin{itemize}
+  \item Acute 2020 COVID crash cannot be evaluated.
+  \item Reason: current real OHLCV starts on 2021-01-04.
+  \item The available COVID-related slice is COVID recovery in 2021.
+  \item This limitation is explicitly recorded.
+\end{itemize}
+\end{frame}
+
+% 71
+\begin{frame}{Best Policy By Regime}
+\begin{center}
+\begin{tabular}{llr}
+\toprule
+Regime & Best policy & Sharpe \\
+\midrule
+COVID recovery 2021 & ADVANC buy-hold & 2.376 \\
+High volatility 1 & ADVANC buy-hold & -0.735 \\
+High volatility 2 & A2C & 7.221 \\
+Inflation hike 2022 & AOT buy-hold & 1.367 \\
+Validation period & PTT buy-hold & 0.405 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+% 72
+\begin{frame}{Market-Context Pilot}
+\begin{itemize}
+  \item First short SET market-context validation run completed.
+  \item Output directory: \texttt{real\_ohlcv\_market\_pilot\_20260531}.
+  \item It verifies SET-index feature ingestion and merge.
+  \item It still does not solve sector-relative data.
+\end{itemize}
+\end{frame}
+
+% 73
+\begin{frame}{Sector-Context Pilot}
+\begin{itemize}
+  \item First short sector-context validation run completed.
+  \item Output directory: \texttt{real\_ohlcv\_sector\_pilot\_20260531}.
+  \item PPO improved over the SET-market-context PPO pilot.
+  \item It still did not beat the PTT buy-and-hold baseline.
+\end{itemize}
+\end{frame}
+
+% 74
+\begin{frame}{Macro-Proxy Pilot}
+\begin{itemize}
+  \item First short macro-proxy validation run completed.
+  \item Output directory: \texttt{real\_ohlcv\_macro\_pilot\_20260531}.
+  \item Macro-proxy PPO improved over sector-context PPO.
+  \item It beat equal weight but not the strongest buy-and-hold baselines.
+\end{itemize}
+\end{frame}
+
+% 75
+\begin{frame}{Fundamentals Pilot}
+\begin{itemize}
+  \item First short fundamentals validation run completed.
+  \item Output directory: \texttt{real\_ohlcv\_fundamentals\_pilot\_20260531}.
+  \item PPO had lower drawdown than equal weight.
+  \item But it still did not beat PTT or ADVANC buy-and-hold.
+\end{itemize}
+\end{frame}
+
+% 76
+\begin{frame}{Sentiment Scaffold Status}
+\begin{itemize}
+  \item News probe, daily scoring, and merge paths are implemented.
+  \item Historical sentiment CSV importer is implemented and tested.
+  \item Current Yahoo latest news has no 2021-2024 overlap.
+  \item A valid historical news source is still needed.
+\end{itemize}
+\end{frame}
+
+% 77
+\begin{frame}{Official Macro Scaffold Status}
+\begin{itemize}
+  \item BOT source probe and release-date merge are implemented.
+  \item Historical official macro CSV importer is implemented and tested.
+  \item Current BOT web rows have no 2021-2024 overlap.
+  \item A historical official macro export is still needed.
+\end{itemize}
+\end{frame}
+
+% 78
+\begin{frame}{Testing Strategy}
+\begin{itemize}
+  \item Unit tests cover environment behavior and feature logic.
+  \item Ingestion tests cover source normalization.
+  \item Experiment tests cover aggregation and config logic.
+  \item HPC full-suite validation is used because local Python lacks some dependencies.
+\end{itemize}
+\end{frame}
+
+% 79
+\begin{frame}{Latest Test Progress}
+\begin{center}
+\begin{tabular}{lr}
+\toprule
+Milestone & Tests passed \\
+\midrule
+Sector-index probe & 43 \\
+Official macro CSV importer & 46 \\
+Historical sentiment CSV importer & 49 \\
+Ticker-universe CSV support & 53 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+% 80
+\begin{frame}{File Separation On HPC}
+\begin{itemize}
+  \item User asked to separate uploaded files from files already on HPC.
+  \item Added \texttt{scripts/file\_separation\_snapshot.py}.
+  \item Latest snapshot: \texttt{\_file\_separation/20260531\_231548}.
+  \item This helps distinguish code uploads from generated outputs.
+\end{itemize}
+\end{frame}
+
+% 81
+\begin{frame}{Final Archive}
+\begin{itemize}
+  \item Latest archive:
+  \item \texttt{final\_archive/20260531\_final\_project\_pilot\_with\_ticker\_universe\_csv.tar.gz}.
+  \item It contains source, configs, tests, docs, selected data, reports, and selected result outputs.
+  \item It intentionally excludes large training caches and TensorBoard event files.
+\end{itemize}
+\end{frame}
+
+% 82
+\begin{frame}{GitHub Progress}
+\begin{itemize}
+  \item Project was pushed to GitHub.
+  \item Recent commits include official macro CSV import, historical sentiment CSV import, and ticker-universe CSV support.
+  \item Latest pushed commit before this slide deck work: \texttt{56a5a52}.
+  \item Remote branch: \texttt{main}.
+\end{itemize}
+\end{frame}
+
+% 83
+\begin{frame}{Main Engineering Lesson}
+\begin{itemize}
+  \item The pipeline matters as much as the model.
+  \item Without clean data splits, leakage checks, and baselines, DRL results are easy to overstate.
+  \item This project now has a reliable experimental skeleton.
+  \item The next bottleneck is data coverage, not only model code.
+\end{itemize}
+\end{frame}
+
+% 84
+\begin{frame}{Main Modeling Lesson}
+\begin{itemize}
+  \item PPO and A2C did not beat the strongest simple baselines in the starter experiment.
+  \item This does not mean DRL is useless.
+  \item It means the current data and feature set are not enough to justify a strong DRL claim.
+  \item The result is still useful because it sets a realistic benchmark.
+\end{itemize}
+\end{frame}
+
+% 85
+\begin{frame}{What Worked Well}
+\begin{itemize}
+  \item End-to-end training and evaluation works.
+  \item Baselines are implemented and comparable.
+  \item Multi-source feature pipelines are modular.
+  \item HPC testing and archiving workflow is repeatable.
+  \item Limitations are documented instead of hidden.
+\end{itemize}
+\end{frame}
+
+% 86
+\begin{frame}{What Is Still Missing}
+\begin{itemize}
+  \item Broader curated or licensed stock universe.
+  \item Complete sector-index or constituent source.
+  \item Historical official macro source with release dates.
+  \item Historical Thai news or sentiment source.
+  \item Licensed fundamentals with stronger coverage.
+\end{itemize}
+\end{frame}
+
+% 87
+\begin{frame}{Why Results Are Called Pilot Results}
+\begin{itemize}
+  \item Only five real tickers are active.
+  \item Some feature groups are scaffolds because historical source data is missing.
+  \item Short 1,000-timestep pilots verify wiring, not final performance.
+  \item The project is ready for stronger experiments once data improves.
+\end{itemize}
+\end{frame}
+
+% 88
+\begin{frame}{Data Sources Completed}
+\begin{itemize}
+  \item Synthetic pilot prices.
+  \item Yahoo real OHLCV starter data.
+  \item Yahoo SET index data.
+  \item Yahoo macro proxy data.
+  \item Yahoo statement fundamentals.
+  \item Yahoo latest-news probe.
+  \item BOT official macro probe.
+\end{itemize}
+\end{frame}
+
+% 89
+\begin{frame}{Import Paths Completed}
+\begin{itemize}
+  \item OHLCV ingestion.
+  \item Market index ingestion.
+  \item Macro proxy ingestion.
+  \item Fundamentals ingestion.
+  \item Latest-news probe.
+  \item Historical sentiment CSV import.
+  \item Historical official macro CSV import.
+  \item Ticker-universe CSV import.
+\end{itemize}
+\end{frame}
+
+% 90
+\begin{frame}{Experiment Paths Completed}
+\begin{itemize}
+  \item Single training run.
+  \item Algorithm comparison.
+  \item Baseline evaluation.
+  \item Hyperparameter search.
+  \item Walk-forward pilot.
+  \item Ablation pilot.
+  \item Regime and stress tests.
+\end{itemize}
+\end{frame}
+
+% 91
+\begin{frame}{Report Artifacts Completed}
+\begin{itemize}
+  \item Final methodology/results markdown report.
+  \item Final methodology/results LaTeX report.
+  \item Data source documentation.
+  \item Final artifact manifest.
+  \item Progress checklist.
+  \item Data-quality reports and selected figures.
+\end{itemize}
+\end{frame}
+
+% 92
+\begin{frame}{How To Explain The Result Simply}
+\begin{itemize}
+  \item The system works.
+  \item The model is not yet better than simple buy-and-hold.
+  \item The experiment is honest about this.
+  \item The next improvement should focus on better and broader data.
+\end{itemize}
+\end{frame}
+
+% 93
+\begin{frame}{Recommended Next Step 1}
+\begin{itemize}
+  \item Replace the five-ticker starter universe with a broader curated list.
+  \item Use the new ticker-universe CSV support.
+  \item Rebuild OHLCV and feature tables.
+  \item Re-run data-quality and leakage checks before training.
+\end{itemize}
+\end{frame}
+
+% 94
+\begin{frame}{Recommended Next Step 2}
+\begin{itemize}
+  \item Replace pilot sector mapping with a complete sector or constituent source.
+  \item Then rebuild sector-relative features.
+  \item This will make sector-relative signals more meaningful.
+  \item It will also support broader universe experiments.
+\end{itemize}
+\end{frame}
+
+% 95
+\begin{frame}{Recommended Next Step 3}
+\begin{itemize}
+  \item Obtain historical official macro data with release dates.
+  \item Use the official macro CSV importer.
+  \item Rebuild official macro feature tables.
+  \item Only then run official macro ablations.
+\end{itemize}
+\end{frame}
+
+% 96
+\begin{frame}{Recommended Next Step 4}
+\begin{itemize}
+  \item Obtain historical Thai news, disclosures, or sentiment scores.
+  \item Use the historical sentiment CSV importer.
+  \item Build daily ticker-level sentiment.
+  \item Re-run sentiment feature merge and ablations.
+\end{itemize}
+\end{frame}
+
+% 97
+\begin{frame}{Recommended Next Step 5}
+\begin{itemize}
+  \item Expand walk-forward validation after better data is connected.
+  \item Use more windows and longer training jobs.
+  \item Compare PPO/A2C with every baseline in each window.
+  \item Report average and per-window stability.
+\end{itemize}
+\end{frame}
+
+% 98
+\begin{frame}{Final Takeaway}
+\begin{itemize}
+  \item The project now has a working, tested, reproducible pilot pipeline.
+  \item It includes data ingestion, features, DRL training, baselines, and evaluation.
+  \item Current DRL results do not beat the strongest simple baseline.
+  \item This is a strong foundation for the next data-driven experiment.
+\end{itemize}
+\end{frame}
+
+% 99
+\begin{frame}{What To Say In A Presentation}
+\begin{itemize}
+  \item "We built the full experimental system first."
+  \item "We tested it on synthetic data and real Thai starter data."
+  \item "We compared DRL with simple but strong baselines."
+  \item "The honest result is that better data is needed before claiming DRL superiority."
+\end{itemize}
+\end{frame}
+
+% 100
+\begin{frame}{End}
+\begin{itemize}
+  \item Thank you.
+  \item Full project code, configs, tests, reports, and archive paths are documented.
+  \item Latest verified HPC test count: 53 passed.
+  \item Latest final archive includes ticker-universe CSV support.
+\end{itemize}
+\end{frame}
+
+\end{document}
