@@ -30,6 +30,8 @@ This manifest lists the current pilot artifacts for the Thai stock DRL project o
 | Full external-data rebuild guide | `docs/full_external_rebuild.md` |
 | BistKA sync status and verified handoff | `hpc/hpc_sync_status.md` |
 | External source-readiness report | `reports/source_readiness.csv` |
+| External intake validation CSV report | `reports/external_intake_validation.csv` |
+| External intake validation Markdown report | `reports/external_intake_validation.md` |
 | Real OHLCV data-quality report | `reports/data_quality/real_ohlcv_data_quality.md` |
 | Ticker coverage CSV | `reports/data_quality/ticker_coverage.csv` |
 | Column missingness CSV | `reports/data_quality/column_missingness.csv` |

@@ -62,7 +62,9 @@ Run:
 
 ```bash
 python -m src.data.source_readiness --output reports/source_readiness.csv
-python -m src.data.intake_validation --output reports/external_intake_validation.csv
+python -m src.data.intake_validation \
+  --output reports/external_intake_validation.csv \
+  --markdown-output reports/external_intake_validation.md
 ```
 
 If provider files are being staged outside the default paths, pass explicit paths:
@@ -77,7 +79,8 @@ python -m src.data.intake_validation \
   --manifest data/external/external_data_manifest.csv \
   --start 2021-01-01 \
   --end 2024-12-31 \
-  --output reports/external_intake_validation.csv
+  --output reports/external_intake_validation.csv \
+  --markdown-output reports/external_intake_validation.md
 ```
 
 Acceptance criteria:
@@ -85,6 +88,7 @@ Acceptance criteria:
 - command exits with status `0`,
 - every row in `reports/source_readiness.csv` has `ready=True`,
 - every row in `reports/external_intake_validation.csv` has `passed=True`,
+- `reports/external_intake_validation.md` summarizes the same checks as `PASS`,
 - no required file is empty,
 - no required column is missing.
 
@@ -115,7 +119,9 @@ Before describing results as a full SET50/SET100 study, run:
 
 ```bash
 python -m src.data.source_readiness --output reports/source_readiness.csv
-python -m src.data.intake_validation --output reports/external_intake_validation.csv
+python -m src.data.intake_validation \
+  --output reports/external_intake_validation.csv \
+  --markdown-output reports/external_intake_validation.md
 python -m pytest -q
 python -m src.data.quality_report \
   --config config/real_ohlcv_full_external.yaml \

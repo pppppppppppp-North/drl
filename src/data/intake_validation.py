@@ -181,6 +181,38 @@ def _write_report_csv(report: list[dict[str, object]], output: Path) -> None:
         writer.writerows(report)
 
 
+def format_markdown_report(report: list[dict[str, object]], *, start: date = DEFAULT_START, end: date = DEFAULT_END) -> str:
+    passed = sum(1 for row in report if bool(row["passed"]))
+    total = len(report)
+    status = "PASS" if passed == total else "FAIL"
+    lines = [
+        "# External Intake Validation Report",
+        "",
+        f"Validation window: `{start.isoformat()}` to `{end.isoformat()}`",
+        "",
+        f"Summary: `{status}` ({passed}/{total} checks passed)",
+        "",
+        "| check | status | detail |",
+        "| --- | --- | --- |",
+    ]
+    for row in report:
+        row_status = "PASS" if bool(row["passed"]) else "FAIL"
+        lines.append(f"| `{row['check']}` | {row_status} | {row['detail']} |")
+    if passed != total:
+        lines.extend(
+            [
+                "",
+                "Claim boundary: keep reporting this as a reproducible five-ticker Thai equity DRL pilot until all intake checks pass.",
+            ]
+        )
+    return "\n".join(lines) + "\n"
+
+
+def _write_report_markdown(report: list[dict[str, object]], output: Path, *, start: date, end: date) -> None:
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(format_markdown_report(report, start=start, end=end), encoding="utf-8")
+
+
 def _format_report(report: list[dict[str, object]]) -> str:
     lines = ["check,passed,detail"]
     lines.extend(f"{row['check']},{row['passed']},{row['detail']}" for row in report)
@@ -208,6 +240,7 @@ def main() -> None:
         help="End date for overlap checks. Defaults to 2024-12-31.",
     )
     parser.add_argument("--output", default=None, help="Optional CSV path for the intake validation report.")
+    parser.add_argument("--markdown-output", default=None, help="Optional Markdown path for the intake validation report.")
     args = parser.parse_args()
 
     if args.start > args.end:
@@ -227,6 +260,8 @@ def main() -> None:
     )
     if args.output:
         _write_report_csv(report, Path(args.output))
+    if args.markdown_output:
+        _write_report_markdown(report, Path(args.markdown_output), start=args.start, end=args.end)
     print(_format_report(report))
     if not all(bool(row["passed"]) for row in report):
         raise SystemExit(1)

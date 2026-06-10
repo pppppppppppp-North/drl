@@ -103,9 +103,12 @@ test -f docs/external_data_handoff.md
 test -f comprehensive_introduction_literature_review.pdf
 
 python -m src.data.source_readiness --output reports/source_readiness.csv
+python -m src.data.intake_validation \
+  --output reports/external_intake_validation.csv \
+  --markdown-output reports/external_intake_validation.md
 ```
 
-The source-readiness command is expected to exit nonzero until the five required external files are provided. That failure is currently a correct readiness signal, not a code failure.
+The source-readiness and intake-validation commands are expected to exit nonzero until the five required external files are provided. That failure is currently a correct readiness signal, not a code failure.
 
 ## Current Boundary
 

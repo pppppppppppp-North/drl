@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 from datetime import date
 
-from src.data.intake_validation import IntakePaths, validate_external_intake
+from src.data.intake_validation import IntakePaths, format_markdown_report, validate_external_intake
 
 
 def _write_csv(path, rows: list[dict[str, object]]) -> None:
@@ -76,3 +76,24 @@ def test_validate_external_intake_honors_custom_window(tmp_path) -> None:
 
     assert bool(macro_check["passed"]) is False
     assert macro_check["detail"] == "2021-01-31 to 2021-01-31"
+
+
+def test_format_markdown_report_summarizes_all_pass(tmp_path) -> None:
+    report = validate_external_intake(_valid_paths(tmp_path))
+
+    markdown = format_markdown_report(report)
+
+    assert "Summary: `PASS`" in markdown
+    assert "Claim boundary" not in markdown
+    assert "| `sector_covers_universe` | PASS | tickers=1 |" in markdown
+
+
+def test_format_markdown_report_includes_claim_boundary_on_failure(tmp_path) -> None:
+    paths = _valid_paths(tmp_path)
+    paths.manifest.unlink()
+
+    markdown = format_markdown_report(validate_external_intake(paths))
+
+    assert "Summary: `FAIL`" in markdown
+    assert "Claim boundary" in markdown
+    assert "| `external_manifest_file` | FAIL |" in markdown
