@@ -49,6 +49,13 @@ def _parse_date(value: str) -> date | None:
     return None
 
 
+def _parse_required_date(value: str, *, argument: str) -> date:
+    parsed = _parse_date(value)
+    if parsed is None:
+        raise argparse.ArgumentTypeError(f"{argument} must be a date like YYYY-MM-DD")
+    return parsed
+
+
 def _date_values(rows: list[dict[str, str]], columns: tuple[str, ...]) -> list[date]:
     values: list[date] = []
     for row in rows:
@@ -182,10 +189,42 @@ def _format_report(report: list[dict[str, object]]) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--universe", default=IntakePaths.universe, type=Path)
+    parser.add_argument("--sector-mapping", default=IntakePaths.sector_mapping, type=Path)
+    parser.add_argument("--official-macro", default=IntakePaths.official_macro, type=Path)
+    parser.add_argument("--historical-news", default=IntakePaths.historical_news, type=Path)
+    parser.add_argument("--fundamentals", default=IntakePaths.fundamentals, type=Path)
+    parser.add_argument("--manifest", default=IntakePaths.manifest, type=Path)
+    parser.add_argument(
+        "--start",
+        default=DEFAULT_START,
+        type=lambda value: _parse_required_date(value, argument="--start"),
+        help="Start date for overlap checks. Defaults to 2021-01-01.",
+    )
+    parser.add_argument(
+        "--end",
+        default=DEFAULT_END,
+        type=lambda value: _parse_required_date(value, argument="--end"),
+        help="End date for overlap checks. Defaults to 2024-12-31.",
+    )
     parser.add_argument("--output", default=None, help="Optional CSV path for the intake validation report.")
     args = parser.parse_args()
 
-    report = validate_external_intake()
+    if args.start > args.end:
+        parser.error("--start must be on or before --end")
+
+    report = validate_external_intake(
+        IntakePaths(
+            universe=args.universe,
+            sector_mapping=args.sector_mapping,
+            official_macro=args.official_macro,
+            historical_news=args.historical_news,
+            fundamentals=args.fundamentals,
+            manifest=args.manifest,
+        ),
+        start=args.start,
+        end=args.end,
+    )
     if args.output:
         _write_report_csv(report, Path(args.output))
     print(_format_report(report))

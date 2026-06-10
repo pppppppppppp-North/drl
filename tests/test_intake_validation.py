@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+from datetime import date
 
 from src.data.intake_validation import IntakePaths, validate_external_intake
 
@@ -65,3 +66,13 @@ def test_validate_external_intake_reports_missing_manifest_file(tmp_path) -> Non
     manifest_check = next(row for row in report if row["check"] == "external_manifest_file")
 
     assert bool(manifest_check["passed"]) is False
+
+
+def test_validate_external_intake_honors_custom_window(tmp_path) -> None:
+    paths = _valid_paths(tmp_path)
+
+    report = validate_external_intake(paths, start=date(2022, 1, 1), end=date(2022, 12, 31))
+    macro_check = next(row for row in report if row["check"] == "official_macro_overlaps_window")
+
+    assert bool(macro_check["passed"]) is False
+    assert macro_check["detail"] == "2021-01-31 to 2021-01-31"

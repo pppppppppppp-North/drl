@@ -65,6 +65,21 @@ python -m src.data.source_readiness --output reports/source_readiness.csv
 python -m src.data.intake_validation --output reports/external_intake_validation.csv
 ```
 
+If provider files are being staged outside the default paths, pass explicit paths:
+
+```bash
+python -m src.data.intake_validation \
+  --universe data/reference/set50_or_set100_universe.csv \
+  --sector-mapping data/reference/sector_mapping.csv \
+  --official-macro data/external/bot_historical_macro.csv \
+  --historical-news data/external/historical_news.csv \
+  --fundamentals data/external/fundamentals.csv \
+  --manifest data/external/external_data_manifest.csv \
+  --start 2021-01-01 \
+  --end 2024-12-31 \
+  --output reports/external_intake_validation.csv
+```
+
 Acceptance criteria:
 
 - command exits with status `0`,
