@@ -114,6 +114,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` External data intake Markdown report synced and verified on BistKA on 2026-06-10; it correctly reports missing provider files in `reports/external_intake_validation.md`.
 - `[x]` Comprehensive 100-frame Beamer presentation drafted locally and synced to HPC: `final_project_beamer_100_pages.tex`.
 - `[x]` Comprehensive 100-frame Beamer presentation compiled locally: `final_project_beamer_100_pages.pdf`.
+- `[x]` Comprehensive 100-frame Beamer presentation refreshed on 2026-06-10 with external-data handoff, intake validation, Markdown report, and current blocker status; local PDF verification shows 100 pages.
 - `[x]` Final pilot archive created on HPC: `final_archive/20260530_final_project_pilot.tar.gz`.
 - `[x]` Updated final pilot archive with walk-forward, ablation, and regime/stress-test artifacts: `final_archive/20260531_final_project_pilot.tar.gz`.
 - `[x]` Updated final pilot archive with SET market-context artifacts: `final_archive/20260531_final_project_pilot_with_set_context.tar.gz`.
