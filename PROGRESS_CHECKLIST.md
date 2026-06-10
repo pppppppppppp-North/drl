@@ -111,6 +111,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[x]` External data intake validation CLI synced to BistKA on 2026-06-10; it correctly reports missing provider files in `reports/external_intake_validation.csv`.
 - `[x]` External data intake validation CLI extended with explicit path and date-window arguments.
 - `[x]` External data intake validation CLI extended with Markdown report output.
+- `[x]` External data intake Markdown report synced and verified on BistKA on 2026-06-10; it correctly reports missing provider files in `reports/external_intake_validation.md`.
 - `[x]` Comprehensive 100-frame Beamer presentation drafted locally and synced to HPC: `final_project_beamer_100_pages.tex`.
 - `[x]` Comprehensive 100-frame Beamer presentation compiled locally: `final_project_beamer_100_pages.pdf`.
 - `[x]` Final pilot archive created on HPC: `final_archive/20260530_final_project_pilot.tar.gz`.
