@@ -47,9 +47,12 @@ tar -xzf /tmp/drl_main_latest.tgz --strip-components=1 \
   drl-main/docs/final_artifacts_manifest.md \
   drl-main/docs/data_sources.md \
   drl-main/docs/external_data_handoff.md \
+  drl-main/docs/external_data_provider_request.md \
+  drl-main/docs/external_data_intake_checklist.md \
   drl-main/docs/full_external_rebuild.md \
   drl-main/hpc/hpc_sync_status.md \
   drl-main/config/real_ohlcv_full_external.yaml \
+  drl-main/data/reference/external_data_manifest_template.csv \
   drl-main/src/data/source_readiness.py \
   drl-main/tests/test_source_readiness.py \
   drl-main/data/reference/set50_or_set100_universe_template.csv \
@@ -81,6 +84,9 @@ The latest sync copied the documentation and readiness artifacts needed to conti
 - `docs/data_sources.md`
 - `docs/full_external_rebuild.md`
 - `config/real_ohlcv_full_external.yaml`
+- `docs/external_data_provider_request.md`
+- `docs/external_data_intake_checklist.md`
+- `data/reference/external_data_manifest_template.csv`
 
 ## Verification Commands
 

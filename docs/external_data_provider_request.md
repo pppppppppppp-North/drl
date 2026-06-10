@@ -81,6 +81,12 @@ Then run the full rebuild guide:
 docs/full_external_rebuild.md
 ```
 
+For local intake, manifest, and acceptance steps after the provider sends files, use:
+
+```text
+docs/external_data_intake_checklist.md
+```
+
 ## Email Template
 
 Subject:

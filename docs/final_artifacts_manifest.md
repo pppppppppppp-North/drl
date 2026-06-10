@@ -24,6 +24,8 @@ This manifest lists the current pilot artifacts for the Thai stock DRL project o
 | Data source notes | `docs/data_sources.md` |
 | External data handoff guide | `docs/external_data_handoff.md` |
 | External data provider request packet | `docs/external_data_provider_request.md` |
+| External data intake checklist | `docs/external_data_intake_checklist.md` |
+| External data manifest template | `data/reference/external_data_manifest_template.csv` |
 | Full external-data rebuild guide | `docs/full_external_rebuild.md` |
 | BistKA sync status and verified handoff | `hpc/hpc_sync_status.md` |
 | External source-readiness report | `reports/source_readiness.csv` |

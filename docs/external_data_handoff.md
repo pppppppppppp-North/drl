@@ -4,7 +4,7 @@ Last updated: 2026-06-09
 
 This guide turns the remaining project blockers into a concrete data handoff workflow. The current implementation is a reproducible five-ticker pilot. A full SET50/SET100 study requires external files that are not currently available in the repository.
 
-For a provider-facing request packet and email template, see `docs/external_data_provider_request.md`.
+For a provider-facing request packet and email template, see `docs/external_data_provider_request.md`. After files are received, use `docs/external_data_intake_checklist.md`.
 
 ## Required Files
 
@@ -42,8 +42,9 @@ The command exits with status `1` while any required file is missing, empty, or 
 8. Save the sentiment/news file as `data/external/historical_news.csv`.
 9. Export licensed fundamentals with period-end and report/effective-date metadata when available.
 10. Save fundamentals as `data/external/fundamentals.csv`.
-11. Run the readiness check.
-12. Update `data/data_manifest.csv` with access method, license note, date range, symbols, columns, and missing-value rate.
+11. Fill `data/external/external_data_manifest.csv` from `data/reference/external_data_manifest_template.csv`.
+12. Run the readiness check.
+13. Update `data/data_manifest.csv` with access method, license note, date range, symbols, columns, and missing-value rate.
 
 ## Rebuild Commands
 
