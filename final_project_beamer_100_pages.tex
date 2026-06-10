@@ -16,7 +16,7 @@
 \subtitle{Comprehensive 100-Slide Project Summary}
 \author{Final Project Progress Report}
 \institute{BistKA HPC Project: \texttt{/lustrefs/project/25sfcs03/drl\_thai\_stock}}
-\date{June 9, 2026}
+\date{June 10, 2026}
 
 \begin{document}
 
@@ -70,8 +70,9 @@
 \begin{itemize}
   \item Local repository scaffold is complete.
   \item HPC project directory and conda environment are complete.
-  \item Latest verified HPC test suite passed with 53 tests.
-  \item Final archive with ticker-universe CSV support has been created on HPC.
+  \item Latest full local validation passed with 53 tests on Python 3.11.
+  \item External data handoff, intake, and validation gates are implemented.
+  \item Latest documentation and validation artifacts are synced to BistKA.
 \end{itemize}
 \end{frame}
 
@@ -92,7 +93,7 @@
   \item Feature engineering for technical and contextual features.
   \item A Gymnasium-compatible trading environment.
   \item DRL training, baselines, evaluation, plots, and result aggregation.
-  \item HPC job scripts and repeatable validation commands.
+  \item HPC job scripts, external-data gates, and repeatable validation commands.
 \end{itemize}
 \end{frame}
 
@@ -136,7 +137,7 @@
   \item Ticker-universe focused tests: 4 tests passed.
   \item Historical sentiment importer tests: 3 tests passed.
   \item Official macro CSV importer tests: 3 tests passed.
-  \item This means recent code additions are covered by automated tests.
+  \item Source-readiness and intake-validation gates run on BistKA.
 \end{itemize}
 \end{frame}
 
@@ -228,7 +229,7 @@ Test & 2024-03-13 to 2024-12-30 & 970 & 194 \\
   \item \texttt{data/data\_manifest.csv} records source provenance.
   \item It records access method, frequency, date range, symbols, columns, and missing-value rate.
   \item It separates synthetic, Yahoo, BOT, and user-provided import paths.
-  \item This improves reproducibility and honesty about source limits.
+  \item A provider manifest template now supports future licensed-data intake.
 \end{itemize}
 \end{frame}
 
@@ -907,8 +908,8 @@ Ticker-universe CSV support & 53 \\
 \begin{frame}{GitHub Progress}
 \begin{itemize}
   \item Project was pushed to GitHub.
-  \item Recent commits include official macro CSV import, historical sentiment CSV import, and ticker-universe CSV support.
-  \item Latest pushed commit before this slide deck work: \texttt{56a5a52}.
+  \item Recent commits include full external config, provider request, intake checklist, and intake validator.
+  \item Latest pushed commit before this slide refresh: \texttt{5eaab95}.
   \item Remote branch: \texttt{main}.
 \end{itemize}
 \end{frame}
@@ -952,6 +953,7 @@ Ticker-universe CSV support & 53 \\
   \item Historical official macro source with release dates.
   \item Historical Thai news or sentiment source.
   \item Licensed fundamentals with stronger coverage.
+  \item These are now explicit provider-file blockers, not unknown code tasks.
 \end{itemize}
 \end{frame}
 
@@ -975,6 +977,7 @@ Ticker-universe CSV support & 53 \\
   \item Yahoo statement fundamentals.
   \item Yahoo latest-news probe.
   \item BOT official macro probe.
+  \item External data templates for the five missing provider files.
 \end{itemize}
 \end{frame}
 
@@ -989,6 +992,7 @@ Ticker-universe CSV support & 53 \\
   \item Historical sentiment CSV import.
   \item Historical official macro CSV import.
   \item Ticker-universe CSV import.
+  \item External intake validation for provider-file packages.
 \end{itemize}
 \end{frame}
 
@@ -1010,10 +1014,11 @@ Ticker-universe CSV support & 53 \\
 \begin{itemize}
   \item Final methodology/results markdown report.
   \item Final methodology/results LaTeX report.
+  \item Comprehensive introduction/literature-review PDF.
+  \item External data handoff, provider request, and intake checklist.
   \item Data source documentation.
   \item Final artifact manifest.
-  \item Progress checklist.
-  \item Data-quality reports and selected figures.
+  \item Intake validation CSV and Markdown reports.
 \end{itemize}
 \end{frame}
 
@@ -1031,9 +1036,9 @@ Ticker-universe CSV support & 53 \\
 \begin{frame}{Recommended Next Step 1}
 \begin{itemize}
   \item Replace the five-ticker starter universe with a broader curated list.
-  \item Use the new ticker-universe CSV support.
-  \item Rebuild OHLCV and feature tables.
-  \item Re-run data-quality and leakage checks before training.
+  \item Save it at \texttt{data/reference/set50\_or\_set100\_universe.csv}.
+  \item Run source-readiness and intake-validation gates.
+  \item Only then rebuild OHLCV and feature tables.
 \end{itemize}
 \end{frame}
 
@@ -1070,10 +1075,10 @@ Ticker-universe CSV support & 53 \\
 % 97
 \begin{frame}{Recommended Next Step 5}
 \begin{itemize}
-  \item Expand walk-forward validation after better data is connected.
-  \item Use more windows and longer training jobs.
-  \item Compare PPO/A2C with every baseline in each window.
-  \item Report average and per-window stability.
+  \item Follow \texttt{docs/full\_external\_rebuild.md}.
+  \item Produce CSV and Markdown intake-validation reports.
+  \item Run broader ablations, walk-forward validation, and regime tests.
+  \item Report average, per-window stability, and failure cases.
 \end{itemize}
 \end{frame}
 
@@ -1102,8 +1107,9 @@ Ticker-universe CSV support & 53 \\
 \begin{itemize}
   \item Thank you.
   \item Full project code, configs, tests, reports, and archive paths are documented.
-  \item Latest verified HPC test count: 53 passed.
-  \item Latest final archive includes ticker-universe CSV support.
+  \item Latest verified full test count: 53 passed.
+  \item Current blocker: five external provider files.
+  \item Current status: reproducible pilot plus complete data handoff workflow.
 \end{itemize}
 \end{frame}
 
