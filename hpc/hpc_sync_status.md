@@ -54,6 +54,8 @@ tar -xzf /tmp/drl_main_latest.tgz --strip-components=1 \
   drl-main/config/real_ohlcv_full_external.yaml \
   drl-main/data/reference/external_data_manifest_template.csv \
   drl-main/src/data/source_readiness.py \
+  drl-main/src/data/intake_validation.py \
+  drl-main/tests/test_intake_validation.py \
   drl-main/tests/test_source_readiness.py \
   drl-main/data/reference/set50_or_set100_universe_template.csv \
   drl-main/data/reference/sector_mapping_template.csv \
@@ -87,6 +89,8 @@ The latest sync copied the documentation and readiness artifacts needed to conti
 - `docs/external_data_provider_request.md`
 - `docs/external_data_intake_checklist.md`
 - `data/reference/external_data_manifest_template.csv`
+- `src/data/intake_validation.py`
+- `tests/test_intake_validation.py`
 
 ## Verification Commands
 

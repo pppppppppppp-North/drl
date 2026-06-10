@@ -93,6 +93,7 @@ After rebuilding:
 
 ```bash
 python -m src.data.source_readiness --output reports/source_readiness.csv
+python -m src.data.intake_validation --output reports/external_intake_validation.csv
 python -m pytest -q
 python -m src.data.quality_report \
   --config config/real_ohlcv_full_external.yaml \
