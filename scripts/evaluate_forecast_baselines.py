@@ -28,9 +28,11 @@ from src.agents.predictive_baselines import LSTMForecaster, sequence_forecaster_
 
 
 def fold_splits(year: int, validation_end_limit: str) -> dict[str, str]:
-    if pd.Timestamp(f"{year}-12-31") > pd.Timestamp(validation_end_limit):
-        raise SystemExit(f"fold {year} would read past the configured validation end {validation_end_limit}")
-    return {"train_end": f"{year - 1}-12-31", "validation_start": f"{year}-01-01", "validation_end": f"{year}-12-31"}
+    limit = pd.Timestamp(validation_end_limit)
+    if pd.Timestamp(f"{year}-01-01") > limit:
+        raise SystemExit(f"fold {year} starts after the configured validation end {validation_end_limit}")
+    fold_end = min(pd.Timestamp(f"{year}-12-31"), limit)
+    return {"train_end": f"{year - 1}-12-31", "validation_start": f"{year}-01-01", "validation_end": fold_end.date().isoformat()}
 
 
 def main() -> None:

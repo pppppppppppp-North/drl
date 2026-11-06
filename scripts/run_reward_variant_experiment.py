@@ -182,12 +182,14 @@ def main() -> None:
     spec = yaml.safe_load(Path(args.config).read_text())
     if args.fold_year is not None:
         limit = pd.Timestamp(spec["splits"]["validation_end"])
-        if pd.Timestamp(f"{args.fold_year}-12-31") > limit:
-            raise SystemExit(f"--fold-year {args.fold_year} would read past the configured validation end {limit.date()}")
+        if pd.Timestamp(f"{args.fold_year}-01-01") > limit:
+            raise SystemExit(f"--fold-year {args.fold_year} starts after the configured validation end {limit.date()}")
+        # The fold never reads past the configured validation end (the last session before the test years).
+        fold_end = min(pd.Timestamp(f"{args.fold_year}-12-31"), limit)
         spec["splits"] = {
             "train_end": f"{args.fold_year - 1}-12-31",
             "validation_start": f"{args.fold_year}-01-01",
-            "validation_end": f"{args.fold_year}-12-31",
+            "validation_end": fold_end.date().isoformat(),
         }
     out = Path(args.output_dir)
     out.mkdir(parents=True, exist_ok=True)
