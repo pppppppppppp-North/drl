@@ -1,0 +1,59 @@
+schema_version: 1
+
+# Copy this template to a new candidate manifest. Do not edit the template in
+# place and do not point it at the locked five-ticker V2 inputs.
+package_id: REPLACE_WITH_IMMUTABLE_PACKAGE_ID
+provider: REPLACE_WITH_LICENSED_PROVIDER
+retrieved_at_utc: REPLACE_WITH_ISO_8601_TIMESTAMP
+
+license:
+  reference: REPLACE_WITH_CONTRACT_OR_LICENSE_REFERENCE
+  research_use_allowed: false
+  derived_publication_allowed: false
+  raw_redistribution_allowed: false
+
+attestations:
+  authoritative_session_calendar_complete: false
+  trading_status_complete: false
+  membership_exit_path_status_complete: false
+  corporate_actions_complete: false
+  symbol_history_complete: false
+  adjustment_method_documented: false
+  point_in_time_feature_safe: false
+
+methodology:
+  exchange_timezone: Asia/Bangkok
+  bar_timing: after_close_same_session_for_later_decision
+  price_adjustment_policy: REPLACE_WITH_PROVIDER_DOCUMENTATION
+  missing_bar_policy: never_infer_suspension_from_missing_bar
+  acquisition_universe_is_static_membership: false
+
+# Every candidate CSV must remain inside this project and be bound by its exact
+# path, SHA-256, byte count, and data-row count. The completed manifest itself
+# must also have a matching .sha256 sidecar.
+bindings:
+  bars:
+    path: data/external/v3_candidate/market_bars.csv
+    sha256: REPLACE_WITH_64_HEX_CHARACTERS
+    bytes: 0
+    rows: 0
+  trading_status:
+    path: data/external/v3_candidate/trading_status.csv
+    sha256: REPLACE_WITH_64_HEX_CHARACTERS
+    bytes: 0
+    rows: 0
+  sessions:
+    path: data/external/v3_candidate/set_sessions.csv
+    sha256: REPLACE_WITH_64_HEX_CHARACTERS
+    bytes: 0
+    rows: 0
+  corporate_actions:
+    path: data/external/v3_candidate/corporate_actions.csv
+    sha256: REPLACE_WITH_64_HEX_CHARACTERS
+    bytes: 0
+    rows: 0
+  symbol_history:
+    path: data/external/v3_candidate/symbol_history.csv
+    sha256: REPLACE_WITH_64_HEX_CHARACTERS
+    bytes: 0
+    rows: 0

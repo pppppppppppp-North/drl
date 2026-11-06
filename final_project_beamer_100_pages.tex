@@ -1,4 +1,4 @@
-\documentclass[aspectratio=169,10pt]{beamer}
+\documentclass[aspectratio=43,10pt]{beamer}
 
 \usetheme{Madrid}
 \usecolortheme{default}
@@ -11,12 +11,13 @@
 \usepackage{array}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{xurl}
 
 \title[Thai Stock DRL Project]{Deep Reinforcement Learning for Thai Stock Portfolio Allocation}
-\subtitle{Comprehensive 100-Slide Project Summary}
+\subtitle{Comprehensive Project Progress, Literature Review, Methodology, Results, and References}
 \author{Final Project Progress Report}
 \institute{BistKA HPC Project: \texttt{/lustrefs/project/25sfcs03/drl\_thai\_stock}}
-\date{June 10, 2026}
+\date{June 28, 2026}
 
 \begin{document}
 
@@ -26,6 +27,8 @@
 \end{frame}
 
 % 2
+\section{Introduction}
+
 \begin{frame}{How To Read This Deck}
 \begin{itemize}
   \item This deck explains what has been built, tested, and learned.
@@ -86,7 +89,65 @@
 \end{itemize}
 \end{frame}
 
+\section{Literature Review}
+
+\begin{frame}{Literature Review Map}
+\begin{itemize}
+  \item Classical portfolio theory defines risk-return tradeoffs and baseline evaluation.
+  \item Deep RL provides sequential decision-making methods for continuous allocation.
+  \item Financial DRL frameworks emphasize separate data, environment, and agent layers.
+  \item Thai-market work requires Thai data sources, Thai-language NLP, and careful leakage control.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Classical Portfolio And Metrics}
+\begin{itemize}
+  \item Markowitz mean-variance optimization motivates comparing return against risk.
+  \item Sharpe ratio motivates reporting risk-adjusted return rather than raw profit alone.
+  \item Equal weight, buy-and-hold, momentum, and mean-variance baselines are necessary competitors.
+  \item A DRL model is not successful unless it improves on simple transparent policies out of sample.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{DRL For Trading}
+\begin{itemize}
+  \item Trading can be written as a Markov decision process with states, actions, transitions, and rewards.
+  \item PPO is a practical policy-gradient method because clipped updates improve training stability.
+  \item Actor-critic methods such as A2C are useful comparisons for noisy financial environments.
+  \item Continuous portfolio weights are closer to portfolio allocation than discrete buy, sell, and hold labels.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Financial DRL System Design}
+\begin{itemize}
+  \item FinRL-style design separates the data layer, environment layer, and agent layer.
+  \item This project follows that separation through \texttt{src/data}, \texttt{src/features}, \texttt{src/envs}, and \texttt{src/experiments}.
+  \item The separation makes feature additions, algorithm comparisons, and validation runs easier to audit.
+  \item It also reduces the chance that one experiment accidentally mutates another experiment's data.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Thai Market And Sentiment Gap}
+\begin{itemize}
+  \item Many DRL trading studies focus on U.S. or global benchmark markets.
+  \item Thai equities add local macro, sector, disclosure, liquidity, and language constraints.
+  \item WangchanBERTa supports Thai-language feature extraction for future news and disclosure sentiment.
+  \item The current project implements sentiment scaffolding but waits for historical Thai text coverage before claiming sentiment results.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Validation Lessons From The Literature}
+\begin{itemize}
+  \item Financial ML experiments are vulnerable to random-split leakage and release-date leakage.
+  \item Chronological splits and walk-forward tests are required for credible out-of-sample claims.
+  \item Fundamentals, macro data, and news must be merged by availability date, not only observation date.
+  \item This project turns those lessons into tests, data-quality reports, and source-readiness gates.
+\end{itemize}
+\end{frame}
+
 % 8
+\section{Project Progress Overview}
+
 \begin{frame}{What Has Been Built}
 \begin{itemize}
   \item Data ingestion for synthetic and real OHLCV data.
@@ -142,6 +203,8 @@
 \end{frame}
 
 % 13
+\section{Data And Feature Progress}
+
 \begin{frame}{Project Phases}
 \begin{enumerate}
   \item Build a reproducible scaffold.
@@ -432,6 +495,8 @@ PTT.BK & Energy \\
 \end{frame}
 
 % 40
+\section{Methodology}
+
 \begin{frame}{No-Lookahead Principle}
 \begin{itemize}
   \item Features must only use information known at or before the trading date.
@@ -589,6 +654,8 @@ PTT.BK & Energy \\
 \end{frame}
 
 % 55
+\section{Results}
+
 \begin{frame}{Synthetic Comparison Result}
 \begin{center}
 \begin{tabular}{lrr}
@@ -859,6 +926,8 @@ Validation period & PTT buy-hold & 0.405 \\
 \end{frame}
 
 % 78
+\section{Validation And Artifacts}
+
 \begin{frame}{Testing Strategy}
 \begin{itemize}
   \item Unit tests cover environment behavior and feature logic.
@@ -889,7 +958,7 @@ Ticker-universe CSV support & 53 \\
 \begin{itemize}
   \item User asked to separate uploaded files from files already on HPC.
   \item Added \texttt{scripts/file\_separation\_snapshot.py}.
-  \item Latest snapshot: \texttt{\_file\_separation/20260531\_231548}.
+  \item Latest snapshot: \texttt{\_file\_separation/20260601\_100216}.
   \item This helps distinguish code uploads from generated outputs.
 \end{itemize}
 \end{frame}
@@ -897,8 +966,8 @@ Ticker-universe CSV support & 53 \\
 % 81
 \begin{frame}{Final Archive}
 \begin{itemize}
-  \item Latest archive:
-  \item \texttt{final\_archive/20260531\_final\_project\_pilot\_with\_ticker\_universe\_csv.tar.gz}.
+  \item Latest archive folder: \texttt{final\_archive/}.
+  \item Latest ticker-universe archive was created on 2026-05-31.
   \item It contains source, configs, tests, docs, selected data, reports, and selected result outputs.
   \item It intentionally excludes large training caches and TensorBoard event files.
 \end{itemize}
@@ -908,13 +977,15 @@ Ticker-universe CSV support & 53 \\
 \begin{frame}{GitHub Progress}
 \begin{itemize}
   \item Project was pushed to GitHub.
-  \item Recent commits include full external config, provider request, intake checklist, and intake validator.
-  \item Latest pushed commit before this slide refresh: \texttt{5eaab95}.
+  \item Recent synced work includes full external config, provider request, intake checklist, and intake validator.
+  \item BistKA was refreshed from the pushed GitHub \texttt{main} archive on 2026-06-09.
   \item Remote branch: \texttt{main}.
 \end{itemize}
 \end{frame}
 
 % 83
+\section{Discussion}
+
 \begin{frame}{Main Engineering Lesson}
 \begin{itemize}
   \item The pipeline matters as much as the model.
@@ -1023,6 +1094,8 @@ Ticker-universe CSV support & 53 \\
 \end{frame}
 
 % 92
+\section{Conclusion And Next Steps}
+
 \begin{frame}{How To Explain The Result Simply}
 \begin{itemize}
   \item The system works.
@@ -1100,6 +1173,59 @@ Ticker-universe CSV support & 53 \\
   \item "We compared DRL with simple but strong baselines."
   \item "The honest result is that better data is needed before claiming DRL superiority."
 \end{itemize}
+\end{frame}
+
+\section{References}
+
+\begin{frame}{References I}
+\scriptsize
+\begin{thebibliography}{99}
+\bibitem{markowitz}
+H. Markowitz, ``Portfolio Selection,'' \textit{The Journal of Finance}, vol. 7, no. 1, pp. 77--91, 1952.
+
+\bibitem{sharpe}
+W. F. Sharpe, ``Mutual Fund Performance,'' \textit{The Journal of Business}, vol. 39, no. 1, pp. 119--138, 1966.
+
+\bibitem{dqn}
+V. Mnih et al., ``Human-level control through deep reinforcement learning,'' \textit{Nature}, vol. 518, pp. 529--533, 2015.
+
+\bibitem{ppo}
+J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov, ``Proximal Policy Optimization Algorithms,'' arXiv:1707.06347, 2017. \url{https://arxiv.org/abs/1707.06347}
+
+\bibitem{finrl}
+X.-Y. Liu, H. Yang, J. Gao, and C. D. Wang, ``FinRL: Deep Reinforcement Learning Framework to Automate Trading in Quantitative Finance,'' ACM ICAIF, 2021. \url{https://arxiv.org/abs/2111.09395}
+\end{thebibliography}
+\end{frame}
+
+\begin{frame}{References II}
+\scriptsize
+\begin{thebibliography}{99}
+\bibitem{zhangtrading}
+Z. Zhang, S. Zohren, and S. Roberts, ``Deep Reinforcement Learning for Trading,'' arXiv:1911.10107, 2019. \url{https://arxiv.org/abs/1911.10107}
+
+\bibitem{longshort}
+G. Huang, X. Zhou, and Q. Song, ``Deep Reinforcement Learning for Long-Short Portfolio Optimization,'' arXiv:2012.13773, 2020. \url{https://arxiv.org/abs/2012.13773}
+
+\bibitem{setsmart}
+Stock Exchange of Thailand, ``SMART Marketplace.'' \url{https://www.set.or.th/th/services/connectivity-and-data/data/smart-marketplace}
+
+\bibitem{bot}
+Bank of Thailand, ``Statistics.'' \url{https://www.bot.or.th/en/statistics.html}
+\end{thebibliography}
+\end{frame}
+
+\begin{frame}{References III}
+\scriptsize
+\begin{thebibliography}{99}
+\bibitem{wangchanberta}
+L. Lowphansirikul, C. Polpanumas, N. Jantrakulchai, and S. Nutanong, ``WangchanBERTa: Pretraining transformer-based Thai Language Models,'' arXiv:2101.09635, 2021. \url{https://arxiv.org/abs/2101.09635}
+
+\bibitem{thaiabsa}
+A. T. Rutherford, S. Chueykamhang, T. Bunditlurdruk, and N. Angsuwichitkul, ``Aspect-Level Obfuscated Sentiment in Thai Financial Disclosures and Its Impact on Abnormal Returns,'' arXiv:2511.13481, 2025. \url{https://arxiv.org/abs/2511.13481}
+
+\bibitem{projectdocs}
+Project documentation: \texttt{PROGRESS\_CHECKLIST.md}, \texttt{docs/final\_methodology\_results.md}, \texttt{docs/final\_artifacts\_manifest.md}, and \texttt{comprehensive\_introduction\_literature\_review.tex}.
+\end{thebibliography}
 \end{frame}
 
 % 100

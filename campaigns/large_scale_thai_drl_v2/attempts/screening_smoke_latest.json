@@ -1,0 +1,121 @@
+{
+  "schema_version": 2,
+  "status": "rendered",
+  "campaign_id": "large_scale_thai_drl_v2",
+  "stage_id": "screening_smoke",
+  "attempt_id": "screening_smoke_20260717T144734Z_652d3bc9",
+  "rendered_at_utc": "2026-07-17T14:47:34.881448+00:00",
+  "inputs": [
+    {
+      "path": "campaigns/large_scale_thai_drl_v2/deployment/bistka_screening_storage_safe_cutover_v2_manifest.json",
+      "bytes": 52883,
+      "sha256": "439b590bc4a85f03a6d98723ee3d28e40acdc00d95bdfbf48d310f07d867e25c"
+    },
+    {
+      "path": "campaigns/large_scale_thai_drl_v2/derived/locked_large_scale_screening.yaml",
+      "bytes": 1540,
+      "sha256": "d7b6ab71ede33ae4c4106fded3078b9a4eb3c56af345e67960061feea1897c1e"
+    },
+    {
+      "path": "campaigns/large_scale_thai_drl_v2/stages/capacity/_SUCCESS.json",
+      "bytes": 206,
+      "sha256": "a4ead2fb6cb1c701b45d597d933039d9ab36fa9f562dcbe6992653aa4584d5b3"
+    },
+    {
+      "path": "campaigns/large_scale_thai_drl_v2/stages/capacity/gate_report.json",
+      "bytes": 885,
+      "sha256": "1dc6abaa4ae711ee5502a2c531143417d6d8839c0461f649b3d7c17388c19a57"
+    },
+    {
+      "path": "campaigns/large_scale_thai_drl_v2/stages/data_readiness/_SUCCESS.json",
+      "bytes": 212,
+      "sha256": "056bac87bfcece26c0599f7fa5d04220ab53200ec04663d305468c48c3e5e70f"
+    },
+    {
+      "path": "campaigns/large_scale_thai_drl_v2/stages/data_readiness/gate_report.json",
+      "bytes": 1631,
+      "sha256": "64b6bd05a60afc0b63bd6a8cfaf82fd1b71f11b8cdcdd7f7eb4085d8b60422ee"
+    },
+    {
+      "path": "campaigns/large_scale_thai_drl_v2/stages/screening_cluster_preflight/_SUCCESS.json",
+      "bytes": 225,
+      "sha256": "c34d8070d548f2f26a0c57f9120041afd28920d1e7ef0d65d7b93b5e8c730cc3"
+    },
+    {
+      "path": "campaigns/large_scale_thai_drl_v2/stages/screening_cluster_preflight/gate_report.json",
+      "bytes": 13929,
+      "sha256": "76a0df8a139e8a90a2b592f06c52f4c60a3c356b05752b55df6c8e4cc71d32c5"
+    },
+    {
+      "path": "config/research_campaign_storage_safe.yaml",
+      "bytes": 35192,
+      "sha256": "2a7934bb3c3256cee012372c25e204585436b1a4239de4a4ad2983366419fadd"
+    },
+    {
+      "path": "data/processed/features_real_ohlcv_market.csv",
+      "bytes": 2183530,
+      "sha256": "b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc"
+    },
+    {
+      "path": "reports/bistka_screening_storage_safe_cutover_v2_preflight.json",
+      "bytes": 50169,
+      "sha256": "1ccac9827e2f018927d711c0fb0918119c79f8721bd6d82d3d08ed026ab59f0c"
+    },
+    {
+      "path": "slurm/screening_storage_safe_smoke.sbatch",
+      "bytes": 1175,
+      "sha256": "337ca899afaf88dfea7326a9059c4a08dddb63c2ca916109689400cedf903588"
+    }
+  ],
+  "deployment_manifest_path": "campaigns/large_scale_thai_drl_v2/deployment/bistka_screening_storage_safe_cutover_v2_manifest.json",
+  "deployment_manifest_sha256": "439b590bc4a85f03a6d98723ee3d28e40acdc00d95bdfbf48d310f07d867e25c",
+  "deployment_release_id": "56358f2a4996f654426814d88e622b7f217ac89bfc02f8bbdacc27e66873b55e",
+  "preflight_receipt_path": "reports/bistka_screening_storage_safe_cutover_v2_preflight.json",
+  "preflight_sha256": "1ccac9827e2f018927d711c0fb0918119c79f8721bd6d82d3d08ed026ab59f0c",
+  "runtime_configs": [
+    {
+      "path": "campaigns/large_scale_thai_drl_v2/derived/locked_large_scale_screening.yaml",
+      "sha256": "d7b6ab71ede33ae4c4106fded3078b9a4eb3c56af345e67960061feea1897c1e",
+      "feature_path": "data/processed/features_real_ohlcv_market.csv",
+      "feature_sha256": "b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc"
+    }
+  ],
+  "runtime_config_path": "campaigns/large_scale_thai_drl_v2/derived/locked_large_scale_screening.yaml",
+  "runtime_config_sha256": "d7b6ab71ede33ae4c4106fded3078b9a4eb3c56af345e67960061feea1897c1e",
+  "runtime_feature_path": "data/processed/features_real_ohlcv_market.csv",
+  "runtime_feature_sha256": "b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc",
+  "predecessor_gates": [
+    {
+      "stage_id": "data_readiness",
+      "evidence_fingerprint": "75ef072c75ccd4f2f5503c19f9714ce1acc023c59b64d3f19f7344cc3e49c8db",
+      "gate_report_path": "campaigns/large_scale_thai_drl_v2/stages/data_readiness/gate_report.json",
+      "gate_report_sha256": "64b6bd05a60afc0b63bd6a8cfaf82fd1b71f11b8cdcdd7f7eb4085d8b60422ee",
+      "success_marker_path": "campaigns/large_scale_thai_drl_v2/stages/data_readiness/_SUCCESS.json",
+      "success_marker_sha256": "056bac87bfcece26c0599f7fa5d04220ab53200ec04663d305468c48c3e5e70f"
+    },
+    {
+      "stage_id": "capacity",
+      "evidence_fingerprint": "1bf61d6ee9430595bb0aa3691b4a5b555cdbb0452327ec7b34da3241657bd474",
+      "gate_report_path": "campaigns/large_scale_thai_drl_v2/stages/capacity/gate_report.json",
+      "gate_report_sha256": "1dc6abaa4ae711ee5502a2c531143417d6d8839c0461f649b3d7c17388c19a57",
+      "success_marker_path": "campaigns/large_scale_thai_drl_v2/stages/capacity/_SUCCESS.json",
+      "success_marker_sha256": "a4ead2fb6cb1c701b45d597d933039d9ab36fa9f562dcbe6992653aa4584d5b3"
+    },
+    {
+      "stage_id": "screening_cluster_preflight",
+      "evidence_fingerprint": "0b2c7b31c18e6666205995011bd4a4d9f50b95c17a717236e7ba03a1c65f768f",
+      "gate_report_path": "campaigns/large_scale_thai_drl_v2/stages/screening_cluster_preflight/gate_report.json",
+      "gate_report_sha256": "76a0df8a139e8a90a2b592f06c52f4c60a3c356b05752b55df6c8e4cc71d32c5",
+      "success_marker_path": "campaigns/large_scale_thai_drl_v2/stages/screening_cluster_preflight/_SUCCESS.json",
+      "success_marker_sha256": "c34d8070d548f2f26a0c57f9120041afd28920d1e7ef0d65d7b93b5e8c730cc3"
+    }
+  ],
+  "supersedes_stale_evidence": {
+    "stage_id": "screening_smoke",
+    "success_marker_path": "campaigns/large_scale_thai_drl_v2/stages/screening_smoke/_SUCCESS.json",
+    "success_marker_sha256": "4ad2996a6c37d3000ac42caf4e8a109e21b311a1897e96bf9023e804ecd87c38",
+    "verified_evidence_fingerprint": "bb443c68a522f233d26f690c63076b65311be373e95f1502dbd074606d0cf37a",
+    "current_evidence_fingerprint": "9b168f52841565e9e23c4754c521f21b0681e55701c9b33bb6740d9d1d057e54"
+  },
+  "attempt_sha256": "3f2b4fa18c77867625c712ab352ce21bf3e9545d74cd9d90b1e789c98e178a26"
+}

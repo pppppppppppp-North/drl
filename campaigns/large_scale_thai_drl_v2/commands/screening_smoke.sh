@@ -1,0 +1,8 @@
+#!/bin/bash
+set -euo pipefail
+
+mkdir -p logs
+SCREENING_SMOKE_SUBMISSION=$(sbatch --parsable --export=BISTKA_PREFLIGHT_SHA256=1ccac9827e2f018927d711c0fb0918119c79f8721bd6d82d3d08ed026ab59f0c,CAMPAIGN_ATTEMPT_ID=screening_smoke_20260717T144734Z_652d3bc9,CAMPAIGN_ATTEMPT_SHA256=3f2b4fa18c77867625c712ab352ce21bf3e9545d74cd9d90b1e789c98e178a26,CAMPAIGN_ID=large_scale_thai_drl_v2,CAMPAIGN_STAGE_ID=screening_smoke,CONFIG_PATH=campaigns/large_scale_thai_drl_v2/derived/locked_large_scale_screening.yaml,DEPLOYMENT_RELEASE_ID=56358f2a4996f654426814d88e622b7f217ac89bfc02f8bbdacc27e66873b55e,MKL_NUM_THREADS=1,NUMEXPR_NUM_THREADS=1,OMP_NUM_THREADS=1,OPENBLAS_NUM_THREADS=1,PATH=/usr/local/bin:/usr/bin:/bin slurm/screening_storage_safe_smoke.sbatch)
+SCREENING_SMOKE_JOB_ID="${SCREENING_SMOKE_SUBMISSION%%;*}"
+echo "run_dir=results/screening_storage_safe_smoke_${SCREENING_SMOKE_JOB_ID}"
+echo "stage=screening_smoke job_id=${SCREENING_SMOKE_JOB_ID}"

@@ -1,0 +1,582 @@
+\documentclass[12pt,a4paper,oneside]{book}
+
+% KVIS template typography and page geometry.
+\usepackage{fontspec}
+\IfFontExistsTF{Times New Roman}
+  {\setmainfont{Times New Roman}}
+  {\setmainfont{TeX Gyre Termes}}
+\usepackage[top=1.5in,bottom=1in,left=1.5in,right=1in]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\parindent}{0.8in}
+\setlength{\parskip}{0pt}
+\setlength{\emergencystretch}{3em}
+
+% Mathematics, tables, and figures.
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{placeins}
+
+% KVIS-style chapter and contents formatting.
+\usepackage{sectsty}
+\chapterfont{\centering}
+\usepackage{tocloft}
+\renewcommand{\contentsname}{\hfill\bfseries\Large TABLE OF CONTENTS\hfill}
+\renewcommand{\cftaftertoctitle}{\hfill}
+\renewcommand{\listtablename}{\hfill\bfseries\Large LIST OF TABLES\hfill}
+\renewcommand{\cftafterlottitle}{\hfill}
+\renewcommand{\listfigurename}{\hfill\bfseries\Large LIST OF FIGURES\hfill}
+\renewcommand{\cftafterloftitle}{\hfill}
+\renewcommand{\bibname}{\centerline{\Large REFERENCES}}
+
+% Links and restrained research colors.
+\usepackage{xcolor}
+\definecolor{kvisblue}{HTML}{2563EB}
+\usepackage{xurl}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=kvisblue,
+  citecolor=kvisblue,
+  urlcolor=kvisblue,
+  pdftitle={Deep Reinforcement Learning for Long Term Profit Optimization in Thai Stock Markets Using Multi-Source Data},
+  pdfauthor={Nathawat Youngyim; Kunach Kijsanayothin}
+}
+
+\pagestyle{myheadings}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+
+\newcommand{\ProjectTitle}{Deep Reinforcement Learning for Long Term Profit Optimization in Thai Stock Markets Using Multi-Source Data}
+\newcommand{\ProjectAuthorOne}{Nathawat Youngyim}
+\newcommand{\ProjectAuthorTwo}{Kunach Kijsanayothin}
+\newcommand{\ProjectTeamCover}{%
+  \shortstack[c]{%
+    \textbf{\ProjectAuthorOne}\\[0.15cm]
+    \textbf{\ProjectAuthorTwo}}}
+\newcommand{\ProjectTeamInfo}{%
+  \begin{tabular}[t]{@{}l@{}}
+    \ProjectAuthorOne\\
+    \ProjectAuthorTwo
+  \end{tabular}}
+\newcommand{\AdvisorName}{Prompong Pakawanwong}
+
+\begin{document}
+
+% -----------------------------------------------------------------------------
+% Cover page based on the official KVIS report template.
+% -----------------------------------------------------------------------------
+\thispagestyle{empty}
+\begin{figure}[h!]
+  \vskip0.5in
+  \centering
+  \includegraphics[width=3.5cm]{KVIS_Logo.png}
+\end{figure}
+
+\begin{center}
+  \Large\textbf{\ProjectTitle}
+\end{center}
+
+\vskip1.5cm
+
+\vskip2.0cm
+
+\begin{center}
+  \textbf{BY}\\[0.5cm]
+  \ProjectTeamCover
+\end{center}
+
+\vfill
+
+\begin{center}
+  \textbf{SUBMITTED IN PARTIAL FULFILLMENT OF}\\[0.25cm]
+  \textbf{THE REQUIREMENTS FOR GRADUATION IN 2026}\\[1.0cm]
+  \textbf{KAMNOETVIDYA SCIENCE ACADEMY (KVIS)}
+\end{center}
+
+\newpage
+\pagenumbering{roman}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{@{}L{0.28\textwidth}Y@{}}
+Project Title & \ProjectTitle \\
+By & \ProjectTeamInfo \\
+Field of Study & Computer Science \\
+Project Advisor & \AdvisorName \\
+Academic Year & 2026 \\
+\end{tabularx}
+\end{table}
+
+\begin{center}
+  \large\textbf{ABSTRACT}
+\end{center}
+\addcontentsline{toc}{chapter}{ABSTRACT}
+
+This study examines a completed deep reinforcement learning (DRL) pilot for Thai stock portfolio allocation and completed high-performance computing (HPC) experiments supporting reproducible execution. The observed dataset contains ADVANC, AOT, CPALL, KBANK, and PTT over 968 trading dates from 4 January 2021 to 30 December 2024. A chronological validation pilot compared proximal policy optimization (PPO) and advantage actor--critic (A2C) with equal-weight, mean-variance, and buy-and-hold baselines. Separate BistKA experiments measured vector-environment throughput, deterministic environment replay, and storage-safe execution of PPO, A2C, DDPG, TD3, and SAC.
+
+PTT buy-and-hold achieved the highest reported annualized return-to-volatility ratio (0.405480); A2C and PPO produced negative cumulative returns and ratios of -0.434028 and -0.439532. One vector environment reached 353.0773 samples per second with 600.711 MiB maximum peak resident memory, whereas 16 environments reached 82.9607 samples per second and 8,737.996 MiB. Two independent subprocesses reproduced the same 549-step trajectory hash. The five-algorithm smoke completed in 33 minutes 20 seconds using two CPUs and produced five complete manifests, final models, and retention receipts with no checkpoint paths. Returned output fell from 275,209,516 to 137,777,145 bytes, a 49.94\% reduction.
+
+The historical pilot did not show DRL outperforming its strongest simple baseline. The HPC results demonstrate that measured resource calibration, deterministic environment checks, and storage-safe retention can strengthen reproducibility while reducing storage. Financial findings remain descriptive because they come from one validation split; smoke results establish executability, not algorithm quality.
+
+\par\medskip
+\noindent\begin{minipage}{\textwidth}
+\small\textbf{Keywords:} deep reinforcement learning, Thai stocks, portfolio allocation, high-performance computing, reproducibility, chronological validation
+\end{minipage}
+
+\newpage
+\begin{center}
+  \large\textbf{ACKNOWLEDGEMENTS}
+\end{center}
+\addcontentsline{toc}{chapter}{ACKNOWLEDGEMENTS}
+
+The authors thank their advisor, \AdvisorName, for guidance throughout the research process. They also acknowledge Kamnoetvidya Science Academy for providing the research environment and the BistKA Mini-HPC cluster used for computational calibration and controlled experiments.
+
+The authors further thank the instructors and technical staff who supported cluster access, storage troubleshooting, and reproducible computational practice. Their assistance made it possible to distinguish measured scientific and engineering findings from unsupported performance claims.
+
+\vfill
+\begin{flushright}
+\ProjectAuthorOne\\
+\ProjectAuthorTwo
+\end{flushright}
+
+\newpage
+\tableofcontents
+
+\newpage
+\addcontentsline{toc}{chapter}{LIST OF FIGURES}
+\listoffigures
+
+\newpage
+\addcontentsline{toc}{chapter}{LIST OF TABLES}
+\listoftables
+
+\clearpage
+\pagenumbering{arabic}
+
+% -----------------------------------------------------------------------------
+\chapter{INTRODUCTION}
+
+\section{Background}
+
+Portfolio allocation requires a decision maker to balance return, risk, diversification, and trading costs over time. Classical portfolio theory formalizes the trade-off between expected return and variance \cite{markowitz1952}, while risk-adjusted measures provide a way to compare strategies whose returns have different variability \cite{sharpe1994}. These ideas remain important even when the allocation rule is learned by a nonlinear model: a complex policy is useful only if it performs credibly against transparent alternatives.
+
+Deep reinforcement learning treats portfolio management as sequential decision-making. At each trading date, an agent observes market and portfolio information, selects an allocation, and receives a reward that can incorporate return, turnover, and drawdown. Frameworks such as FinRL illustrate how market observations, trading constraints, portfolio actions, and backtesting can be integrated into this formulation \cite{liu2020finrl}. DRL is attractive because it can represent nonlinear policies, but stochastic optimization and repeated model selection also create substantial risks of unstable or overfit results \cite{bailey2017backtest,henderson2018drl}.
+
+High-performance computing is relevant because financial DRL experiments are computationally repetitive. Seeds, algorithms, and environment settings must be evaluated under consistent conditions, while intermediate outputs and software provenance must be retained. More hardware does not automatically improve a workload, however. Process overhead, memory duplication, storage pressure, and scheduling behavior can dominate when the environment is small. Consequently, HPC resource choices must be measured on the actual application rather than inferred from core count alone.
+
+\section{Research Problem}
+
+The central scientific problem is whether added model complexity produces useful portfolio behavior on observed Thai equity data. A convincing answer requires two forms of evidence. The first is financial evidence: learned policies must be compared with simple baselines on chronologically separated data. The second is computational evidence: the implementation must execute reproducibly, use resources efficiently, and preserve enough artifacts for independent inspection.
+
+The selected five-stock cohort is intentionally narrow. It provides an observed-market pilot rather than a claim about the full Stock Exchange of Thailand. The completed performance experiment contains one historical validation split, so its values are descriptive rather than population-level estimates. The completed HPC experiments answer a different question: whether the software environment, resource configuration, and storage-retention mechanism behave as intended under measured conditions.
+
+\section{Research Questions}
+
+This paper addresses three questions using only completed experiments:
+\begin{enumerate}
+  \item On the completed real-OHLCV validation split, how did PPO and A2C compare with equal-weight, mean-variance, and buy-and-hold baselines?
+  \item How did the number of parallel vector environments affect observed training throughput and process-tree memory on BistKA?
+  \item Could the five implemented DRL algorithms execute through a deterministic, storage-safe HPC path while preserving auditable final artifacts?
+\end{enumerate}
+
+\section{Scope and Contributions}
+
+The study covers five Thai equities from 4 January 2021 through 30 December 2024 and reports four completed contributions: a frozen validation comparison of PPO and A2C against transparent baselines; measured throughput and peak memory for 1, 2, 4, 8, and 16 vector environments; matching 549-step trajectories from two fixed-seed subprocesses; and a five-algorithm storage-safe smoke with a measured returned-output reduction. Financial and engineering findings remain separate: validation evaluates portfolio behavior, whereas calibration, replay, and smoke evaluate computational behavior.
+
+\FloatBarrier
+
+% -----------------------------------------------------------------------------
+\chapter{LITERATURE REVIEW}
+
+\section{Portfolio Theory and Transparent Baselines}
+
+Markowitz introduced mean-variance portfolio selection as an explicit balance between expected return and portfolio variance \cite{markowitz1952}. The framework remains a natural classical comparator for an allocation model, but its estimated weights can be sensitive to sampling error. DeMiguel, Garlappi, and Uppal showed that evaluated mean-variance extensions did not consistently outperform the simple $1/N$ portfolio out of sample \cite{demiguel2009naive}. Equal weighting is therefore a demanding and interpretable benchmark rather than a trivial alternative.
+
+Sharpe formalized a ratio of mean differential return to its standard deviation \cite{sharpe1994}. The completed implementation reports a related but not identical quantity: compounded annualized return divided by annualized volatility under a zero-risk-free-rate convention. This paper calls that quantity the \emph{reported annualized return-to-volatility ratio} and defines it explicitly in Chapter~3.
+
+\section{Deep Reinforcement Learning Algorithms}
+
+FinRL frames automated trading as a sequential learning problem that combines market states, actions, transaction constraints, and backtesting \cite{liu2020finrl}. The algorithms used in the completed experiments represent several actor--critic families. PPO constrains policy updates with a clipped surrogate objective \cite{schulman2017ppo}. A2C is a synchronous actor--critic implementation in the lineage of the asynchronous A3C architecture \cite{mnih2016a3c}. DDPG extends deterministic actor--critic learning to continuous action spaces \cite{lillicrap2015ddpg}; TD3 reduces function-approximation and overestimation error through paired critics and delayed updates \cite{fujimoto2018td3}; and SAC adds entropy regularization to off-policy learning \cite{haarnoja2018sac}.
+
+Stable-Baselines3 supplies standardized implementations of these methods \cite{raffin2021sb3}. Standardized software reduces avoidable implementation differences, but it does not imply that any algorithm should dominate on Thai equities. The original algorithm papers mainly establish learning mechanisms on control or game benchmarks; their citation supports method provenance rather than financial suitability.
+
+\section{Temporal Evaluation and Backtest-Selection Risk}
+
+Financial observations are ordered and dependent. Randomly mixing future and past observations can leak information and produce an unrealistically favorable evaluation. Cerqueira, Torgo, and Mozeti\v{c} found that out-of-sample estimation strategies are important for non-stationary time series and that repeated holdout methods can improve performance estimation \cite{cerqueira2020timeseries}. The present study therefore preserves chronological order.
+
+Chronological splitting alone does not eliminate selection bias. Bailey and colleagues demonstrate that repeated strategy search can overfit historical backtests and produce apparently strong strategies by chance \cite{bailey2017backtest}. This concern is particularly relevant to DRL, where training stochasticity and hyperparameter choice can generate many candidate policies. The completed pilot contains one validation split and is consequently interpreted as descriptive evidence rather than a definitive out-of-sample ranking.
+
+\section{Uncertainty and Multiple Comparisons}
+
+Bootstrap resampling provides a general approach to estimating uncertainty when an analytic sampling distribution is inconvenient \cite{efron1979bootstrap}. Holm's sequentially rejective procedure controls family-wise error across multiple hypothesis tests \cite{holm1979}. These methods establish important statistical principles, but neither source alone validates independent resampling of serially dependent daily returns. Because the completed pilot contains one preserved validation table and no validated resampling analysis, this paper reports exact descriptive metrics without confidence intervals or adjusted significance claims.
+
+\section{Reproducible DRL and HPC Execution}
+
+Deep reinforcement learning results can vary with random seeds, hyperparameters, environment details, and reporting choices \cite{henderson2018drl}. Reproducible computational research therefore requires precise records of data, configuration, software versions, random seeds, and the relationship between intermediate artifacts and reported results \cite{sandve2013reproducible}. These practices are especially important on a shared cluster, where the scheduler, runtime modules, and filesystem form part of the experimental environment.
+
+SLURM provides a general mechanism for resource allocation and job scheduling on Linux clusters \cite{yoo2003slurm}. In this study, BistKA scheduler records supply elapsed time, CPU allocation, memory requests, and exit status, while experiment manifests and checksums capture application-level provenance. Scheduler completion and scientific validity are treated as distinct conditions.
+
+\section{Literature Synthesis and Research Gap}
+
+The literature supplies portfolio baselines, continuous-control algorithms, temporal-evaluation principles, statistical tools, and reproducibility guidance. It does not determine whether PPO or A2C should outperform simple strategies on this fixed Thai-equity cohort. It also does not specify the most efficient vectorization level or storage-retention policy for this particular software and hardware combination. The paper addresses this narrow practical gap by pairing a completed observed-market pilot with measured HPC calibration, deterministic environment replay, and storage-safe execution evidence. It does not claim priority over all Thai-market DRL research.
+
+\FloatBarrier
+
+% -----------------------------------------------------------------------------
+\chapter{METHODOLOGY}
+
+\section{Completed Experimental Design}
+
+The study consists of three completed experimental components, summarized in Table~\ref{tab:study-components}. The components share an observed five-stock data pipeline but answer different questions. The performance pilot evaluates portfolio metrics. The calibration and replay experiments evaluate resource behavior and environment repeatability. The storage-safe smoke evaluates whether all five algorithm paths complete while satisfying an artifact-retention contract.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Completed experimental components included in this paper.}
+\label{tab:study-components}
+\begin{tabularx}{\textwidth}{@{}L{0.23\textwidth}L{0.31\textwidth}Y@{}}
+\toprule
+Component & Completed comparison & Scientific role \\
+\midrule
+Real-OHLCV pilot & PPO and A2C versus four transparent baseline families on one chronological validation split & Descriptive portfolio-performance evidence \\
+HPC calibration and replay & Five vector-environment settings, three repeats each; two independent fixed-seed trajectories & Resource selection and environment repeatability \\
+Storage-safe smoke & One 2,048-timestep run for each of PPO, A2C, DDPG, TD3, and SAC & Executability, scheduler accounting, and artifact-retention evidence \\
+Storage comparison & Complete returned inventories from checkpoint-writing and storage-safe smoke runs & Observed storage effect of the retention policy \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Observed-Market Data and Chronological Split}
+
+The observed universe contains \texttt{ADVANC.BK}, \texttt{AOT.BK}, \texttt{CPALL.BK}, \texttt{KBANK.BK}, and \texttt{PTT.BK}. The panel contains 4,840 rows: 968 dates for each of five tickers from 4 January 2021 through 30 December 2024. The associated SET-index context contains 965 observed dates. Automated readiness checks recorded 15 passes, three disclosed warnings, and zero failures. The warnings consisted of ten deterministically normalized OHLC rows, three stock dates without a same-day SET-index observation, and constant scaffold fields that were not interpreted as economic signals.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Observed-market cohort used by the completed experiments.}
+\label{tab:data-scope}
+\begin{tabularx}{\textwidth}{@{}L{0.31\textwidth}Y@{}}
+\toprule
+Item & Observed definition \\
+\midrule
+Stock universe & ADVANC, AOT, CPALL, KBANK, and PTT Yahoo Finance symbols \\
+Stock period & 4 January 2021 through 30 December 2024 \\
+Panel size & 4,840 rows; 968 dates per ticker; five tickers \\
+Market context & SET index symbol \texttt{\string^SET.BK}; 965 observed dates \\
+Chronological split & 580 training dates, 194 validation dates, and 194 held-out test dates \\
+Readiness outcome & 15 passes, 3 warnings, and 0 failures \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The chronological split is shown in Figure~\ref{fig:split}. Training uses 580 dates, validation uses the next 194 dates, and the final 194 dates are held out. The completed performance values reported in this paper come from the validation interval; the held-out interval is not used to support the reported performance comparison. Maintaining temporal order reduces direct future-to-past leakage, although one split cannot remove all backtest-selection risk \cite{cerqueira2020timeseries,bailey2017backtest}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{reports/figures/kvis_chronological_split_3550.pdf}
+\caption{Chronological split of the observed five-stock panel. Rows equal dates multiplied by five tickers.}
+\label{fig:split}
+\end{figure}
+
+\section{Features and Leakage Controls}
+
+The completed real-OHLCV pilot used a 30-date lookback and 13 configured columns: 1-day, 5-day, and 20-day returns; 20-day volatility; 10-day and 30-day moving-average ratios; 14-day relative strength index; moving-average convergence divergence; Bollinger z-score; 20-day volume ratio; a daily market-return field; a macro-rate-change field; and a sentiment field. The final two fields were constant scaffolds in the frozen table and therefore supplied no historical variation. This paper makes no claim about macroeconomic or sentiment effects.
+
+Features were computed from information available on or before the current date. Duplicate date--ticker keys, missing configured columns, non-finite values, and chronology violations were treated as failed inputs. The historical pilot and the later five-algorithm smoke used related but not identical feature configurations; their results are therefore not combined into one algorithm ranking.
+
+\section{Portfolio Environment, Algorithms, and Baselines}
+
+The environment is a Gymnasium-compatible long-only portfolio allocator. At each date, the state contains the current lookback tensor and portfolio information, while the action is a continuous vector of target portfolio weights. The environment starts with 1,000,000 units of cash, applies a transaction-cost rate of 0.001, and records portfolio value, daily net return, turnover, drawdown, cash weight, and per-ticker allocation. The training reward is
+\begin{equation}
+  r_t = R_t - 0.05T_t - 0.10D_t,
+  \label{eq:reward}
+\end{equation}
+where $R_t$ is net portfolio return, $T_t$ is turnover, and $D_t$ is the drawdown penalty. The reward guides optimization; portfolio performance is evaluated with separate metrics.
+
+The completed performance pilot trained PPO and A2C and compared them with PTT and ADVANC buy-and-hold, equal weighting, and mean variance. Equal weighting provides a transparent $1/N$ benchmark \cite{demiguel2009naive}, while mean variance represents classical portfolio optimization \cite{markowitz1952}. The storage-safe smoke instantiated PPO, A2C, DDPG, TD3, and SAC using Stable-Baselines3 \cite{raffin2021sb3}. Each smoke run was deliberately short and was used only to test execution and artifacts.
+
+\section{Portfolio Metrics}
+
+For portfolio value $V_t$, daily net return $r_t$, and $n$ evaluated trading dates, the completed pilot metrics are defined in Table~\ref{tab:metrics}. Annualized volatility uses the population standard deviation and 252 trading periods per year.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Descriptive portfolio metrics used in the completed pilot.}
+\label{tab:metrics}
+\begin{tabularx}{\textwidth}{@{}L{0.28\textwidth}L{0.34\textwidth}Y@{}}
+\toprule
+Metric & Computation & Interpretation \\
+\midrule
+Cumulative return & $C=V_T/V_0-1$ & Net growth over the evaluated interval \\
+Annualized return & $A=(1+C)^{252/n}-1$ & Compounded return scaled to 252 periods \\
+Annualized volatility & $\sigma_a=\operatorname{sd}_0(r_t)\sqrt{252}$ & Dispersion of daily net returns \\
+Reported return-to-volatility ratio & $S^\star=A/\sigma_a$ & Study-defined risk-adjusted ratio; larger is better \\
+Maximum drawdown & $\min_t(V_t/\max_{s\leq t}V_s-1)$ & Worst peak-to-trough loss; less negative is better \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The quantity $S^\star$ is related to the Sharpe ratio \cite{sharpe1994}, but it is not identical to Sharpe's mean differential-return definition. The distinction is retained throughout the paper. Because the pilot contains one validation split, the analysis is descriptive: exact values are reported without confidence intervals, bootstrap resampling, or multiplicity-adjusted hypothesis tests.
+
+\section{HPC Calibration and Deterministic Replay}
+
+BistKA uses SLURM for shared-cluster scheduling; SLURM's design and resource-management role are described by Yoo, Jette, and Grondona \cite{yoo2003slurm}. The completed calibration evaluated 1, 2, 4, 8, and 16 subprocess vector environments. Each setting executed 4,096 training timesteps on the observed training split with seed 42 and three independent repetitions. The recorded outcomes were samples per second and sampled concurrent process-tree resident memory.
+
+The selected environment count was the setting whose median throughput was at least 95\% of the maximum median throughput, with lower memory preferred when performance was comparable. A separate deterministic-replay experiment launched two independent subprocesses with the same seed, runtime versions, resolved configuration, and observed training data. Each subprocess generated a 549-step fixed-random-action environment trajectory. Determinism was accepted only if the trajectory hashes, step counts, provenance hashes, and runtime versions matched. This protocol tests environment replay under one configuration; it does not claim bitwise-deterministic neural-network training.
+
+\section{Storage-Safe Five-Algorithm Smoke}
+
+The completed storage-safe smoke used one vector environment and 2,048 training timesteps for each of PPO, A2C, DDPG, TD3, and SAC. The scheduler requested two CPUs and 8 GiB of memory. Each run was required to produce a resolved configuration, split summary, final model, metrics, equity curve, actions, trial metadata, complete experiment manifest, and checksum evidence.
+
+The retention policy suppressed periodic checkpoint writes while retaining the final model. It also created an atomic retention receipt and SHA-256 sidecar. Acceptance required one complete manifest and one retention receipt per algorithm, matching checksums, final models, and zero paths classified as periodic checkpoints. This artifact design follows the general principle that computational claims should remain linked to exact inputs, configurations, and outputs \cite{sandve2013reproducible,henderson2018drl}.
+
+Storage was measured from complete returned file inventories. The checkpoint-writing smoke inventory contained 275,209,516 bytes, and the storage-safe inventory contained 137,777,145 bytes. The reduction was calculated as
+\begin{equation}
+  100\left(1-\frac{137{,}777{,}145}{275{,}209{,}516}\right)=49.94\%.
+  \label{eq:storage-reduction}
+\end{equation}
+
+\FloatBarrier
+
+% -----------------------------------------------------------------------------
+\chapter{DISCUSSION}
+
+\section{Summary of Completed Observations}
+
+Table~\ref{tab:completed-results} separates the financial pilot result from the engineering results. This distinction is essential: the validation pilot compares portfolio behavior, whereas the HPC experiments measure throughput, repeatability, execution, and storage.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Summary of completed observations.}
+\label{tab:completed-results}
+\begin{tabularx}{\textwidth}{@{}L{0.29\textwidth}L{0.29\textwidth}Y@{}}
+\toprule
+Experiment & Main observation & Interpretation \\
+\midrule
+Real-OHLCV validation pilot & PTT buy-and-hold ratio 0.405480; A2C -0.434028; PPO -0.439532 & No DRL outperformance in this single split \\
+Vector-environment calibration & One environment: 353.0773 samples/s; 16 environments: 82.9607 samples/s & Added subprocesses reduced throughput \\
+Deterministic replay & Identical 549-step hashes in two subprocesses & Environment replay matched under the tested configuration \\
+Five-algorithm smoke & Five complete manifests, models, and receipts; zero checkpoint paths & All five algorithm paths satisfied the artifact contract \\
+Storage comparison & 275,209,516 versus 137,777,145 bytes & Storage-safe retention reduced returned output by 49.94\% \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Historical Pilot Results}
+
+The completed real-OHLCV pilot used one chronological validation split. Table~\ref{tab:pilot-performance} reports the preserved values. PTT buy-and-hold had both the highest cumulative return and the highest reported annualized return-to-volatility ratio. PPO and A2C had negative cumulative returns and ratios below the equal-weight portfolio. Mean variance performed worst on the reported ratio.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Real-OHLCV pilot results on one chronological validation split. Returns are decimals.}
+\label{tab:pilot-performance}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Policy & Cumulative return & Reported ratio $S^\star$ & Maximum drawdown \\
+\midrule
+PTT buy-and-hold & 0.043523 & 0.405480 & -0.103448 \\
+ADVANC buy-and-hold & 0.009999 & 0.097452 & -0.098919 \\
+Equal weight & -0.030573 & -0.416554 & -0.103240 \\
+A2C & -0.038061 & -0.434028 & -0.120042 \\
+PPO & -0.035900 & -0.439532 & -0.066219 \\
+Mean variance & -0.099682 & -1.097376 & -0.166737 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Figure~\ref{fig:pilot-ratio} emphasizes the signed risk-adjusted comparison. PPO's maximum drawdown (-0.066219) was smaller in magnitude than the equal-weight and A2C drawdowns, but its cumulative return and reported ratio were worse. This is a narrow risk observation, not evidence of superior overall performance.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{reports/figures/kvis_pilot_validation_sharpe_2855.pdf}
+\caption{Reported annualized return-to-volatility ratios in the completed historical validation pilot. The values come from one preserved validation table.}
+\label{fig:pilot-ratio}
+\end{figure}
+
+The simplest interpretation is that model complexity did not create an advantage automatically in this sample. The result does not establish that DRL is ineffective in general, because the cohort is small, the comparison uses one split, and PPO/A2C outcomes depend on their particular training configuration. It does establish that the strongest observed result in this pilot belonged to a simple buy-and-hold baseline.
+
+\section{One Vector Environment Was Fastest and Most Memory-Efficient}
+
+Increasing vector environments reduced throughput monotonically and increased maximum sampled process-tree memory, as shown in Table~\ref{tab:calibration}. One environment achieved the highest median throughput, 353.0773 samples per second. Sixteen environments achieved 82.9607 samples per second, approximately 76.5\% below the one-environment result, while maximum peak resident memory rose from 600.711 to 8,737.996 MiB.
+
+\begin{table}[H]
+\centering
+\small
+\caption{BistKA vector-environment calibration with three repeats per setting.}
+\label{tab:calibration}
+\begin{tabular}{@{}rrr@{}}
+\toprule
+Vector environments & Median samples/s & Maximum peak RSS (MiB) \\
+\midrule
+1 & 353.0773 & 600.711 \\
+2 & 257.0366 & 1,641.160 \\
+4 & 212.1034 & 2,655.523 \\
+8 & 141.2985 & 4,680.582 \\
+16 & 82.9607 & 8,737.996 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.97\textwidth]{reports/figures/vectorized_training_calibration_3540.png}
+\caption{Observed throughput and sampled peak resident memory across vector-environment settings. Throughput error ranges show the minimum and maximum of three repeats.}
+\label{fig:calibration}
+\end{figure}
+
+The likely mechanism is overhead: process creation, inter-process communication, and duplicated environment state outweighed useful parallel work for a five-ticker environment. The result demonstrates why a large HPC allocation should be calibrated rather than filled automatically. For this workload, the evidence-supported configuration was \texttt{num\_envs=1}.
+
+The separate replay experiment strengthens this resource choice at the environment level. Both subprocesses produced 549 steps and the same SHA-256 trajectory digest. Data, configuration, code, provenance, and runtime records also matched. The observation is deliberately narrow: it supports deterministic environment replay under the tested seed and software stack, not deterministic training across all algorithms or hardware.
+
+\section{Five Algorithms Satisfied the Storage-Safe Artifact Contract}
+
+The completed smoke job executed PPO, A2C, DDPG, TD3, and SAC through the same storage-safe path. Scheduler and artifact outcomes are summarized in Table~\ref{tab:job3550}. The job completed normally in 2,000 seconds with exit code \texttt{0:0}. All five algorithm directories contained complete manifests, final models, and checksum-bound retention receipts, and no periodic checkpoint paths were found.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Observed scheduler accounting and artifact validation for the five-algorithm smoke.}
+\label{tab:job3550}
+\begin{tabularx}{\textwidth}{@{}L{0.36\textwidth}Y@{}}
+\toprule
+Field & Observed value \\
+\midrule
+Job name and partition & \texttt{drl\_safe\_smoke}; \texttt{compute-devel} \\
+State and exit code & \texttt{COMPLETED}; \texttt{0:0} \\
+Elapsed time & 2,000 seconds = 00:33:20 \\
+Allocated resources & 2 CPUs; 8 GiB requested memory \\
+Total CPU and maximum batch RSS & 32:33.567; 809680K \\
+Algorithms & PPO, A2C, DDPG, TD3, SAC \\
+Accepted artifacts & 5 complete manifests; 5 final models; 5 retention receipts \\
+Rejected artifact condition & 0 periodic checkpoint paths \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+This result verifies software-path coverage and artifact completeness. It does not rank algorithms because each smoke run was a single short 2,048-timestep execution with an algorithm-specific sampled configuration. Financial metrics from these runs are therefore excluded from the performance discussion.
+
+\section{Storage-Safe Retention Halved Returned Output}
+
+The checkpoint-writing smoke returned 262.460 MiB, while the storage-safe smoke returned 131.395 MiB. Figure~\ref{fig:storage} displays both complete inventories from a zero baseline. The 49.94\% reduction occurred even though the storage-safe run retained all final models and added manifest, receipt, and checksum evidence.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.94\textwidth]{reports/figures/kvis_observed_storage_3543_3550.pdf}
+\caption{Complete returned output inventories before and after storage-safe retention. The comparison measures artifact storage, not investment performance.}
+\label{fig:storage}
+\end{figure}
+
+Suppressing redundant periodic checkpoints at write time was more effective than retaining them and deleting them afterward. The result is operationally significant because it reduced filesystem pressure without removing the final trained model or the evidence needed to identify the run. The measured percentage applies to these two smoke inventories and should not be interpreted as a universal per-trial reduction.
+
+\section{Financial and Computational Interpretation}
+
+The completed evidence supports two different conclusions. Financially, the historical pilot did not show PPO or A2C outperforming the strongest transparent baseline. Computationally, the environment could be calibrated, replayed reproducibly under fixed conditions, and executed across five algorithm classes with a validated artifact contract. HPC was significant not because more processors improved the result, but because the cluster made repeated measurement, scheduler accounting, and provenance capture practical.
+
+This distinction also clarifies what reproducibility means. Matching environment trajectories, manifests, and checksums reduce the risk of silent code or configuration drift. They do not reduce uncertainty in future market returns, remove sampling bias from a five-stock cohort, or turn a smoke test into a financial comparison. A reproducible negative or inconclusive financial result remains scientifically valuable because it prevents computational complexity from being mistaken for economic evidence.
+
+\section{Limitations}
+
+The interpretation is constrained by the following completed-study limitations:
+\begin{enumerate}
+  \item \textbf{Fixed cohort.} Five selected equities are not a survivorship-free representation of the whole Thai market.
+  \item \textbf{Single validation split.} The pilot provides descriptive metrics without repeated holdouts, confidence intervals, or multiplicity-adjusted inference.
+  \item \textbf{Configuration difference.} The historical PPO/A2C pilot used an earlier 13-feature configuration, whereas the five-algorithm smoke used a later observed-market configuration. Their financial outputs are not pooled.
+  \item \textbf{Constant context fields.} The macro-rate-change and sentiment columns in the pilot configuration were constant scaffolds and cannot support economic-effect claims.
+  \item \textbf{Preserved table rather than rerun.} The original pilot run directory was not present in the current local bundle; the reported pilot values were taken from the frozen accepted results table and were not regenerated.
+  \item \textbf{Narrow deterministic test.} Matching 549-step random-action trajectories verify environment replay under one runtime, not bitwise-identical model training.
+  \item \textbf{Smoke-test purpose.} Each of the five storage-safe algorithm runs was short and singular. These runs establish executability and artifacts, not relative investment performance.
+  \item \textbf{Storage comparison scope.} The 49.94\% reduction is an observation from two complete smoke inventories and may vary with model settings or retention policy.
+\end{enumerate}
+
+\FloatBarrier
+
+% -----------------------------------------------------------------------------
+\chapter{CONCLUSION}
+
+\section{Summary of Findings}
+
+The completed real-OHLCV pilot did not show PPO or A2C outperforming the strongest simple strategy. PTT buy-and-hold achieved a cumulative return of 0.043523 and a reported annualized return-to-volatility ratio of 0.405480. PPO and A2C produced negative cumulative returns and negative ratios on the same validation interval. PPO exhibited a smaller maximum drawdown than several comparators, but that isolated feature did not offset its weaker return and risk-adjusted result.
+
+The HPC experiments produced clear engineering findings. One vector environment delivered the highest median throughput and the lowest measured process-tree memory among the five settings. Two independent subprocesses generated identical 549-step environment trajectory hashes. A single storage-safe job then completed PPO, A2C, DDPG, TD3, and SAC with five complete manifests, five final models, five checksum-bound retention receipts, and zero periodic checkpoint paths. Compared with the checkpoint-writing smoke, returned output fell by 49.94\%.
+
+\section{Scientific Conclusion}
+
+For the completed five-stock pilot, added DRL complexity did not produce superior validation performance relative to the strongest buy-and-hold baseline. The evidence is limited to one chronological validation split and therefore supports a pilot-level negative finding rather than a general statement about Thai equities or DRL.
+
+HPC was nevertheless scientifically significant. Its main contribution was not raw parallelism: excessive vectorization made the tested workload slower and more memory-intensive. Its contribution was controlled measurement and auditability. BistKA enabled repeatable resource calibration, independent environment replay, scheduler accounting, and artifact-preserving execution across five DRL algorithms. The study therefore demonstrates that careful HPC design can strengthen the reproducibility and storage efficiency of financial machine-learning experiments even when the observed investment result is negative.
+
+\clearpage
+
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{REFERENCES}
+\footnotesize
+\raggedright
+\setlength{\itemsep}{0.5\baselineskip}
+
+\bibitem{bailey2017backtest}
+D. H. Bailey, J. M. Borwein, M. L\'opez de Prado, and Q. J. Zhu, “The Probability of Backtest Overfitting,” \emph{Journal of Computational Finance}, vol. 20, no. 4, pp. 39--69, 2017. \href{https://doi.org/10.21314/JCF.2016.322}{doi:10.21314/JCF.2016.322}.
+
+\bibitem{cerqueira2020timeseries}
+V. Cerqueira, L. Torgo, and I. Mozeti\v{c}, “Evaluating Time Series Forecasting Models: An Empirical Study on Performance Estimation Methods,” \emph{Machine Learning}, vol. 109, pp. 1997--2028, 2020. \href{https://doi.org/10.1007/s10994-020-05910-7}{doi:10.1007/s10994-020-05910-7}.
+
+\bibitem{liu2020finrl}
+X.-Y. Liu, H. Yang, Q. Chen, R. Zhang, L. Yang, B. Xiao, and C. D. Wang, “FinRL: A Deep Reinforcement Learning Library for Automated Stock Trading in Quantitative Finance,” \emph{Deep Reinforcement Learning Workshop, NeurIPS 2020}, 2020, arXiv:2011.09607. \url{https://arxiv.org/abs/2011.09607}.
+
+\bibitem{schulman2017ppo}
+J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov, “Proximal Policy Optimization Algorithms,” arXiv:1707.06347, 2017. \url{https://arxiv.org/abs/1707.06347}.
+
+\bibitem{mnih2016a3c}
+V. Mnih, A. P. Badia, M. Mirza, A. Graves, T. Lillicrap, T. Harley, D. Silver, and K. Kavukcuoglu, “Asynchronous Methods for Deep Reinforcement Learning,” in \emph{Proceedings of the 33rd International Conference on Machine Learning}, PMLR, vol. 48, pp. 1928--1937, 2016. \url{https://proceedings.mlr.press/v48/mniha16.html}.
+
+\bibitem{lillicrap2015ddpg}
+T. P. Lillicrap, J. J. Hunt, A. Pritzel, N. Heess, T. Erez, Y. Tassa, D. Silver, and D. Wierstra, “Continuous Control with Deep Reinforcement Learning,” arXiv:1509.02971, 2015. \url{https://arxiv.org/abs/1509.02971}.
+
+\bibitem{fujimoto2018td3}
+S. Fujimoto, H. van Hoof, and D. Meger, “Addressing Function Approximation Error in Actor-Critic Methods,” in \emph{Proceedings of the 35th International Conference on Machine Learning}, PMLR, vol. 80, pp. 1587--1596, 2018. \url{https://proceedings.mlr.press/v80/fujimoto18a.html}.
+
+\bibitem{haarnoja2018sac}
+T. Haarnoja, A. Zhou, P. Abbeel, and S. Levine, “Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor,” in \emph{Proceedings of the 35th International Conference on Machine Learning}, PMLR, vol. 80, pp. 1861--1870, 2018. \url{https://proceedings.mlr.press/v80/haarnoja18b.html}.
+
+\bibitem{raffin2021sb3}
+A. Raffin, A. Hill, A. Gleave, A. Kanervisto, M. Ernestus, and N. Dormann, “Stable-Baselines3: Reliable Reinforcement Learning Implementations,” \emph{Journal of Machine Learning Research}, vol. 22, no. 268, pp. 1--8, 2021. \url{https://www.jmlr.org/papers/v22/20-1364.html}.
+
+\bibitem{demiguel2009naive}
+V. DeMiguel, L. Garlappi, and R. Uppal, “Optimal Versus Naive Diversification: How Inefficient Is the $1/N$ Portfolio Strategy?” \emph{Review of Financial Studies}, vol. 22, no. 5, pp. 1915--1953, 2009. \href{https://doi.org/10.1093/rfs/hhm075}{doi:10.1093/rfs/hhm075}.
+
+\bibitem{markowitz1952}
+H. Markowitz, “Portfolio Selection,” \emph{The Journal of Finance}, vol. 7, no. 1, pp. 77--91, 1952. \href{https://doi.org/10.1111/j.1540-6261.1952.tb01525.x}{doi:10.1111/j.1540-6261.1952.tb01525.x}.
+
+\bibitem{sharpe1994}
+W. F. Sharpe, “The Sharpe Ratio,” \emph{The Journal of Portfolio Management}, vol. 21, no. 1, pp. 49--58, 1994. \href{https://doi.org/10.3905/jpm.1994.409501}{doi:10.3905/jpm.1994.409501}.
+
+\bibitem{holm1979}
+S. Holm, “A Simple Sequentially Rejective Multiple Test Procedure,” \emph{Scandinavian Journal of Statistics}, vol. 6, no. 2, pp. 65--70, 1979. \url{https://www.jstor.org/stable/4615733}.
+
+\bibitem{efron1979bootstrap}
+B. Efron, “Bootstrap Methods: Another Look at the Jackknife,” \emph{The Annals of Statistics}, vol. 7, no. 1, pp. 1--26, 1979. \href{https://doi.org/10.1214/aos/1176344552}{doi:10.1214/aos/1176344552}.
+
+\bibitem{yoo2003slurm}
+A. B. Yoo, M. A. Jette, and M. Grondona, “SLURM: Simple Linux Utility for Resource Management,” in \emph{Job Scheduling Strategies for Parallel Processing}, Lecture Notes in Computer Science, vol. 2862, pp. 44--60, Springer, 2003. \href{https://doi.org/10.1007/10968987_3}{doi:10.1007/10968987\_3}.
+
+\bibitem{sandve2013reproducible}
+G. K. Sandve, A. Nekrutenko, J. Taylor, and E. Hovig, “Ten Simple Rules for Reproducible Computational Research,” \emph{PLOS Computational Biology}, vol. 9, no. 10, e1003285, 2013. \href{https://doi.org/10.1371/journal.pcbi.1003285}{doi:10.1371/journal.pcbi.1003285}.
+
+\bibitem{henderson2018drl}
+P. Henderson, R. Islam, P. Bachman, J. Pineau, D. Precup, and D. Meger, “Deep Reinforcement Learning That Matters,” \emph{Proceedings of the AAAI Conference on Artificial Intelligence}, vol. 32, no. 1, 2018. \href{https://doi.org/10.1609/aaai.v32i1.11694}{doi:10.1609/aaai.v32i1.11694}.
+
+\end{thebibliography}
+
+\end{document}

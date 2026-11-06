@@ -1,6 +1,17 @@
 # BistKA HPC Sync Status
 
-Last verified: 2026-06-09
+Last full remote evidence: 2026-07-26
+
+Latest connection probe: 2026-07-31
+
+## 2026-07-31 Connection And Sync Boundary
+
+- The VPN path reached the BistKA SSH endpoint at `10.205.100.101`.
+- The bounded key-only probe was rejected because no accepted public key is configured for `s00658`.
+- A password-authenticated refresh was not performed without a separate explicit stored-credential approval.
+- Zero jobs were submitted and no remote file was changed.
+- The new official SET constituent archive and isolated V3 membership-development capsule remain local and have not been synchronized or deployed.
+- The authoritative remote scheduler/quota/release evidence therefore remains the checksum-bound 2026-07-26 snapshot documented in `PROGRESS_CHECKLIST.md`.
 
 ## Verified Connection
 
@@ -112,11 +123,11 @@ The source-readiness and intake-validation commands are expected to exit nonzero
 
 ## Current Boundary
 
-All local and HPC-side scaffolding for the next research step is in place. The remaining work is blocked by missing external datasets:
+The local project now contains official point-in-time SET50/SET100 membership and sector history for 2021–2024. It is not part of the active BistKA V2 release. The remaining broad-study data blockers are:
 
-- broad SET50/SET100 ticker universe,
-- complete sector membership or sector-index history,
-- historical official macro exports,
+- licensed or explicitly authorized OHLCV and corporate actions for the 138-ticker acquisition union,
+- licensed trading-status/corporate-action rules that extend the implemented local membership panel into final investability, plus an author-approved locked V3 release,
+- point-in-time official macro vintages,
 - historical Thai news or sentiment data,
 - licensed fundamentals.
 

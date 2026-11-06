@@ -1,0 +1,73 @@
+{
+  "stage_id": "screening_smoke",
+  "passed": true,
+  "base_dir": "results/screening_storage_safe_smoke_3550",
+  "run_dir": "results/screening_storage_safe_smoke_3550",
+  "requirements": [
+    {
+      "name": "complete five-algorithm observed-data smoke summary",
+      "passed": true,
+      "matches": [
+        "results/screening_storage_safe_smoke_3550/screening_smoke_summary.json"
+      ],
+      "issues": []
+    },
+    {
+      "name": "screening smoke summary SHA-256 sidecar",
+      "passed": true,
+      "matches": [
+        "results/screening_storage_safe_smoke_3550/screening_smoke_summary.json.sha256"
+      ],
+      "issues": []
+    },
+    {
+      "name": "storage-safe smoke validation receipt",
+      "passed": true,
+      "matches": [
+        "results/screening_storage_safe_smoke_3550/storage_safe_smoke_validation.json"
+      ],
+      "issues": []
+    },
+    {
+      "name": "storage-safe smoke validation SHA-256 sidecar",
+      "passed": true,
+      "matches": [
+        "results/screening_storage_safe_smoke_3550/storage_safe_smoke_validation.json.sha256"
+      ],
+      "issues": []
+    }
+  ],
+  "manifest_expected": 5,
+  "manifest_found": 5,
+  "manifest_complete": 5,
+  "manifest_running": 0,
+  "manifest_failed": 0,
+  "issues": [],
+  "evidence_files": [
+    "campaigns/large_scale_thai_drl_v2/attempts/screening_smoke_20260717T144734Z_652d3bc9.json",
+    "campaigns/large_scale_thai_drl_v2/attempts/screening_smoke_latest.json",
+    "campaigns/large_scale_thai_drl_v2/deployment/bistka_screening_storage_safe_cutover_v2_manifest.json",
+    "campaigns/large_scale_thai_drl_v2/derived/locked_large_scale_screening.yaml",
+    "campaigns/large_scale_thai_drl_v2/stages/capacity/_SUCCESS.json",
+    "campaigns/large_scale_thai_drl_v2/stages/capacity/gate_report.json",
+    "campaigns/large_scale_thai_drl_v2/stages/data_readiness/_SUCCESS.json",
+    "campaigns/large_scale_thai_drl_v2/stages/data_readiness/gate_report.json",
+    "campaigns/large_scale_thai_drl_v2/stages/screening_cluster_preflight/_SUCCESS.json",
+    "campaigns/large_scale_thai_drl_v2/stages/screening_cluster_preflight/gate_report.json",
+    "config/research_campaign_storage_safe.yaml",
+    "data/processed/features_real_ohlcv_market.csv",
+    "reports/bistka_screening_storage_safe_cutover_v2_preflight.json",
+    "results/screening_storage_safe_smoke_3550/algorithm_a2c/experiment_manifest.json",
+    "results/screening_storage_safe_smoke_3550/algorithm_ddpg/experiment_manifest.json",
+    "results/screening_storage_safe_smoke_3550/algorithm_ppo/experiment_manifest.json",
+    "results/screening_storage_safe_smoke_3550/algorithm_sac/experiment_manifest.json",
+    "results/screening_storage_safe_smoke_3550/algorithm_td3/experiment_manifest.json",
+    "results/screening_storage_safe_smoke_3550/screening_smoke_summary.json",
+    "results/screening_storage_safe_smoke_3550/screening_smoke_summary.json.sha256",
+    "results/screening_storage_safe_smoke_3550/storage_safe_smoke_validation.json",
+    "results/screening_storage_safe_smoke_3550/storage_safe_smoke_validation.json.sha256",
+    "slurm/screening_storage_safe_smoke.sbatch"
+  ],
+  "evidence_fingerprint": "ec76499d2008d84ab44ea2c72b92060a5293c06ac7ad87b459cdd954cc3c9b96",
+  "evaluated_at": "2026-07-17T15:41:17.973092+00:00"
+}

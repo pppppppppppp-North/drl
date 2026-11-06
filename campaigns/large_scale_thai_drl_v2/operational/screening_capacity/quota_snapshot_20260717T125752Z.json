@@ -1,0 +1,45 @@
+{
+  "captured_at": "2026-07-17T12:58:28.294863Z",
+  "filesystem": "/lustrefs/project/25sfcs03",
+  "group": {
+    "bytes": {
+      "grace_expired": false,
+      "hard_limit": 53687091200,
+      "soft_limit": 32212254720,
+      "used": 25286039552
+    },
+    "gid": 1039,
+    "inodes": {
+      "grace_expired": false,
+      "hard_limit": 1100000,
+      "soft_limit": 1000000,
+      "used": 170186
+    },
+    "name": "s00658"
+  },
+  "project": {
+    "bytes": {
+      "grace_expired": false,
+      "hard_limit": 322122547200,
+      "soft_limit": 268435456000,
+      "used": 39218758656
+    },
+    "id": 25110303,
+    "inodes": {
+      "grace_expired": false,
+      "hard_limit": 11000000,
+      "soft_limit": 10000000,
+      "used": 278629
+    }
+  },
+  "schema_version": 1,
+  "write_probe": {
+    "bytes_written": 1048576,
+    "completed_at": "2026-07-17T12:58:28.272024Z",
+    "filesystem": "/lustrefs/project/25sfcs03",
+    "fsync_succeeded": true,
+    "gid": 1039,
+    "path": "/lustrefs/project/25sfcs03/drl_thai_stock/results/.screening-quota-probe-asn4nz_y",
+    "removed": true
+  }
+}

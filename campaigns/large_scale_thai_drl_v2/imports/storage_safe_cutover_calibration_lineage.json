@@ -1,0 +1,216 @@
+{
+  "accepted_stages": {
+    "determinism": {
+      "attempt_id": "determinism_20260716T155437Z_32014fd9",
+      "attempt_sha256": "6b6f627e9e755ab9a54f1d1855bc647d7a39891dce7022d831efc6221e1d0951",
+      "evidence_file_count": 24,
+      "gate_evidence_fingerprint": "5593b113aa32ae3b26cd4f49fbd600e31717c6269b81ef16c152bf9ff5652316",
+      "receipts": [
+        {
+          "bytes": 4483,
+          "path": "reports/determinism_3541.json.receipt.json",
+          "sha256": "c2009de48486aec4b51271f385afdf659c239dffe3014a2d93d839e15422bd4d"
+        }
+      ],
+      "stage_id": "determinism"
+    },
+    "vector_benchmark": {
+      "attempt_id": "vector_benchmark_20260716T155433Z_76f61dd7",
+      "attempt_sha256": "55e45948c9d0efe9b2fcf4fcfea2ce4a487f851cd9ac3ec1bc6f7ddaee47dec3",
+      "evidence_file_count": 26,
+      "gate_evidence_fingerprint": "ba22f643f993b76e0f01d33a2c759ced86b710629c65f9f56e2c2501b0212381",
+      "receipts": [
+        {
+          "bytes": 4886,
+          "path": "reports/vectorized_training_benchmark_3540.csv.receipt.json",
+          "sha256": "e0b089755046ff53e78bc53c5f7816545c32d242956538dc63361992daf94524"
+        }
+      ],
+      "stage_id": "vector_benchmark"
+    }
+  },
+  "created_at_utc": "2026-07-17T14:38:18.052460+00:00",
+  "decision": "reuse_without_compute",
+  "references": [
+    {
+      "bytes": 1707398,
+      "path": "campaigns/large_scale_thai_drl_v2/cutovers/storage_safe_20260717_pre_cutover/pre_cutover_control_and_release.tar.gz",
+      "sha256": "5dd485c41ee5e287c893081f760f1f496fb458e1e1097e691fb64e254e822aee"
+    },
+    {
+      "bytes": 65,
+      "path": "campaigns/large_scale_thai_drl_v2/cutovers/storage_safe_20260717_pre_cutover/pre_cutover_control_and_release.tar.gz.sha256",
+      "sha256": "6d02492e22c468fe48ac400aff29a757f39a770e34e3b000aee23b75bb8a71bd"
+    },
+    {
+      "bytes": 10779,
+      "path": "campaigns/large_scale_thai_drl_v2/cutovers/storage_safe_20260717_pre_cutover/snapshot_receipt.json",
+      "sha256": "24fab6ab9e2fa1b7d364c367f39d721ea459f876f0b5be105b9d3b888a7ef158"
+    },
+    {
+      "bytes": 65,
+      "path": "campaigns/large_scale_thai_drl_v2/cutovers/storage_safe_20260717_pre_cutover/snapshot_receipt.json.sha256",
+      "sha256": "c460791f55af7bf0b01c4529707b958a9e7e4a5eba7c007d22e18fed8a824c80"
+    },
+    {
+      "bytes": 8286,
+      "path": "campaigns/large_scale_thai_drl_v2/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_0_gate_report.json",
+      "sha256": "7bc32779a55ca4b622b5e9f36399097a499f401498011286f62abd5f7793fa9a"
+    },
+    {
+      "bytes": 215,
+      "path": "campaigns/large_scale_thai_drl_v2/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_1__SUCCESS.json",
+      "sha256": "461cbe8d6348029f92585d0c33a3b971a8fdd277b4ded42e2eaaea62af5b427e"
+    },
+    {
+      "bytes": 3349,
+      "path": "campaigns/large_scale_thai_drl_v2/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_2_gate_report.json",
+      "sha256": "ab34b96d139710d180cb449cd8a02711a8e856210e6b1780196c720a68a51b8c"
+    },
+    {
+      "bytes": 214,
+      "path": "campaigns/large_scale_thai_drl_v2/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_3__SUCCESS.json",
+      "sha256": "24a543a87a8de9efeaddef77aaeb6a4a8715840881edf48822da6adb9daa9436"
+    },
+    {
+      "bytes": 2792,
+      "path": "campaigns/large_scale_thai_drl_v2/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_4_gate_report.json",
+      "sha256": "f76cccdadb1d03ea451e0eb37a71fa1465b6d8d6151d7916c79e82066bf03f59"
+    },
+    {
+      "bytes": 209,
+      "path": "campaigns/large_scale_thai_drl_v2/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_5__SUCCESS.json",
+      "sha256": "88bc5bfef522bc5b73b56ab148351b5f17ee46ff0c3e73b344ea8c966489dbff"
+    },
+    {
+      "bytes": 215,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/_SUCCESS.json",
+      "sha256": "0e2f6ced32670ab86a28b70882cb21ae982ad61d5f758fdd5784f4ada4ece052"
+    },
+    {
+      "bytes": 8286,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/gate_report.json",
+      "sha256": "bb175bb075b05784c08db6ddb24c9e7e681946204fdcab311199d5f8d06ff4d0"
+    },
+    {
+      "bytes": 209,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/determinism/_SUCCESS.json",
+      "sha256": "88bc5bfef522bc5b73b56ab148351b5f17ee46ff0c3e73b344ea8c966489dbff"
+    },
+    {
+      "bytes": 2098,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/determinism/gate_report.json",
+      "sha256": "0de02de36c2a8e4a06e724f1efa06cb2d559d70c2aedb0e9c272a9da723bd215"
+    },
+    {
+      "bytes": 214,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/vector_benchmark/_SUCCESS.json",
+      "sha256": "24a543a87a8de9efeaddef77aaeb6a4a8715840881edf48822da6adb9daa9436"
+    },
+    {
+      "bytes": 2641,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/vector_benchmark/gate_report.json",
+      "sha256": "6a806ec61c814a96da8caa0041968ac25027d0a40ed5e4bac81f31ec22894658"
+    },
+    {
+      "bytes": 39548,
+      "path": "config/research_campaign.yaml",
+      "sha256": "9d0d02ad1890379e72ce8d7513cf93dc83a54e8afc1c6f527c5275e76476a0b4"
+    },
+    {
+      "bytes": 35192,
+      "path": "config/research_campaign_storage_safe.yaml",
+      "sha256": "2a7934bb3c3256cee012372c25e204585436b1a4239de4a4ad2983366419fadd"
+    }
+  ],
+  "restored_predecessor_records": [
+    {
+      "bytes": 8286,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/gate_report.json",
+      "sha256": "bb175bb075b05784c08db6ddb24c9e7e681946204fdcab311199d5f8d06ff4d0"
+    },
+    {
+      "bytes": 215,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/_SUCCESS.json",
+      "sha256": "0e2f6ced32670ab86a28b70882cb21ae982ad61d5f758fdd5784f4ada4ece052"
+    },
+    {
+      "bytes": 2641,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/vector_benchmark/gate_report.json",
+      "sha256": "6a806ec61c814a96da8caa0041968ac25027d0a40ed5e4bac81f31ec22894658"
+    },
+    {
+      "bytes": 214,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/vector_benchmark/_SUCCESS.json",
+      "sha256": "24a543a87a8de9efeaddef77aaeb6a4a8715840881edf48822da6adb9daa9436"
+    },
+    {
+      "bytes": 2098,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/determinism/gate_report.json",
+      "sha256": "0de02de36c2a8e4a06e724f1efa06cb2d559d70c2aedb0e9c272a9da723bd215"
+    },
+    {
+      "bytes": 209,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/determinism/_SUCCESS.json",
+      "sha256": "88bc5bfef522bc5b73b56ab148351b5f17ee46ff0c3e73b344ea8c966489dbff"
+    }
+  ],
+  "schema_version": 1,
+  "scientific_claim": "Only control-lineage predecessor records were restored. The accepted observed-data calibration outputs, attempts, deployment, preflight, configuration, executable code, and receipt hashes remain unchanged.",
+  "source": {
+    "active_release": {
+      "manifest_path": "campaigns/large_scale_thai_drl_v2/deployment/bistka_screening_v2_manifest.json",
+      "manifest_sha256": "d9a1fd96af46cfe022d12b38d2de97642296a4a1f66928bbbbf3669af4dcfd86",
+      "release_id": "ef89ff5a738c5b25460ae40ad7789239134d761ce511a36665f857e01e3d74b4"
+    },
+    "original_campaign_spec": {
+      "bytes": 39548,
+      "path": "config/research_campaign.yaml",
+      "sha256": "9d0d02ad1890379e72ce8d7513cf93dc83a54e8afc1c6f527c5275e76476a0b4"
+    },
+    "snapshot_kind": "pre_storage_safe_campaign_cutover"
+  },
+  "status": "accepted",
+  "submitted_hpc_jobs": 0,
+  "superseded_transition_records": [
+    {
+      "bytes": 8286,
+      "path": "campaigns/large_scale_thai_drl_v2/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_0_gate_report.json",
+      "sha256": "7bc32779a55ca4b622b5e9f36399097a499f401498011286f62abd5f7793fa9a"
+    },
+    {
+      "bytes": 215,
+      "path": "campaigns/large_scale_thai_drl_v2/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_1__SUCCESS.json",
+      "sha256": "461cbe8d6348029f92585d0c33a3b971a8fdd277b4ded42e2eaaea62af5b427e"
+    },
+    {
+      "bytes": 3349,
+      "path": "campaigns/large_scale_thai_drl_v2/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_2_gate_report.json",
+      "sha256": "ab34b96d139710d180cb449cd8a02711a8e856210e6b1780196c720a68a51b8c"
+    },
+    {
+      "bytes": 214,
+      "path": "campaigns/large_scale_thai_drl_v2/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_3__SUCCESS.json",
+      "sha256": "24a543a87a8de9efeaddef77aaeb6a4a8715840881edf48822da6adb9daa9436"
+    },
+    {
+      "bytes": 2792,
+      "path": "campaigns/large_scale_thai_drl_v2/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_4_gate_report.json",
+      "sha256": "f76cccdadb1d03ea451e0eb37a71fa1465b6d8d6151d7916c79e82066bf03f59"
+    },
+    {
+      "bytes": 209,
+      "path": "campaigns/large_scale_thai_drl_v2/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_5__SUCCESS.json",
+      "sha256": "88bc5bfef522bc5b73b56ab148351b5f17ee46ff0c3e73b344ea8c966489dbff"
+    }
+  ],
+  "target": {
+    "campaign_id": "large_scale_thai_drl_v2",
+    "campaign_spec": {
+      "bytes": 35192,
+      "path": "config/research_campaign_storage_safe.yaml",
+      "sha256": "2a7934bb3c3256cee012372c25e204585436b1a4239de4a4ad2983366419fadd"
+    },
+    "replacement_stage": "calibration_lineage"
+  }
+}

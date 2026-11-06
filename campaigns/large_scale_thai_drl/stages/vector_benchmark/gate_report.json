@@ -1,0 +1,63 @@
+{
+  "stage_id": "vector_benchmark",
+  "passed": true,
+  "base_dir": ".",
+  "run_dir": null,
+  "requirements": [
+    {
+      "name": "observed 1/2/4/8/16 repeated environment benchmark",
+      "passed": true,
+      "matches": [
+        "reports/vectorized_training_benchmark_3530.csv"
+      ],
+      "issues": []
+    },
+    {
+      "name": "measured 95-percent throughput selection metadata",
+      "passed": true,
+      "matches": [
+        "reports/vectorized_training_benchmark_3530.json"
+      ],
+      "issues": []
+    },
+    {
+      "name": "attempt-bound BistKA vector calibration receipt",
+      "passed": true,
+      "matches": [
+        "reports/vectorized_training_benchmark_3530.csv.receipt.json"
+      ],
+      "issues": []
+    }
+  ],
+  "manifest_expected": 0,
+  "manifest_found": 0,
+  "manifest_complete": 0,
+  "manifest_running": 0,
+  "manifest_failed": 0,
+  "issues": [],
+  "evidence_files": [
+    "campaigns/large_scale_thai_drl/attempts/vector_benchmark_20260715T161221Z_8ac0554b.json",
+    "campaigns/large_scale_thai_drl/attempts/vector_benchmark_latest.json",
+    "campaigns/large_scale_thai_drl/deployment/bistka_deployment_manifest.json",
+    "config/large_scale_screening.yaml",
+    "config/research_campaign.yaml",
+    "data/processed/features_real_ohlcv_market.csv",
+    "environment.yml",
+    "reports/bistka_calibration_preflight.json",
+    "reports/data_quality_market/market_data_readiness.json",
+    "reports/data_quality_market/market_data_readiness.sha256",
+    "reports/vectorized_training_benchmark_3530.csv",
+    "reports/vectorized_training_benchmark_3530.csv.receipt.json",
+    "reports/vectorized_training_benchmark_3530.json",
+    "requirements.txt",
+    "scripts/benchmark_vectorized_training.py",
+    "slurm/benchmark_vectorized_training.sbatch",
+    "src/campaigns/calibration.py",
+    "src/data/splits.py",
+    "src/envs/trading_env.py",
+    "src/train.py",
+    "src/utils/config.py"
+  ],
+  "evidence_fingerprint": "a3f9b3b3319eb2e30f08ce82e399341033c635bd0a6a631a4c561123a8b8f09b",
+  "evaluated_at": "2026-07-15T16:24:21.717125+00:00"
+}

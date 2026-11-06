@@ -1,0 +1,716 @@
+\documentclass[12pt,a4paper,oneside]{book}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{latexsym}
+%\usepackage{pslatex}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{cite}
+\usepackage{indentfirst}
+\usepackage{tocloft}
+\usepackage{multirow}
+\usepackage{fontspec}
+% Times New Roman
+\setromanfont[
+Path=/System/Library/Fonts/Supplemental/,
+BoldFont=Times New Roman Bold.ttf,
+ItalicFont=Times New Roman Italic.ttf,
+BoldItalicFont=Times New Roman Bold Italic.ttf,
+]{Times New Roman.ttf}
+%\setmainfont{Times New Roman}
+
+% Centering Chapter
+\usepackage{sectsty}   
+\chapterfont{\centering}
+
+\pagestyle{myheadings}
+\setlength{\parindent}{0.8in}
+
+\usepackage[top=1.5in,bottom=1in,left=1.5in,right=1in]{geometry}
+
+
+
+% Theorem style-------------------------------------------------------------------
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[chapter]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{rem}[thm]{Remark}
+\newtheorem{ex}[thm]{Example}
+\newtheorem{de}[thm]{Definition}
+\renewcommand{\proof}{\textbf{Proof.}}
+
+\numberwithin{equation}{chapter} \DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Ima}{Im}
+
+\usepackage{float}
+%\usepackage[skip=2pt,font=footnotesize]{caption}
+
+% Graph-------------------------------------------------------------------
+\usepackage{graphics,graphicx}
+\usepackage{calc}
+\usepackage{tikz}
+\usetikzlibrary{decorations.markings}
+\tikzstyle{vertex}=[circle, draw, inner sep=2pt, minimum size=4pt]
+\newcommand{\vertex}{\node[vertex]}
+\newcounter{Angle}
+
+% Line space-------------------------------------------------------------------
+\renewcommand{\baselinestretch}{1.5}
+
+\newcommand*{\QEDA}{\hfill\ensuremath{\large{\lozenge}}}
+\newcommand*{\QEDAa}{\hfill\ensuremath{\square}}
+
+\renewcommand{\bibname}{\centerline{\Large REFERENCES}}
+
+%Centering table of contents and list of table
+\usepackage{tocloft}
+\renewcommand{\contentsname}{\hfill\bfseries\Large TABLE OF CONTENTS \hfill}   
+\renewcommand{\cftaftertoctitle}{\hfill}
+
+\renewcommand{\listtablename}{\hfill\bfseries\Large LIST OF TABLES} 
+\renewcommand{\cftafterlottitle}{\hfill}
+
+\renewcommand{\listfigurename}{\hfill\bfseries\Large LIST OF FIGURES} 
+\renewcommand{\cftafterloftitle}{\hfill}
+
+
+
+
+
+
+
+
+% Table and cross-reference support; school layout and typography retained.
+\usepackage{booktabs,tabularx,array,placeins,xurl}
+\usepackage{pgfplots}\pgfplotsset{compat=1.18}
+\usepackage[hidelinks]{hyperref}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\setlength{\emergencystretch}{3em}
+\setcounter{tocdepth}{1}
+\hypersetup{pdftitle={Deep Reinforcement Learning for Long-Term Profit Optimization in Thai Stock Markets Using Multi-Source Data},pdfauthor={Nathawat Youngyim; Kunach Kijsanayothin}}
+\newcommand{\ProjectTitle}{Deep Reinforcement Learning for Long-Term Profit Optimization in Thai Stock Markets Using Multi-Source Data}
+\newcommand{\ProjectAuthorOne}{Nathawat Youngyim}
+\newcommand{\ProjectAuthorTwo}{Kunach Kijsanayothin}
+\newcommand{\ProjectTeamCover}{%
+  \shortstack[c]{%
+    \textbf{\ProjectAuthorOne}\\[0.15cm]
+    \textbf{\ProjectAuthorTwo}}}
+\newcommand{\ProjectTeamInfo}{%
+  \begin{tabular}[t]{@{}l@{}}
+    \ProjectAuthorOne\\
+    \ProjectAuthorTwo
+  \end{tabular}}
+\newcommand{\AdvisorName}{Prompong Pakawanwong}
+
+\begin{document}
+
+% -----------------------------------------------------------------------------
+% Cover page based on the official KVIS report template.
+% -----------------------------------------------------------------------------
+\thispagestyle{empty}
+\begin{figure}[h!]
+  \vskip0.5in
+  \centering
+  \includegraphics[width=3.5cm]{KVIS_Logo.png}
+\end{figure}
+
+\begin{center}
+  \large\textbf{\ProjectTitle}
+\end{center}
+
+\vskip1.5cm
+
+\vskip2.0cm
+
+\begin{center}
+  \ProjectTeamCover
+\end{center}
+
+\vfill
+
+\begin{center}
+  \textbf{SUBMITTED IN PARTIAL FULFILLMENT OF}\\[0.25cm]
+  \textbf{THE REQUIREMENTS FOR GRADUATION IN 2026}\\[1.0cm]
+  \textbf{KAMNOETVIDYA SCIENCE ACADEMY (KVIS)}
+\end{center}
+
+\newpage
+\pagenumbering{roman}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.0}
+\begin{tabularx}{\textwidth}{@{}L{0.28\textwidth}Y@{}}
+Project Title & \ProjectTitle \\
+By & \ProjectTeamInfo \\
+Field of Study & Computer Science \\
+Project Advisor & \AdvisorName \\
+Academic Year & 2026 \\
+\end{tabularx}
+\end{table}
+
+\begin{center}
+  \large\textbf{ABSTRACT}
+\end{center}
+\addcontentsline{toc}{chapter}{ABSTRACT}
+
+We evaluated whether deep reinforcement learning (DRL), in which a model learns decisions by repeated interaction with a simulation environment, outperformed portfolio-allocation strategies (the proportions invested in each asset) in a five-stock Thai-equity pilot. Using chronological open, high, low, close, and volume (OHLCV) data, we compared Proximal Policy Optimization (PPO) and Advantage Actor-Critic (A2C) with buy-and-hold (holding one stock), equal-weight (same weight for each stock), and mean-variance (risk-return optimization) baselines. We also measured workflow efficiency and repeatability on BistKA's high-performance computing (HPC) cluster.
+
+PTT buy-and-hold produced the highest cumulative return (net growth over the interval) and the highest reported ratio of annualized return (one-year-scaled return) to annualized volatility (one-year-scaled return variability). PPO and A2C did not outperform this baseline. With one parallel simulation copy (one environment), throughput was approximately 353 samples per second; with sixteen, approximately 83, with higher memory use. Two processes with the same fixed random seed (random-number initialization) reproduced the same 549-step trajectory. All five methods completed short runs; without periodic model checkpoints (saved model states), output was approximately 50\% lower. Results are limited to five stocks and one interval; some values are summary-only.
+
+\par\medskip
+\noindent\begin{minipage}{\textwidth}
+\small\textbf{Keywords:} deep reinforcement learning, Thai equities, portfolio allocation, high-performance computing, reproducibility, chronological validation
+\end{minipage}
+
+\newpage
+\begin{center}
+  \large\textbf{ACKNOWLEDGEMENTS}
+\end{center}
+\addcontentsline{toc}{chapter}{ACKNOWLEDGEMENTS}
+
+We thank our advisor, \AdvisorName, for guidance throughout the research process. We are grateful to Kamnoetvidya Science Academy for providing the research environment and the BistKA Mini-HPC cluster used for our computational experiments.
+
+We also thank the instructors and technical staff who helped us use the cluster and resolve storage and runtime problems. Their support allowed us to complete the computational part of this project carefully and reproducibly.
+
+\vfill
+\begin{flushright}
+\ProjectAuthorOne\\
+\ProjectAuthorTwo
+\end{flushright}
+
+\newpage
+\tableofcontents
+
+\newpage
+\addcontentsline{toc}{chapter}{LIST OF FIGURES}
+\listoffigures
+
+\newpage
+\addcontentsline{toc}{chapter}{LIST OF TABLES}
+\listoftables
+
+\clearpage
+\pagenumbering{arabic}
+
+% -----------------------------------------------------------------------------
+\chapter{Introduction}
+
+\section{Background}
+
+Portfolio allocation requires a decision maker to balance return, risk, diversification, and trading costs over time. Classical portfolio theory expresses the trade-off between expected return and variance \cite{markowitz1952}; risk-adjusted measures help compare strategies whose returns have different variability \cite{sharpe1994}. These principles remain relevant when an allocation rule is learned by a nonlinear model, because a complex policy is useful only if it performs credibly against transparent alternatives.
+
+Deep reinforcement learning treats portfolio management as sequential decision-making. At each trading date, an agent receives market and portfolio information, selects an allocation, and receives a training reward that can include return, turnover, and drawdown. Frameworks such as FinRL show how observations, trading constraints, actions, and backtesting can be combined in this setting \cite{liu2020finrl}. DRL may represent nonlinear policies, but stochastic optimization and repeated model selection can also produce unstable or overfit results \cite{bailey2017backtest,henderson2018drl}.
+
+We therefore examine two connected dimensions. The financial question is whether the tested DRL policies outperform simple baselines on the available historical pilot. The computational question is whether the workflow can run efficiently and repeatably on the BistKA high-performance computing (HPC) system. Process overhead and duplicated memory can outweigh the benefit of additional workers, so we measured vectorization on the actual workload instead of assuming that more parallel environments would be faster.
+
+\section{Research Problem}
+
+We ask whether Proximal Policy Optimization (PPO) and Advantage Actor-Critic (A2C) improved portfolio performance on the available Thai-equity data. A credible comparison requires chronological evaluation against simple baselines because random splitting can leak future information into training. DRL experiments also depend on software configuration, random seeds, resource allocation, and storage behavior, which motivates a separate computational evaluation.
+
+We intentionally restrict the financial experiment to five stocks and treat it as a pilot rather than a representation of the Stock Exchange of Thailand. The principal comparison uses one chronological interval, so its values are descriptive and do not establish long-term generalization beyond the tested period. The implemented reward includes return, turnover, and drawdown terms rather than optimizing pure profit alone. The HPC experiments address efficiency and repeatability under the tested software and hardware configuration; they do not measure investment performance.
+
+\section{Research Questions}
+
+We address two research questions:
+\begin{enumerate}
+  \item How did PPO and A2C perform relative to the portfolio-allocation baselines included in the historical pilot?
+  \item How did vectorization affect computational efficiency on BistKA, and could the workflow be reproduced under a fixed-seed configuration?
+\end{enumerate}
+
+\section{Scope and Contributions}
+
+We evaluate open, high, low, close, and volume (OHLCV) records for five Thai equities from 4 January 2021 through 30 December 2024. The main pilot also uses SET-index context. Later sector, macroeconomic, and fundamental extensions are exploratory and did not establish consistent performance gains. The financial part compares PPO and A2C with transparent baselines and reviews several earlier sensitivity analyses. The computational part measures throughput and memory across five vector-environment settings, tests fixed-seed environment replay, runs all five implemented algorithms through a short execution test, and compares storage with and without periodic checkpoints. Our contribution is primarily empirical rather than algorithmic: we provide a bounded comparison of DRL with transparent baselines and a measured characterization of the computational workflow used for that comparison. Chapter~4 presents the results, Chapter~5 interprets them, and Appendix~A contains supporting historical tables.
+
+\FloatBarrier
+
+% -----------------------------------------------------------------------------
+\chapter{PRELIMINARIES}
+
+\section{Portfolio Theory and Transparent Baselines}
+
+Markowitz introduced mean-variance portfolio selection as an explicit balance between expected return and portfolio variance \cite{markowitz1952}. The framework remains a natural classical comparator for an allocation model, but its estimated weights can be sensitive to sampling error. DeMiguel, Garlappi, and Uppal showed that evaluated mean-variance extensions did not consistently outperform the simple $1/N$ portfolio out of sample \cite{demiguel2009naive}. Equal weighting is therefore a demanding and interpretable benchmark rather than a trivial alternative.
+
+Sharpe formalized a ratio of mean differential return to its standard deviation \cite{sharpe1994}. The retained historical metric definition reports a related but different quantity: compounded annualized return divided by annualized volatility under a zero-risk-free-rate convention. We call this quantity the \emph{reported annualized return-to-volatility ratio} and define it explicitly in Chapter~3.
+
+\section{Deep Reinforcement Learning Algorithms}
+
+FinRL frames automated trading as a sequential learning problem that combines market states, actions, transaction constraints, and backtesting \cite{liu2020finrl}. The algorithms used in our experiments represent several actor--critic families. Proximal Policy Optimization (PPO) constrains policy updates with a clipped surrogate objective \cite{schulman2017ppo}. Advantage Actor-Critic (A2C) is a synchronous actor--critic implementation in the lineage of the asynchronous A3C architecture \cite{mnih2016a3c}. Deep Deterministic Policy Gradient (DDPG) extends deterministic actor--critic learning to continuous action spaces \cite{lillicrap2015ddpg}; Twin Delayed Deep Deterministic Policy Gradient (TD3) reduces function-approximation and overestimation error through paired critics and delayed updates \cite{fujimoto2018td3}; and Soft Actor-Critic (SAC) adds entropy regularization to off-policy learning \cite{haarnoja2018sac}.
+
+Stable-Baselines3 supplies standardized implementations of these methods \cite{raffin2021sb3}. Standardized software reduces avoidable implementation differences, but it does not imply that any algorithm should dominate on Thai equities. The original algorithm papers mainly establish learning mechanisms on control or game benchmarks; their citation supports method provenance rather than financial suitability.
+
+\section{Temporal Evaluation and Backtest-Selection Risk}
+
+Financial observations are ordered and dependent. Randomly mixing future and past observations can leak information and produce an unrealistically favorable evaluation. Cerqueira, Torgo, and Mozeti\v{c} found that out-of-sample estimation strategies are important for non-stationary time series and that repeated holdout methods can improve performance estimation \cite{cerqueira2020timeseries}. We therefore preserve chronological order.
+
+Chronological splitting alone does not eliminate selection bias. Bailey and colleagues demonstrate that repeated strategy search can overfit historical backtests and produce apparently strong strategies by chance \cite{bailey2017backtest}. This concern is particularly relevant to DRL, where training stochasticity and hyperparameter choice can generate many candidate policies. Our pilot contains one validation split, so we interpret it descriptively rather than as a definitive out-of-sample ranking.
+
+\section{Uncertainty and Multiple Comparisons}
+
+Bootstrap resampling provides a general approach to estimating uncertainty when an analytic sampling distribution is inconvenient \cite{efron1979bootstrap}. Holm's sequentially rejective procedure controls family-wise error across multiple hypothesis tests \cite{holm1979}. These methods establish important statistical principles, but neither source alone validates independent resampling of serially dependent daily returns. Because our pilot contains one historical comparison and no validated resampling analysis, we report descriptive metrics without confidence intervals or adjusted significance claims.
+
+\section{Reproducible DRL and HPC Execution}
+
+Deep reinforcement learning results can vary with random seeds, hyperparameters, environment details, and reporting choices \cite{henderson2018drl}. Reproducible computational research therefore requires precise records of data, configuration, software versions, random seeds, and the relationship between intermediate artifacts and reported results \cite{sandve2013reproducible}. These practices are especially important on a shared cluster, where the scheduler, runtime modules, and filesystem form part of the experimental environment.
+
+SLURM provides a general mechanism for resource allocation and job scheduling on Linux clusters \cite{yoo2003slurm}. For our BistKA experiments, scheduler logs recorded elapsed time, CPU allocation, requested memory, and exit status. We treated successful execution and scientific interpretation as separate questions.
+
+\section{Literature Synthesis and Research Gap}
+
+The literature supplies portfolio baselines, continuous-control algorithms, temporal-evaluation principles, statistical tools, and reproducibility guidance. It does not determine whether PPO or A2C outperform transparent baselines in this Thai-equity pilot. We address that practical uncertainty through a chronological historical comparison. We treat measured HPC calibration and fixed-seed replay as methodological contributions that make the computational comparison more inspectable.
+
+\FloatBarrier
+
+% -----------------------------------------------------------------------------
+\chapter{REVIEW OF LITERATURE}
+
+\section{Study Design}
+
+We organized the work into four completed components, summarized in Table~\ref{tab:study-components}. The financial pilot evaluates portfolio performance. The computational experiments evaluate resource use, environment repeatability, algorithm execution, and storage behavior. We analyze these components separately because successful execution does not imply successful investing.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Completed experimental components included in this paper.}
+\label{tab:study-components}
+\begin{tabularx}{\textwidth}{@{}L{0.23\textwidth}L{0.31\textwidth}Y@{}}
+\toprule
+Component & Completed comparison & Scientific role \\
+\midrule
+Historical OHLCV pilot & PPO and A2C versus four baseline policies on one chronological financial comparison & Descriptive portfolio-performance result \\
+HPC calibration and replay & Five vector-environment settings, three repeated measurements under seed 42; two fixed-seed processes & Resource selection and environment repeatability \\
+Short five-algorithm execution test & One 2,048-timestep run for each of PPO, A2C, DDPG, TD3, and SAC & Confirmation that each implemented algorithm path ran successfully \\
+Storage comparison & Complete returned outputs from checkpoint-writing and checkpoint-free runs & Descriptive comparison of returned storage \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Historical OHLCV Data and Chronological Split}
+
+The historical OHLCV cohort contains \texttt{ADVANC.BK}, \texttt{AOT.BK}, \texttt{CPALL.BK}, \texttt{KBANK.BK}, and \texttt{PTT.BK}. The panel contains 4,840 rows: 968 dates for each ticker from 4 January 2021 through 30 December 2024. The associated SET-index context contains 965 dates. Ten OHLC rows required deterministic normalization, and three stock dates lacked a same-day SET-index observation. Constant scaffold fields were not interpreted as economic signals. The retained records do not state the criterion used to select the five stocks, so we treat the cohort as a fixed pilot sample. Table~\ref{tab:data-scope} summarizes the dataset and split.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Historical OHLCV cohort used by the financial and computational pilot.}
+\label{tab:data-scope}
+\begin{tabularx}{\textwidth}{@{}L{0.31\textwidth}Y@{}}
+\toprule
+Item & Observed definition \\
+\midrule
+Stock cohort & ADVANC, AOT, CPALL, KBANK, and PTT symbols \\
+Stock period & 4 January 2021 through 30 December 2024 \\
+Panel size & 4,840 rows; 968 dates per ticker; five tickers \\
+Market context & SET index symbol \texttt{\string^SET.BK}; 965 observed dates \\
+Chronological split & 580 training dates, 194 validation dates, and 194 historical test dates \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The chronological split is shown in Figure~\ref{fig:split}. Training uses 580 dates, the principal financial comparison uses the next 194 dates, and the final 194 dates form a historically examined test interval. Walk-forward means are presented separately in Appendix~A. Because earlier analyses already examined portions of 2021--2024, this period is not an untouched final holdout. Temporal ordering reduces direct future-to-past leakage, although one split cannot remove all backtest-selection risk \cite{cerqueira2020timeseries,bailey2017backtest}.
+
+\begin{figure}[H]
+\centering
+
+\begin{tikzpicture}[x=0.0137cm,y=1cm,font=\footnotesize]
+\filldraw[fill=black!12] (0,0) rectangle (580,1.8);
+\filldraw[fill=black!25] (580,0) rectangle (774,1.8);
+\filldraw[fill=black!5] (774,0) rectangle (968,1.8);
+\node[align=center] at (290,0.9) {Training\\580 dates\\2,900 rows};
+\node[align=center] at (677,0.9) {Validation\\194 dates\\970 rows};
+\node[align=center] at (871,0.9) {Historical test\\194 dates\\970 rows};
+\node[align=center] at (290,-0.7) {4 Jan 2021--\\29 May 2023};
+\node[align=center] at (677,-0.7) {30 May 2023--\\12 Mar 2024};
+\node[align=center] at (871,-0.7) {13 Mar 2024--\\30 Dec 2024};
+\end{tikzpicture}
+
+\caption{Chronological split of the five-stock historical panel. Rows equal dates multiplied by five tickers.}
+\label{fig:split}
+\end{figure}
+
+\section{Feature Construction and Leakage Controls}
+
+The historical OHLCV pilot used a 30-date lookback and 13 configured columns: 1-day, 5-day, and 20-day returns; 20-day volatility; 10-day and 30-day moving-average ratios; 14-day relative strength index; moving-average convergence divergence; Bollinger z-score; 20-day volume ratio; a daily market-return field; a macro-rate-change field; and a sentiment field. The final two fields were constant scaffolds in the historical table and therefore supplied no variation. Their presence demonstrates pipeline compatibility only; it does not show that macroeconomic or sentiment information improved performance.
+
+Features were computed from information available on or before the current date. Duplicate date--ticker keys, missing configured columns, nonfinite values, and chronology violations were treated as failed inputs. The retained summary does not preserve the full scaling procedure, missing-value treatment beyond these input checks, or whether any fitted transformation used training dates only. The historical pilot and the later five-algorithm execution test used related but not identical feature configurations; their results are not combined into one algorithm ranking.
+
+\section{Portfolio Environment, Algorithms, and Baselines}
+
+The retained summary describes a Gymnasium-compatible long-only portfolio allocator. At each date, the state contains the current lookback tensor and portfolio information, while the action is a continuous vector of target portfolio weights. The environment starts with an initial portfolio value of 1,000,000 monetary units, applies a recorded transaction-cost rate of 0.001, and records portfolio value, daily net return, turnover, drawdown, cash weight, and per-ticker allocation. The original training directories are unavailable, so exact state dimensions, action transformation, cash treatment, rebalance timing, and transaction-cost mechanics cannot be reconstructed. The training reward is
+\begin{equation}
+  u_t = R_t - 0.05T_t - 0.10D_t,
+  \label{eq:reward}
+\end{equation}
+where $R_t$ denotes the one-step net portfolio return used by the training environment, $T_t$ denotes turnover, and $D_t$ denotes the drawdown term used by the historical environment. The exact internal sign convention for $D_t$ could not be reconstructed from the retained summary. The symbol $u_t$ denotes training reward, whereas $r_t$ denotes the daily return series reconstructed from recorded portfolio values for evaluation. The reward guides optimization; portfolio performance is evaluated with separate metrics.
+
+The financial pilot trained PPO and A2C. Its principal comparison includes equal-weight, mean-variance, and single-stock buy-and-hold baselines for PTT and ADVANC. Equal-weight provides a transparent $1/N$ benchmark \cite{demiguel2009naive}, while mean-variance represents classical portfolio optimization \cite{markowitz1952}. The original training directories are unavailable, so the principal policies' timestep budget, seeds, network architecture, implementation settings, and model-selection procedure cannot be reconstructed. The retained summary also does not preserve the baselines' rebalance, estimation, constraint, or transaction-cost mechanics.
+
+The short execution test instantiated PPO, A2C, DDPG, TD3, and SAC using Stable-Baselines3 \cite{raffin2021sb3}. We designed this test to confirm that each implemented algorithm path ran and saved its final output; we did not design it to compare investment performance.
+
+\section{Portfolio Metrics}
+
+For portfolio value $V_t$, daily portfolio return $r_t$, and $n$ evaluated daily-return observations, Table~\ref{tab:metrics} defines the financial metrics. Annualized volatility uses the population standard deviation and 252 trading periods per year. In the retained historical metric definition, $r_t$ is the percentage change of recorded portfolio values, with the initial missing change filled by zero; $n$ includes that initial observation. A zero volatility produces a reported ratio of zero. We retain these conventions to remain consistent with the historical summaries.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Descriptive portfolio metrics used in the completed pilot.}
+\label{tab:metrics}
+\begin{tabularx}{\textwidth}{@{}L{0.28\textwidth}L{0.34\textwidth}Y@{}}
+\toprule
+Metric & Computation & Interpretation \\
+\midrule
+Cumulative return & $C=V_T/V_0-1$ & Net growth over the evaluated interval \\
+Annualized return & $A=(1+C)^{252/n}-1$ & Compounded return scaled to 252 periods \\
+Annualized volatility & $\sigma_a=\operatorname{sd}_0(r_t)\sqrt{252}$ & Dispersion of daily net returns \\
+Reported return-to-volatility ratio & $S^\star=A/\sigma_a$ & Study-defined risk-adjusted ratio; larger is better \\
+Maximum drawdown & $\min_t(V_t/\max_{s\leq t}V_s-1)$ & Worst peak-to-trough loss; less negative is better \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The quantity $S^\star$ is related to the Sharpe ratio \cite{sharpe1994}, but it is not identical to Sharpe's mean differential-return definition. We retain this distinction throughout. Because the pilot contains one validation split, we report descriptive values without confidence intervals, bootstrap resampling, or multiplicity-adjusted hypothesis tests.
+
+\section{HPC Calibration and Environment Replay}
+
+BistKA uses SLURM for shared-cluster scheduling; SLURM's design and resource-management role are described by Yoo, Jette, and Grondona \cite{yoo2003slurm}. The calibration evaluated 1, 2, 4, 8, and 16 vector environments. The one-environment setting ran in the main process, while the larger settings used subprocess vectorization. Each setting executed 4,096 training timesteps on the training split with seed 42 and three repeated measurements under the same seed. The recorded outcomes were samples per second and sampled concurrent process-tree resident memory.
+
+We selected the environment count whose median throughput was at least 95\% of the maximum median throughput, preferring lower memory when performance was comparable. A separate replay experiment launched two processes with the same seed, runtime versions, configuration, and training data. Both processes followed the same seeded random-action procedure. With 580 training dates and a 30-date lookback, the environment permits $580-30-1=549$ decision-to-outcome transitions; both processes generated all 549 steps. We required their trajectory hashes and step counts to match. This protocol tests environment replay under one configuration; it does not claim bitwise-deterministic neural-network training.
+
+\section{Short Five-Algorithm Execution Test}
+
+We used one vector environment and 2,048 training timesteps for each of PPO, A2C, DDPG, TD3, and SAC. The scheduler requested two CPUs and 8 GiB of memory. Each run saved its resolved configuration, final model, metrics, equity curve, and actions. The checkpoint-free setting suppressed periodic model snapshots while retaining the final model and run information needed for review \cite{sandve2013reproducible,henderson2018drl}.
+
+We measured storage from the complete output of each run. The checkpoint-writing run contained 275,209,516 bytes, and the checkpoint-free run contained 137,777,145 bytes. The reduction was calculated as
+\begin{equation}
+  100\left(1-\frac{137{,}777{,}145}{275{,}209{,}516}\right)=49.94\%.
+  \label{eq:storage-reduction}
+\end{equation}
+
+\FloatBarrier
+
+% -----------------------------------------------------------------------------
+
+\section{Study Scope and Record Limitations}
+Some earlier financial results, including the extension tables in Appendix~\ref{app:history}, are available only from a project summary dated 31 May 2026 because the original training directories are no longer available. We therefore describe these values as historical summaries and do not claim that we independently reconstructed their return series, annualization, transaction paths, or implementation-level settings. The HPC findings come from completed experiments with retained measurements and outputs. Throughout the paper, we keep financial performance separate from computational efficiency and successful software execution.
+\FloatBarrier
+
+\chapter{MAIN RESULT}
+\label{chap:results}
+\section{Historical Pilot Results}
+
+The historical project summary records one principal chronological comparison. The original training directories are unavailable, so we report these values without claiming an independent reconstruction. Table~\ref{tab:pilot-performance} shows that PTT buy-and-hold produced the highest cumulative return, approximately 4.35\%, and the highest reported annualized return-to-volatility ratio. PPO returned approximately -3.59\%, and A2C returned approximately -3.81\%. Both ratios were below the equal-weight result, while mean-variance had the lowest reported ratio.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Historical principal comparison. Returns and drawdowns are decimal fractions; $S^\star$ is dimensionless.}
+\label{tab:pilot-performance}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Policy & Cumulative return & Reported ratio $S^\star$ & Maximum drawdown \\
+\midrule
+PTT buy-and-hold & 0.043523 & 0.405480 & -0.103448 \\
+ADVANC buy-and-hold & 0.009999 & 0.097452 & -0.098919 \\
+Equal-weight & -0.030573 & -0.416554 & -0.103240 \\
+A2C & -0.038061 & -0.434028 & -0.120042 \\
+PPO & -0.035900 & -0.439532 & -0.066219 \\
+Mean-variance & -0.099682 & -1.097376 & -0.166737 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+PPO's maximum drawdown (-0.066219) was smaller in magnitude than the equal-weight and A2C drawdowns, but its cumulative return and reported ratio were worse. We therefore do not interpret the smaller drawdown as superior overall performance. In the principal comparison, neither tested DRL policy outperformed the best-performing tested baseline.
+
+\section{Historical Extension Results}
+The historical summary also contains sensitivity and robustness checks, reproduced in Appendix~\ref{app:history}. The five-trial outcomes and sampled settings appear in Tables~\ref{tab:search} and~\ref{tab:settings}. The search reported a best short PPO ratio of 0.279954 and cumulative return of 0.020408. A subsequent 20,000-timestep run using the selected settings, shown in Table~\ref{tab:longer}, returned -0.030269 with a ratio of -0.403028, so the short-search advantage did not persist.
+
+Across two walk-forward windows, Table~\ref{tab:walk} reports that PPO's mean cumulative return was 0.004260 and its mean ratio was 0.057644, compared with 0.021133 and 0.633491 for equal-weight. All three short PPO ablations in Table~\ref{tab:ablation} produced negative returns. The market, sector, macro-proxy, and fundamental feature extensions in Table~\ref{tab:features} also produced negative PPO returns and did not establish a consistent improvement in portfolio performance. These historical checks remain descriptive because the original trajectories and model files are unavailable.
+
+\section{HPC Throughput, Memory, and Replay}
+
+Across the tested vectorization settings, throughput decreased as the number of environments increased, while sampled process-tree memory increased, as shown in Table~\ref{tab:calibration} and Figure~\ref{fig:calibration}. One environment achieved the highest median throughput, approximately 353.1 samples per second. Sixteen environments achieved approximately 83.0 samples per second, 76.5\% below the one-environment result, while maximum sampled memory rose from about 601 to 8,738 MiB.
+
+\begin{table}[H]
+\centering
+\small
+\caption{BistKA calibration with three repeated measurements under seed 42 per vector-environment setting.}
+\label{tab:calibration}
+\begin{tabular}{@{}rrr@{}}
+\toprule
+Vector environments & Median samples/s & Peak process-tree RSS (MiB) \\
+\midrule
+1 & 353.0773 & 600.711 \\
+2 & 257.0366 & 1,641.160 \\
+4 & 212.1034 & 2,655.523 \\
+8 & 141.2985 & 4,680.582 \\
+16 & 82.9607 & 8,737.996 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+
+\begin{tikzpicture}
+\begin{axis}[width=0.88\textwidth,height=5.3cm,ymin=0,ymax=400,xmin=0,xmax=17,xtick={1,2,4,8,16},ylabel={Samples per second},title={(a) Throughput},ymajorgrids,grid style={black!15},tick label style={font=\small},label style={font=\small}]
+\addplot[black,mark=*,error bars/.cd,y dir=both,y explicit] coordinates {(1,353.07730250905706) += (0,7.337341131051119) -= (0,111.64986988917025) (2,257.0365726849823) += (0,10.95053801640313) -= (0,24.675341063558477) (4,212.10335203904407) += (0,2.437753513651046) -= (0,0.48420953259682165) (8,141.29846713913784) += (0,0.20395734992501957) -= (0,0.8725230560535806) (16,82.96068664324659) += (0,0.17079929859886533) -= (0,0.4075602496238844)};
+\end{axis}\end{tikzpicture}
+\par\smallskip
+\begin{tikzpicture}
+\begin{axis}[width=0.88\textwidth,height=4.6cm,ymin=0,ymax=9500,xmin=0,xmax=17,xtick={1,2,4,8,16},ylabel={Peak process-tree RSS (MiB)},xlabel={Vector environments},title={(b) Peak process-tree memory},ymajorgrids,grid style={black!15},tick label style={font=\small},label style={font=\small},scaled y ticks=false,yticklabel style={/pgf/number format/fixed}]
+\addplot[black,mark=square*] coordinates {(1,600.7109375) (2,1641.16015625) (4,2655.5234375) (8,4680.58203125) (16,8737.99609375)};
+\end{axis}\end{tikzpicture}
+
+\caption{Median throughput and peak process-tree memory across vector-environment settings. The throughput plot shows the minimum and maximum of three repeated measurements under seed 42.}
+\label{fig:calibration}
+\end{figure}
+
+The replay experiment tested repeatability at the environment level. Both processes produced the expected 549 steps and the same trajectory hash under the tested seed and software configuration. This result concerns one environment trajectory and does not imply deterministic neural-network training.
+
+\section{Five-Algorithm Execution Test}
+
+We ran PPO, A2C, DDPG, TD3, and SAC through the same checkpoint-free execution path. Table~\ref{tab:job3550} summarizes the run. It completed normally in 2,000 seconds, and all five algorithms saved their final models. No periodic checkpoint paths were created.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Outcome of the five-algorithm execution test.}
+\label{tab:job3550}
+\begin{tabularx}{\textwidth}{@{}L{0.36\textwidth}Y@{}}
+\toprule
+Field & Observed value \\
+\midrule
+Algorithms & PPO, A2C, DDPG, TD3, SAC \\
+Training length & 2,048 timesteps per algorithm \\
+Allocated resources & 2 CPUs; 8 GiB requested memory \\
+Elapsed time and exit code & 2,000 seconds; \texttt{0:0} \\
+Final models saved & 5 \\
+Periodic checkpoints saved & 0 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+This short test confirms that each implemented algorithm path executed and saved its final output. It was not designed to rank investment performance, so its financial metrics are excluded from the comparison in Section~4.1.
+
+\section{Storage Reduction}
+
+The checkpoint-writing run returned 262.460 MiB, while the checkpoint-free run returned 131.395 MiB. Figure~\ref{fig:storage} compares the complete output directories. The checkpoint-free run returned 49.94\% less output than the checkpoint-writing run, and both records retained all five final models.
+
+\begin{figure}[H]
+\centering
+
+\begin{tikzpicture}
+\begin{axis}[width=0.94\textwidth,height=6.5cm,ybar,bar width=48pt,ymin=0,ymax=310,xmin=0.4,xmax=2.6,xtick={1,2},xticklabels={Checkpoint writing,Checkpoint-free},ylabel={Returned output (MiB)},ymajorgrids,grid style={black!15},tick label style={font=\small},label style={font=\small},nodes near coords,every node near coord/.append style={font=\small},/pgf/number format/fixed,/pgf/number format/precision=3]
+\addplot[fill=black!25,draw=black] coordinates {(1,262.460247) (2,131.394525)};
+\end{axis}\end{tikzpicture}
+
+\caption{Complete returned output for checkpoint-writing and checkpoint-free runs.}
+\label{fig:storage}
+\end{figure}
+
+
+\FloatBarrier
+\chapter{CONCLUSION AND DISCUSSION}
+\label{chap:discussion}
+\section{Financial Interpretation}
+The first research question asks how PPO and A2C performed relative to the portfolio-allocation baselines included in the historical pilot. In the principal historical comparison, PTT buy-and-hold returned approximately 4.35\%. PPO returned approximately -3.59\%, A2C returned approximately -3.81\%, and equal-weight returned approximately -3.06\%. Although PPO had a smaller maximum-drawdown magnitude than equal-weight and A2C, its return and reported ratio were worse. Neither tested DRL policy outperformed the best-performing tested baseline in this five-stock pilot.
+
+The extension results reinforce the need for caution. A favorable outcome in the short hyperparameter search did not persist in the longer PPO run. PPO also trailed equal-weight in the two-window walk-forward summary, and the ablation and feature-extension runs did not show a consistent improvement. These results are descriptive and do not establish that DRL is generally ineffective for Thai equities.
+
+\section{Computational Interpretation}
+The second research question asks how vectorization affected computational efficiency on BistKA and whether the workflow could be reproduced under a fixed-seed configuration. Across the five tested settings, throughput decreased and sampled process-tree memory increased as the number of vector environments increased. One environment achieved approximately 353.1 samples per second, compared with approximately 83.0 for sixteen environments, while peak process-tree memory increased from about 601 to 8,738 MiB. For this tested workload, additional vectorized parallelism was counterproductive.
+
+Both fixed-seed processes followed the same seeded random-action procedure and produced the same 549-step environment trajectory. The short execution test also completed all five implemented algorithm paths. The checkpoint-free run returned 49.94\% less output than the checkpoint-writing run, while both records retained the final models. These findings describe this implementation and cluster configuration; they should not be generalized to all DRL workloads.
+
+\section{Financial and Statistical Limitations}
+Our financial cohort contains five equities and cannot be treated as a survivorship-free representation of the Thai market. The principal comparison uses one chronological interval. Because we had already examined the 2021--2024 period during the pilot and historical extensions, we cannot treat it as an untouched final holdout. Some extension values survive only in the 31 May 2026 project summary; the original trajectories and model files are unavailable, so we cannot independently reconstruct their annualization, costs, or equity paths.
+
+The retained summary also does not preserve all implementation details of the principal PPO and A2C training runs or the exact rebalancing, estimation, constraint, and transaction-cost procedures used by the baselines. The principal comparison can therefore be interpreted from its reported outcomes but cannot be fully reconstructed from the retained material.
+
+Most extensions were short and configuration-dependent. The two-window walk-forward values are arithmetic means of window metrics rather than a pooled portfolio return. The reported ratio $S^\star$ is not the conventional Sharpe ratio. We did not compute validated confidence intervals, apply resampling designed for serial dependence, or correct for multiple comparisons.
+
+\section{Data and Feature Limitations}
+The main pilot contains historical OHLCV data and SET-index context, but the macro-rate-change and sentiment fields are constant scaffolds. The feature extensions do not establish that sector, macroeconomic, or fundamental inputs improved investment performance. In addition, backward date alignment does not confirm intraday availability, and the fundamental extension assumes a 60-day lag rather than using verified publication timestamps. These limits prevent the phrase ``multi-source data'' in the project title from being interpreted as a demonstrated performance advantage.
+
+\section{Computational and Reproducibility Limitations}
+The replay test covers one fixed-random-action environment configuration. The five-algorithm executions are short, single runs with algorithm-specific settings, and their completion is not a performance ranking. Matching environment trajectories do not prove bitwise-deterministic neural-network training across seeds, software versions, or hardware. The measured throughput and memory trends may also differ for larger environments, different algorithms, or another cluster.
+
+\section{Future Work}
+A stronger follow-up study should use a larger, survivorship-aware Thai-equity universe with point-in-time membership and price data. It should include repeated training seeds, realistic transaction costs, stronger temporal evaluation, uncertainty methods that respect serial dependence, and a separately untouched evaluation period. If macroeconomic, fundamental, or sentiment features remain in scope, their histories should overlap the modeling period and be aligned by verified publication and execution times.
+
+\section{Conclusion}
+We conclude that PPO and A2C did not outperform the best-performing tested baseline in this five-stock pilot. Across the tested computational settings, one vector environment provided the highest median throughput and the lowest sampled process-tree memory, while a fixed-seed replay reproduced the same environment trajectory in two processes. These results answer both research questions for the completed pilot without establishing long-term generalization or performance across the broader Thai market.
+\FloatBarrier
+
+\appendix
+\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+\chapter{HISTORICAL EXTENSION TABLES}
+\label{app:history}
+The tables in this appendix reproduce selected values from the 31 May 2026 project summary. The original training directories are unavailable, so we do not claim to have independently reproduced these results. Returns and drawdowns are decimal fractions, annualized returns use the historical implementation convention, and $S^\star$ is dimensionless.
+\section{Hyperparameter Search}
+
+\begin{table}[H]
+\centering\small
+\caption{Historical five-trial hyperparameter-search outcomes.}
+\label{tab:search}
+\begin{tabular}{@{}rlrrr@{}}
+\toprule
+Trial & Algorithm & Return & $S^\star$ & Drawdown \\
+\midrule
+4 & PPO & 0.020408 & 0.279954 & -0.068810 \\
+0 & PPO & -0.002649 & -0.305640 & -0.008809 \\
+1 & A2C & -0.042686 & -0.519583 & -0.127149 \\
+2 & PPO & -0.088712 & -1.079920 & -0.115319 \\
+3 & A2C & -0.003138 & -1.708120 & -0.004297 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\caption{Sampled settings for the historical five-trial search.}
+\label{tab:settings}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Trial & Learning rate & $\gamma$ & Rollout steps \\
+\midrule
+4 & 0.000389 & 0.98 & 256 \\
+0 & 0.000017 & 0.90 & 512 \\
+1 & 0.001210 & 0.99 & 256 \\
+2 & 0.002160 & 0.95 & 256 \\
+3 & 0.000029 & 0.90 & 128 \\
+\bottomrule
+\end{tabular}
+\end{table}
+In Table~\ref{tab:settings}, $\gamma$ denotes the discount factor used by the sampled configuration.
+
+\begin{table}[H]
+\centering\small
+\caption{Historical longer PPO run with 20,000 timesteps.}
+\label{tab:longer}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Policy & Return & Annualized return & $S^\star$ & Drawdown \\
+\midrule
+PPO & -0.030269 & -0.046132 & -0.403028 & -0.099395 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\section{Walk-Forward and Ablation Pilots}
+\begin{table}[H]
+\centering\small
+\caption{Historical arithmetic means across two test windows.}
+\label{tab:walk}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Policy & Mean return & Mean annualized return & Mean $S^\star$ & Mean drawdown \\
+\midrule
+ADVANC & 0.083927 & 0.281661 & 1.467928 & -0.064073 \\
+KBANK & 0.064203 & 0.202352 & 1.157021 & -0.096110 \\
+PTT & 0.040690 & 0.111308 & 0.672495 & -0.081828 \\
+Equal-weight & 0.021133 & 0.066667 & 0.633491 & -0.068208 \\
+PPO & 0.004260 & 0.011669 & 0.057644 & -0.026071 \\
+\bottomrule
+\end{tabular}
+\end{table}
+The configuration specifies 504 training dates, 126 validation dates, 126 test dates, and a 126-date step. Each of the two PPO jobs used 1,000 training timesteps. The table does not describe a compounded combined equity curve.
+\begin{table}[H]
+\centering\small
+\caption{Historical 1,000-timestep PPO ablations.}
+\label{tab:ablation}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Features & Return & Annualized return & $S^\star$ & Drawdown \\
+\midrule
+Returns only & -0.010482 & -0.016061 & -0.453371 & -0.040127 \\
+Technical + context & -0.055886 & -0.084574 & -0.823513 & -0.099160 \\
+Technical only & -0.078913 & -0.118657 & -1.611158 & -0.109727 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\section{Multi-Source Feature Extensions}
+\begin{table}[H]
+\centering\small
+\caption{Historical 1,000-timestep PPO feature-extension runs.}
+\label{tab:features}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Input extension & Return & Annualized return & $S^\star$ & Drawdown \\
+\midrule
+SET market & -0.054013 & -0.081783 & -0.952524 & -0.104711 \\
+Sector & -0.031097 & -0.047383 & -0.626349 & -0.068484 \\
+Macro proxy & -0.022360 & -0.034152 & -0.344318 & -0.085930 \\
+Fundamentals & -0.025996 & -0.039666 & -0.416967 & -0.067777 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Each feature-extension dataset contains the same 4,840 historical stock rows. The market, sector, macro-proxy, and fundamental versions contain 26, 38, 68, and 82 columns respectively, including metadata. The macro proxies include USD/THB, Brent, WTI, gold, and the US 10-year yield. Backward date alignment does not confirm intraday availability. The fundamental extension uses an assumed 60-day lag, and approximately 27.7\% of merged rows precede fundamental coverage. These constraints limit the interpretation of the feature comparisons.
+\clearpage
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{REFERENCES}
+\footnotesize
+\raggedright
+\setlength{\itemsep}{0.5\baselineskip}
+
+\bibitem{bailey2017backtest}
+D. H. Bailey, J. M. Borwein, M. L\'opez de Prado, and Q. J. Zhu, “The Probability of Backtest Overfitting,” \emph{Journal of Computational Finance}, vol. 20, no. 4, pp. 39--69, 2017. \href{https://doi.org/10.21314/JCF.2016.322}{doi:10.21314/JCF.2016.322}.
+
+\bibitem{cerqueira2020timeseries}
+V. Cerqueira, L. Torgo, and I. Mozeti\v{c}, “Evaluating Time Series Forecasting Models: An Empirical Study on Performance Estimation Methods,” \emph{Machine Learning}, vol. 109, pp. 1997--2028, 2020. \href{https://doi.org/10.1007/s10994-020-05910-7}{doi:10.1007/s10994-020-05910-7}.
+
+\bibitem{liu2020finrl}
+X.-Y. Liu, H. Yang, Q. Chen, R. Zhang, L. Yang, B. Xiao, and C. D. Wang, “FinRL: A Deep Reinforcement Learning Library for Automated Stock Trading in Quantitative Finance,” \emph{Deep Reinforcement Learning Workshop, NeurIPS 2020}, 2020, arXiv:2011.09607. \url{https://arxiv.org/abs/2011.09607}.
+
+\bibitem{schulman2017ppo}
+J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov, “Proximal Policy Optimization Algorithms,” arXiv:1707.06347, 2017. \url{https://arxiv.org/abs/1707.06347}.
+
+\bibitem{mnih2016a3c}
+V. Mnih, A. P. Badia, M. Mirza, A. Graves, T. Lillicrap, T. Harley, D. Silver, and K. Kavukcuoglu, “Asynchronous Methods for Deep Reinforcement Learning,” in \emph{Proceedings of the 33rd International Conference on Machine Learning}, PMLR, vol. 48, pp. 1928--1937, 2016. \url{https://proceedings.mlr.press/v48/mniha16.html}.
+
+\bibitem{lillicrap2015ddpg}
+T. P. Lillicrap, J. J. Hunt, A. Pritzel, N. Heess, T. Erez, Y. Tassa, D. Silver, and D. Wierstra, “Continuous Control with Deep Reinforcement Learning,” arXiv:1509.02971, 2015. \url{https://arxiv.org/abs/1509.02971}.
+
+\bibitem{fujimoto2018td3}
+S. Fujimoto, H. van Hoof, and D. Meger, “Addressing Function Approximation Error in Actor-Critic Methods,” in \emph{Proceedings of the 35th International Conference on Machine Learning}, PMLR, vol. 80, pp. 1587--1596, 2018. \url{https://proceedings.mlr.press/v80/fujimoto18a.html}.
+
+\bibitem{haarnoja2018sac}
+T. Haarnoja, A. Zhou, P. Abbeel, and S. Levine, “Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor,” in \emph{Proceedings of the 35th International Conference on Machine Learning}, PMLR, vol. 80, pp. 1861--1870, 2018. \url{https://proceedings.mlr.press/v80/haarnoja18b.html}.
+
+\bibitem{raffin2021sb3}
+A. Raffin, A. Hill, A. Gleave, A. Kanervisto, M. Ernestus, and N. Dormann, “Stable-Baselines3: Reliable Reinforcement Learning Implementations,” \emph{Journal of Machine Learning Research}, vol. 22, no. 268, pp. 1--8, 2021. \url{https://www.jmlr.org/papers/v22/20-1364.html}.
+
+\bibitem{demiguel2009naive}
+V. DeMiguel, L. Garlappi, and R. Uppal, “Optimal Versus Naive Diversification: How Inefficient Is the $1/N$ Portfolio Strategy?” \emph{Review of Financial Studies}, vol. 22, no. 5, pp. 1915--1953, 2009. \href{https://doi.org/10.1093/rfs/hhm075}{doi:10.1093/rfs/hhm075}.
+
+\bibitem{markowitz1952}
+H. Markowitz, “Portfolio Selection,” \emph{The Journal of Finance}, vol. 7, no. 1, pp. 77--91, 1952. \href{https://doi.org/10.1111/j.1540-6261.1952.tb01525.x}{doi:10.1111/j.1540-6261.1952.tb01525.x}.
+
+\bibitem{sharpe1994}
+W. F. Sharpe, “The Sharpe Ratio,” \emph{The Journal of Portfolio Management}, vol. 21, no. 1, pp. 49--58, 1994. \href{https://doi.org/10.3905/jpm.1994.409501}{doi:10.3905/jpm.1994.409501}.
+
+\bibitem{holm1979}
+S. Holm, “A Simple Sequentially Rejective Multiple Test Procedure,” \emph{Scandinavian Journal of Statistics}, vol. 6, no. 2, pp. 65--70, 1979. \url{https://www.jstor.org/stable/4615733}.
+
+\bibitem{efron1979bootstrap}
+B. Efron, “Bootstrap Methods: Another Look at the Jackknife,” \emph{The Annals of Statistics}, vol. 7, no. 1, pp. 1--26, 1979. \href{https://doi.org/10.1214/aos/1176344552}{doi:10.1214/aos/1176344552}.
+
+\bibitem{yoo2003slurm}
+A. B. Yoo, M. A. Jette, and M. Grondona, “SLURM: Simple Linux Utility for Resource Management,” in \emph{Job Scheduling Strategies for Parallel Processing}, Lecture Notes in Computer Science, vol. 2862, pp. 44--60, Springer, 2003. \href{https://doi.org/10.1007/10968987_3}{doi:10.1007/10968987\_3}.
+
+\bibitem{sandve2013reproducible}
+G. K. Sandve, A. Nekrutenko, J. Taylor, and E. Hovig, “Ten Simple Rules for Reproducible Computational Research,” \emph{PLOS Computational Biology}, vol. 9, no. 10, e1003285, 2013. \href{https://doi.org/10.1371/journal.pcbi.1003285}{doi:10.1371/journal.pcbi.1003285}.
+
+\bibitem{henderson2018drl}
+P. Henderson, R. Islam, P. Bachman, J. Pineau, D. Precup, and D. Meger, “Deep Reinforcement Learning That Matters,” \emph{Proceedings of the AAAI Conference on Artificial Intelligence}, vol. 32, no. 1, 2018. \href{https://doi.org/10.1609/aaai.v32i1.11694}{doi:10.1609/aaai.v32i1.11694}.
+
+
+\end{thebibliography}
+
+\end{document}

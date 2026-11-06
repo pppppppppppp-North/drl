@@ -1,0 +1,18 @@
+extends: large_scale_screening_v2.yaml
+
+project:
+  name: drl_thai_stock_nested_walk_forward_screening_v2
+
+nested_screening:
+  algorithms: [ppo, a2c, ddpg, td3, sac]
+  window_ids: [0, 1]
+  trials_per_algorithm_window: 10
+  total_timesteps: 20000
+  objective_metric: sharpe
+
+walk_forward:
+  train_window: 504
+  validation_window: 126
+  test_window: 126
+  step_size: 126
+  expanding_train: false

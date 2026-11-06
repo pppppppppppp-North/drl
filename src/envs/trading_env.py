@@ -19,7 +19,10 @@ except ImportError:  # pragma: no cover - used only on minimal HPC smoke envs.
             self.dtype = dtype
 
     class _Env:
-        pass
+        def close(self) -> None:
+            """Match the Gymnasium lifecycle API in minimal smoke runtimes."""
+
+            return None
 
     class _Gym:
         Env = _Env
@@ -59,6 +62,10 @@ class ThaiStockTradingEnv(gym.Env):
         lookback: int = 30,
         initial_cash: float = 1_000_000.0,
         transaction_cost: float = 0.001,
+        slippage: float = 0.0,
+        max_turnover: float | None = None,
+        max_position_weight: float = 1.0,
+        min_cash_weight: float = 0.0,
         reward_config: RewardConfig | None = None,
     ) -> None:
         super().__init__()
@@ -69,7 +76,19 @@ class ThaiStockTradingEnv(gym.Env):
         self.lookback = lookback
         self.initial_cash = float(initial_cash)
         self.transaction_cost = float(transaction_cost)
+        self.slippage = float(slippage)
+        self.max_turnover = float(max_turnover) if max_turnover is not None else None
+        self.max_position_weight = float(max_position_weight)
+        self.min_cash_weight = float(min_cash_weight)
         self.reward_config = reward_config or RewardConfig()
+        if self.transaction_cost < 0 or self.slippage < 0:
+            raise ValueError("transaction_cost and slippage must be non-negative")
+        if self.max_turnover is not None and self.max_turnover <= 0:
+            raise ValueError("max_turnover must be positive when configured")
+        if not 0.0 < self.max_position_weight <= 1.0:
+            raise ValueError("max_position_weight must be in (0, 1]")
+        if not 0.0 <= self.min_cash_weight < 1.0:
+            raise ValueError("min_cash_weight must be in [0, 1)")
 
         self.dates = list(self.features["date"].drop_duplicates().sort_values())
         self.tickers = list(self.features["ticker"].drop_duplicates().sort_values())
@@ -82,7 +101,7 @@ class ThaiStockTradingEnv(gym.Env):
             .sort_index()
         )
         self.panel[self.feature_columns] = self.panel[self.feature_columns].fillna(0.0)
-        self.close = self.panel["close"].unstack("ticker").to_numpy(dtype=np.float64)
+        self.close_prices = self.panel["close"].unstack("ticker").to_numpy(dtype=np.float64)
         self.feature_tensor = np.stack(
             [
                 self.panel[col].unstack("ticker").to_numpy(dtype=np.float32)
@@ -115,21 +134,23 @@ class ThaiStockTradingEnv(gym.Env):
         self.weights = np.zeros(self.num_assets, dtype=np.float64)
         self.portfolio_value = self.initial_cash
         self.peak_value = self.initial_cash
-        return self._observation(), self._info(0.0, 0.0, 0.0)
+        return self._observation(), self._info(0.0, 0.0, 0.0, 0.0, 0.0)
 
     def step(self, action: np.ndarray):
         action = np.asarray(action, dtype=np.float64)
         target_weights = self._normalize_action(action)
+        target_weights = self._apply_turnover_limit(target_weights)
         previous_weights = self.weights.copy()
         previous_cash = self.cash_weight
         turnover = float(np.abs(target_weights - previous_weights).sum() + abs((1 - target_weights.sum()) - previous_cash))
 
-        current_prices = self.close[self.current_step]
-        next_prices = self.close[self.current_step + 1]
+        current_prices = self.close_prices[self.current_step]
+        next_prices = self.close_prices[self.current_step + 1]
         asset_returns = np.divide(next_prices, current_prices, out=np.ones_like(next_prices), where=current_prices != 0) - 1.0
         gross_return = float(np.dot(target_weights, asset_returns))
         cost = self.transaction_cost * turnover
-        net_return = gross_return - cost
+        slippage_cost = self.slippage * turnover
+        net_return = gross_return - cost - slippage_cost
 
         self.portfolio_value *= 1.0 + net_return
         self.peak_value = max(self.peak_value, self.portfolio_value)
@@ -146,15 +167,34 @@ class ThaiStockTradingEnv(gym.Env):
         self.current_step += 1
         terminated = self.current_step >= len(self.dates) - 1
         truncated = False
-        return self._observation(), float(reward), terminated, truncated, self._info(net_return, turnover, drawdown)
+        return self._observation(), float(reward), terminated, truncated, self._info(
+            net_return,
+            turnover,
+            drawdown,
+            cost,
+            slippage_cost,
+        )
 
     def _normalize_action(self, action: np.ndarray) -> np.ndarray:
         action = np.nan_to_num(action, nan=0.0, posinf=1.0, neginf=0.0)
-        action = np.clip(action, 0.0, 1.0)
+        action = np.clip(action, 0.0, self.max_position_weight)
         total = action.sum()
-        if total > 1.0:
-            action = action / total
+        investment_budget = 1.0 - self.min_cash_weight
+        if total > investment_budget:
+            action = action / total * investment_budget
         return action.astype(np.float64)
+
+    def _apply_turnover_limit(self, target_weights: np.ndarray) -> np.ndarray:
+        if self.max_turnover is None:
+            return target_weights
+        current_cash = 1.0 - float(self.weights.sum())
+        target_cash = 1.0 - float(target_weights.sum())
+        turnover = float(np.abs(target_weights - self.weights).sum() + abs(target_cash - current_cash))
+        if turnover <= self.max_turnover:
+            return target_weights
+        scale = self.max_turnover / turnover
+        constrained = self.weights + scale * (target_weights - self.weights)
+        return np.clip(constrained, 0.0, self.max_position_weight)
 
     def _observation(self) -> np.ndarray:
         start = self.current_step - self.lookback
@@ -168,14 +208,22 @@ class ThaiStockTradingEnv(gym.Env):
         )
         return np.nan_to_num(obs, nan=0.0, posinf=0.0, neginf=0.0).astype(np.float32)
 
-    def _info(self, net_return: float, turnover: float, drawdown: float) -> dict[str, Any]:
+    def _info(
+        self,
+        net_return: float,
+        turnover: float,
+        drawdown: float,
+        transaction_cost_paid: float,
+        slippage_paid: float,
+    ) -> dict[str, Any]:
         return {
             "date": self.dates[self.current_step].date().isoformat(),
             "portfolio_value": float(self.portfolio_value),
             "net_return": float(net_return),
             "turnover": float(turnover),
+            "transaction_cost_paid": float(transaction_cost_paid),
+            "slippage_paid": float(slippage_paid),
             "drawdown": float(drawdown),
             "weights": self.weights.copy(),
             "cash_weight": float(self.cash_weight),
         }
-

@@ -1,0 +1,10 @@
+extends: real_ohlcv_macro.yaml
+
+project:
+  name: drl_thai_stock_real_ohlcv_macro_v2
+
+paths:
+  base_features: data/processed/features_real_ohlcv_sector.csv
+  fallback_base_features_csv: data/processed/features_real_ohlcv_sector.csv
+  features: data/processed/features_real_ohlcv_macro.csv
+  fallback_features_csv: data/processed/features_real_ohlcv_macro.csv

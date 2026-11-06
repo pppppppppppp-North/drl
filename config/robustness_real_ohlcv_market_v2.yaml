@@ -1,0 +1,10 @@
+extends: robustness_real_ohlcv_market.yaml
+
+project:
+  name: drl_thai_stock_repeated_seed_robustness_v2
+
+paths:
+  base_features: data/processed/features_real_ohlcv.csv
+  fallback_base_features_csv: data/processed/features_real_ohlcv.csv
+  features: data/processed/features_real_ohlcv_market.csv
+  fallback_features_csv: data/processed/features_real_ohlcv_market.csv

@@ -1,0 +1,20 @@
+extends: large_scale_screening_v2.yaml
+
+project:
+  name: drl_thai_stock_training_budget_sweep_v2
+
+walk_forward:
+  train_window: 504
+  validation_window: 126
+  test_window: 126
+  step_size: 126
+  expanding_train: false
+
+budget_sweep:
+  algorithms: [ppo, a2c]
+  budgets: [20000, 100000, 250000, 500000]
+  seeds: [42, 43, 44]
+  window_ids: [0, 1]
+  objective_metric: sharpe
+  plateau_tolerance: 0.05
+  algorithm_parameters: {}

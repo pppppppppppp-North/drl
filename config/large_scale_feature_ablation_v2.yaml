@@ -1,0 +1,16 @@
+extends: large_scale_feature_ablation.yaml
+
+feature_ablation:
+  groups:
+    - name: returns_only
+      config: config/ablation_returns_real_ohlcv_v2.yaml
+    - name: technical
+      config: config/ablation_technical_real_ohlcv_v2.yaml
+    - name: technical_context
+      config: config/ablation_technical_context_real_ohlcv_v2.yaml
+    - name: set_market
+      config: config/real_ohlcv_market_v2.yaml
+    - name: macro_proxy
+      config: config/real_ohlcv_macro_v2.yaml
+    - name: fundamentals_pilot
+      config: config/real_ohlcv_fundamentals_v2.yaml

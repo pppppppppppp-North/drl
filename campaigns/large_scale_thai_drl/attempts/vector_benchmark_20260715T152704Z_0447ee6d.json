@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "status": "rendered",
+  "campaign_id": "large_scale_thai_drl",
+  "stage_id": "vector_benchmark",
+  "attempt_id": "vector_benchmark_20260715T152704Z_0447ee6d",
+  "rendered_at_utc": "2026-07-15T15:27:04.853662+00:00",
+  "inputs": [
+    {
+      "path": "campaigns/large_scale_thai_drl/deployment/bistka_deployment_manifest.json",
+      "bytes": 29499,
+      "sha256": "f08db3dbeb00131cb49c180ecf84c1e8d8011b1e7313cbff9fe25c600ffe0991"
+    },
+    {
+      "path": "config/large_scale_screening.yaml",
+      "bytes": 1556,
+      "sha256": "46647a2e78651170218ae743ee2e971addf6c8157b5d88a92257fe81dc00ffcb"
+    },
+    {
+      "path": "config/research_campaign.yaml",
+      "bytes": 26225,
+      "sha256": "f0f37b8c9b9d87662010f23d1206c188b1d10878e9b6d528f81430072af4b0d7"
+    },
+    {
+      "path": "data/processed/features_real_ohlcv_market.csv",
+      "bytes": 2183530,
+      "sha256": "b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc"
+    },
+    {
+      "path": "environment.yml",
+      "bytes": 306,
+      "sha256": "4bf28e28107d9b1a3f57baaaf097eeb063b797218a241de65fb4c0b4d6436ac4"
+    },
+    {
+      "path": "reports/bistka_calibration_preflight.json",
+      "bytes": 27139,
+      "sha256": "47cf1796f706708599e22fb60ef44fe509afdf1bbe9a49d38fc2db0d1e75f8e7"
+    },
+    {
+      "path": "reports/data_quality_market/market_data_readiness.json",
+      "bytes": 8945,
+      "sha256": "d6be2b82c164dd2f3844381ef9db8518a56c71e1b8ab5e9080e9c389908e8a4d"
+    },
+    {
+      "path": "reports/data_quality_market/market_data_readiness.sha256",
+      "bytes": 65,
+      "sha256": "d5b4f1b987d238738c1c4b16f5968a2fc7c16b8674e099b641069264089bae49"
+    },
+    {
+      "path": "requirements.txt",
+      "bytes": 173,
+      "sha256": "83741566c1d8e03f03430c28bd1881832ba43101deaf4f8d0cbfee57f9175ef3"
+    },
+    {
+      "path": "scripts/benchmark_vectorized_training.py",
+      "bytes": 16088,
+      "sha256": "0497ccd4da64d442d076c4d79a67677a808400c3414095bf35f11a9f530bf7da"
+    },
+    {
+      "path": "slurm/benchmark_vectorized_training.sbatch",
+      "bytes": 817,
+      "sha256": "0a108086f21ee6c58802d9e1f60521329ed1a9a1ad6b52391c3620ed3a04c88c"
+    },
+    {
+      "path": "src/campaigns/calibration.py",
+      "bytes": 15413,
+      "sha256": "8e66b424df5b4d8e2283bed8551edc0c79eba667952410f97f6f8cf58469d7f0"
+    },
+    {
+      "path": "src/data/splits.py",
+      "bytes": 6912,
+      "sha256": "52dfba142b8966b4b2ab9d52647fa995b33b796158f3730ec6221b9c6997d059"
+    },
+    {
+      "path": "src/envs/trading_env.py",
+      "bytes": 9075,
+      "sha256": "6b44ae825440794834d70ab2732f7d62ce0367a38533c0c3cacc559ba8348bcb"
+    },
+    {
+      "path": "src/train.py",
+      "bytes": 17256,
+      "sha256": "036c13455311b1a1bbd01e96197774d388346e1628f1f3d2ca01598128ae7f53"
+    },
+    {
+      "path": "src/utils/config.py",
+      "bytes": 1538,
+      "sha256": "f219974a00a2b4575f5a3defb8759de84a798914a820c0da515333d0ed1306be"
+    }
+  ],
+  "deployment_release_id": "64b21f29d8baec4bf0647f5c74d2a72962a7291787abbb189e5785b9889ac082",
+  "preflight_sha256": "47cf1796f706708599e22fb60ef44fe509afdf1bbe9a49d38fc2db0d1e75f8e7",
+  "attempt_sha256": "4da190475767af4fdc939aa8dd23156ce7b6a2a559f5d4c44ff2fb17a6a6072d"
+}

@@ -1,0 +1,88 @@
+# BistKA Capacity Snapshot
+captured_at=2026-07-26T21:25:48+07:00
+hostname=bistka-master
+user=s00658
+
+## mycredit 
+
+                              Service Hour                                             
+Account     Allocation(SHr)        Used(SHr)   Remaining(SHr) Remaining(%) Expiry Date 
+---------- ---------------- ---------------- ---------------- ------------ ------------
+25sfcs03           10000.00            21.28          9978.72       99.79% 2027-02-28  
+s00658               500.00             3.75           496.25       99.25% -           
+
+
+## myquota 
+
+                                Block Quota Limits          Inode Quota Limits
+Path                               Used       Size         IUsed        Inodes
+                             ---------------------  --------------------------
+/lustrefs/home/s00658            23.66G        50G        170332       1100000
+/lustrefs/project/25sfcs03       36.64G       300G        278775      11000000
+
+
+## sinfo 
+PARTITION      AVAIL  TIMELIMIT  NODES  STATE NODELIST
+compute-normal    up 2-00:00:00      2   idle bistka-compute-01,bistka-storage-01
+compute-long      up 4-00:00:00      1   idle bistka-compute-01
+compute-devel*    up    6:00:00      1   idle bistka-master
+gpu4500-normal    up 2-00:00:00      1   idle bistka-gpu-01
+gpu4500-long      up 4-00:00:00      1   idle bistka-gpu-01
+gpu4500-devel     up    6:00:00      1   idle bistka-gpu-01
+gpu4000-normal    up 2-00:00:00      1   idle bistka-gpu-02
+gpu4000-long      up 4-00:00:00      1   idle bistka-gpu-02
+gpu4000-devel     up    6:00:00      1   idle bistka-gpu-02
+
+## squeue -u s00658
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+
+## sacctmgr -nP show assoc where user=s00658 account=25sfcs03 format=User,Account,Partition,QOS
+s00658|25sfcs03||25sfcs03
+
+## sacctmgr -nP show qos where name=25sfcs03 format=Name,GrpJobs,GrpSubmitJobs,GrpTRES,Flags
+25sfcs03|2|5|cpu=32,gres/gpu=2|NoDecay
+
+## scontrol show partition -o
+PartitionName=compute-normal AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=N/A DefaultTime=00:30:00 DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=2-00:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=bistka-compute-01,bistka-storage-01 PriorityJobFactor=1 PriorityTier=1000 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=192 TotalNodes=2 SelectTypeParameters=NONE JobDefaults=(null) DefMemPerCPU=1024 MaxMemPerNode=UNLIMITED TRES=cpu=192,mem=584G,node=2,billing=250 TRESBillingWeights=CPU=1,Mem=0.1G
+PartitionName=compute-long AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=N/A DefaultTime=00:30:00 DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=4-00:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=bistka-compute-01 PriorityJobFactor=1 PriorityTier=500 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=128 TotalNodes=1 SelectTypeParameters=NONE JobDefaults=(null) DefMemPerCPU=1024 MaxMemPerNode=UNLIMITED TRES=cpu=128,mem=500G,node=1,billing=178 TRESBillingWeights=CPU=1,Mem=0.1G
+PartitionName=compute-devel AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=YES QoS=N/A DefaultTime=00:30:00 DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=06:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=bistka-master PriorityJobFactor=1 PriorityTier=1500 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=64 TotalNodes=1 SelectTypeParameters=NONE JobDefaults=(null) DefMemPerCPU=1024 MaxMemPerNode=UNLIMITED TRES=cpu=64,mem=96G,node=1,billing=73 TRESBillingWeights=CPU=1,Mem=0.1G
+PartitionName=gpu4500-normal AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=N/A DefaultTime=00:30:00 DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=2-00:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=bistka-gpu-01 PriorityJobFactor=1 PriorityTier=1000 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=32 TotalNodes=1 SelectTypeParameters=NONE JobDefaults=DefCpuPerGPU=2,DefMemPerGPU=1024 DefMemPerNode=UNLIMITED MaxMemPerNode=UNLIMITED TRES=cpu=32,mem=84G,node=1,billing=68,gres/gpu=4,gres/gpu:pro4500=4 TRESBillingWeights=CPU=1,Mem=0.1G,GRES/gpu=7.0
+PartitionName=gpu4500-long AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=N/A DefaultTime=00:30:00 DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=4-00:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=bistka-gpu-01 PriorityJobFactor=1 PriorityTier=500 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=32 TotalNodes=1 SelectTypeParameters=NONE JobDefaults=DefCpuPerGPU=2,DefMemPerGPU=1024 DefMemPerNode=UNLIMITED MaxMemPerNode=UNLIMITED TRES=cpu=32,mem=84G,node=1,billing=68,gres/gpu=4,gres/gpu:pro4500=4 TRESBillingWeights=CPU=1,Mem=0.1G,GRES/gpu=7.0
+PartitionName=gpu4500-devel AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=N/A DefaultTime=00:30:00 DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=06:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=bistka-gpu-01 PriorityJobFactor=1 PriorityTier=1500 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=32 TotalNodes=1 SelectTypeParameters=NONE JobDefaults=DefCpuPerGPU=2,DefMemPerGPU=1024 DefMemPerNode=UNLIMITED MaxMemPerNode=UNLIMITED TRES=cpu=32,mem=84G,node=1,billing=68,gres/gpu=4,gres/gpu:pro4500=4 TRESBillingWeights=CPU=1,Mem=0.1G,GRES/gpu=7.0
+PartitionName=gpu4000-normal AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=N/A DefaultTime=00:30:00 DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=2-00:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=bistka-gpu-02 PriorityJobFactor=1 PriorityTier=1000 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=32 TotalNodes=1 SelectTypeParameters=NONE JobDefaults=DefCpuPerGPU=2,DefMemPerGPU=1024 DefMemPerNode=UNLIMITED MaxMemPerNode=UNLIMITED TRES=cpu=32,mem=84G,node=1,billing=60,gres/gpu=4,gres/gpu:pro4000=4 TRESBillingWeights=CPU=1,Mem=0.1G,GRES/gpu=5.0
+PartitionName=gpu4000-long AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=N/A DefaultTime=00:30:00 DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=4-00:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=bistka-gpu-02 PriorityJobFactor=1 PriorityTier=500 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=32 TotalNodes=1 SelectTypeParameters=NONE JobDefaults=DefCpuPerGPU=2,DefMemPerGPU=1024 DefMemPerNode=UNLIMITED MaxMemPerNode=UNLIMITED TRES=cpu=32,mem=84G,node=1,billing=60,gres/gpu=4,gres/gpu:pro4000=4 TRESBillingWeights=CPU=1,Mem=0.1G,GRES/gpu=5.0
+PartitionName=gpu4000-devel AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=N/A DefaultTime=00:30:00 DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=06:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=bistka-gpu-02 PriorityJobFactor=1 PriorityTier=1500 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=32 TotalNodes=1 SelectTypeParameters=NONE JobDefaults=DefCpuPerGPU=2,DefMemPerGPU=1024 DefMemPerNode=UNLIMITED MaxMemPerNode=UNLIMITED TRES=cpu=32,mem=84G,node=1,billing=60,gres/gpu=4,gres/gpu:pro4000=4 TRESBillingWeights=CPU=1,Mem=0.1G,GRES/gpu=5.0
+
+## live scheduler policy
+Maximum Job Submission: 5 jobs/group
+Maximum Job Running: 2 jobs/group
+Maximum CPU-cores = 32 CPU-cores/group
+Maximum GPUs = 2 GPUs/group
+compute-devel: 6 hours
+compute-normal: 2 days
+compute-long: 4 days
+
+## global scheduler configuration
+DefMemPerNode           = UNLIMITED
+MaxArraySize            = 1001
+MaxJobCount             = 10000
+MaxStepCount            = 40000
+SchedulerType           = sched/backfill
+SelectType              = select/cons_tres
+SelectTypeParameters    = CR_CORE_MEMORY
+
+## loaded modules
+scripts/capture_bistka_capacity.sh: line 67: module: command not found
+
+## Python modules
+scripts/capture_bistka_capacity.sh: line 70: ml: command not found
+
+## Miniforge modules
+scripts/capture_bistka_capacity.sh: line 73: ml: command not found
+
+## CUDA modules
+scripts/capture_bistka_capacity.sh: line 76: ml: command not found
+
+## deployed release identity
+deployed_bundle_sha256=a5135665dd14fdfcd0a5dcdbfab70a7e6f88fd78fc75ff946df9851c01a4072e
+deployment_manifest_sha256=439b590bc4a85f03a6d98723ee3d28e40acdc00d95bdfbf48d310f07d867e25c

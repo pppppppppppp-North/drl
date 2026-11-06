@@ -1,0 +1,72 @@
+{
+  "calibration_source": {
+    "campaign_attempt_id": "vector_benchmark_20260716T155433Z_76f61dd7",
+    "campaign_id": "large_scale_thai_drl_v2",
+    "slurm_job_id": "3540"
+  },
+  "campaign_attempt_id": "vector_benchmark_20260716T155433Z_76f61dd7",
+  "campaign_id": "large_scale_thai_drl_v2",
+  "created_at_utc": "2026-07-16T16:03:34.863846+00:00",
+  "decision_kind": "vectorized_training_num_envs",
+  "evidence_mode": "native",
+  "output": {
+    "bytes": 1540,
+    "path": "campaigns/large_scale_thai_drl_v2/derived/locked_large_scale_screening.yaml",
+    "sha256": "d7b6ab71ede33ae4c4106fded3078b9a4eb3c56af345e67960061feea1897c1e"
+  },
+  "resolved_base_config_sha256": "b0c15940b53c55ba255171731ce69fff1b3ecedd3edb05b715cc4228eda8bcd0",
+  "resolved_locked_config_sha256": "89471f151fab5933325a1bb465a1c60c930c1ca508cab371dbcbe2b58f1aae21",
+  "schema_version": 2,
+  "selection": {
+    "median_samples_per_second": {
+      "1": 353.07730250905706,
+      "16": 82.96068664324659,
+      "2": 257.0365726849823,
+      "4": 212.10335203904407,
+      "8": 141.29846713913784
+    },
+    "previous_num_envs": 8,
+    "selected_num_envs": 1,
+    "selection_fraction_of_max": 0.95,
+    "selection_rule": "smallest num_envs with median throughput at least 95% of maximum median throughput",
+    "throughput_statistic": "median_samples_per_second"
+  },
+  "slurm_job_id": "3540",
+  "source_campaign_attempt_id": "vector_benchmark_20260716T155433Z_76f61dd7",
+  "source_campaign_id": "large_scale_thai_drl_v2",
+  "source_slurm_job_id": "3540",
+  "sources": {
+    "base_config": {
+      "bytes": 231,
+      "path": "config/large_scale_screening_v2.yaml",
+      "sha256": "3284f59a23ae0313fc28515027902024450873592890bbbd3eb5e34ce1a3cdd3"
+    },
+    "base_config_parent_1": {
+      "bytes": 1700,
+      "path": "config/large_scale_screening.yaml",
+      "sha256": "e87738df7ddf844654ac27b83a92efd988ddc3082da0dfa6209785c1d81137fd"
+    },
+    "benchmark_csv": {
+      "bytes": 7698,
+      "path": "reports/vectorized_training_benchmark_3540.csv",
+      "sha256": "3e30b1c45366a704e409c06233c20dba0c8ffb13f75f55de0ee0a38644f008d0"
+    },
+    "benchmark_metadata": {
+      "bytes": 3769,
+      "path": "reports/vectorized_training_benchmark_3540.json",
+      "sha256": "3be2359ce5589a9819034408566cb327c2d8a54e03c1c94bb8ef89ab1322b967"
+    },
+    "benchmark_receipt": {
+      "bytes": 4886,
+      "path": "reports/vectorized_training_benchmark_3540.csv.receipt.json",
+      "sha256": "e0b089755046ff53e78bc53c5f7816545c32d242956538dc63361992daf94524"
+    },
+    "latest_attempt": {
+      "bytes": 5697,
+      "path": "campaigns/large_scale_thai_drl_v2/attempts/vector_benchmark_latest.json",
+      "sha256": "668ec440f455dfa639ef4bda04acdd998dd79cc4f0a4a7142068d67dd483de3a"
+    }
+  },
+  "status": "success",
+  "target_campaign_id": "large_scale_thai_drl_v2"
+}

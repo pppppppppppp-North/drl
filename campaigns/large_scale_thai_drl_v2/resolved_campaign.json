@@ -1,0 +1,1291 @@
+{
+  "campaign": {
+    "id": "large_scale_thai_drl_v2",
+    "title": "Large-Scale Thai DRL Research Campaign V2",
+    "strict_deployment_resolution": true,
+    "limits": {
+      "account": "25sfcs03",
+      "allowed_partitions": [
+        "compute-devel",
+        "compute-normal",
+        "compute-long"
+      ],
+      "max_array_tasks": 5,
+      "max_concurrent_tasks": 2,
+      "max_cpus_per_task": 32,
+      "max_rendered_submissions": 1
+    },
+    "decisions": {
+      "window_ids": [
+        0,
+        1
+      ],
+      "stress_model_seed": 42,
+      "sources": {
+        "screening_selection": "results/large_scale_screening_*/aggregate/screening_selected_algorithms.json",
+        "budget_selection": "results/training_budget_sweep_*/aggregate/selected_training_budget.json",
+        "nested_selection": "results/nested_walk_forward_screening_*/aggregate/nested_selected_trials.csv"
+      },
+      "source_stages": {
+        "screening_selection": "screening_aggregate",
+        "budget_selection": "budget_aggregate",
+        "nested_selection": "nested_aggregate"
+      },
+      "base_configs": {
+        "budget": "config/training_budget_sweep_v2.yaml",
+        "nested": "config/nested_walk_forward_screening_v2.yaml",
+        "robustness": "config/large_scale_robustness_v2.yaml",
+        "ablation": "config/large_scale_feature_ablation_v2.yaml",
+        "stress": "config/execution_stress_real_ohlcv_market_v2.yaml"
+      },
+      "outputs": {
+        "budget": "{campaign_dir}/derived/locked_training_budget_sweep.yaml",
+        "nested": "{campaign_dir}/derived/locked_nested_screening.yaml",
+        "robustness": "{campaign_dir}/derived/locked_robustness.yaml",
+        "ablation": "{campaign_dir}/derived/locked_feature_ablation.yaml",
+        "stress": "{campaign_dir}/derived/locked_execution_stress.yaml",
+        "model_registry": "{campaign_dir}/derived/model_registry.json"
+      }
+    },
+    "protocol_lock": {
+      "path": "protocol_lock.json",
+      "inputs": [
+        {
+          "name": "campaign_spec",
+          "pattern": "config/research_campaign.yaml"
+        },
+        {
+          "name": "screening_selection",
+          "pattern": "results/large_scale_screening_*/aggregate/screening_selected_algorithms.json"
+        },
+        {
+          "name": "budget_selection",
+          "pattern": "results/training_budget_sweep_*/aggregate/selected_training_budget.json"
+        },
+        {
+          "name": "nested_selection",
+          "pattern": "results/nested_walk_forward_screening_*/aggregate/nested_selected_trials.csv"
+        },
+        {
+          "name": "locked_screening",
+          "pattern": "{campaign_dir}/derived/locked_large_scale_screening.yaml"
+        },
+        {
+          "name": "vector_calibration_decision",
+          "pattern": "{campaign_dir}/derived/locked_large_scale_screening.decision.json"
+        },
+        {
+          "name": "locked_budget",
+          "pattern": "{campaign_dir}/derived/locked_training_budget_sweep.yaml"
+        },
+        {
+          "name": "locked_budget_decision",
+          "pattern": "{campaign_dir}/derived/locked_training_budget_sweep.decision.json"
+        },
+        {
+          "name": "locked_nested",
+          "pattern": "{campaign_dir}/derived/locked_nested_screening.yaml"
+        },
+        {
+          "name": "locked_nested_decision",
+          "pattern": "{campaign_dir}/derived/locked_nested_screening.decision.json"
+        },
+        {
+          "name": "locked_robustness",
+          "pattern": "{campaign_dir}/derived/locked_robustness.yaml"
+        },
+        {
+          "name": "locked_robustness_decision",
+          "pattern": "{campaign_dir}/derived/locked_robustness.decision.json"
+        },
+        {
+          "name": "locked_ablation",
+          "pattern": "{campaign_dir}/derived/locked_feature_ablation.yaml"
+        },
+        {
+          "name": "locked_ablation_decision",
+          "pattern": "{campaign_dir}/derived/locked_feature_ablation.decision.json"
+        },
+        {
+          "name": "execution_scenarios",
+          "pattern": "config/execution_stress_real_ohlcv_market_v2.yaml"
+        },
+        {
+          "name": "ablation_returns_config",
+          "pattern": "config/ablation_returns_real_ohlcv_v2.yaml"
+        },
+        {
+          "name": "ablation_technical_config",
+          "pattern": "config/ablation_technical_real_ohlcv_v2.yaml"
+        },
+        {
+          "name": "ablation_technical_context_config",
+          "pattern": "config/ablation_technical_context_real_ohlcv_v2.yaml"
+        },
+        {
+          "name": "ablation_set_market_config",
+          "pattern": "config/real_ohlcv_market_v2.yaml"
+        },
+        {
+          "name": "ablation_macro_config",
+          "pattern": "config/real_ohlcv_macro_v2.yaml"
+        },
+        {
+          "name": "ablation_fundamentals_config",
+          "pattern": "config/real_ohlcv_fundamentals_v2.yaml"
+        },
+        {
+          "name": "raw_prices",
+          "pattern": "data/raw/prices_real_ohlcv.csv"
+        },
+        {
+          "name": "market_indices",
+          "pattern": "data/raw/prices_market_indices.csv"
+        },
+        {
+          "name": "base_processed_features",
+          "pattern": "data/processed/features_real_ohlcv.csv"
+        },
+        {
+          "name": "market_processed_features",
+          "pattern": "data/processed/features_real_ohlcv_market.csv"
+        },
+        {
+          "name": "macro_processed_features",
+          "pattern": "data/processed/features_real_ohlcv_macro.csv"
+        },
+        {
+          "name": "fundamental_processed_features",
+          "pattern": "data/processed/features_real_ohlcv_fundamentals.csv"
+        },
+        {
+          "name": "market_data_readiness",
+          "pattern": "reports/data_quality_market/market_data_readiness.json"
+        },
+        {
+          "name": "market_data_source_manifest",
+          "pattern": "data/data_manifest.csv"
+        },
+        {
+          "name": "research_preregistration",
+          "pattern": "config/research_preregistration.yaml"
+        },
+        {
+          "name": "research_preregistration_sidecar",
+          "pattern": "config/research_preregistration.sha256"
+        },
+        {
+          "name": "bistka_deployment_manifest",
+          "pattern": "{campaign_dir}/deployment/bistka_deployment_v2_manifest.json"
+        },
+        {
+          "name": "bistka_calibration_preflight",
+          "pattern": "reports/bistka_calibration_v2_preflight.json"
+        },
+        {
+          "name": "bistka_screening_manifest",
+          "pattern": "{campaign_dir}/deployment/bistka_screening_v2_manifest.json"
+        },
+        {
+          "name": "bistka_screening_preflight",
+          "pattern": "reports/bistka_screening_v2_preflight.json"
+        },
+        {
+          "name": "bistka_budget_manifest",
+          "pattern": "{campaign_dir}/deployment/bistka_budget_v2_manifest.json"
+        },
+        {
+          "name": "bistka_budget_preflight",
+          "pattern": "reports/bistka_budget_v2_preflight.json"
+        },
+        {
+          "name": "bistka_nested_manifest",
+          "pattern": "{campaign_dir}/deployment/bistka_nested_v2_manifest.json"
+        },
+        {
+          "name": "bistka_nested_preflight",
+          "pattern": "reports/bistka_nested_v2_preflight.json"
+        }
+      ]
+    },
+    "stages": [
+      {
+        "id": "data_readiness",
+        "title": "Verify Real Market Data",
+        "kind": "manual",
+        "missing_state": "BLOCKED",
+        "action": "python -m src.data.market_data_readiness --config config/real_ohlcv_market_v2.yaml --output-dir reports/data_quality_market",
+        "requirements": [
+          {
+            "name": "real OHLCV prices",
+            "pattern": "data/raw/prices_real_ohlcv.csv"
+          },
+          {
+            "name": "SET index prices",
+            "pattern": "data/raw/prices_market_indices.csv"
+          },
+          {
+            "name": "processed market-context features",
+            "patterns": [
+              "data/processed/features_real_ohlcv_market.parquet",
+              "data/processed/features_real_ohlcv_market.csv"
+            ]
+          },
+          {
+            "name": "strict observed-market readiness receipt",
+            "pattern": "reports/data_quality_market/market_data_readiness.json",
+            "validator": "market_data_readiness"
+          },
+          {
+            "name": "readiness receipt SHA-256 sidecar",
+            "pattern": "reports/data_quality_market/market_data_readiness.sha256"
+          }
+        ]
+      },
+      {
+        "id": "preregistration",
+        "title": "Verify Locked Scientific Preregistration",
+        "kind": "manual",
+        "depends_on": [
+          "data_readiness"
+        ],
+        "action": "python -m src.campaigns.preregistration --path config/research_preregistration.yaml --project-root .",
+        "requirements": [
+          {
+            "name": "locked research question, baselines, outcomes, split firewall, and claim boundary",
+            "pattern": "config/research_preregistration.yaml",
+            "validator": "research_preregistration"
+          },
+          {
+            "name": "preregistration SHA-256 sidecar",
+            "pattern": "config/research_preregistration.sha256"
+          }
+        ]
+      },
+      {
+        "id": "capacity",
+        "title": "Verify BistKA Credit, Storage, and Queue Snapshot",
+        "kind": "manual",
+        "action": "bash scripts/capture_bistka_capacity.sh",
+        "requirements": [
+          {
+            "name": "live credit, quota, partition, and queue snapshot",
+            "pattern": "reports/bistka_capacity_*.txt",
+            "validator": "capacity_snapshot",
+            "options": {
+              "required_fragments": [
+                "Maximum Job Submission: 5 jobs/group",
+                "Maximum Job Running: 2 jobs/group",
+                "Maximum CPU-cores = 32 CPU-cores/group",
+                "Maximum GPUs = 2 GPUs/group",
+                "compute-devel: 6 hours",
+                "compute-normal: 2 days",
+                "compute-long: 4 days",
+                "Miniforge3/25.3.0-3",
+                "cuda/12.8",
+                "cuda/13.0"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "deployment_bundle",
+        "title": "Build Exact BistKA V2 Base Deployment Bundle",
+        "kind": "local",
+        "depends_on": [
+          "data_readiness",
+          "preregistration",
+          "capacity"
+        ],
+        "action": "python -m scripts.build_bistka_deployment --config config/bistka_deployment_v2.yaml --manifest {campaign_dir}/deployment/bistka_deployment_v2_manifest.json --bundle {campaign_dir}/deployment/bistka_release_v2.tar.gz",
+        "requirements": [
+          {
+            "name": "content-addressed V2 base deployment manifest",
+            "pattern": "{campaign_dir}/deployment/bistka_deployment_v2_manifest.json",
+            "validator": "bistka_deployment_manifest"
+          },
+          {
+            "name": "deterministic V2 base deployment bundle",
+            "pattern": "{campaign_dir}/deployment/bistka_release_v2.tar.gz",
+            "validator": "bistka_deployment_bundle",
+            "options": {
+              "manifest": "{campaign_dir}/deployment/bistka_deployment_v2_manifest.json"
+            }
+          },
+          {
+            "name": "V2 base deployment bundle SHA-256 sidecar",
+            "pattern": "{campaign_dir}/deployment/bistka_release_v2.tar.gz.sha256"
+          }
+        ]
+      },
+      {
+        "id": "cluster_preflight",
+        "title": "Apply and Verify Exact V2 Base Deployment on BistKA",
+        "kind": "manual",
+        "depends_on": [
+          "deployment_bundle"
+        ],
+        "action": "LOCAL_PYTHON=.venv/bin/python MANIFEST={campaign_dir}/deployment/bistka_deployment_v2_manifest.json BUNDLE={campaign_dir}/deployment/bistka_release_v2.tar.gz PREFLIGHT_OUTPUT=reports/bistka_calibration_v2_preflight.json bash scripts/stage_bistka_deployment_v2.sh --apply",
+        "requirements": [
+          {
+            "name": "passing BistKA V2 base deployment and runtime receipt",
+            "pattern": "reports/bistka_calibration_v2_preflight.json",
+            "validator": "bistka_preflight",
+            "options": {
+              "manifest": "{campaign_dir}/deployment/bistka_deployment_v2_manifest.json"
+            }
+          }
+        ]
+      },
+      {
+        "id": "vector_benchmark",
+        "title": "Calibrate Vectorized Throughput",
+        "kind": "slurm",
+        "depends_on": [
+          "cluster_preflight"
+        ],
+        "job_script": "slurm/benchmark_vectorized_training.sbatch",
+        "config_path": "config/large_scale_screening_v2.yaml",
+        "deployment_manifest": "{campaign_dir}/deployment/bistka_deployment_v2_manifest.json",
+        "preflight_receipt": "reports/bistka_calibration_v2_preflight.json",
+        "fingerprint_paths": [
+          "scripts/benchmark_vectorized_training.py",
+          "src/campaigns/calibration.py",
+          "src/train.py",
+          "src/envs/trading_env.py",
+          "src/data/splits.py",
+          "src/utils/config.py",
+          "data/processed/features_real_ohlcv_market.csv",
+          "reports/data_quality_market/market_data_readiness.json",
+          "reports/data_quality_market/market_data_readiness.sha256",
+          "requirements.txt",
+          "environment.yml"
+        ],
+        "requirements": [
+          {
+            "name": "observed 1/2/4/8/16 repeated environment benchmark",
+            "pattern": "reports/vectorized_training_benchmark_*[0-9].csv",
+            "validator": "vector_benchmark",
+            "options": {
+              "env_counts": [
+                1,
+                2,
+                4,
+                8,
+                16
+              ],
+              "repeats": 3,
+              "timesteps": 4096,
+              "backend": "subproc",
+              "seed": 42,
+              "observed": true
+            }
+          },
+          {
+            "name": "measured 95-percent throughput selection metadata",
+            "pattern": "reports/vectorized_training_benchmark_*[0-9].json",
+            "validator": "vector_benchmark_metadata",
+            "options": {
+              "env_counts": [
+                1,
+                2,
+                4,
+                8,
+                16
+              ],
+              "repeats": 3,
+              "selection_fraction_of_max": 0.95
+            }
+          },
+          {
+            "name": "native or checksum-migrated BistKA vector calibration evidence",
+            "patterns": [
+              "reports/vectorized_training_benchmark_*[0-9].csv.receipt.json",
+              "{campaign_dir}/imports/v1_calibration_evidence.json"
+            ],
+            "validator": "calibration_evidence",
+            "options": {
+              "kind": "vectorized_training_benchmark",
+              "artifact_contract": "vector_benchmark",
+              "hostname_prefix": "bistka-",
+              "benchmark_options": {
+                "env_counts": [
+                  1,
+                  2,
+                  4,
+                  8,
+                  16
+                ],
+                "repeats": 3,
+                "timesteps": 4096,
+                "exact_completed": true,
+                "backend": "subproc",
+                "seed": 42,
+                "observed": true,
+                "data_source": "yahoo_ohlcv",
+                "training_split": "train",
+                "hostname_prefix": "bistka-",
+                "rss_measurement": "sampled_concurrent_process_tree_rss",
+                "distinct_processes": true
+              },
+              "parameters": {
+                "env_counts": [
+                  1,
+                  2,
+                  4,
+                  8,
+                  16
+                ],
+                "timesteps": 4096,
+                "repeats": 3,
+                "backend": "subproc",
+                "seed": 42,
+                "synthetic": false
+              },
+              "required_input_names": [
+                "config_candidate",
+                "config_file",
+                "resolved_config",
+                "feature_table",
+                "code:scripts/benchmark_vectorized_training.py",
+                "code:src/campaigns/calibration.py",
+                "code:src/train.py",
+                "code:src/envs/trading_env.py",
+                "code:src/data/splits.py",
+                "code:src/utils/config.py"
+              ],
+              "output_names": [
+                "benchmark_csv",
+                "benchmark_metadata"
+              ],
+              "result_sha256_fields": [
+                "data_sha256",
+                "config_sha256",
+                "code_sha256"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "determinism",
+        "title": "Verify Fixed-Seed Determinism",
+        "kind": "slurm",
+        "depends_on": [
+          "cluster_preflight"
+        ],
+        "job_script": "slurm/verify_determinism.sbatch",
+        "config_path": "config/large_scale_screening_v2.yaml",
+        "deployment_manifest": "{campaign_dir}/deployment/bistka_deployment_v2_manifest.json",
+        "preflight_receipt": "reports/bistka_calibration_v2_preflight.json",
+        "fingerprint_paths": [
+          "scripts/verify_determinism.py",
+          "src/campaigns/calibration.py",
+          "src/train.py",
+          "src/envs/trading_env.py",
+          "src/data/splits.py",
+          "src/utils/config.py",
+          "data/processed/features_real_ohlcv_market.csv",
+          "reports/data_quality_market/market_data_readiness.json",
+          "reports/data_quality_market/market_data_readiness.sha256",
+          "requirements.txt",
+          "environment.yml"
+        ],
+        "requirements": [
+          {
+            "name": "matching independent observed-data fixed-seed trajectory hashes",
+            "pattern": "reports/determinism_*[0-9].json",
+            "validator": "determinism",
+            "options": {
+              "seed": 42,
+              "observed": true
+            }
+          },
+          {
+            "name": "native or checksum-migrated BistKA determinism evidence",
+            "patterns": [
+              "reports/determinism_*[0-9].json.receipt.json",
+              "{campaign_dir}/imports/v1_calibration_evidence.json"
+            ],
+            "validator": "calibration_evidence",
+            "options": {
+              "kind": "fixed_seed_determinism",
+              "artifact_contract": "determinism",
+              "hostname_prefix": "bistka-",
+              "determinism_options": {
+                "seed": 42,
+                "observed": true,
+                "data_source": "yahoo_ohlcv"
+              },
+              "parameters": {
+                "seed": 42,
+                "synthetic": false
+              },
+              "required_input_names": [
+                "config_candidate",
+                "config_file",
+                "resolved_config",
+                "feature_table",
+                "code:scripts/verify_determinism.py",
+                "code:src/campaigns/calibration.py",
+                "code:src/train.py",
+                "code:src/envs/trading_env.py",
+                "code:src/data/splits.py",
+                "code:src/utils/config.py"
+              ],
+              "output_names": [
+                "determinism_result"
+              ],
+              "result_sha256_fields": [
+                "trajectory_sha256",
+                "data_sha256",
+                "config_sha256",
+                "code_sha256"
+              ],
+              "result_values": {
+                "deterministic": true
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "screening_config",
+        "title": "Materialize Attempt-Bound Vector Calibration",
+        "kind": "local",
+        "depends_on": [
+          "vector_benchmark"
+        ],
+        "action": "python -m scripts.materialize_calibrated_screening --project-root . --campaign-dir {campaign_dir} --spec config/research_campaign.yaml --base-config config/large_scale_screening_v2.yaml --output {campaign_dir}/derived/locked_large_scale_screening.yaml",
+        "requirements": [
+          {
+            "name": "locked screening configuration with measured vector count",
+            "pattern": "{campaign_dir}/derived/locked_large_scale_screening.yaml",
+            "validator": "sha256_sidecar"
+          },
+          {
+            "name": "attempt-bound vector calibration decision provenance",
+            "pattern": "{campaign_dir}/derived/locked_large_scale_screening.decision.json",
+            "validator": "sha256_sidecar"
+          }
+        ]
+      },
+      {
+        "id": "screening_deployment_bundle",
+        "title": "Build Cumulative V2 Calibrated-Screening Release",
+        "kind": "local",
+        "depends_on": [
+          "screening_config",
+          "determinism"
+        ],
+        "action": "python -m scripts.build_bistka_campaign_release --profile config/bistka_profiles_v2/screening.yaml --campaign-dir {campaign_dir} --config-output {campaign_dir}/deployment/bistka_screening_v2_deployment.yaml --manifest {campaign_dir}/deployment/bistka_screening_v2_manifest.json --bundle {campaign_dir}/deployment/bistka_screening_v2.tar.gz",
+        "requirements": [
+          {
+            "name": "content-addressed cumulative calibrated-screening manifest",
+            "pattern": "{campaign_dir}/deployment/bistka_screening_v2_manifest.json",
+            "validator": "bistka_deployment_manifest"
+          },
+          {
+            "name": "deterministic cumulative calibrated-screening bundle",
+            "pattern": "{campaign_dir}/deployment/bistka_screening_v2.tar.gz",
+            "validator": "bistka_deployment_bundle",
+            "options": {
+              "manifest": "{campaign_dir}/deployment/bistka_screening_v2_manifest.json"
+            }
+          },
+          {
+            "name": "cumulative calibrated-screening bundle SHA-256 sidecar",
+            "pattern": "{campaign_dir}/deployment/bistka_screening_v2.tar.gz.sha256"
+          }
+        ]
+      },
+      {
+        "id": "screening_cluster_preflight",
+        "title": "Apply and Verify Cumulative V2 Screening Release on BistKA",
+        "kind": "manual",
+        "depends_on": [
+          "screening_deployment_bundle"
+        ],
+        "action": "LOCAL_PYTHON=.venv/bin/python MANIFEST={campaign_dir}/deployment/bistka_screening_v2_manifest.json BUNDLE={campaign_dir}/deployment/bistka_screening_v2.tar.gz PREFLIGHT_OUTPUT=reports/bistka_screening_v2_preflight.json bash scripts/stage_bistka_deployment_v2.sh --apply",
+        "requirements": [
+          {
+            "name": "passing cumulative calibrated-screening runtime receipt",
+            "pattern": "reports/bistka_screening_v2_preflight.json",
+            "validator": "bistka_preflight",
+            "options": {
+              "manifest": "{campaign_dir}/deployment/bistka_screening_v2_manifest.json"
+            }
+          }
+        ]
+      },
+      {
+        "id": "screening_smoke",
+        "title": "Smoke-Test Five Algorithms on the Locked Screening Release",
+        "kind": "slurm",
+        "depends_on": [
+          "data_readiness",
+          "capacity",
+          "screening_cluster_preflight"
+        ],
+        "run_glob": "results/screening_smoke_*",
+        "manifest_pattern": "**/experiment_manifest.json",
+        "expected_manifests": 5,
+        "job_script": "slurm/screening_smoke.sbatch",
+        "config_path": "{campaign_dir}/derived/locked_large_scale_screening.yaml",
+        "deployment_manifest": "{campaign_dir}/deployment/bistka_screening_v2_manifest.json",
+        "preflight_receipt": "reports/bistka_screening_v2_preflight.json",
+        "run_dir_template": "results/screening_smoke_{job_id}",
+        "planned_runs": 5,
+        "planned_timesteps": 10240,
+        "requirements": [
+          {
+            "name": "complete five-algorithm observed-data smoke summary",
+            "pattern": "screening_smoke_summary.json",
+            "validator": "screening_smoke_summary",
+            "options": {
+              "algorithms": [
+                "ppo",
+                "a2c",
+                "ddpg",
+                "td3",
+                "sac"
+              ],
+              "timesteps_per_algorithm": 2048,
+              "representative_trials": {
+                "ppo": 1,
+                "a2c": 7,
+                "ddpg": 17,
+                "td3": 1,
+                "sac": 1
+              },
+              "runtime_limit_hours": 72,
+              "required_runtime_packages": [
+                "numpy",
+                "pandas",
+                "torch",
+                "stable-baselines3",
+                "gymnasium",
+                "pyyaml",
+                "optuna",
+                "tensorboard"
+              ]
+            }
+          },
+          {
+            "name": "screening smoke summary SHA-256 sidecar",
+            "pattern": "screening_smoke_summary.json.sha256"
+          }
+        ]
+      },
+      {
+        "id": "screening",
+        "title": "Run Five-Algorithm Validation Screening",
+        "kind": "slurm",
+        "depends_on": [
+          "data_readiness",
+          "capacity",
+          "screening_cluster_preflight",
+          "screening_smoke"
+        ],
+        "run_glob": "results/large_scale_screening_*",
+        "manifest_pattern": "**/experiment_manifest.json",
+        "expected_manifests": 150,
+        "job_script": "slurm/large_scale_screening.sbatch",
+        "config_path": "{campaign_dir}/derived/locked_large_scale_screening.yaml",
+        "deployment_manifest": "{campaign_dir}/deployment/bistka_screening_v2_manifest.json",
+        "preflight_receipt": "reports/bistka_screening_v2_preflight.json",
+        "run_dir_template": "results/large_scale_screening_{job_id}",
+        "planned_runs": 150,
+        "planned_timesteps": 3000000,
+        "array_tasks": 5
+      },
+      {
+        "id": "screening_aggregate",
+        "title": "Verify and Rank Screening Results",
+        "kind": "slurm",
+        "depends_on": [
+          "screening"
+        ],
+        "run_source": "screening",
+        "job_script": "slurm/large_scale_screening_aggregate.sbatch",
+        "config_path": "{campaign_dir}/derived/locked_large_scale_screening.yaml",
+        "requirements": [
+          {
+            "name": "validation-only top-two algorithm selection",
+            "pattern": "aggregate/screening_selected_algorithms.json",
+            "validator": "algorithm_selection",
+            "options": {
+              "maximum": 2
+            }
+          },
+          {
+            "name": "complete screening grid",
+            "pattern": "aggregate/screening_completeness.csv"
+          }
+        ]
+      },
+      {
+        "id": "budget_config",
+        "title": "Materialize Selected-Algorithm Budget Configuration",
+        "kind": "local",
+        "depends_on": [
+          "screening_aggregate"
+        ],
+        "action": "python -m src.campaigns.control materialize --target budget --spec config/research_campaign.yaml --campaign-dir {campaign_dir}",
+        "requirements": [
+          {
+            "name": "locked budget-sweep configuration",
+            "pattern": "{campaign_dir}/derived/locked_training_budget_sweep.yaml"
+          },
+          {
+            "name": "budget decision provenance",
+            "pattern": "{campaign_dir}/derived/locked_training_budget_sweep.decision.json"
+          }
+        ]
+      },
+      {
+        "id": "budget_deployment_bundle",
+        "title": "Build Cumulative V2 Budget-Sweep Release",
+        "kind": "local",
+        "depends_on": [
+          "budget_config"
+        ],
+        "action": "python -m scripts.build_bistka_campaign_release --profile config/bistka_profiles_v2/budget.yaml --campaign-dir {campaign_dir} --config-output {campaign_dir}/deployment/bistka_budget_v2_deployment.yaml --manifest {campaign_dir}/deployment/bistka_budget_v2_manifest.json --bundle {campaign_dir}/deployment/bistka_budget_v2.tar.gz",
+        "requirements": [
+          {
+            "name": "content-addressed cumulative budget-sweep manifest",
+            "pattern": "{campaign_dir}/deployment/bistka_budget_v2_manifest.json",
+            "validator": "bistka_deployment_manifest"
+          },
+          {
+            "name": "deterministic cumulative budget-sweep bundle",
+            "pattern": "{campaign_dir}/deployment/bistka_budget_v2.tar.gz",
+            "validator": "bistka_deployment_bundle",
+            "options": {
+              "manifest": "{campaign_dir}/deployment/bistka_budget_v2_manifest.json"
+            }
+          },
+          {
+            "name": "cumulative budget-sweep bundle SHA-256 sidecar",
+            "pattern": "{campaign_dir}/deployment/bistka_budget_v2.tar.gz.sha256"
+          }
+        ]
+      },
+      {
+        "id": "budget_cluster_preflight",
+        "title": "Apply and Verify Cumulative V2 Budget-Sweep Release on BistKA",
+        "kind": "manual",
+        "depends_on": [
+          "budget_deployment_bundle"
+        ],
+        "action": "LOCAL_PYTHON=.venv/bin/python MANIFEST={campaign_dir}/deployment/bistka_budget_v2_manifest.json BUNDLE={campaign_dir}/deployment/bistka_budget_v2.tar.gz PREFLIGHT_OUTPUT=reports/bistka_budget_v2_preflight.json bash scripts/stage_bistka_deployment_v2.sh --apply",
+        "requirements": [
+          {
+            "name": "passing cumulative budget-sweep runtime receipt",
+            "pattern": "reports/bistka_budget_v2_preflight.json",
+            "validator": "bistka_preflight",
+            "options": {
+              "manifest": "{campaign_dir}/deployment/bistka_budget_v2_manifest.json"
+            }
+          }
+        ]
+      },
+      {
+        "id": "budget_sweep",
+        "title": "Run Validation-Only Training-Budget Sweep",
+        "kind": "slurm",
+        "depends_on": [
+          "budget_cluster_preflight"
+        ],
+        "run_glob": "results/training_budget_sweep_*",
+        "manifest_pattern": "**/experiment_manifest.json",
+        "expected_manifests": 48,
+        "job_script": "slurm/training_budget_sweep.sbatch",
+        "config_path": "{campaign_dir}/derived/locked_training_budget_sweep.yaml",
+        "deployment_manifest": "{campaign_dir}/deployment/bistka_budget_v2_manifest.json",
+        "preflight_receipt": "reports/bistka_budget_v2_preflight.json",
+        "run_dir_template": "results/training_budget_sweep_{job_id}",
+        "planned_runs": 48,
+        "planned_timesteps": 10440000,
+        "array_tasks": 4
+      },
+      {
+        "id": "budget_aggregate",
+        "title": "Select the Validation Plateau Budget",
+        "kind": "slurm",
+        "depends_on": [
+          "budget_sweep"
+        ],
+        "run_source": "budget_sweep",
+        "job_script": "slurm/training_budget_sweep_aggregate.sbatch",
+        "config_path": "{campaign_dir}/derived/locked_training_budget_sweep.yaml",
+        "requirements": [
+          {
+            "name": "validation-only selected training budget",
+            "pattern": "aggregate/selected_training_budget.json",
+            "validator": "budget_selection",
+            "options": {
+              "allowed": [
+                20000,
+                100000,
+                250000,
+                500000
+              ]
+            }
+          },
+          {
+            "name": "complete budget grid",
+            "pattern": "aggregate/training_budget_completeness.csv"
+          }
+        ]
+      },
+      {
+        "id": "nested_config",
+        "title": "Materialize Nested-Screening Budget",
+        "kind": "local",
+        "depends_on": [
+          "budget_aggregate"
+        ],
+        "action": "python -m src.campaigns.control materialize --target nested --spec config/research_campaign.yaml --campaign-dir {campaign_dir}",
+        "requirements": [
+          {
+            "name": "locked nested-screening configuration",
+            "pattern": "{campaign_dir}/derived/locked_nested_screening.yaml"
+          },
+          {
+            "name": "nested decision provenance",
+            "pattern": "{campaign_dir}/derived/locked_nested_screening.decision.json"
+          }
+        ]
+      },
+      {
+        "id": "nested_deployment_bundle",
+        "title": "Build Cumulative V2 Nested-Screening Release",
+        "kind": "local",
+        "depends_on": [
+          "nested_config"
+        ],
+        "action": "python -m scripts.build_bistka_campaign_release --profile config/bistka_profiles_v2/nested.yaml --campaign-dir {campaign_dir} --config-output {campaign_dir}/deployment/bistka_nested_v2_deployment.yaml --manifest {campaign_dir}/deployment/bistka_nested_v2_manifest.json --bundle {campaign_dir}/deployment/bistka_nested_v2.tar.gz",
+        "requirements": [
+          {
+            "name": "content-addressed cumulative nested-screening manifest",
+            "pattern": "{campaign_dir}/deployment/bistka_nested_v2_manifest.json",
+            "validator": "bistka_deployment_manifest"
+          },
+          {
+            "name": "deterministic cumulative nested-screening bundle",
+            "pattern": "{campaign_dir}/deployment/bistka_nested_v2.tar.gz",
+            "validator": "bistka_deployment_bundle",
+            "options": {
+              "manifest": "{campaign_dir}/deployment/bistka_nested_v2_manifest.json"
+            }
+          },
+          {
+            "name": "cumulative nested-screening bundle SHA-256 sidecar",
+            "pattern": "{campaign_dir}/deployment/bistka_nested_v2.tar.gz.sha256"
+          }
+        ]
+      },
+      {
+        "id": "nested_cluster_preflight",
+        "title": "Apply and Verify Cumulative V2 Nested-Screening Release on BistKA",
+        "kind": "manual",
+        "depends_on": [
+          "nested_deployment_bundle"
+        ],
+        "action": "LOCAL_PYTHON=.venv/bin/python MANIFEST={campaign_dir}/deployment/bistka_nested_v2_manifest.json BUNDLE={campaign_dir}/deployment/bistka_nested_v2.tar.gz PREFLIGHT_OUTPUT=reports/bistka_nested_v2_preflight.json bash scripts/stage_bistka_deployment_v2.sh --apply",
+        "requirements": [
+          {
+            "name": "passing cumulative nested-screening runtime receipt",
+            "pattern": "reports/bistka_nested_v2_preflight.json",
+            "validator": "bistka_preflight",
+            "options": {
+              "manifest": "{campaign_dir}/deployment/bistka_nested_v2_manifest.json"
+            }
+          }
+        ]
+      },
+      {
+        "id": "nested_screening",
+        "title": "Run Validation-Only Nested Screening",
+        "kind": "slurm",
+        "depends_on": [
+          "nested_cluster_preflight"
+        ],
+        "run_glob": "results/nested_walk_forward_screening_*",
+        "manifest_pattern": "**/experiment_manifest.json",
+        "expected_manifests": 100,
+        "job_script": "slurm/nested_walk_forward_screening.sbatch",
+        "config_path": "{campaign_dir}/derived/locked_nested_screening.yaml",
+        "deployment_manifest": "{campaign_dir}/deployment/bistka_nested_v2_manifest.json",
+        "preflight_receipt": "reports/bistka_nested_v2_preflight.json",
+        "run_dir_template": "results/nested_walk_forward_screening_{job_id}",
+        "planned_runs": 100,
+        "planned_timesteps": 2000000,
+        "array_tasks": 5
+      },
+      {
+        "id": "nested_aggregate",
+        "title": "Freeze Per-Window Validation Selections",
+        "kind": "slurm",
+        "depends_on": [
+          "nested_screening"
+        ],
+        "run_source": "nested_screening",
+        "job_script": "slurm/nested_walk_forward_screening_aggregate.sbatch",
+        "config_path": "{campaign_dir}/derived/locked_nested_screening.yaml",
+        "requirements": [
+          {
+            "name": "one selected validation trial per algorithm and window",
+            "pattern": "aggregate/nested_selected_trials.csv"
+          },
+          {
+            "name": "complete nested-screening grid",
+            "pattern": "aggregate/nested_screening_completeness.csv"
+          }
+        ]
+      },
+      {
+        "id": "robustness_config",
+        "title": "Materialize Locked Robustness Configuration",
+        "kind": "local",
+        "depends_on": [
+          "nested_aggregate"
+        ],
+        "action": "python -m src.campaigns.control materialize --target robustness --spec config/research_campaign.yaml --campaign-dir {campaign_dir}",
+        "requirements": [
+          {
+            "name": "locked robustness configuration",
+            "pattern": "{campaign_dir}/derived/locked_robustness.yaml"
+          },
+          {
+            "name": "robustness decision provenance",
+            "pattern": "{campaign_dir}/derived/locked_robustness.decision.json"
+          }
+        ]
+      },
+      {
+        "id": "ablation_config",
+        "title": "Materialize Locked Feature-Ablation Configuration",
+        "kind": "local",
+        "depends_on": [
+          "nested_aggregate"
+        ],
+        "action": "python -m src.campaigns.control materialize --target ablation --spec config/research_campaign.yaml --campaign-dir {campaign_dir}",
+        "requirements": [
+          {
+            "name": "locked feature-ablation configuration",
+            "pattern": "{campaign_dir}/derived/locked_feature_ablation.yaml"
+          },
+          {
+            "name": "ablation decision provenance",
+            "pattern": "{campaign_dir}/derived/locked_feature_ablation.decision.json"
+          }
+        ]
+      },
+      {
+        "id": "protocol_lock",
+        "title": "Lock the Validation-Selected Scientific Protocol",
+        "kind": "lock",
+        "depends_on": [
+          "robustness_config",
+          "ablation_config"
+        ],
+        "action": "python -m src.campaigns.control lock --spec config/research_campaign.yaml --campaign-dir {campaign_dir}",
+        "requirements": [
+          {
+            "name": "immutable protocol lock",
+            "pattern": "{campaign_dir}/protocol_lock.json",
+            "validator": "protocol_lock"
+          },
+          {
+            "name": "protocol lock SHA-256 sidecar",
+            "pattern": "{campaign_dir}/protocol_lock.sha256"
+          }
+        ]
+      },
+      {
+        "id": "protocol_deployment_bundle",
+        "title": "Build Cumulative V2 Locked-Protocol Release",
+        "kind": "local",
+        "depends_on": [
+          "protocol_lock"
+        ],
+        "action": "python -m scripts.build_bistka_campaign_release --profile config/bistka_profiles_v2/protocol.yaml --campaign-dir {campaign_dir} --config-output {campaign_dir}/deployment/bistka_protocol_v2_deployment.yaml --manifest {campaign_dir}/deployment/bistka_protocol_v2_manifest.json --bundle {campaign_dir}/deployment/bistka_protocol_v2.tar.gz",
+        "requirements": [
+          {
+            "name": "content-addressed cumulative locked-protocol manifest",
+            "pattern": "{campaign_dir}/deployment/bistka_protocol_v2_manifest.json",
+            "validator": "bistka_deployment_manifest"
+          },
+          {
+            "name": "deterministic cumulative locked-protocol bundle",
+            "pattern": "{campaign_dir}/deployment/bistka_protocol_v2.tar.gz",
+            "validator": "bistka_deployment_bundle",
+            "options": {
+              "manifest": "{campaign_dir}/deployment/bistka_protocol_v2_manifest.json"
+            }
+          },
+          {
+            "name": "cumulative locked-protocol bundle SHA-256 sidecar",
+            "pattern": "{campaign_dir}/deployment/bistka_protocol_v2.tar.gz.sha256"
+          }
+        ]
+      },
+      {
+        "id": "protocol_cluster_preflight",
+        "title": "Apply and Verify Cumulative V2 Locked-Protocol Release on BistKA",
+        "kind": "manual",
+        "depends_on": [
+          "protocol_deployment_bundle"
+        ],
+        "action": "LOCAL_PYTHON=.venv/bin/python MANIFEST={campaign_dir}/deployment/bistka_protocol_v2_manifest.json BUNDLE={campaign_dir}/deployment/bistka_protocol_v2.tar.gz PREFLIGHT_OUTPUT=reports/bistka_protocol_v2_preflight.json bash scripts/stage_bistka_deployment_v2.sh --apply",
+        "requirements": [
+          {
+            "name": "passing cumulative locked-protocol runtime receipt",
+            "pattern": "reports/bistka_protocol_v2_preflight.json",
+            "validator": "bistka_preflight",
+            "options": {
+              "manifest": "{campaign_dir}/deployment/bistka_protocol_v2_manifest.json"
+            }
+          }
+        ]
+      },
+      {
+        "id": "robustness",
+        "title": "Run Repeated-Seed Test Confirmation",
+        "kind": "slurm",
+        "depends_on": [
+          "protocol_cluster_preflight"
+        ],
+        "run_glob": "results/large_scale_robustness_*",
+        "manifest_pattern": "**/experiment_manifest.json",
+        "expected_manifests": 80,
+        "require_protocol_hash": true,
+        "job_script": "slurm/large_scale_robustness.sbatch",
+        "config_path": "{campaign_dir}/derived/locked_robustness.yaml",
+        "deployment_manifest": "{campaign_dir}/deployment/bistka_protocol_v2_manifest.json",
+        "preflight_receipt": "reports/bistka_protocol_v2_preflight.json",
+        "run_dir_template": "results/large_scale_robustness_{job_id}",
+        "planned_runs": 80,
+        "planned_timesteps": 8000000,
+        "array_tasks": 4
+      },
+      {
+        "id": "robustness_aggregate",
+        "title": "Verify Test-Only Robustness Evidence",
+        "kind": "slurm",
+        "depends_on": [
+          "robustness"
+        ],
+        "run_source": "robustness",
+        "require_protocol_hash": true,
+        "job_script": "slurm/robustness_aggregate.sbatch",
+        "config_path": "{campaign_dir}/derived/locked_robustness.yaml",
+        "requirements": [
+          {
+            "name": "test-only policy summary",
+            "pattern": "aggregate/robustness_policy_summary.csv"
+          },
+          {
+            "name": "paired baseline comparisons",
+            "pattern": "aggregate/robustness_paired_summary.csv"
+          },
+          {
+            "name": "complete robustness grid",
+            "pattern": "aggregate/robustness_completeness.csv"
+          }
+        ]
+      },
+      {
+        "id": "feature_ablation",
+        "title": "Run Locked Feature Ablations",
+        "kind": "slurm",
+        "depends_on": [
+          "robustness_aggregate",
+          "protocol_cluster_preflight"
+        ],
+        "run_glob": "results/large_scale_feature_ablation_*",
+        "manifest_pattern": "**/experiment_manifest.json",
+        "expected_manifests": 120,
+        "require_protocol_hash": true,
+        "job_script": "slurm/large_scale_feature_ablation.sbatch",
+        "config_path": "{campaign_dir}/derived/locked_feature_ablation.yaml",
+        "runtime_configs": [
+          "config/ablation_returns_real_ohlcv_v2.yaml",
+          "config/ablation_technical_real_ohlcv_v2.yaml",
+          "config/ablation_technical_context_real_ohlcv_v2.yaml",
+          "config/real_ohlcv_market_v2.yaml",
+          "config/real_ohlcv_macro_v2.yaml",
+          "config/real_ohlcv_fundamentals_v2.yaml"
+        ],
+        "deployment_manifest": "{campaign_dir}/deployment/bistka_protocol_v2_manifest.json",
+        "preflight_receipt": "reports/bistka_protocol_v2_preflight.json",
+        "run_dir_template": "results/large_scale_feature_ablation_{job_id}",
+        "planned_runs": 120,
+        "planned_timesteps": 6000000,
+        "array_tasks": 5
+      },
+      {
+        "id": "feature_ablation_aggregate",
+        "title": "Verify Test-Only Feature Evidence",
+        "kind": "slurm",
+        "depends_on": [
+          "feature_ablation"
+        ],
+        "run_source": "feature_ablation",
+        "require_protocol_hash": true,
+        "job_script": "slurm/large_scale_feature_ablation_aggregate.sbatch",
+        "config_path": "{campaign_dir}/derived/locked_feature_ablation.yaml",
+        "requirements": [
+          {
+            "name": "ablation confidence intervals",
+            "pattern": "aggregate/feature_ablation_confidence_intervals.png"
+          },
+          {
+            "name": "paired control comparisons",
+            "pattern": "aggregate/feature_ablation_paired_comparisons.csv"
+          },
+          {
+            "name": "complete ablation grid",
+            "pattern": "aggregate/feature_ablation_completeness.csv"
+          }
+        ]
+      },
+      {
+        "id": "stress_config",
+        "title": "Build the Fixed-Seed Execution-Stress Registry",
+        "kind": "local",
+        "depends_on": [
+          "robustness_aggregate"
+        ],
+        "action": "python -m src.campaigns.control materialize --target stress --spec config/research_campaign.yaml --campaign-dir {campaign_dir}",
+        "requirements": [
+          {
+            "name": "protocol-bound fixed-seed model registry",
+            "pattern": "{campaign_dir}/derived/model_registry.json",
+            "validator": "model_registry"
+          },
+          {
+            "name": "model registry SHA-256 sidecar",
+            "pattern": "{campaign_dir}/derived/model_registry.sha256"
+          },
+          {
+            "name": "locked window-aligned execution-stress configuration",
+            "pattern": "{campaign_dir}/derived/locked_execution_stress.yaml",
+            "validator": "stress_config"
+          }
+        ]
+      },
+      {
+        "id": "stress_deployment_bundle",
+        "title": "Build Cumulative V2 Execution-Stress Release",
+        "kind": "local",
+        "depends_on": [
+          "stress_config"
+        ],
+        "action": "python -m scripts.build_bistka_campaign_release --profile config/bistka_profiles_v2/stress.yaml --campaign-dir {campaign_dir} --config-output {campaign_dir}/deployment/bistka_stress_v2_deployment.yaml --manifest {campaign_dir}/deployment/bistka_stress_v2_manifest.json --bundle {campaign_dir}/deployment/bistka_stress_v2.tar.gz",
+        "requirements": [
+          {
+            "name": "content-addressed cumulative execution-stress manifest",
+            "pattern": "{campaign_dir}/deployment/bistka_stress_v2_manifest.json",
+            "validator": "bistka_deployment_manifest"
+          },
+          {
+            "name": "deterministic cumulative execution-stress bundle",
+            "pattern": "{campaign_dir}/deployment/bistka_stress_v2.tar.gz",
+            "validator": "bistka_deployment_bundle",
+            "options": {
+              "manifest": "{campaign_dir}/deployment/bistka_stress_v2_manifest.json"
+            }
+          },
+          {
+            "name": "cumulative execution-stress bundle SHA-256 sidecar",
+            "pattern": "{campaign_dir}/deployment/bistka_stress_v2.tar.gz.sha256"
+          }
+        ]
+      },
+      {
+        "id": "stress_cluster_preflight",
+        "title": "Apply and Verify Cumulative V2 Execution-Stress Release on BistKA",
+        "kind": "manual",
+        "depends_on": [
+          "stress_deployment_bundle"
+        ],
+        "action": "LOCAL_PYTHON=.venv/bin/python MANIFEST={campaign_dir}/deployment/bistka_stress_v2_manifest.json BUNDLE={campaign_dir}/deployment/bistka_stress_v2.tar.gz PREFLIGHT_OUTPUT=reports/bistka_stress_v2_preflight.json bash scripts/stage_bistka_deployment_v2.sh --apply",
+        "requirements": [
+          {
+            "name": "passing cumulative execution-stress runtime receipt",
+            "pattern": "reports/bistka_stress_v2_preflight.json",
+            "validator": "bistka_preflight",
+            "options": {
+              "manifest": "{campaign_dir}/deployment/bistka_stress_v2_manifest.json"
+            }
+          }
+        ]
+      },
+      {
+        "id": "execution_stress",
+        "title": "Run Locked-Model Execution Stress Tests",
+        "kind": "slurm",
+        "depends_on": [
+          "stress_cluster_preflight"
+        ],
+        "run_glob": "results/execution_stress_*",
+        "manifest_pattern": "experiment_manifest.json",
+        "expected_manifests": 1,
+        "require_protocol_hash": true,
+        "job_script": "slurm/execution_stress.sbatch",
+        "config_path": "{campaign_dir}/derived/locked_execution_stress.yaml",
+        "deployment_manifest": "{campaign_dir}/deployment/bistka_stress_v2_manifest.json",
+        "preflight_receipt": "reports/bistka_stress_v2_preflight.json",
+        "run_dir_template": "results/execution_stress_{job_id}",
+        "run_dir_env": "OUTPUT_DIR",
+        "requirements": [
+          {
+            "name": "every configured model loaded successfully",
+            "pattern": "execution_stress_model_readiness.csv",
+            "validator": "stress_readiness"
+          },
+          {
+            "name": "execution sensitivity evidence",
+            "pattern": "execution_stress_sensitivity.png"
+          },
+          {
+            "name": "complete model-window-scenario grid",
+            "pattern": "execution_stress_completeness.csv",
+            "validator": "stress_completeness"
+          },
+          {
+            "name": "base-scenario robustness replay",
+            "pattern": "execution_stress_base_replay.csv",
+            "validator": "stress_replay"
+          },
+          {
+            "name": "walk-forward stress window summary",
+            "pattern": "execution_stress_window_summary.csv"
+          }
+        ]
+      },
+      {
+        "id": "finalize",
+        "title": "Build and Verify the Reproducibility Archive",
+        "kind": "manual",
+        "depends_on": [
+          "feature_ablation_aggregate",
+          "execution_stress"
+        ],
+        "missing_state": "BLOCKED",
+        "action": "echo 'Build the final archive from verified aggregate directories and selected models.'",
+        "requirements": [
+          {
+            "name": "verified reproducibility archive",
+            "pattern": "final_archive/reproducibility_*.tar.gz",
+            "validator": "archive"
+          }
+        ]
+      }
+    ]
+  }
+}

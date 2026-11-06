@@ -4,9 +4,10 @@ scipy>=1.11
 pyyaml>=6.0
 matplotlib>=3.8
 pyarrow>=14.0
+pdfplumber>=0.11
 gymnasium>=0.29
 stable-baselines3>=2.3
-optuna>=3.6
-tensorboard>=2.16
+optuna==4.8.0
+tensorboard==2.20.0
 pytest>=8.0
 yfinance>=0.2

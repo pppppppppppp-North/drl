@@ -1,0 +1,35 @@
+deployment:
+  campaign_id: large_scale_thai_drl_v2
+  target_project_root: /lustrefs/project/25sfcs03/drl_thai_stock
+  python_executable: /lustrefs/project/25sfcs03/envs/drl_env/bin/python
+  required_hostname_prefix: bistka-
+  data_readiness_path: reports/data_quality_market/market_data_readiness.json
+  runtime_configs:
+    - config/large_scale_screening_v2.yaml
+  required_packages:
+    - numpy
+    - pandas
+    - torch
+    - stable-baselines3
+    - gymnasium
+    - optuna
+    - tensorboard
+    - pyyaml
+  inputs:
+    - requirements.txt
+    - environment.yml
+    - config/*.yaml
+    - config/bistka_profiles_v2/*.yaml
+    - config/research_preregistration.sha256
+    - slurm/*.sbatch
+    - scripts/*.py
+    - scripts/*.sh
+    - src/**/*.py
+    - data/data_manifest.csv
+    - data/raw/prices_real_ohlcv.csv
+    - data/raw/prices_market_indices.csv
+    - data/processed/features_real_ohlcv.csv
+    - data/processed/features_real_ohlcv_market.csv
+    - reports/data_quality_market/*.json
+    - reports/data_quality_market/*.sha256
+    - reports/data_quality_market/*.csv

@@ -4,6 +4,7 @@ import json
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from src.data.synthetic import make_synthetic_prices
 from src.data.leakage import LeakageCheckConfig, assert_no_leakage, check_split_boundaries, run_leakage_checks
@@ -21,15 +22,27 @@ from src.data.splits import (
     walk_forward_summary,
     chronological_split,
 )
-from src.agents.baselines import run_baselines, run_baselines_on_features
+from src.agents.baselines import _run_return_benchmark, run_baselines, run_baselines_on_features
 from src.envs.trading_env import ThaiStockTradingEnv, load_feature_table
 from src.evaluation.metrics import equity_metrics
+from src.evaluation.statistics import holm_adjust, sign_flip_p_value
 from src.evaluation.compare_results import load_comparison, summarize_actions
 from src.experiments.aggregate_trials import aggregate_trials
 from src.experiments.aggregate_ablation import aggregate_ablation
 from src.experiments.aggregate_walk_forward import aggregate_walk_forward
-from src.experiments.run_trial import apply_trial_config, parse_algorithms, select_trial_algorithm, suggest_hyperparameters
-from src.experiments.run_walk_forward import make_env_from_features
+from src.experiments.aggregate_robustness import aggregate_robustness
+from src.experiments.aggregate_screening import aggregate_screening
+from src.experiments.aggregate_feature_ablation import aggregate_feature_ablation
+from src.experiments.aggregate_nested_screening import aggregate_nested_screening
+from src.experiments.aggregate_budget_sweep import aggregate_budget_sweep
+from src.experiments.experiment_manifest import collect_experiment_manifests, tracked_experiment
+from src.experiments.run_robustness import robustness_seeds, robustness_task_grid
+from src.experiments.run_screening import screening_task_grid
+from src.experiments.run_feature_ablation import groups_for_task
+from src.experiments.run_execution_stress import apply_execution_scenario, run_execution_stress
+from src.experiments.run_trial import apply_trial_config, parse_algorithms, read_objective, select_trial_algorithm, suggest_hyperparameters
+from src.experiments.run_budget_sweep import budget_values
+from src.experiments.run_walk_forward import make_env_from_features, run_walk_forward_window
 from src.experiments.run_regime_tests import configured_regime_slices, high_volatility_slices, run_regime_tests
 from src.features.technical import add_technical_features
 from src.features.market_context import build_index_context, merge_market_context
@@ -41,6 +54,7 @@ from src.features.official_macro_context import build_official_macro_context, me
 from src.sentiment.extract_embeddings import _hash_sentiment
 from src.train import (
     _algorithm_kwargs,
+    build_training_feature_slices,
     ensure_feature_inputs,
     ensure_pilot_features,
     evaluate_model,
@@ -48,6 +62,10 @@ from src.train import (
     write_split_summary,
     write_walk_forward_summary,
 )
+from src.utils.config import load_config
+from src.utils.checkpoints import prune_checkpoints
+from scripts.build_reproducibility_archive import build_archive, collect_archive_files, verify_archive
+from scripts.verify_determinism import verify as verify_determinism
 
 
 def _config() -> dict:
@@ -68,6 +86,23 @@ def _config() -> dict:
     }
 
 
+def test_config_inheritance_deep_merges_overrides(tmp_path) -> None:
+    (tmp_path / "base.yaml").write_text(
+        "project:\n  name: base\ntraining:\n  total_timesteps: 1000\n  num_envs: 2\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "child.yaml").write_text(
+        "extends: base.yaml\nproject:\n  name: child\ntraining:\n  total_timesteps: 5000\n",
+        encoding="utf-8",
+    )
+
+    loaded = load_config(tmp_path / "child.yaml")
+
+    assert loaded["project"]["name"] == "child"
+    assert loaded["training"]["total_timesteps"] == 5000
+    assert loaded["training"]["num_envs"] == 2
+
+
 def test_env_reset_and_step_shapes() -> None:
     config = _config()
     features = add_technical_features(make_synthetic_prices(config))
@@ -85,6 +120,70 @@ def test_env_reset_and_step_shapes() -> None:
     assert info["portfolio_value"] > 0
 
 
+def test_env_close_remains_callable_after_price_panel_initialization() -> None:
+    config = _config()
+    features = add_technical_features(make_synthetic_prices(config))
+    env = ThaiStockTradingEnv(features, config["features"]["columns"], lookback=5)
+
+    env.close()
+
+
+def test_checkpoint_retention_keeps_complete_latest_step_groups(tmp_path) -> None:
+    prefix = "ppo_checkpoint"
+    for step in (100, 200, 300):
+        (tmp_path / f"{prefix}_{step}_steps.zip").write_bytes(b"model")
+        (tmp_path / f"{prefix}_replay_buffer_{step}_steps.pkl").write_bytes(b"buffer")
+    unrelated = tmp_path / "other_100_steps.zip"
+    unrelated.write_bytes(b"other")
+
+    removed = prune_checkpoints(tmp_path, name_prefix=prefix, keep_last=2)
+
+    assert {path.name for path in removed} == {
+        "ppo_checkpoint_100_steps.zip",
+        "ppo_checkpoint_replay_buffer_100_steps.pkl",
+    }
+    assert (tmp_path / "ppo_checkpoint_200_steps.zip").exists()
+    assert (tmp_path / "ppo_checkpoint_300_steps.zip").exists()
+    assert unrelated.exists()
+
+
+def test_holm_adjustment_controls_a_family_and_preserves_order() -> None:
+    adjusted = holm_adjust([0.01, 0.04, 0.02, float("nan")])
+    assert adjusted[:3] == pytest.approx([0.03, 0.04, 0.04])
+    assert np.isnan(adjusted[3])
+    assert sign_flip_p_value([1.0, 1.0, 1.0, 1.0], resamples=1_000, seed=7) < 0.2
+
+
+def test_reproducibility_archive_has_hash_verified_manifest(tmp_path) -> None:
+    project = tmp_path / "project"
+    (project / "src").mkdir(parents=True)
+    (project / "config").mkdir()
+    (project / "results" / "run").mkdir(parents=True)
+    (project / "src" / "model.py").write_text("VALUE = 1\n", encoding="utf-8")
+    (project / "config" / "experiment.yaml").write_text("seed: 42\n", encoding="utf-8")
+    (project / "results" / "run" / "metrics.csv").write_text("score\n1\n", encoding="utf-8")
+    (project / "results" / "run" / "checkpoints").mkdir()
+    (project / "results" / "run" / "checkpoints" / "old.zip").write_bytes(b"old")
+
+    files = collect_archive_files(
+        project,
+        result_dirs=[project / "results" / "run"],
+        selected_models=[],
+    )
+    archive = tmp_path / "repro.tar.gz"
+    manifest = build_archive(project, archive, files)
+    verify_archive(archive)
+
+    assert manifest["file_count"] == 3
+    assert all("checkpoints" not in entry["path"] for entry in manifest["files"])
+
+
+def test_fixed_seed_environment_trajectory_is_deterministic() -> None:
+    result = verify_determinism(17)
+    assert result["deterministic"] is True
+    assert result["first_sha256"] == result["second_sha256"]
+
+
 def test_action_is_normalized_to_long_only_budget() -> None:
     config = _config()
     features = add_technical_features(make_synthetic_prices(config))
@@ -93,6 +192,29 @@ def test_action_is_normalized_to_long_only_budget() -> None:
     env.step(np.array([10.0, 10.0]))
     assert np.isclose(env.weights.sum(), 1.0)
     assert env.cash_weight <= 1e-9
+
+
+def test_execution_constraints_limit_position_cash_and_turnover() -> None:
+    config = _config()
+    features = add_technical_features(make_synthetic_prices(config))
+    env = ThaiStockTradingEnv(
+        features,
+        config["features"]["columns"],
+        lookback=5,
+        transaction_cost=0.0,
+        slippage=0.01,
+        max_turnover=0.5,
+        max_position_weight=0.4,
+        min_cash_weight=0.2,
+    )
+    env.reset(seed=1)
+
+    _, _, _, _, info = env.step(np.array([1.0, 1.0]))
+
+    assert info["turnover"] <= 0.5 + 1e-9
+    assert info["weights"].max() <= 0.4 + 1e-9
+    assert info["cash_weight"] >= 0.2 - 1e-9
+    assert np.isclose(info["slippage_paid"], 0.01 * info["turnover"])
 
 
 def test_evaluate_model_returns_equity_curve() -> None:
@@ -111,6 +233,8 @@ def test_evaluate_model_returns_equity_curve() -> None:
         "policy",
         "net_return",
         "turnover",
+        "transaction_cost_paid",
+        "slippage_paid",
         "drawdown",
         "cash_weight",
     ]
@@ -236,6 +360,39 @@ def test_run_baselines_includes_buy_hold_and_ma_crossover(tmp_path) -> None:
     assert metrics["final_portfolio_value"].gt(0).all()
 
 
+def test_return_benchmark_aligns_with_env_dates_and_initial_cost() -> None:
+    config = _config()
+    features = add_technical_features(make_synthetic_prices(config))
+    features["set_return_1d"] = 0.01
+
+    curve = _run_return_benchmark(
+        features,
+        return_column="set_return_1d",
+        policy_name="set_index",
+        lookback=config["features"]["lookback"],
+        initial_cash=config["environment"]["initial_cash"],
+        transaction_cost=config["environment"]["transaction_cost"],
+    )
+
+    unique_dates = sorted(pd.to_datetime(features["date"]).unique())
+    assert curve.iloc[0]["date"] == pd.Timestamp(unique_dates[config["features"]["lookback"]]).date().isoformat()
+    assert curve.iloc[1]["turnover"] == 2.0
+    assert np.isclose(curve.iloc[1]["net_return"], 0.01 - 2 * config["environment"]["transaction_cost"])
+    assert curve["policy"].eq("set_index").all()
+
+
+def test_run_baselines_adds_configured_market_index() -> None:
+    config = _config()
+    features = add_technical_features(make_synthetic_prices(config))
+    features["set_return_1d"] = features.groupby("ticker")["close"].pct_change().fillna(0.0)
+    config["baselines"] = {"market_index": {"policy_name": "set_index", "return_column": "set_return_1d"}}
+
+    curves, metrics = run_baselines_on_features(config, features)
+
+    assert "set_index" in set(curves["policy"])
+    assert "set_index" in set(metrics["policy"])
+
+
 def test_run_baselines_on_features_uses_supplied_window() -> None:
     config = _config()
     features = add_technical_features(make_synthetic_prices(config))
@@ -259,6 +416,29 @@ def test_make_env_from_features_builds_window_specific_env() -> None:
     assert obs.shape == env.observation_space.shape
     assert max(env.dates) <= pd.Timestamp("2023-04-30")
     assert info["portfolio_value"] == config["environment"]["initial_cash"]
+
+
+def test_training_feature_slices_are_distinct_complete_panels() -> None:
+    config = _config()
+    features = add_technical_features(make_synthetic_prices(config))
+
+    slices = build_training_feature_slices(
+        features,
+        num_envs=4,
+        lookback=config["features"]["lookback"],
+        seed=42,
+        window_dates=60,
+    )
+
+    assert len(slices) == 4
+    date_ranges = []
+    for part in slices:
+        dates = pd.to_datetime(part["date"])
+        date_ranges.append((dates.min(), dates.max()))
+        assert dates.nunique() == 60
+        assert set(part["ticker"]) == set(config["data"]["tickers"])
+        assert not part.duplicated(["date", "ticker"]).any()
+    assert len(set(date_ranges)) == 4
 
 
 def test_chronological_split_preserves_order_and_panel_rows() -> None:
@@ -360,6 +540,31 @@ def test_walk_forward_summary_is_written_when_config_has_walk_forward(tmp_path) 
     assert summary["unique_dates"].min() == 10
 
 
+def test_walk_forward_runner_rejects_empty_or_unknown_evaluation_splits(tmp_path) -> None:
+    config = _config()
+    config["data"]["source"] = "unit_test_features"
+    features = add_technical_features(make_synthetic_prices(config))
+    feature_path = tmp_path / "features.csv"
+    features.to_csv(feature_path, index=False)
+    config["paths"] = {
+        "raw_prices": str(tmp_path / "prices.csv"),
+        "features": str(feature_path),
+        "fallback_features_csv": str(feature_path),
+    }
+    config["walk_forward"] = {
+        "train_window": 60,
+        "validation_window": 20,
+        "test_window": 20,
+        "step_size": 20,
+    }
+    config["training"] = {"total_timesteps": 10, "num_envs": 1, "seed": 1}
+
+    with pytest.raises(ValueError, match="evaluation_splits"):
+        run_walk_forward_window(config, 0, tmp_path / "empty", evaluation_splits=())
+    with pytest.raises(ValueError, match="evaluation_splits"):
+        run_walk_forward_window(config, 0, tmp_path / "unknown", evaluation_splits=("test", "future"))
+
+
 def test_leakage_checks_pass_clean_feature_table() -> None:
     config = _config()
     features = add_technical_features(make_synthetic_prices(config))
@@ -388,7 +593,7 @@ def test_download_ohlcv_normalizes_provider_data_and_context_columns() -> None:
         return pd.DataFrame(
             {
                 "Open": [100.0, 101.0, 102.0],
-                "High": [101.0, 102.0, 103.0],
+                "High": [101.0, 101.5, 103.0],
                 "Low": [99.0, 100.0, 101.0],
                 "Close": [100.0, 102.0, 101.0],
                 "Volume": [1000, 1100, 1200],
@@ -404,6 +609,8 @@ def test_download_ohlcv_normalizes_provider_data_and_context_columns() -> None:
     assert prices["ticker"].nunique() == 2
     assert prices["macro_rate_change"].eq(0.0).all()
     assert prices["sentiment_score"].eq(0.0).all()
+    assert int(prices["ohlc_repaired"].sum()) == 2
+    assert (prices["high"] >= prices[["open", "close"]].max(axis=1)).all()
 
 
 def test_download_indices_normalizes_configured_index_data() -> None:
@@ -529,8 +736,15 @@ def test_merge_market_context_replaces_placeholder_market_return() -> None:
     merged = merge_market_context(features, index_prices, "set")
     context = build_index_context(index_prices, "set")
 
-    assert {"set_return_1d", "set_return_5d", "set_volatility_20d", "set_ma_ratio_20"}.issubset(merged.columns)
+    assert {
+        "set_return_1d",
+        "set_return_5d",
+        "set_volatility_20d",
+        "set_ma_ratio_20",
+        "set_context_available",
+    }.issubset(merged.columns)
     assert not merged["market_return_1d"].eq(999.0).all()
+    assert set(merged["set_context_available"].unique()) == {0.0, 1.0}
     sample_date = pd.to_datetime(context.iloc[10]["date"])
     expected = context[context["date"].eq(sample_date)].iloc[0]["set_return_1d"]
     actual = merged[pd.to_datetime(merged["date"]).eq(sample_date)].iloc[0]["market_return_1d"]
@@ -830,6 +1044,20 @@ def test_optuna_trial_sampling_changes_across_trial_numbers() -> None:
     assert params_0 != params_1
 
 
+def test_large_scale_screening_supports_all_continuous_algorithms() -> None:
+    config = {"screening": {"algorithms": ["ppo", "a2c", "ddpg", "td3", "sac"]}}
+    tasks = screening_task_grid(config)
+
+    assert [task.algorithm for task in tasks] == ["ppo", "a2c", "ddpg", "td3", "sac"]
+    for task in tasks:
+        params = suggest_hyperparameters(task.algorithm, trial_number=0, seed=42)
+        kwargs = _algorithm_kwargs(task.algorithm, 20_000, params)
+        assert "learning_rate" in kwargs
+        assert "gamma" in kwargs
+    assert "policy_delay" in _algorithm_kwargs("td3", 20_000, suggest_hyperparameters("td3", 0, 42))
+    assert "ent_coef" in _algorithm_kwargs("sac", 20_000, suggest_hyperparameters("sac", 0, 42))
+
+
 def test_aggregate_trials_ranks_by_objective(tmp_path) -> None:
     for trial_id, value in [(0, 0.1), (1, 0.3)]:
         trial_dir = tmp_path / f"trial_{trial_id}"
@@ -855,6 +1083,210 @@ def test_aggregate_trials_ranks_by_objective(tmp_path) -> None:
     assert list(results["trial_id"]) == [1, 0]
     assert "param_learning_rate" in results.columns
     assert "metric_cumulative_return" in results.columns
+
+
+def test_aggregate_screening_requires_complete_algorithm_trial_grid(tmp_path) -> None:
+    algorithms = ["ppo", "sac"]
+    for algorithm_index, algorithm in enumerate(algorithms):
+        for trial_number in range(2):
+            trial_id = algorithm_index * 2 + trial_number
+            trial_dir = tmp_path / f"trial_{trial_id}"
+            trial_dir.mkdir()
+            value = float(algorithm_index + trial_number / 10)
+            (trial_dir / "trial_metadata.json").write_text(
+                json.dumps(
+                    {
+                        "trial_id": trial_id,
+                        "trial_number": trial_number,
+                        "algorithm": algorithm,
+                        "seed": 42 + trial_id,
+                        "objective_metric": "sharpe",
+                        "objective_value": value,
+                        "sampled_params": {"learning_rate": 0.001},
+                        "metrics": {"sharpe": value},
+                    }
+                ),
+                encoding="utf-8",
+            )
+    config = {
+        "screening": {
+            "algorithms": algorithms,
+            "trials_per_algorithm": 2,
+            "objective_metric": "sharpe",
+            "top_n_per_algorithm": 1,
+        }
+    }
+
+    results, top = aggregate_screening(tmp_path, config=config)
+
+    assert len(results) == 4
+    assert len(top) == 2
+    assert set(top["algorithm"]) == set(algorithms)
+    assert (tmp_path / "aggregate" / "screening_completeness.csv").exists()
+    ranking = pd.read_csv(tmp_path / "aggregate" / "screening_algorithm_ranking.csv")
+    selection = json.loads((tmp_path / "aggregate" / "screening_selected_algorithms.json").read_text())
+    assert ranking["selected"].all()
+    assert set(selection["selected_algorithms"]) == set(algorithms)
+
+
+def test_read_objective_rejects_nonfinite_metrics_and_invalid_actions(tmp_path) -> None:
+    pd.DataFrame([{"policy": "ppo", "sharpe": float("nan"), "max_drawdown": -0.1}]).to_csv(
+        tmp_path / "ppo_metrics.csv", index=False
+    )
+    with pytest.raises(ValueError, match="NaN or infinite"):
+        read_objective(tmp_path, "ppo")
+
+    pd.DataFrame([{"policy": "ppo", "sharpe": 0.2, "max_drawdown": -0.1}]).to_csv(
+        tmp_path / "ppo_metrics.csv", index=False
+    )
+    pd.DataFrame(
+        [
+            {"date": "2024-01-01", "ticker": "A", "weight": 0.8},
+            {"date": "2024-01-01", "ticker": "B", "weight": 0.8},
+        ]
+    ).to_csv(tmp_path / "ppo_actions.csv", index=False)
+    with pytest.raises(ValueError, match="exceed total capital"):
+        read_objective(tmp_path, "ppo")
+
+
+def test_budget_sweep_aggregation_is_complete_validation_only_and_selects_plateau(tmp_path) -> None:
+    config = {
+        "budget_sweep": {
+            "algorithms": ["ppo", "a2c"],
+            "budgets": [20, 100],
+            "seeds": [1, 2],
+            "window_ids": [0],
+            "objective_metric": "sharpe",
+            "plateau_tolerance": 0.03,
+        }
+    }
+    assert budget_values(config) == [20, 100]
+    for budget in (20, 100):
+        for algorithm in ("ppo", "a2c"):
+            for seed in (1, 2):
+                run_dir = tmp_path / f"budget_{budget}" / f"algorithm_{algorithm}" / "window_0" / f"seed_{seed}"
+                run_dir.mkdir(parents=True)
+                sharpe = 0.10 if budget == 20 else 0.12
+                (run_dir / "budget_trial_result.json").write_text(
+                    json.dumps(
+                        {
+                            "algorithm": algorithm,
+                            "window": 0,
+                            "seed": seed,
+                            "training_budget": budget,
+                            "selection_split": "validation",
+                            "metrics": {"split": "validation", "policy": algorithm, "sharpe": sharpe},
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+
+    results, summary, selection = aggregate_budget_sweep(tmp_path, config=config)
+
+    assert set(results["split"]) == {"validation"}
+    assert len(summary) == 4
+    assert selection["selected_training_budget"] == 20
+    assert (tmp_path / "aggregate" / "training_budget_completeness.csv").exists()
+    assert (tmp_path / "aggregate" / "selected_training_budget.json").exists()
+
+
+def test_feature_ablation_task_distribution_and_complete_aggregation(tmp_path) -> None:
+    config = {
+        "feature_ablation": {
+            "task_count": 2,
+            "algorithm": "ppo",
+            "seeds": [42, 43],
+            "window_ids": [0],
+            "bootstrap_resamples": 100,
+            "groups": [
+                {"name": "returns", "config": "unused_returns.yaml"},
+                {"name": "technical", "config": "unused_technical.yaml"},
+                {"name": "market", "config": "unused_market.yaml"},
+            ],
+        }
+    }
+    assert [group.name for group in groups_for_task(config, 0)] == ["returns", "market"]
+    assert [group.name for group in groups_for_task(config, 1)] == ["technical"]
+
+    for group_index, group in enumerate(("returns", "technical", "market")):
+        for seed in (42, 43):
+            run_dir = tmp_path / f"feature_{group}" / "window_0" / f"seed_{seed}"
+            identity = {
+                "experiment_id": f"{group}_{seed}",
+                "algorithm": "ppo",
+                "window": 0,
+                "seed": seed,
+                "feature_group": group,
+            }
+            with tracked_experiment(run_dir, config={"paths": {}}, identity=identity):
+                pd.DataFrame(
+                    [
+                        {
+                            "window": 0,
+                            "seed": seed,
+                            "split": "test",
+                            "policy": "ppo",
+                            "cumulative_return": 0.01 * (group_index + 1),
+                            "sharpe": 0.1 * (group_index + 1),
+                            "max_drawdown": -0.1,
+                        }
+                    ]
+                ).to_csv(run_dir / "walk_forward_metrics.csv", index=False)
+
+    metrics, summary = aggregate_feature_ablation(tmp_path, config=config)
+
+    assert len(metrics) == 6
+    assert summary.iloc[0]["feature_group"] == "market"
+    assert (tmp_path / "aggregate" / "feature_ablation_completeness.csv").exists()
+    assert (tmp_path / "aggregate" / "feature_ablation_confidence_intervals.png").exists()
+    comparisons = pd.read_csv(tmp_path / "aggregate" / "feature_ablation_paired_comparisons.csv")
+    assert set(comparisons["feature_group"]) == {"returns", "market"}
+    assert comparisons["excess_sharpe_holm_p_value"].between(0.0, 1.0).all()
+
+
+def test_nested_screening_aggregation_selects_validation_best_per_window(tmp_path) -> None:
+    algorithms = ["ppo", "sac"]
+    config = {
+        "nested_screening": {
+            "algorithms": algorithms,
+            "window_ids": [0],
+            "trials_per_algorithm_window": 2,
+            "objective_metric": "sharpe",
+        }
+    }
+    for algorithm_index, algorithm in enumerate(algorithms):
+        for trial_number in range(2):
+            trial_dir = tmp_path / f"algorithm_{algorithm}" / "window_0" / f"trial_{trial_number}"
+            value = 0.1 * algorithm_index + 0.01 * trial_number
+            identity = {
+                "experiment_id": f"{algorithm}_{trial_number}",
+                "algorithm": algorithm,
+                "window": 0,
+                "seed": 42 + trial_number,
+            }
+            with tracked_experiment(trial_dir, config={"paths": {}}, identity=identity):
+                (trial_dir / "nested_trial_result.json").write_text(
+                    json.dumps(
+                        {
+                            "trial_id": algorithm_index * 2 + trial_number,
+                            "trial_number": trial_number,
+                            "algorithm": algorithm,
+                            "window": 0,
+                            "seed": 42 + trial_number,
+                            "selection_split": "validation",
+                            "objective_metric": "sharpe",
+                            "metrics": {"sharpe": value, "cumulative_return": value / 10},
+                            "sampled_params": {"learning_rate": 0.001},
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+
+    results, selected = aggregate_nested_screening(tmp_path, config=config)
+
+    assert len(results) == 4
+    assert selected["trial_number"].eq(1).all()
+    assert (tmp_path / "aggregate" / "nested_screening_completeness.csv").exists()
 
 
 def test_aggregate_ablation_writes_best_policy_and_ppo_summary(tmp_path) -> None:
@@ -929,6 +1361,173 @@ def test_aggregate_walk_forward_combines_window_metrics(tmp_path) -> None:
     assert (tmp_path / "walk_forward_test_equity_curves.csv").exists()
 
 
+def test_robustness_task_grid_maps_algorithm_and_window_without_duplicate_seeds() -> None:
+    config = {
+        "robustness": {
+            "algorithms": ["ppo", "a2c"],
+            "window_ids": [0, 1],
+            "seeds": [42, 43, 44],
+        }
+    }
+
+    tasks = robustness_task_grid(config)
+
+    assert [(task.task_id, task.algorithm, task.window) for task in tasks] == [
+        (0, "ppo", 0),
+        (1, "ppo", 1),
+        (2, "a2c", 0),
+        (3, "a2c", 1),
+    ]
+    assert robustness_seeds(config) == [42, 43, 44]
+
+
+def test_aggregate_robustness_is_test_only_and_writes_uncertainty_artifacts(tmp_path) -> None:
+    for algorithm in ("ppo", "a2c"):
+        for window in (0, 1):
+            for seed in (42, 43):
+                run_dir = tmp_path / f"algorithm_{algorithm}" / f"window_{window}" / f"seed_{seed}"
+                run_dir.mkdir(parents=True)
+                adjustment = (seed - 42) * 0.01 + window * 0.02
+                rows = []
+                for split in ("validation", "test"):
+                    split_adjustment = 10.0 if split == "validation" else 0.0
+                    rows.extend(
+                        [
+                            {
+                                "window": window,
+                                "seed": seed,
+                                "split": split,
+                                "policy": algorithm,
+                                "cumulative_return": 0.02 + adjustment + split_adjustment,
+                                "sharpe": 0.2 + adjustment + split_adjustment,
+                                "max_drawdown": -0.08 + adjustment,
+                            },
+                            {
+                                "window": window,
+                                "seed": seed,
+                                "split": split,
+                                "policy": "equal_weight",
+                                "cumulative_return": 0.01 + window * 0.01,
+                                "sharpe": 0.1 + window * 0.01,
+                                "max_drawdown": -0.10,
+                            },
+                            {
+                                "window": window,
+                                "seed": seed,
+                                "split": split,
+                                "policy": "set_index",
+                                "cumulative_return": 0.005 + window * 0.01,
+                                "sharpe": 0.05 + window * 0.01,
+                                "max_drawdown": -0.12,
+                            },
+                        ]
+                    )
+                pd.DataFrame(rows).to_csv(run_dir / "walk_forward_metrics.csv", index=False)
+
+    config = {
+        "robustness": {
+            "algorithms": ["ppo", "a2c"],
+            "seeds": [42, 43],
+            "window_ids": [0, 1],
+            "primary_baselines": ["equal_weight", "set_index"],
+            "confidence": 0.95,
+            "bootstrap_resamples": 100,
+            "bootstrap_seed": 7,
+        }
+    }
+    output_dir = tmp_path / "aggregate"
+
+    all_metrics, test_metrics, policy_summary, paired_summary = aggregate_robustness(
+        tmp_path,
+        config=config,
+        output_dir=output_dir,
+    )
+
+    assert set(test_metrics["split"]) == {"test"}
+    assert test_metrics["sharpe"].max() < 1.0
+    assert len(all_metrics) == 32
+    assert set(policy_summary["policy"]) == {"ppo", "a2c", "equal_weight", "set_index"}
+    assert policy_summary.loc[policy_summary["policy"].eq("equal_weight"), "runs"].item() == 2
+    assert "sharpe_ci_low" in policy_summary
+    assert set(paired_summary["baseline"]) == {"equal_weight", "set_index"}
+    assert paired_summary["excess_cumulative_return_positive_rate"].eq(1.0).all()
+    assert paired_summary["excess_cumulative_return_holm_p_value"].between(0.0, 1.0).all()
+    for name in (
+        "robustness_test_metrics.csv",
+        "robustness_policy_summary.csv",
+        "robustness_paired_summary.csv",
+        "robustness_completeness.csv",
+        "robustness_confidence_intervals.png",
+        "robustness_sharpe_heatmap.png",
+        "robustness_summary.md",
+    ):
+        assert (output_dir / name).exists()
+
+
+def test_aggregate_robustness_rejects_incomplete_candidate_grid(tmp_path) -> None:
+    run_dir = tmp_path / "algorithm_ppo" / "window_0" / "seed_42"
+    run_dir.mkdir(parents=True)
+    pd.DataFrame(
+        [
+            {
+                "window": 0,
+                "seed": 42,
+                "split": "test",
+                "policy": "ppo",
+                "cumulative_return": 0.01,
+                "sharpe": 0.1,
+                "max_drawdown": -0.1,
+            },
+            {
+                "window": 0,
+                "seed": 42,
+                "split": "test",
+                "policy": "equal_weight",
+                "cumulative_return": 0.0,
+                "sharpe": 0.0,
+                "max_drawdown": -0.1,
+            },
+        ]
+    ).to_csv(run_dir / "walk_forward_metrics.csv", index=False)
+    config = {
+        "robustness": {
+            "algorithms": ["ppo"],
+            "seeds": [42, 43],
+            "window_ids": [0],
+            "primary_baselines": ["equal_weight"],
+            "bootstrap_resamples": 10,
+        }
+    }
+
+    with pytest.raises(ValueError, match="incomplete robustness candidate grid"):
+        aggregate_robustness(tmp_path, config=config)
+
+
+def test_tracked_experiment_records_complete_and_failed_status(tmp_path) -> None:
+    config = {"paths": {}, "project": {"name": "test"}}
+    complete_dir = tmp_path / "complete"
+    with tracked_experiment(
+        complete_dir,
+        config=config,
+        identity={"experiment_id": "complete", "algorithm": "ppo", "window": 0, "seed": 42},
+    ):
+        pass
+
+    failed_dir = tmp_path / "failed"
+    with pytest.raises(RuntimeError, match="expected failure"):
+        with tracked_experiment(
+            failed_dir,
+            config=config,
+            identity={"experiment_id": "failed", "algorithm": "a2c", "window": 1, "seed": 43},
+        ):
+            raise RuntimeError("expected failure")
+
+    manifests = pd.DataFrame(collect_experiment_manifests(tmp_path))
+    assert set(manifests["status"]) == {"complete", "failed"}
+    assert (complete_dir / "resolved_config.json").exists()
+    assert "RuntimeError: expected failure" in (failed_dir / "experiment_manifest.json").read_text()
+
+
 def test_regime_slice_helpers_report_unavailable_and_high_volatility_windows() -> None:
     config = _config()
     features = add_technical_features(make_synthetic_prices(config))
@@ -948,6 +1547,36 @@ def test_regime_slice_helpers_report_unavailable_and_high_volatility_windows() -
     assert pd.to_datetime(regimes["in_sample"]["date"]).nunique() > config["features"]["lookback"]
     assert len(high_vol) == 1
     assert high_vol_summary.iloc[0]["unique_dates"] == 20
+
+
+def test_execution_stress_runs_scenarios_on_test_split(tmp_path) -> None:
+    config = _config()
+    config["data"]["source"] = "unit_test_features"
+    features = add_technical_features(make_synthetic_prices(config))
+    feature_path = tmp_path / "features.csv"
+    features.to_csv(feature_path, index=False)
+    config["paths"] = {
+        "raw_prices": str(tmp_path / "prices.csv"),
+        "features": str(feature_path),
+        "fallback_features_csv": str(feature_path),
+        "results_dir": str(tmp_path / "stress"),
+    }
+    config["splits"] = {"train_fraction": 0.6, "validation_fraction": 0.2}
+    config["execution_stress"] = {
+        "model_paths": [],
+        "scenarios": [
+            {"name": "base", "transaction_cost": 0.001, "slippage": 0.0},
+            {"name": "hostile", "transaction_cost": 0.01, "slippage": 0.002, "max_turnover": 0.5},
+        ],
+    }
+
+    scenario_config = apply_execution_scenario(config, config["execution_stress"]["scenarios"][1])
+    metrics, readiness = run_execution_stress(config, tmp_path / "stress")
+
+    assert scenario_config["environment"]["slippage"] == 0.002
+    assert set(metrics["scenario"]) == {"base", "hostile"}
+    assert readiness.empty
+    assert (tmp_path / "stress" / "execution_stress_sensitivity.png").exists()
 
 
 def test_run_regime_tests_writes_metrics_and_summary(tmp_path) -> None:

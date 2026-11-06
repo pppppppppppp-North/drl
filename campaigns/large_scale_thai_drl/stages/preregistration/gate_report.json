@@ -1,0 +1,38 @@
+{
+  "stage_id": "preregistration",
+  "passed": true,
+  "base_dir": ".",
+  "run_dir": null,
+  "requirements": [
+    {
+      "name": "locked research question, baselines, outcomes, split firewall, and claim boundary",
+      "passed": true,
+      "matches": [
+        "config/research_preregistration.yaml"
+      ],
+      "issues": []
+    },
+    {
+      "name": "preregistration SHA-256 sidecar",
+      "passed": true,
+      "matches": [
+        "config/research_preregistration.sha256"
+      ],
+      "issues": []
+    }
+  ],
+  "manifest_expected": 0,
+  "manifest_found": 0,
+  "manifest_complete": 0,
+  "manifest_running": 0,
+  "manifest_failed": 0,
+  "issues": [],
+  "evidence_files": [
+    "config/research_preregistration.sha256",
+    "config/research_preregistration.yaml",
+    "reports/data_quality_market/market_data_readiness.json",
+    "reports/data_quality_market/market_data_readiness.sha256"
+  ],
+  "evidence_fingerprint": "04492c2d1eb1f92e1f897a1d66a432a74bd426303d8ac504ad1a60f7c1f863c6",
+  "evaluated_at": "2026-07-15T14:49:28.026091+00:00"
+}

@@ -1,0 +1,8 @@
+extends: ablation_technical_real_ohlcv.yaml
+
+project:
+  name: ablation_technical_real_ohlcv_v2
+
+paths:
+  features: data/processed/features_real_ohlcv.csv
+  fallback_features_csv: data/processed/features_real_ohlcv.csv

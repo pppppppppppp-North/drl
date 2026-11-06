@@ -1,0 +1,43 @@
+campaign_release_profile:
+  schema_version: 1
+  name: screening_native_3540_3541
+  require_feature_expectations: true
+  base:
+    manifest: "{campaign_dir}/deployment/bistka_deployment_v2_manifest.json"
+  include:
+    derived_configs:
+      - "{campaign_dir}/derived/locked_large_scale_screening.yaml"
+    decisions:
+      - "{campaign_dir}/derived/locked_large_scale_screening.decision.json"
+    protocols: []
+    registries: []
+    files:
+      - "{campaign_dir}/derived/locked_large_scale_screening.yaml.sha256"
+      - "{campaign_dir}/derived/locked_large_scale_screening.decision.json.sha256"
+      - "{campaign_dir}/attempts/vector_benchmark_latest.json"
+      - "{campaign_dir}/attempts/vector_benchmark_20260716T155433Z_76f61dd7.json"
+      - "{campaign_dir}/attempts/determinism_latest.json"
+      - "{campaign_dir}/attempts/determinism_20260716T155437Z_32014fd9.json"
+      - "{campaign_dir}/stages/vector_benchmark/gate_report.json"
+      - "{campaign_dir}/stages/vector_benchmark/_SUCCESS.json"
+      - "{campaign_dir}/stages/determinism/gate_report.json"
+      - "{campaign_dir}/stages/determinism/_SUCCESS.json"
+      - reports/bistka_calibration_v2_preflight.json
+      - reports/vectorized_training_benchmark_3540.csv
+      - reports/vectorized_training_benchmark_3540.json
+      - reports/vectorized_training_benchmark_3540.csv.receipt.json
+      - reports/slurm_accounting_vector_benchmark_3540.txt
+      - reports/determinism_3541.json
+      - reports/determinism_3541.json.receipt.json
+      - reports/slurm_accounting_determinism_3541.txt
+  runtime_configs:
+    - "{campaign_dir}/derived/locked_large_scale_screening.yaml"
+  resolve:
+    feature_ablation_configs: []
+    stress_registries: []
+  feature_expectations:
+    "{campaign_dir}/derived/locked_large_scale_screening.yaml":
+      path: data/processed/features_real_ohlcv_market.csv
+      sha256: b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc
+      bytes: 2183530
+      require_readiness: true

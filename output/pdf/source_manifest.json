@@ -1,0 +1,82 @@
+[
+  {
+    "path": "25FCS03 Full Report.pdf",
+    "bytes": 375076,
+    "sha256": "c0b681c3151300eed9b2312977288d9a11ffdc1dbbdce3127011f87fee1ff98d"
+  },
+  {
+    "path": "KVIS Final Report Template.tex",
+    "bytes": 6599,
+    "sha256": "7fdeb85e3b2b0e3ae8f428cc2c25d60f621f69ca5e742649cfb13a030301a11b"
+  },
+  {
+    "path": "kvis_final_research_report.tex",
+    "bytes": 44459,
+    "sha256": "ffcef6a4b3a90ddf25b18db6b121434713052d807bef0da4d1b960a641249263"
+  },
+  {
+    "path": "docs/final_methodology_results.md",
+    "bytes": 21698,
+    "sha256": "5880eb21155bb1f12b5191804540612bc90258a299e299106555118b9eaf4e1e"
+  },
+  {
+    "path": "reports/vectorized_training_benchmark_3540.csv",
+    "bytes": 7698,
+    "sha256": "3e30b1c45366a704e409c06233c20dba0c8ffb13f75f55de0ee0a38644f008d0"
+  },
+  {
+    "path": "reports/vectorized_training_benchmark_3540.json",
+    "bytes": 3769,
+    "sha256": "3be2359ce5589a9819034408566cb327c2d8a54e03c1c94bb8ef89ab1322b967"
+  },
+  {
+    "path": "reports/determinism_3541.json",
+    "bytes": 3740,
+    "sha256": "cc48bf5f5777b34f409984de5244a45c5f0e84fd08c870fb59158ebfa0810498"
+  },
+  {
+    "path": "reports/slurm_accounting_screening_storage_safe_smoke_3550.txt",
+    "bytes": 544,
+    "sha256": "6959a20d6a95d7f0a8d57852f40302d66233f587d62fe9c329848cf2a4608601"
+  },
+  {
+    "path": "reports/data_quality_v3/v3_market_package_coverage.csv",
+    "bytes": 847,
+    "sha256": "ed9013aa941cc61de6a25e2201011cc87b8ee0433997291455d3fa75356ac3a1"
+  },
+  {
+    "path": "reports/data_quality_v3/v3_membership_mask_readiness_20260731.json",
+    "bytes": 5950,
+    "sha256": "edc9763821bac9fc90cefacc5008ae328176cd1254540bcf47e4cc12f2a8bb1a"
+  },
+  {
+    "path": "reports/data_quality_v3/v3_execution_plan_20260907.csv",
+    "bytes": 536032,
+    "sha256": "906d5b613f2ec4f4afa5513b31d791e97c66d8a6bc719c4b4c5dfe47a93f4fef"
+  },
+  {
+    "path": "reports/data_quality_v3/v3_execution_plan_fold_workload_20260907.csv",
+    "bytes": 581,
+    "sha256": "e1b42e19522610c23ab3501c7df4e4c260b8332443f63e151be688b035899f32"
+  },
+  {
+    "path": "reports/data_quality_v3/v3_focused_final_20260907.xml",
+    "bytes": 7847,
+    "sha256": "5bed5c0ce0e858b7f454c9bcb453b4e9ec60703afc9ae2fec30c6aa298bc4ad7"
+  },
+  {
+    "path": "reports/data_quality_v3/v3_broad_final_20260907.xml",
+    "bytes": 75495,
+    "sha256": "a7cf59210f2734f5905f11265c84aa1239c6106c62d5f33410216a9aacb24c93"
+  },
+  {
+    "path": "reports/v3_execution_readiness_20260907.md",
+    "bytes": 16291,
+    "sha256": "283b71079f9d1bdff54b8aa9855e8f17c3e4ce194677eab27feca4f297a36ef8"
+  },
+  {
+    "path": "reports/v3_execution_readiness_20260907_qa.md",
+    "bytes": 10140,
+    "sha256": "e1b3adb0d3b5fc12a68cf25acb1d885aa5bf53eb4c28a108a4ae4e0d7c714616"
+  }
+]

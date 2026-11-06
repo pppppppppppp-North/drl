@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 
@@ -34,6 +35,9 @@ def aggregate_trials(run_dir: str | Path, objective_metric: str | None = None) -
 
     rows = [_flatten_trial_metadata(path) for path in metadata_paths]
     results = pd.DataFrame(rows)
+    objective_values = pd.to_numeric(results["objective_value"], errors="coerce").to_numpy(dtype=float)
+    if not np.isfinite(objective_values).all():
+        raise ValueError("trial objective values contain NaN or infinity")
     metric = objective_metric or str(results.iloc[0]["objective_metric"])
     if metric != str(results.iloc[0]["objective_metric"]):
         metric_column = f"metric_{metric}"

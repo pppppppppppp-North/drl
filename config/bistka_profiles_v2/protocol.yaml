@@ -1,0 +1,59 @@
+campaign_release_profile:
+  schema_version: 1
+  name: protocol
+  require_feature_expectations: true
+  base:
+    manifest: "{campaign_dir}/deployment/bistka_nested_v2_manifest.json"
+  include:
+    derived_configs:
+      - "{campaign_dir}/derived/locked_robustness.yaml"
+      - "{campaign_dir}/derived/locked_feature_ablation.yaml"
+    decisions:
+      - "{campaign_dir}/derived/locked_robustness.decision.json"
+      - "{campaign_dir}/derived/locked_feature_ablation.decision.json"
+    protocols:
+      - "{campaign_dir}/protocol_lock.json"
+      - "{campaign_dir}/protocol_lock.sha256"
+    registries: []
+    files: []
+  runtime_configs:
+    - "{campaign_dir}/derived/locked_robustness.yaml"
+    - config/ablation_returns_real_ohlcv_v2.yaml
+    - config/ablation_technical_real_ohlcv_v2.yaml
+    - config/ablation_technical_context_real_ohlcv_v2.yaml
+    - config/real_ohlcv_market_v2.yaml
+    - config/real_ohlcv_macro_v2.yaml
+    - config/real_ohlcv_fundamentals_v2.yaml
+  resolve:
+    feature_ablation_configs:
+      - "{campaign_dir}/derived/locked_feature_ablation.yaml"
+    stress_registries: []
+  feature_expectations:
+    "{campaign_dir}/derived/locked_robustness.yaml":
+      path: data/processed/features_real_ohlcv_market.csv
+      sha256: b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc
+      bytes: 2183530
+      require_readiness: true
+    config/ablation_returns_real_ohlcv_v2.yaml:
+      path: data/processed/features_real_ohlcv.csv
+      sha256: a1ab860c819bd1d485357f16cd678d9587c7c6075a3fa05062460c4128381ac4
+      bytes: 1708597
+    config/ablation_technical_real_ohlcv_v2.yaml:
+      path: data/processed/features_real_ohlcv.csv
+      sha256: a1ab860c819bd1d485357f16cd678d9587c7c6075a3fa05062460c4128381ac4
+      bytes: 1708597
+    config/ablation_technical_context_real_ohlcv_v2.yaml:
+      path: data/processed/features_real_ohlcv.csv
+      sha256: a1ab860c819bd1d485357f16cd678d9587c7c6075a3fa05062460c4128381ac4
+      bytes: 1708597
+    config/real_ohlcv_market_v2.yaml:
+      path: data/processed/features_real_ohlcv_market.csv
+      sha256: b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc
+      bytes: 2183530
+      require_readiness: true
+    config/real_ohlcv_macro_v2.yaml:
+      path: data/processed/features_real_ohlcv_macro.csv
+      require_readiness: true
+    config/real_ohlcv_fundamentals_v2.yaml:
+      path: data/processed/features_real_ohlcv_fundamentals.csv
+      require_readiness: true
