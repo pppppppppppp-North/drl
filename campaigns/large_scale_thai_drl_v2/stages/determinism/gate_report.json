@@ -1,0 +1,60 @@
+{
+  "stage_id": "determinism",
+  "passed": true,
+  "base_dir": ".",
+  "run_dir": null,
+  "requirements": [
+    {
+      "name": "matching independent observed-data fixed-seed trajectory hashes",
+      "passed": true,
+      "matches": [
+        "reports/determinism_3530.json",
+        "reports/determinism_3541.json"
+      ],
+      "issues": []
+    },
+    {
+      "name": "native or checksum-migrated BistKA determinism evidence",
+      "passed": true,
+      "matches": [
+        "reports/determinism_3530.json.receipt.json",
+        "reports/determinism_3541.json.receipt.json"
+      ],
+      "issues": []
+    }
+  ],
+  "manifest_expected": 0,
+  "manifest_found": 0,
+  "manifest_complete": 0,
+  "manifest_running": 0,
+  "manifest_failed": 0,
+  "issues": [],
+  "evidence_files": [
+    "campaigns/large_scale_thai_drl_v2/attempts/determinism_20260716T155437Z_32014fd9.json",
+    "campaigns/large_scale_thai_drl_v2/attempts/determinism_latest.json",
+    "campaigns/large_scale_thai_drl_v2/deployment/bistka_deployment_v2_manifest.json",
+    "campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/_SUCCESS.json",
+    "campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/gate_report.json",
+    "config/large_scale_screening_v2.yaml",
+    "config/research_campaign.yaml",
+    "data/processed/features_real_ohlcv_market.csv",
+    "environment.yml",
+    "reports/bistka_calibration_v2_preflight.json",
+    "reports/data_quality_market/market_data_readiness.json",
+    "reports/data_quality_market/market_data_readiness.sha256",
+    "reports/determinism_3530.json",
+    "reports/determinism_3530.json.receipt.json",
+    "reports/determinism_3541.json",
+    "reports/determinism_3541.json.receipt.json",
+    "requirements.txt",
+    "scripts/verify_determinism.py",
+    "slurm/verify_determinism.sbatch",
+    "src/campaigns/calibration.py",
+    "src/data/splits.py",
+    "src/envs/trading_env.py",
+    "src/train.py",
+    "src/utils/config.py"
+  ],
+  "evidence_fingerprint": "5593b113aa32ae3b26cd4f49fbd600e31717c6269b81ef16c152bf9ff5652316",
+  "evaluated_at": "2026-07-16T16:03:23.031228+00:00"
+}

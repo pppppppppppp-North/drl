@@ -1,0 +1,243 @@
+{
+  "assessed_at": "2026-07-17T13:00:16.462919Z",
+  "candidate_capacity_eligible": true,
+  "capacity_checks": {
+    "group_bytes_fit_hard_headroom": true,
+    "group_bytes_fit_soft_headroom": true,
+    "group_inodes_fit_hard_headroom": true,
+    "group_inodes_fit_soft_headroom": true,
+    "project_bytes_fit_hard_headroom": true,
+    "project_bytes_fit_soft_headroom": true,
+    "project_inodes_fit_hard_headroom": true,
+    "project_inodes_fit_soft_headroom": true
+  },
+  "decision": "pass",
+  "inputs": {
+    "quota_snapshot": {
+      "path": "campaigns/large_scale_thai_drl_v2/operational/screening_capacity/quota_snapshot_20260717T125752Z.json",
+      "sha256": "a024384bdd866f8f50565a6d08b825968cea360b56010cc204ce8b5af823f148",
+      "sidecar_path": "campaigns/large_scale_thai_drl_v2/operational/screening_capacity/quota_snapshot_20260717T125752Z.json.sha256",
+      "sidecar_verified": true
+    },
+    "smoke_summary": {
+      "path": "results/screening_smoke_3543/screening_smoke_summary.json",
+      "sha256": "4d724b25b430e3574e1e9d8ca1064ece12499a3c6001a98abf522f5aff6c1883",
+      "sidecar_path": "results/screening_smoke_3543/screening_smoke_summary.json.sha256",
+      "sidecar_verified": true
+    }
+  },
+  "policy": {
+    "expected_algorithms": [
+      "ppo",
+      "a2c",
+      "ddpg",
+      "td3",
+      "sac"
+    ],
+    "expected_filesystem": "/lustrefs/project/25sfcs03",
+    "expected_gid": 1039,
+    "expected_group": "s00658",
+    "expected_output_parent": "/lustrefs/project/25sfcs03/drl_thai_stock/results",
+    "expected_project_id": 25110303,
+    "fixed_reserve_bytes": 268435456,
+    "max_clock_skew_seconds": 60,
+    "max_quota_age_seconds": 900,
+    "safety_factor": 1.5
+  },
+  "projection": {
+    "candidate_overhead_policy": {
+      "retention_files_per_trial": 2,
+      "retention_receipt_budget_bytes_per_trial": 4096,
+      "retention_sidecar_bytes_per_trial": 65,
+      "smoke_only_result_name": "screening_smoke_result.json",
+      "task_summary_budget_bytes_per_algorithm": 1048576,
+      "task_summary_files_per_algorithm": 1
+    },
+    "checkpoint_policy": "suppress_writes_with_bounded_candidate_evidence",
+    "fixed_reserve_bytes": 268435456,
+    "full_screening_trials_per_algorithm": 30,
+    "per_algorithm": [
+      {
+        "algorithm": "ppo",
+        "candidate_receipt_budget_bytes_per_trial": 4161,
+        "candidate_receipt_files_per_trial": 2,
+        "checkpoint_bytes_excluded_per_trial": 4342109,
+        "checkpoint_files_excluded_per_trial": 1,
+        "projected_retained_bytes": 133332046,
+        "projected_retained_files": 331,
+        "retained_bytes_per_trial": 4409449,
+        "retained_files_per_trial": 11,
+        "smoke_only_result_bytes_per_trial": 1301,
+        "smoke_only_result_files_per_trial": 1,
+        "smoke_retained_bytes_per_trial": 4406589,
+        "smoke_retained_files_per_trial": 10,
+        "task_summary_budget_bytes": 1048576,
+        "task_summary_files": 1
+      },
+      {
+        "algorithm": "a2c",
+        "candidate_receipt_budget_bytes_per_trial": 4161,
+        "candidate_receipt_files_per_trial": 2,
+        "checkpoint_bytes_excluded_per_trial": 2918003,
+        "checkpoint_files_excluded_per_trial": 1,
+        "projected_retained_bytes": 90601576,
+        "projected_retained_files": 331,
+        "retained_bytes_per_trial": 2985100,
+        "retained_files_per_trial": 11,
+        "smoke_only_result_bytes_per_trial": 1241,
+        "smoke_only_result_files_per_trial": 1,
+        "smoke_retained_bytes_per_trial": 2982180,
+        "smoke_retained_files_per_trial": 10,
+        "task_summary_budget_bytes": 1048576,
+        "task_summary_files": 1
+      },
+      {
+        "algorithm": "ddpg",
+        "candidate_receipt_budget_bytes_per_trial": 4161,
+        "candidate_receipt_files_per_trial": 2,
+        "checkpoint_bytes_excluded_per_trial": 38656791,
+        "checkpoint_files_excluded_per_trial": 1,
+        "projected_retained_bytes": 1162289536,
+        "projected_retained_files": 331,
+        "retained_bytes_per_trial": 38708032,
+        "retained_files_per_trial": 11,
+        "smoke_only_result_bytes_per_trial": 1303,
+        "smoke_only_result_files_per_trial": 1,
+        "smoke_retained_bytes_per_trial": 38705174,
+        "smoke_retained_files_per_trial": 10,
+        "task_summary_budget_bytes": 1048576,
+        "task_summary_files": 1
+      },
+      {
+        "algorithm": "td3",
+        "candidate_receipt_budget_bytes_per_trial": 4161,
+        "candidate_receipt_files_per_trial": 2,
+        "checkpoint_bytes_excluded_per_trial": 57951395,
+        "checkpoint_files_excluded_per_trial": 1,
+        "projected_retained_bytes": 1741629496,
+        "projected_retained_files": 331,
+        "retained_bytes_per_trial": 58019364,
+        "retained_files_per_trial": 11,
+        "smoke_only_result_bytes_per_trial": 1327,
+        "smoke_only_result_files_per_trial": 1,
+        "smoke_retained_bytes_per_trial": 58016530,
+        "smoke_retained_files_per_trial": 10,
+        "task_summary_budget_bytes": 1048576,
+        "task_summary_files": 1
+      },
+      {
+        "algorithm": "sac",
+        "candidate_receipt_budget_bytes_per_trial": 4161,
+        "candidate_receipt_files_per_trial": 2,
+        "checkpoint_bytes_excluded_per_trial": 33573148,
+        "checkpoint_files_excluded_per_trial": 1,
+        "projected_retained_bytes": 1010272546,
+        "projected_retained_files": 331,
+        "retained_bytes_per_trial": 33640799,
+        "retained_files_per_trial": 11,
+        "smoke_only_result_bytes_per_trial": 1325,
+        "smoke_only_result_files_per_trial": 1,
+        "smoke_retained_bytes_per_trial": 33637963,
+        "smoke_retained_files_per_trial": 10,
+        "task_summary_budget_bytes": 1048576,
+        "task_summary_files": 1
+      }
+    ],
+    "projected_checkpoint_bytes_avoided": 4123243380,
+    "projected_retained_bytes": 4138125200,
+    "projected_retained_inodes": 1655,
+    "required_bytes": 6475623256,
+    "required_inodes": 2483,
+    "safety_adjusted_retained_bytes": 6207187800,
+    "safety_adjusted_retained_inodes": 2483,
+    "safety_factor": 1.5,
+    "smoke_projected_original_bytes": 8255696460
+  },
+  "quota": {
+    "captured_at": "2026-07-17T12:58:28.294863Z",
+    "filesystem": "/lustrefs/project/25sfcs03",
+    "group": {
+      "bytes": {
+        "grace_expired": false,
+        "hard_headroom": 28401051648,
+        "hard_limit": 53687091200,
+        "soft_headroom": 6926215168,
+        "soft_limit": 32212254720,
+        "used": 25286039552
+      },
+      "gid": 1039,
+      "inodes": {
+        "grace_expired": false,
+        "hard_headroom": 929814,
+        "hard_limit": 1100000,
+        "soft_headroom": 829814,
+        "soft_limit": 1000000,
+        "used": 170186
+      },
+      "name": "s00658"
+    },
+    "project": {
+      "bytes": {
+        "grace_expired": false,
+        "hard_headroom": 282903788544,
+        "hard_limit": 322122547200,
+        "soft_headroom": 229216697344,
+        "soft_limit": 268435456000,
+        "used": 39218758656
+      },
+      "id": 25110303,
+      "inodes": {
+        "grace_expired": false,
+        "hard_headroom": 10721371,
+        "hard_limit": 11000000,
+        "soft_headroom": 9721371,
+        "soft_limit": 10000000,
+        "used": 278629
+      }
+    },
+    "write_probe": {
+      "bytes_written": 1048576,
+      "completed_at": "2026-07-17T12:58:28.272024Z",
+      "filesystem": "/lustrefs/project/25sfcs03",
+      "fsync_succeeded": true,
+      "gid": 1039,
+      "path": "/lustrefs/project/25sfcs03/drl_thai_stock/results/.screening-quota-probe-asn4nz_y",
+      "removed": true
+    }
+  },
+  "reason_codes": [],
+  "runtime": {
+    "algorithms": [
+      {
+        "algorithm": "ppo",
+        "projected_task_hours": 3.556594360351563,
+        "within_limit_recomputed": true
+      },
+      {
+        "algorithm": "a2c",
+        "projected_task_hours": 0.24379650878906253,
+        "within_limit_recomputed": true
+      },
+      {
+        "algorithm": "ddpg",
+        "projected_task_hours": 20.54098628950972,
+        "within_limit_recomputed": true
+      },
+      {
+        "algorithm": "td3",
+        "projected_task_hours": 21.570824554242066,
+        "within_limit_recomputed": true
+      },
+      {
+        "algorithm": "sac",
+        "projected_task_hours": 21.993850979635834,
+        "within_limit_recomputed": true
+      }
+    ],
+    "eligible_recomputed": true,
+    "limit_hours": 72.0,
+    "maximum_projected_task_hours": 21.993850979635834
+  },
+  "schema_version": 1,
+  "validation_errors": []
+}

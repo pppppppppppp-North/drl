@@ -1,0 +1,135 @@
+{
+  "schema_version": 2,
+  "status": "rendered",
+  "campaign_id": "large_scale_thai_drl_v2",
+  "stage_id": "determinism",
+  "attempt_id": "determinism_20260716T155437Z_32014fd9",
+  "rendered_at_utc": "2026-07-16T15:54:38.017328+00:00",
+  "inputs": [
+    {
+      "path": "campaigns/large_scale_thai_drl_v2/deployment/bistka_deployment_v2_manifest.json",
+      "bytes": 36822,
+      "sha256": "3083a36024c29b1e48b52fc3af66454ae4feceb9d4477773ffc35b8364cc8872"
+    },
+    {
+      "path": "campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/_SUCCESS.json",
+      "bytes": 215,
+      "sha256": "0e2f6ced32670ab86a28b70882cb21ae982ad61d5f758fdd5784f4ada4ece052"
+    },
+    {
+      "path": "campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/gate_report.json",
+      "bytes": 8286,
+      "sha256": "bb175bb075b05784c08db6ddb24c9e7e681946204fdcab311199d5f8d06ff4d0"
+    },
+    {
+      "path": "config/large_scale_screening_v2.yaml",
+      "bytes": 231,
+      "sha256": "3284f59a23ae0313fc28515027902024450873592890bbbd3eb5e34ce1a3cdd3"
+    },
+    {
+      "path": "config/research_campaign.yaml",
+      "bytes": 39548,
+      "sha256": "9d0d02ad1890379e72ce8d7513cf93dc83a54e8afc1c6f527c5275e76476a0b4"
+    },
+    {
+      "path": "data/processed/features_real_ohlcv_market.csv",
+      "bytes": 2183530,
+      "sha256": "b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc"
+    },
+    {
+      "path": "environment.yml",
+      "bytes": 310,
+      "sha256": "a7bd923ba0dc83e2e7bae778964912a3a85c49d6fc795c424a5b06f26bdfb72e"
+    },
+    {
+      "path": "reports/bistka_calibration_v2_preflight.json",
+      "bytes": 34783,
+      "sha256": "82d4fe058b4d64142786764362ab3caa9930224d545733d48dfab8c4ff2493e8"
+    },
+    {
+      "path": "reports/data_quality_market/market_data_readiness.json",
+      "bytes": 8945,
+      "sha256": "d6be2b82c164dd2f3844381ef9db8518a56c71e1b8ab5e9080e9c389908e8a4d"
+    },
+    {
+      "path": "reports/data_quality_market/market_data_readiness.sha256",
+      "bytes": 65,
+      "sha256": "d5b4f1b987d238738c1c4b16f5968a2fc7c16b8674e099b641069264089bae49"
+    },
+    {
+      "path": "requirements.txt",
+      "bytes": 177,
+      "sha256": "9602ebcebb5e433edf05e63cc531e20fd7f5e8d06f56b4572c12162a82b2075d"
+    },
+    {
+      "path": "scripts/verify_determinism.py",
+      "bytes": 9502,
+      "sha256": "8344ab10284ece8f3f59ad934b46cf0f7c6a3d5912313299f26d20502390c5e8"
+    },
+    {
+      "path": "slurm/verify_determinism.sbatch",
+      "bytes": 674,
+      "sha256": "d79e279d22ea9d9fe5720a52560ce790cdc67640c65bfe1d0f38b3e94c3d3244"
+    },
+    {
+      "path": "src/campaigns/calibration.py",
+      "bytes": 15413,
+      "sha256": "8e66b424df5b4d8e2283bed8551edc0c79eba667952410f97f6f8cf58469d7f0"
+    },
+    {
+      "path": "src/data/splits.py",
+      "bytes": 6912,
+      "sha256": "52dfba142b8966b4b2ab9d52647fa995b33b796158f3730ec6221b9c6997d059"
+    },
+    {
+      "path": "src/envs/trading_env.py",
+      "bytes": 9075,
+      "sha256": "6b44ae825440794834d70ab2732f7d62ce0367a38533c0c3cacc559ba8348bcb"
+    },
+    {
+      "path": "src/train.py",
+      "bytes": 17256,
+      "sha256": "036c13455311b1a1bbd01e96197774d388346e1628f1f3d2ca01598128ae7f53"
+    },
+    {
+      "path": "src/utils/config.py",
+      "bytes": 1538,
+      "sha256": "f219974a00a2b4575f5a3defb8759de84a798914a820c0da515333d0ed1306be"
+    }
+  ],
+  "deployment_manifest_path": "campaigns/large_scale_thai_drl_v2/deployment/bistka_deployment_v2_manifest.json",
+  "deployment_manifest_sha256": "3083a36024c29b1e48b52fc3af66454ae4feceb9d4477773ffc35b8364cc8872",
+  "deployment_release_id": "4b7d1d4b887bf08675bc664683b06f0fb103369016f7233e6caeb594e41ee382",
+  "preflight_receipt_path": "reports/bistka_calibration_v2_preflight.json",
+  "preflight_sha256": "82d4fe058b4d64142786764362ab3caa9930224d545733d48dfab8c4ff2493e8",
+  "runtime_configs": [
+    {
+      "path": "config/large_scale_screening_v2.yaml",
+      "sha256": "3284f59a23ae0313fc28515027902024450873592890bbbd3eb5e34ce1a3cdd3",
+      "feature_path": "data/processed/features_real_ohlcv_market.csv",
+      "feature_sha256": "b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc"
+    }
+  ],
+  "runtime_config_path": "config/large_scale_screening_v2.yaml",
+  "runtime_config_sha256": "3284f59a23ae0313fc28515027902024450873592890bbbd3eb5e34ce1a3cdd3",
+  "runtime_feature_path": "data/processed/features_real_ohlcv_market.csv",
+  "runtime_feature_sha256": "b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc",
+  "predecessor_gates": [
+    {
+      "stage_id": "cluster_preflight",
+      "evidence_fingerprint": "9f261b5052dead8d7392c328ef09cddb45f2df47f56762b09bae6b7aef5b6511",
+      "gate_report_path": "campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/gate_report.json",
+      "gate_report_sha256": "bb175bb075b05784c08db6ddb24c9e7e681946204fdcab311199d5f8d06ff4d0",
+      "success_marker_path": "campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/_SUCCESS.json",
+      "success_marker_sha256": "0e2f6ced32670ab86a28b70882cb21ae982ad61d5f758fdd5784f4ada4ece052"
+    }
+  ],
+  "supersedes_stale_evidence": {
+    "stage_id": "determinism",
+    "success_marker_path": "campaigns/large_scale_thai_drl_v2/stages/determinism/_SUCCESS.json",
+    "success_marker_sha256": "cdfbf6f2200fe1293ac86a81fe5a839517c251d92c8336f361a423f565c03e3e",
+    "verified_evidence_fingerprint": "bf3de4547648c084ec68e772ba2883e03ad08f358fc8ffdf95d036db763c4794",
+    "current_evidence_fingerprint": "a0be4b475e69896f3b7124655e0635329a82a71f2efb9772e1617028e1e60fa5"
+  },
+  "attempt_sha256": "6b6f627e9e755ab9a54f1d1855bc647d7a39891dce7022d831efc6221e1d0951"
+}

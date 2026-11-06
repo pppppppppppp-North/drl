@@ -1,0 +1,93 @@
+schema_version: 1
+
+registration:
+  id: thai_drl_v3_investability_lifecycle
+  status: draft_not_approved
+  approved_by_authors: false
+  replaces_v2: false
+  purpose: >-
+    Define observable order, holding, exit, valuation, and accounting behavior
+    before any broad-universe V3 training is permitted.
+
+scientific_boundary:
+  development_only: true
+  final_investability_ready: false
+  training_enabled: false
+  publication_claim_enabled: false
+
+timing:
+  timezone: Asia/Bangkok
+  decision_horizon: close_t_to_close_t_plus_1
+  model_information_rule: strictly_available_before_decision_cutoff
+  same_session_after_close_bar_role: execution_evidence_only_not_model_input
+  later_correction_rule: never_rewrite_an_earlier_decision
+
+rules:
+  entry:
+    membership_required: true
+    complete_prior_lookback_required: true
+    observable_trading_permission_required: true
+    valid_execution_bar_required_for_fill: true
+    failed_fill_destination: remain_in_cash
+  membership_exit:
+    request_on_first_nonmember_session: true
+    execute_on_first_subsequent_trading_bar: true
+    while_untradeable: freeze_existing_shares
+    never_convert_unfilled_holding_to_cash: true
+  suspension:
+    new_entry_allowed: false
+    sale_allowed: false
+    holding_rule: freeze_existing_shares
+    return_observation_rule: stale_valuation_is_not_an_observed_zero_return
+  halt:
+    new_entry_allowed: false
+    sale_allowed: false
+    holding_rule: freeze_existing_shares
+    return_observation_rule: stale_valuation_is_not_an_observed_zero_return
+  no_trade:
+    new_entry_allowed: false
+    sale_allowed: false
+    holding_rule: freeze_existing_shares
+    return_observation_rule: stale_valuation_is_not_an_observed_zero_return
+  delisting:
+    assumed_recovery_value: forbidden
+    required_resolution: explicit_cash_settlement_or_successor_instrument
+    unresolved_resolution: block_experiment
+  stale_valuation:
+    method: carry_last_observed_raw_close_with_age_flag
+    fabricated_observed_return: forbidden
+    unresolved_limit_action: block_experiment
+  corporate_actions:
+    wealth_basis: raw_execution_prices_plus_explicit_actions
+    adjusted_close_role: model_features_and_return_reconciliation_only
+    double_count_adjusted_return_and_cash_action: forbidden
+    split_rule: preserve_instrument_value_and_adjust_share_count
+    dividend_rule: credit_once_on_provider_authorized_date
+  symbol_change:
+    identity_key: stable_instrument_id
+    wealth_rule: preserve_instrument_continuity
+    ticker_string_as_identity: forbidden
+
+accounting:
+  ledger: self_financing_security_and_cash
+  turnover: sum_absolute_security_trades_excluding_cash_settlement_leg
+  transaction_cost_basis: gross_traded_security_notional
+  slippage_basis: gross_traded_security_notional
+  post_return_state: carry_drifted_security_and_cash_weights
+  cost_funding: reduce_purchases_before_allowing_negative_cash
+  borrowing_allowed: false
+  forced_exit_overrides_discretionary_turnover_cap: true
+  untradeable_forced_exit: remain_pending_without_trade_cost
+
+required_provider_evidence:
+  - adjusted_ohlcv_with_availability
+  - daily_trading_status_with_availability
+  - authoritative_set_sessions
+  - corporate_actions_with_announcement_and_effective_dates
+  - stable_instrument_symbol_history
+
+author_decisions_required_before_lock:
+  - maximum_stale_valuation_sessions_before_aborting_a_fold
+  - exact_dividend_credit_date_and_reinvestment_convention
+  - terminal_delisting_settlement_and_recovery_mapping
+  - final_order_submission_cutoff_relative_to_the_closing_auction

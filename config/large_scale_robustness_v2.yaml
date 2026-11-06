@@ -1,0 +1,16 @@
+extends: robustness_real_ohlcv_market_v2.yaml
+
+project:
+  name: drl_thai_stock_large_scale_robustness_v2
+
+training:
+  total_timesteps: 100000
+  checkpoint_freq: 50000
+  checkpoint_keep_last: 2
+
+robustness:
+  seeds: [42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61]
+  total_timesteps: 100000
+  bootstrap_unit: observation
+  bootstrap_resamples: 50000
+  randomization_resamples: 50000

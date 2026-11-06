@@ -1,0 +1,20 @@
+deployment:
+  campaign_id: large_scale_thai_drl_screening_overlay
+  target_project_root: /lustrefs/project/25sfcs03/drl_thai_stock
+  python_executable: /lustrefs/project/25sfcs03/envs/drl_env/bin/python
+  required_hostname_prefix: bistka-
+  data_readiness_path: reports/data_quality_market/market_data_readiness.json
+  runtime_configs:
+    - campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml
+  required_packages:
+    - numpy
+    - pandas
+    - torch
+    - stable-baselines3
+    - gymnasium
+    - pyyaml
+  inputs:
+    - campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml
+    - campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml.sha256
+    - campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json
+    - campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json.sha256

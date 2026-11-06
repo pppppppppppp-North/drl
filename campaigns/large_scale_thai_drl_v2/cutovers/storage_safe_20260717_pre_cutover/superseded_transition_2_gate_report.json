@@ -1,0 +1,77 @@
+{
+  "stage_id": "vector_benchmark",
+  "passed": false,
+  "base_dir": ".",
+  "run_dir": null,
+  "requirements": [
+    {
+      "name": "observed 1/2/4/8/16 repeated environment benchmark",
+      "passed": true,
+      "matches": [
+        "reports/vectorized_training_benchmark_3530.csv",
+        "reports/vectorized_training_benchmark_3540.csv"
+      ],
+      "issues": []
+    },
+    {
+      "name": "measured 95-percent throughput selection metadata",
+      "passed": true,
+      "matches": [
+        "reports/vectorized_training_benchmark_3530.json",
+        "reports/vectorized_training_benchmark_3540.json"
+      ],
+      "issues": []
+    },
+    {
+      "name": "native or checksum-migrated BistKA vector calibration evidence",
+      "passed": false,
+      "matches": [
+        "reports/vectorized_training_benchmark_3530.csv.receipt.json",
+        "reports/vectorized_training_benchmark_3540.csv.receipt.json"
+      ],
+      "issues": [
+        "calibration attempt input changed after command rendering: campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/_SUCCESS.json",
+        "calibration attempt input changed after command rendering: campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/gate_report.json"
+      ]
+    }
+  ],
+  "manifest_expected": 0,
+  "manifest_found": 0,
+  "manifest_complete": 0,
+  "manifest_running": 0,
+  "manifest_failed": 0,
+  "issues": [
+    "native or checksum-migrated BistKA vector calibration evidence: calibration attempt input changed after command rendering: campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/_SUCCESS.json",
+    "native or checksum-migrated BistKA vector calibration evidence: calibration attempt input changed after command rendering: campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/gate_report.json"
+  ],
+  "evidence_files": [
+    "campaigns/large_scale_thai_drl_v2/attempts/vector_benchmark_20260716T155433Z_76f61dd7.json",
+    "campaigns/large_scale_thai_drl_v2/attempts/vector_benchmark_latest.json",
+    "campaigns/large_scale_thai_drl_v2/deployment/bistka_deployment_v2_manifest.json",
+    "campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/_SUCCESS.json",
+    "campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/gate_report.json",
+    "config/large_scale_screening_v2.yaml",
+    "config/research_campaign.yaml",
+    "data/processed/features_real_ohlcv_market.csv",
+    "environment.yml",
+    "reports/bistka_calibration_v2_preflight.json",
+    "reports/data_quality_market/market_data_readiness.json",
+    "reports/data_quality_market/market_data_readiness.sha256",
+    "reports/vectorized_training_benchmark_3530.csv",
+    "reports/vectorized_training_benchmark_3530.csv.receipt.json",
+    "reports/vectorized_training_benchmark_3530.json",
+    "reports/vectorized_training_benchmark_3540.csv",
+    "reports/vectorized_training_benchmark_3540.csv.receipt.json",
+    "reports/vectorized_training_benchmark_3540.json",
+    "requirements.txt",
+    "scripts/benchmark_vectorized_training.py",
+    "slurm/benchmark_vectorized_training.sbatch",
+    "src/campaigns/calibration.py",
+    "src/data/splits.py",
+    "src/envs/trading_env.py",
+    "src/train.py",
+    "src/utils/config.py"
+  ],
+  "evidence_fingerprint": "27577eacbdf4f3f60703b5865111fbbb55a50d1731654d884634bae8a8ef2a15",
+  "evaluated_at": "2026-07-17T14:24:40.535084+00:00"
+}

@@ -1,0 +1,1671 @@
+{
+  "campaign_id": "large_scale_thai_drl",
+  "generated_at": "2026-07-15T16:26:51.205488+00:00",
+  "workload": {
+    "planned_model_runs": 498,
+    "planned_training_timesteps": 29440000,
+    "array_elements": 23
+  },
+  "stages": [
+    {
+      "stage_id": "data_readiness",
+      "title": "Verify Real Market Data",
+      "state": "VERIFIED",
+      "reason": "artifact gate verified and fingerprint is unchanged",
+      "dependencies": [],
+      "run_dir": null,
+      "progress": "5/5 artifact gates",
+      "gate": {
+        "stage_id": "data_readiness",
+        "passed": true,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "real OHLCV prices",
+            "passed": true,
+            "matches": [
+              "data/raw/prices_real_ohlcv.csv"
+            ],
+            "issues": []
+          },
+          {
+            "name": "SET index prices",
+            "passed": true,
+            "matches": [
+              "data/raw/prices_market_indices.csv"
+            ],
+            "issues": []
+          },
+          {
+            "name": "processed market-context features",
+            "passed": true,
+            "matches": [
+              "data/processed/features_real_ohlcv_market.csv"
+            ],
+            "issues": []
+          },
+          {
+            "name": "strict observed-market readiness receipt",
+            "passed": true,
+            "matches": [
+              "reports/data_quality_market/market_data_readiness.json"
+            ],
+            "issues": []
+          },
+          {
+            "name": "readiness receipt SHA-256 sidecar",
+            "passed": true,
+            "matches": [
+              "reports/data_quality_market/market_data_readiness.sha256"
+            ],
+            "issues": []
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [],
+        "evidence_files": [
+          "data/data_manifest.csv",
+          "data/processed/features_real_ohlcv_market.csv",
+          "data/raw/prices_market_indices.csv",
+          "data/raw/prices_real_ohlcv.csv",
+          "reports/data_quality_market/market_data_readiness.json",
+          "reports/data_quality_market/market_data_readiness.sha256"
+        ],
+        "evidence_fingerprint": "b964fdf9ddbeaa24cbc4fb2a05e68e5b678b1b056a054b1cfebe440191ffa76d",
+        "evaluated_at": "2026-07-15T16:26:50.871770+00:00"
+      }
+    },
+    {
+      "stage_id": "capacity",
+      "title": "Verify BistKA Credit, Storage, and Queue Snapshot",
+      "state": "VERIFIED",
+      "reason": "artifact gate verified and fingerprint is unchanged",
+      "dependencies": [],
+      "run_dir": null,
+      "progress": "1/1 artifact gates",
+      "gate": {
+        "stage_id": "capacity",
+        "passed": true,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "live credit, quota, partition, and queue snapshot",
+            "passed": true,
+            "matches": [
+              "reports/bistka_capacity_20260715_162248.txt"
+            ],
+            "issues": []
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [],
+        "evidence_files": [
+          "reports/bistka_capacity_20260715_162248.txt"
+        ],
+        "evidence_fingerprint": "20e54c651476805a3eae90e178051fb107c9a9291ddcd8e46f5afe9fe448e731",
+        "evaluated_at": "2026-07-15T16:26:50.872440+00:00"
+      }
+    },
+    {
+      "stage_id": "preregistration",
+      "title": "Verify Locked Scientific Preregistration",
+      "state": "VERIFIED",
+      "reason": "artifact gate verified and fingerprint is unchanged",
+      "dependencies": [
+        "data_readiness"
+      ],
+      "run_dir": null,
+      "progress": "2/2 artifact gates",
+      "gate": {
+        "stage_id": "preregistration",
+        "passed": true,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "locked research question, baselines, outcomes, split firewall, and claim boundary",
+            "passed": true,
+            "matches": [
+              "config/research_preregistration.yaml"
+            ],
+            "issues": []
+          },
+          {
+            "name": "preregistration SHA-256 sidecar",
+            "passed": true,
+            "matches": [
+              "config/research_preregistration.sha256"
+            ],
+            "issues": []
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [],
+        "evidence_files": [
+          "config/research_preregistration.sha256",
+          "config/research_preregistration.yaml",
+          "reports/data_quality_market/market_data_readiness.json",
+          "reports/data_quality_market/market_data_readiness.sha256"
+        ],
+        "evidence_fingerprint": "04492c2d1eb1f92e1f897a1d66a432a74bd426303d8ac504ad1a60f7c1f863c6",
+        "evaluated_at": "2026-07-15T16:26:50.877661+00:00"
+      }
+    },
+    {
+      "stage_id": "deployment_bundle",
+      "title": "Build Exact BistKA Deployment Bundle",
+      "state": "VERIFIED",
+      "reason": "artifact gate verified and fingerprint is unchanged",
+      "dependencies": [
+        "data_readiness",
+        "preregistration",
+        "capacity"
+      ],
+      "run_dir": null,
+      "progress": "3/3 artifact gates",
+      "gate": {
+        "stage_id": "deployment_bundle",
+        "passed": true,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "content-addressed deployment manifest",
+            "passed": true,
+            "matches": [
+              "campaigns/large_scale_thai_drl/deployment/bistka_deployment_manifest.json"
+            ],
+            "issues": []
+          },
+          {
+            "name": "deterministic deployment bundle",
+            "passed": true,
+            "matches": [
+              "campaigns/large_scale_thai_drl/deployment/bistka_release.tar.gz"
+            ],
+            "issues": []
+          },
+          {
+            "name": "deployment bundle SHA-256 sidecar",
+            "passed": true,
+            "matches": [
+              "campaigns/large_scale_thai_drl/deployment/bistka_release.tar.gz.sha256"
+            ],
+            "issues": []
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [],
+        "evidence_files": [
+          "campaigns/large_scale_thai_drl/deployment/bistka_deployment_manifest.json",
+          "campaigns/large_scale_thai_drl/deployment/bistka_deployment_manifest.sha256",
+          "campaigns/large_scale_thai_drl/deployment/bistka_release.tar.gz",
+          "campaigns/large_scale_thai_drl/deployment/bistka_release.tar.gz.sha256",
+          "config/ablation_returns_real_ohlcv.yaml",
+          "config/ablation_technical_context_real_ohlcv.yaml",
+          "config/ablation_technical_real_ohlcv.yaml",
+          "config/best_ppo_real_ohlcv.yaml",
+          "config/bistka_deployment.yaml",
+          "config/bistka_screening_overlay.yaml",
+          "config/debug.yaml",
+          "config/default.yaml",
+          "config/execution_stress_real_ohlcv_market.yaml",
+          "config/large_scale_feature_ablation.yaml",
+          "config/large_scale_robustness.yaml",
+          "config/large_scale_screening.yaml",
+          "config/nested_walk_forward_screening.yaml",
+          "config/optuna_search.yaml",
+          "config/ppo_technical.yaml",
+          "config/real_ohlcv.yaml",
+          "config/real_ohlcv_full_external.yaml",
+          "config/real_ohlcv_fundamentals.yaml",
+          "config/real_ohlcv_macro.yaml",
+          "config/real_ohlcv_market.yaml",
+          "config/real_ohlcv_official_macro.yaml",
+          "config/real_ohlcv_sector.yaml",
+          "config/real_ohlcv_sentiment.yaml",
+          "config/real_ohlcv_universe_csv.yaml",
+          "config/regime_tests_real_ohlcv.yaml",
+          "config/research_campaign.yaml",
+          "config/research_preregistration.sha256",
+          "config/research_preregistration.yaml",
+          "config/robustness_real_ohlcv_market.yaml",
+          "config/training_budget_sweep.yaml",
+          "data/data_manifest.csv",
+          "data/processed/features_real_ohlcv.csv",
+          "data/processed/features_real_ohlcv_market.csv",
+          "data/raw/prices_market_indices.csv",
+          "data/raw/prices_real_ohlcv.csv",
+          "environment.yml",
+          "reports/data_quality_market/column_missingness.csv",
+          "reports/data_quality_market/market_data_quality_checks.csv",
+          "reports/data_quality_market/market_data_readiness.json",
+          "reports/data_quality_market/market_data_readiness.sha256",
+          "reports/data_quality_market/ticker_coverage.csv",
+          "requirements.txt",
+          "scripts/benchmark_vectorized_training.py",
+          "scripts/build_bistka_deployment.py",
+          "scripts/build_reproducibility_archive.py",
+          "scripts/check_bistka_calibration_preflight.py",
+          "scripts/file_separation_snapshot.py",
+          "scripts/hpc_smoke.py",
+          "scripts/materialize_calibrated_screening.py",
+          "scripts/smoke_vectorized_training.py",
+          "scripts/verify_determinism.py",
+          "slurm/ablation_array.sbatch",
+          "slurm/algorithm_compare.sbatch",
+          "slurm/benchmark_vectorized_training.sbatch",
+          "slurm/execution_stress.sbatch",
+          "slurm/jupyter_lab.sbatch",
+          "slurm/large_scale_feature_ablation.sbatch",
+          "slurm/large_scale_feature_ablation_aggregate.sbatch",
+          "slurm/large_scale_robustness.sbatch",
+          "slurm/large_scale_screening.sbatch",
+          "slurm/large_scale_screening_aggregate.sbatch",
+          "slurm/nested_walk_forward_screening.sbatch",
+          "slurm/nested_walk_forward_screening_aggregate.sbatch",
+          "slurm/optuna_array.sbatch",
+          "slurm/robustness_aggregate.sbatch",
+          "slurm/robustness_array.sbatch",
+          "slurm/smoke_cpu.sbatch",
+          "slurm/train_drl_cpu.sbatch",
+          "slurm/train_drl_debug.sbatch",
+          "slurm/train_sentiment_gpu.sbatch",
+          "slurm/training_budget_sweep.sbatch",
+          "slurm/training_budget_sweep_aggregate.sbatch",
+          "slurm/verify_determinism.sbatch",
+          "slurm/walk_forward_array.sbatch",
+          "src/__init__.py",
+          "src/agents/__init__.py",
+          "src/agents/baselines.py",
+          "src/campaigns/__init__.py",
+          "src/campaigns/bistka_deployment.py",
+          "src/campaigns/calibration.py",
+          "src/campaigns/control.py",
+          "src/campaigns/decisions.py",
+          "src/campaigns/gates.py",
+          "src/campaigns/model.py",
+          "src/campaigns/models.py",
+          "src/campaigns/preregistration.py",
+          "src/campaigns/report.py",
+          "src/campaigns/slurm.py",
+          "src/campaigns/vector_calibration.py",
+          "src/data/__init__.py",
+          "src/data/ingest_bot_macro.py",
+          "src/data/ingest_fundamentals.py",
+          "src/data/ingest_indices.py",
+          "src/data/ingest_macro.py",
+          "src/data/ingest_news_yahoo.py",
+          "src/data/ingest_official_macro_csv.py",
+          "src/data/ingest_ohlcv.py",
+          "src/data/ingest_sentiment_csv.py",
+          "src/data/intake_validation.py",
+          "src/data/leakage.py",
+          "src/data/market_data_readiness.py",
+          "src/data/probe_sector_indices.py",
+          "src/data/quality_report.py",
+          "src/data/source_readiness.py",
+          "src/data/splits.py",
+          "src/data/synthetic.py",
+          "src/data/ticker_universe.py",
+          "src/envs/__init__.py",
+          "src/envs/trading_env.py",
+          "src/evaluation/__init__.py",
+          "src/evaluation/compare_results.py",
+          "src/evaluation/metrics.py",
+          "src/evaluation/plot_results.py",
+          "src/evaluation/statistics.py",
+          "src/experiments/__init__.py",
+          "src/experiments/aggregate_ablation.py",
+          "src/experiments/aggregate_budget_sweep.py",
+          "src/experiments/aggregate_feature_ablation.py",
+          "src/experiments/aggregate_nested_screening.py",
+          "src/experiments/aggregate_robustness.py",
+          "src/experiments/aggregate_screening.py",
+          "src/experiments/aggregate_trials.py",
+          "src/experiments/aggregate_walk_forward.py",
+          "src/experiments/experiment_manifest.py",
+          "src/experiments/run_budget_sweep.py",
+          "src/experiments/run_execution_stress.py",
+          "src/experiments/run_feature_ablation.py",
+          "src/experiments/run_nested_screening.py",
+          "src/experiments/run_regime_tests.py",
+          "src/experiments/run_robustness.py",
+          "src/experiments/run_screening.py",
+          "src/experiments/run_trial.py",
+          "src/experiments/run_walk_forward.py",
+          "src/features/__init__.py",
+          "src/features/build_features.py",
+          "src/features/fundamental_context.py",
+          "src/features/macro_context.py",
+          "src/features/market_context.py",
+          "src/features/official_macro_context.py",
+          "src/features/sector_context.py",
+          "src/features/sentiment_context.py",
+          "src/features/technical.py",
+          "src/models/__init__.py",
+          "src/sentiment/__init__.py",
+          "src/sentiment/extract_embeddings.py",
+          "src/train.py",
+          "src/utils/__init__.py",
+          "src/utils/checkpoints.py",
+          "src/utils/config.py"
+        ],
+        "evidence_fingerprint": "0e857df178fcbfa6011b501c1594a04c38c08c2cf6884b7d5baa0a6111914ff6",
+        "evaluated_at": "2026-07-15T16:26:50.943338+00:00"
+      }
+    },
+    {
+      "stage_id": "cluster_preflight",
+      "title": "Verify Exact Deployment on BistKA",
+      "state": "VERIFIED",
+      "reason": "artifact gate verified and fingerprint is unchanged",
+      "dependencies": [
+        "deployment_bundle"
+      ],
+      "run_dir": null,
+      "progress": "1/1 artifact gates",
+      "gate": {
+        "stage_id": "cluster_preflight",
+        "passed": true,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "passing BistKA deployment and runtime receipt",
+            "passed": true,
+            "matches": [
+              "reports/bistka_calibration_preflight.json"
+            ],
+            "issues": []
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [],
+        "evidence_files": [
+          "campaigns/large_scale_thai_drl/deployment/bistka_deployment_manifest.json",
+          "config/ablation_returns_real_ohlcv.yaml",
+          "config/ablation_technical_context_real_ohlcv.yaml",
+          "config/ablation_technical_real_ohlcv.yaml",
+          "config/best_ppo_real_ohlcv.yaml",
+          "config/bistka_deployment.yaml",
+          "config/bistka_screening_overlay.yaml",
+          "config/debug.yaml",
+          "config/default.yaml",
+          "config/execution_stress_real_ohlcv_market.yaml",
+          "config/large_scale_feature_ablation.yaml",
+          "config/large_scale_robustness.yaml",
+          "config/large_scale_screening.yaml",
+          "config/nested_walk_forward_screening.yaml",
+          "config/optuna_search.yaml",
+          "config/ppo_technical.yaml",
+          "config/real_ohlcv.yaml",
+          "config/real_ohlcv_full_external.yaml",
+          "config/real_ohlcv_fundamentals.yaml",
+          "config/real_ohlcv_macro.yaml",
+          "config/real_ohlcv_market.yaml",
+          "config/real_ohlcv_official_macro.yaml",
+          "config/real_ohlcv_sector.yaml",
+          "config/real_ohlcv_sentiment.yaml",
+          "config/real_ohlcv_universe_csv.yaml",
+          "config/regime_tests_real_ohlcv.yaml",
+          "config/research_campaign.yaml",
+          "config/research_preregistration.sha256",
+          "config/research_preregistration.yaml",
+          "config/robustness_real_ohlcv_market.yaml",
+          "config/training_budget_sweep.yaml",
+          "data/data_manifest.csv",
+          "data/processed/features_real_ohlcv.csv",
+          "data/processed/features_real_ohlcv_market.csv",
+          "data/raw/prices_market_indices.csv",
+          "data/raw/prices_real_ohlcv.csv",
+          "environment.yml",
+          "reports/bistka_calibration_preflight.json",
+          "reports/data_quality_market/column_missingness.csv",
+          "reports/data_quality_market/market_data_quality_checks.csv",
+          "reports/data_quality_market/market_data_readiness.json",
+          "reports/data_quality_market/market_data_readiness.sha256",
+          "reports/data_quality_market/ticker_coverage.csv",
+          "requirements.txt",
+          "scripts/benchmark_vectorized_training.py",
+          "scripts/build_bistka_deployment.py",
+          "scripts/build_reproducibility_archive.py",
+          "scripts/check_bistka_calibration_preflight.py",
+          "scripts/file_separation_snapshot.py",
+          "scripts/hpc_smoke.py",
+          "scripts/materialize_calibrated_screening.py",
+          "scripts/smoke_vectorized_training.py",
+          "scripts/verify_determinism.py",
+          "slurm/ablation_array.sbatch",
+          "slurm/algorithm_compare.sbatch",
+          "slurm/benchmark_vectorized_training.sbatch",
+          "slurm/execution_stress.sbatch",
+          "slurm/jupyter_lab.sbatch",
+          "slurm/large_scale_feature_ablation.sbatch",
+          "slurm/large_scale_feature_ablation_aggregate.sbatch",
+          "slurm/large_scale_robustness.sbatch",
+          "slurm/large_scale_screening.sbatch",
+          "slurm/large_scale_screening_aggregate.sbatch",
+          "slurm/nested_walk_forward_screening.sbatch",
+          "slurm/nested_walk_forward_screening_aggregate.sbatch",
+          "slurm/optuna_array.sbatch",
+          "slurm/robustness_aggregate.sbatch",
+          "slurm/robustness_array.sbatch",
+          "slurm/smoke_cpu.sbatch",
+          "slurm/train_drl_cpu.sbatch",
+          "slurm/train_drl_debug.sbatch",
+          "slurm/train_sentiment_gpu.sbatch",
+          "slurm/training_budget_sweep.sbatch",
+          "slurm/training_budget_sweep_aggregate.sbatch",
+          "slurm/verify_determinism.sbatch",
+          "slurm/walk_forward_array.sbatch",
+          "src/__init__.py",
+          "src/agents/__init__.py",
+          "src/agents/baselines.py",
+          "src/campaigns/__init__.py",
+          "src/campaigns/bistka_deployment.py",
+          "src/campaigns/calibration.py",
+          "src/campaigns/control.py",
+          "src/campaigns/decisions.py",
+          "src/campaigns/gates.py",
+          "src/campaigns/model.py",
+          "src/campaigns/models.py",
+          "src/campaigns/preregistration.py",
+          "src/campaigns/report.py",
+          "src/campaigns/slurm.py",
+          "src/campaigns/vector_calibration.py",
+          "src/data/__init__.py",
+          "src/data/ingest_bot_macro.py",
+          "src/data/ingest_fundamentals.py",
+          "src/data/ingest_indices.py",
+          "src/data/ingest_macro.py",
+          "src/data/ingest_news_yahoo.py",
+          "src/data/ingest_official_macro_csv.py",
+          "src/data/ingest_ohlcv.py",
+          "src/data/ingest_sentiment_csv.py",
+          "src/data/intake_validation.py",
+          "src/data/leakage.py",
+          "src/data/market_data_readiness.py",
+          "src/data/probe_sector_indices.py",
+          "src/data/quality_report.py",
+          "src/data/source_readiness.py",
+          "src/data/splits.py",
+          "src/data/synthetic.py",
+          "src/data/ticker_universe.py",
+          "src/envs/__init__.py",
+          "src/envs/trading_env.py",
+          "src/evaluation/__init__.py",
+          "src/evaluation/compare_results.py",
+          "src/evaluation/metrics.py",
+          "src/evaluation/plot_results.py",
+          "src/evaluation/statistics.py",
+          "src/experiments/__init__.py",
+          "src/experiments/aggregate_ablation.py",
+          "src/experiments/aggregate_budget_sweep.py",
+          "src/experiments/aggregate_feature_ablation.py",
+          "src/experiments/aggregate_nested_screening.py",
+          "src/experiments/aggregate_robustness.py",
+          "src/experiments/aggregate_screening.py",
+          "src/experiments/aggregate_trials.py",
+          "src/experiments/aggregate_walk_forward.py",
+          "src/experiments/experiment_manifest.py",
+          "src/experiments/run_budget_sweep.py",
+          "src/experiments/run_execution_stress.py",
+          "src/experiments/run_feature_ablation.py",
+          "src/experiments/run_nested_screening.py",
+          "src/experiments/run_regime_tests.py",
+          "src/experiments/run_robustness.py",
+          "src/experiments/run_screening.py",
+          "src/experiments/run_trial.py",
+          "src/experiments/run_walk_forward.py",
+          "src/features/__init__.py",
+          "src/features/build_features.py",
+          "src/features/fundamental_context.py",
+          "src/features/macro_context.py",
+          "src/features/market_context.py",
+          "src/features/official_macro_context.py",
+          "src/features/sector_context.py",
+          "src/features/sentiment_context.py",
+          "src/features/technical.py",
+          "src/models/__init__.py",
+          "src/sentiment/__init__.py",
+          "src/sentiment/extract_embeddings.py",
+          "src/train.py",
+          "src/utils/__init__.py",
+          "src/utils/checkpoints.py",
+          "src/utils/config.py"
+        ],
+        "evidence_fingerprint": "fd6e30b9180b5c880c33c1e8f1ad7fb1be13547cb902473dff9c028c0e7cc0e2",
+        "evaluated_at": "2026-07-15T16:26:50.950609+00:00"
+      }
+    },
+    {
+      "stage_id": "vector_benchmark",
+      "title": "Calibrate Vectorized Throughput",
+      "state": "VERIFIED",
+      "reason": "artifact gate verified and fingerprint is unchanged",
+      "dependencies": [
+        "cluster_preflight"
+      ],
+      "run_dir": null,
+      "progress": "3/3 artifact gates",
+      "gate": {
+        "stage_id": "vector_benchmark",
+        "passed": true,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "observed 1/2/4/8/16 repeated environment benchmark",
+            "passed": true,
+            "matches": [
+              "reports/vectorized_training_benchmark_3530.csv"
+            ],
+            "issues": []
+          },
+          {
+            "name": "measured 95-percent throughput selection metadata",
+            "passed": true,
+            "matches": [
+              "reports/vectorized_training_benchmark_3530.json"
+            ],
+            "issues": []
+          },
+          {
+            "name": "attempt-bound BistKA vector calibration receipt",
+            "passed": true,
+            "matches": [
+              "reports/vectorized_training_benchmark_3530.csv.receipt.json"
+            ],
+            "issues": []
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [],
+        "evidence_files": [
+          "campaigns/large_scale_thai_drl/attempts/vector_benchmark_20260715T161221Z_8ac0554b.json",
+          "campaigns/large_scale_thai_drl/attempts/vector_benchmark_latest.json",
+          "campaigns/large_scale_thai_drl/deployment/bistka_deployment_manifest.json",
+          "config/large_scale_screening.yaml",
+          "config/research_campaign.yaml",
+          "data/processed/features_real_ohlcv_market.csv",
+          "environment.yml",
+          "reports/bistka_calibration_preflight.json",
+          "reports/data_quality_market/market_data_readiness.json",
+          "reports/data_quality_market/market_data_readiness.sha256",
+          "reports/vectorized_training_benchmark_3530.csv",
+          "reports/vectorized_training_benchmark_3530.csv.receipt.json",
+          "reports/vectorized_training_benchmark_3530.json",
+          "requirements.txt",
+          "scripts/benchmark_vectorized_training.py",
+          "slurm/benchmark_vectorized_training.sbatch",
+          "src/campaigns/calibration.py",
+          "src/data/splits.py",
+          "src/envs/trading_env.py",
+          "src/train.py",
+          "src/utils/config.py"
+        ],
+        "evidence_fingerprint": "a3f9b3b3319eb2e30f08ce82e399341033c635bd0a6a631a4c561123a8b8f09b",
+        "evaluated_at": "2026-07-15T16:26:51.169003+00:00"
+      }
+    },
+    {
+      "stage_id": "determinism",
+      "title": "Verify Fixed-Seed Determinism",
+      "state": "VERIFIED",
+      "reason": "artifact gate verified and fingerprint is unchanged",
+      "dependencies": [
+        "cluster_preflight"
+      ],
+      "run_dir": null,
+      "progress": "2/2 artifact gates",
+      "gate": {
+        "stage_id": "determinism",
+        "passed": true,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "matching independent observed-data fixed-seed trajectory hashes",
+            "passed": true,
+            "matches": [
+              "reports/determinism_3530.json"
+            ],
+            "issues": []
+          },
+          {
+            "name": "attempt-bound BistKA determinism receipt",
+            "passed": true,
+            "matches": [
+              "reports/determinism_3530.json.receipt.json"
+            ],
+            "issues": []
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [],
+        "evidence_files": [
+          "campaigns/large_scale_thai_drl/attempts/determinism_20260715T161221Z_1427b73d.json",
+          "campaigns/large_scale_thai_drl/attempts/determinism_latest.json",
+          "campaigns/large_scale_thai_drl/deployment/bistka_deployment_manifest.json",
+          "config/large_scale_screening.yaml",
+          "config/research_campaign.yaml",
+          "data/processed/features_real_ohlcv_market.csv",
+          "environment.yml",
+          "reports/bistka_calibration_preflight.json",
+          "reports/data_quality_market/market_data_readiness.json",
+          "reports/data_quality_market/market_data_readiness.sha256",
+          "reports/determinism_3530.json",
+          "reports/determinism_3530.json.receipt.json",
+          "requirements.txt",
+          "scripts/verify_determinism.py",
+          "slurm/verify_determinism.sbatch",
+          "src/campaigns/calibration.py",
+          "src/data/splits.py",
+          "src/envs/trading_env.py",
+          "src/train.py",
+          "src/utils/config.py"
+        ],
+        "evidence_fingerprint": "256908a60c6a2baa40097d552dcda6702ec11cda679583003ae0ec9083193acc",
+        "evaluated_at": "2026-07-15T16:26:51.188799+00:00"
+      }
+    },
+    {
+      "stage_id": "screening_config",
+      "title": "Materialize Attempt-Bound Vector Calibration",
+      "state": "VERIFIED",
+      "reason": "artifact gate verified and fingerprint is unchanged",
+      "dependencies": [
+        "vector_benchmark"
+      ],
+      "run_dir": null,
+      "progress": "2/2 artifact gates",
+      "gate": {
+        "stage_id": "screening_config",
+        "passed": true,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "locked screening configuration with measured vector count",
+            "passed": true,
+            "matches": [
+              "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml"
+            ],
+            "issues": []
+          },
+          {
+            "name": "attempt-bound vector calibration decision provenance",
+            "passed": true,
+            "matches": [
+              "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json"
+            ],
+            "issues": []
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [],
+        "evidence_files": [
+          "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json",
+          "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml"
+        ],
+        "evidence_fingerprint": "2dbd330edbc5bb6a8e93bb745441bd1751ea4e07bdc2711c1de8ba4e541d039e",
+        "evaluated_at": "2026-07-15T16:26:51.189290+00:00"
+      }
+    },
+    {
+      "stage_id": "screening_deployment_bundle",
+      "title": "Build Calibrated Screening Overlay",
+      "state": "VERIFIED",
+      "reason": "artifact gate verified and fingerprint is unchanged",
+      "dependencies": [
+        "screening_config",
+        "determinism"
+      ],
+      "run_dir": null,
+      "progress": "3/3 artifact gates",
+      "gate": {
+        "stage_id": "screening_deployment_bundle",
+        "passed": true,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "content-addressed calibrated-screening overlay manifest",
+            "passed": true,
+            "matches": [
+              "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay_manifest.json"
+            ],
+            "issues": []
+          },
+          {
+            "name": "deterministic calibrated-screening overlay bundle",
+            "passed": true,
+            "matches": [
+              "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay.tar.gz"
+            ],
+            "issues": []
+          },
+          {
+            "name": "calibrated-screening overlay bundle SHA-256 sidecar",
+            "passed": true,
+            "matches": [
+              "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay.tar.gz.sha256"
+            ],
+            "issues": []
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [],
+        "evidence_files": [
+          "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay.tar.gz",
+          "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay.tar.gz.sha256",
+          "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay_manifest.json",
+          "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay_manifest.sha256",
+          "campaigns/large_scale_thai_drl/deployment/bistka_screening_runtime_profile.yaml",
+          "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json",
+          "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json.sha256",
+          "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml",
+          "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml.sha256",
+          "data/processed/features_real_ohlcv_market.csv"
+        ],
+        "evidence_fingerprint": "a2abf652de3695089450b1841ab68ee14683cbed330a5bb48407bdc2bd7a05dd",
+        "evaluated_at": "2026-07-15T16:26:51.202622+00:00"
+      }
+    },
+    {
+      "stage_id": "screening_cluster_preflight",
+      "title": "Verify Calibrated Screening Overlay on BistKA",
+      "state": "VERIFIED",
+      "reason": "artifact gate verified and fingerprint is unchanged",
+      "dependencies": [
+        "screening_deployment_bundle"
+      ],
+      "run_dir": null,
+      "progress": "1/1 artifact gates",
+      "gate": {
+        "stage_id": "screening_cluster_preflight",
+        "passed": true,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "passing calibrated-screening overlay and runtime receipt",
+            "passed": true,
+            "matches": [
+              "reports/bistka_screening_preflight.json"
+            ],
+            "issues": []
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [],
+        "evidence_files": [
+          "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay_manifest.json",
+          "campaigns/large_scale_thai_drl/deployment/bistka_screening_runtime_profile.yaml",
+          "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json",
+          "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json.sha256",
+          "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml",
+          "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml.sha256",
+          "data/processed/features_real_ohlcv_market.csv",
+          "reports/bistka_screening_preflight.json"
+        ],
+        "evidence_fingerprint": "7723abbb529a4100496f23b43f62a625ffd0be72a514629d2bee54d1018c4e7a",
+        "evaluated_at": "2026-07-15T16:26:51.203364+00:00"
+      }
+    },
+    {
+      "stage_id": "screening",
+      "title": "Run Five-Algorithm Validation Screening",
+      "state": "READY",
+      "reason": "stage is ready",
+      "dependencies": [
+        "data_readiness",
+        "capacity",
+        "screening_cluster_preflight"
+      ],
+      "run_dir": null,
+      "progress": "0/150 complete manifests",
+      "gate": {
+        "stage_id": "screening",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [],
+        "manifest_expected": 150,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "no stage run directory exists"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "9bee9192e7349a7102668b82d0483a764dbbf1dae5e2b01d5742e49c431f29cc",
+        "evaluated_at": "2026-07-15T16:26:51.203577+00:00"
+      }
+    },
+    {
+      "stage_id": "screening_aggregate",
+      "title": "Verify and Rank Screening Results",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "screening"
+      ],
+      "run_dir": null,
+      "progress": "0/2 artifact gates",
+      "gate": {
+        "stage_id": "screening_aggregate",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "validation-only top-two algorithm selection",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "complete screening grid",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "validation-only top-two algorithm selection: requires 1 match(es), found 0",
+          "complete screening grid: requires 1 match(es), found 0"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "caf347af3aee526dbc43360a6afc70383098fda61f4e4316dec02b9cf2ec39db",
+        "evaluated_at": "2026-07-15T16:26:51.203699+00:00"
+      }
+    },
+    {
+      "stage_id": "budget_config",
+      "title": "Materialize Selected-Algorithm Budget Configuration",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "screening_aggregate"
+      ],
+      "run_dir": null,
+      "progress": "0/2 artifact gates",
+      "gate": {
+        "stage_id": "budget_config",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "locked budget-sweep configuration",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "budget decision provenance",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "locked budget-sweep configuration: requires 1 match(es), found 0",
+          "budget decision provenance: requires 1 match(es), found 0"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "0a5de189c652fbe987d3c6a4de4d26dafec182cab5911ba86b1a755b7f05287d",
+        "evaluated_at": "2026-07-15T16:26:51.203794+00:00"
+      }
+    },
+    {
+      "stage_id": "budget_sweep",
+      "title": "Run Validation-Only Training-Budget Sweep",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "budget_config"
+      ],
+      "run_dir": null,
+      "progress": "0/48 complete manifests",
+      "gate": {
+        "stage_id": "budget_sweep",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [],
+        "manifest_expected": 48,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "no stage run directory exists"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "5bc1dc21a249035e13e65cb7688a5e869ebf3a154aa329c0863bd7fae00c0b54",
+        "evaluated_at": "2026-07-15T16:26:51.203917+00:00"
+      }
+    },
+    {
+      "stage_id": "budget_aggregate",
+      "title": "Select the Validation Plateau Budget",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "budget_sweep"
+      ],
+      "run_dir": null,
+      "progress": "0/2 artifact gates",
+      "gate": {
+        "stage_id": "budget_aggregate",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "validation-only selected training budget",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "complete budget grid",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "validation-only selected training budget: requires 1 match(es), found 0",
+          "complete budget grid: requires 1 match(es), found 0"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "53de7a4da3b45deace7049056421b7885ef0e0a522360dcf9500f14a3317da54",
+        "evaluated_at": "2026-07-15T16:26:51.204013+00:00"
+      }
+    },
+    {
+      "stage_id": "nested_config",
+      "title": "Materialize Nested-Screening Budget",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "budget_aggregate"
+      ],
+      "run_dir": null,
+      "progress": "0/2 artifact gates",
+      "gate": {
+        "stage_id": "nested_config",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "locked nested-screening configuration",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "nested decision provenance",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "locked nested-screening configuration: requires 1 match(es), found 0",
+          "nested decision provenance: requires 1 match(es), found 0"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "c6bb8ddabbdd9ab647510db845c041a7d70caffb7fdca2bbb016309496d271d7",
+        "evaluated_at": "2026-07-15T16:26:51.204103+00:00"
+      }
+    },
+    {
+      "stage_id": "nested_screening",
+      "title": "Run Validation-Only Nested Screening",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "nested_config"
+      ],
+      "run_dir": null,
+      "progress": "0/100 complete manifests",
+      "gate": {
+        "stage_id": "nested_screening",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [],
+        "manifest_expected": 100,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "no stage run directory exists"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "063d2f115e5ebc34db70643531100d074f251d7710391d1fe33039e9334b88d2",
+        "evaluated_at": "2026-07-15T16:26:51.204284+00:00"
+      }
+    },
+    {
+      "stage_id": "nested_aggregate",
+      "title": "Freeze Per-Window Validation Selections",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "nested_screening"
+      ],
+      "run_dir": null,
+      "progress": "0/2 artifact gates",
+      "gate": {
+        "stage_id": "nested_aggregate",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "one selected validation trial per algorithm and window",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "complete nested-screening grid",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "one selected validation trial per algorithm and window: requires 1 match(es), found 0",
+          "complete nested-screening grid: requires 1 match(es), found 0"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "5b813450223667d1ee22a69adc8d82f718177e522fb0a90a0063b0bb644f0132",
+        "evaluated_at": "2026-07-15T16:26:51.204383+00:00"
+      }
+    },
+    {
+      "stage_id": "robustness_config",
+      "title": "Materialize Locked Robustness Configuration",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "nested_aggregate"
+      ],
+      "run_dir": null,
+      "progress": "0/2 artifact gates",
+      "gate": {
+        "stage_id": "robustness_config",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "locked robustness configuration",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "robustness decision provenance",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "locked robustness configuration: requires 1 match(es), found 0",
+          "robustness decision provenance: requires 1 match(es), found 0"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "ceb41670d3c2ceae4e1b71ebceaccfded1b28164485b1b239aff33142dede40b",
+        "evaluated_at": "2026-07-15T16:26:51.204464+00:00"
+      }
+    },
+    {
+      "stage_id": "ablation_config",
+      "title": "Materialize Locked Feature-Ablation Configuration",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "nested_aggregate"
+      ],
+      "run_dir": null,
+      "progress": "0/2 artifact gates",
+      "gate": {
+        "stage_id": "ablation_config",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "locked feature-ablation configuration",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "ablation decision provenance",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "locked feature-ablation configuration: requires 1 match(es), found 0",
+          "ablation decision provenance: requires 1 match(es), found 0"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "5e79b96717dc283ec45c32f14a358363c35928c22aac874b19c5e45e14c0a9af",
+        "evaluated_at": "2026-07-15T16:26:51.204543+00:00"
+      }
+    },
+    {
+      "stage_id": "protocol_lock",
+      "title": "Lock the Validation-Selected Scientific Protocol",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "robustness_config",
+        "ablation_config"
+      ],
+      "run_dir": null,
+      "progress": "0/2 artifact gates",
+      "gate": {
+        "stage_id": "protocol_lock",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "immutable protocol lock",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "protocol lock SHA-256 sidecar",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "immutable protocol lock: requires 1 match(es), found 0",
+          "protocol lock SHA-256 sidecar: requires 1 match(es), found 0"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "ab4edea507ce3cb49004c2f06d0a083a77bc95c9fd0b82f2120dde1757b4c3c8",
+        "evaluated_at": "2026-07-15T16:26:51.204623+00:00"
+      }
+    },
+    {
+      "stage_id": "robustness",
+      "title": "Run Repeated-Seed Test Confirmation",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "protocol_lock"
+      ],
+      "run_dir": null,
+      "progress": "0/80 complete manifests",
+      "gate": {
+        "stage_id": "robustness",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [],
+        "manifest_expected": 80,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "no stage run directory exists",
+          "protocol lock and SHA-256 sidecar are required"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "ea87f61c836e16f34872d367c485c0c844ea60ab4e2dadbca14fbe8675bd163d",
+        "evaluated_at": "2026-07-15T16:26:51.204738+00:00"
+      }
+    },
+    {
+      "stage_id": "robustness_aggregate",
+      "title": "Verify Test-Only Robustness Evidence",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "robustness"
+      ],
+      "run_dir": null,
+      "progress": "0/3 artifact gates",
+      "gate": {
+        "stage_id": "robustness_aggregate",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "test-only policy summary",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "paired baseline comparisons",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "complete robustness grid",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "test-only policy summary: requires 1 match(es), found 0",
+          "paired baseline comparisons: requires 1 match(es), found 0",
+          "complete robustness grid: requires 1 match(es), found 0",
+          "protocol lock and SHA-256 sidecar are required"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "1910c91f9039a9e65cb2ebc1c94ee204e7365369408456d6d0723a3654a0709c",
+        "evaluated_at": "2026-07-15T16:26:51.204850+00:00"
+      }
+    },
+    {
+      "stage_id": "feature_ablation",
+      "title": "Run Locked Feature Ablations",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "robustness_aggregate"
+      ],
+      "run_dir": null,
+      "progress": "0/120 complete manifests",
+      "gate": {
+        "stage_id": "feature_ablation",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [],
+        "manifest_expected": 120,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "no stage run directory exists",
+          "protocol lock and SHA-256 sidecar are required"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "362e118e400107c08f978b2232cb90e4cccb1b5174708708e43c18e772c105e8",
+        "evaluated_at": "2026-07-15T16:26:51.204962+00:00"
+      }
+    },
+    {
+      "stage_id": "stress_config",
+      "title": "Build the Fixed-Seed Execution-Stress Registry",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "robustness_aggregate"
+      ],
+      "run_dir": null,
+      "progress": "0/3 artifact gates",
+      "gate": {
+        "stage_id": "stress_config",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "protocol-bound fixed-seed model registry",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "model registry SHA-256 sidecar",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "locked window-aligned execution-stress configuration",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "protocol-bound fixed-seed model registry: requires 1 match(es), found 0",
+          "model registry SHA-256 sidecar: requires 1 match(es), found 0",
+          "locked window-aligned execution-stress configuration: requires 1 match(es), found 0"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "d3da5ef329a92b42c8077ea11438cea0e2ffcd4d0418ab46f0346ae08b114d9c",
+        "evaluated_at": "2026-07-15T16:26:51.205075+00:00"
+      }
+    },
+    {
+      "stage_id": "feature_ablation_aggregate",
+      "title": "Verify Test-Only Feature Evidence",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "feature_ablation"
+      ],
+      "run_dir": null,
+      "progress": "0/3 artifact gates",
+      "gate": {
+        "stage_id": "feature_ablation_aggregate",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "ablation confidence intervals",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "paired control comparisons",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "complete ablation grid",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "ablation confidence intervals: requires 1 match(es), found 0",
+          "paired control comparisons: requires 1 match(es), found 0",
+          "complete ablation grid: requires 1 match(es), found 0",
+          "protocol lock and SHA-256 sidecar are required"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "d478f74a1f15204f72756ab6562242d558d6858a0268df956b6d84201026ccb0",
+        "evaluated_at": "2026-07-15T16:26:51.205178+00:00"
+      }
+    },
+    {
+      "stage_id": "execution_stress",
+      "title": "Run Locked-Model Execution Stress Tests",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "stress_config"
+      ],
+      "run_dir": null,
+      "progress": "0/1 complete manifests",
+      "gate": {
+        "stage_id": "execution_stress",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "every configured model loaded successfully",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "execution sensitivity evidence",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "complete model-window-scenario grid",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "base-scenario robustness replay",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          },
+          {
+            "name": "walk-forward stress window summary",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          }
+        ],
+        "manifest_expected": 1,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "every configured model loaded successfully: requires 1 match(es), found 0",
+          "execution sensitivity evidence: requires 1 match(es), found 0",
+          "complete model-window-scenario grid: requires 1 match(es), found 0",
+          "base-scenario robustness replay: requires 1 match(es), found 0",
+          "walk-forward stress window summary: requires 1 match(es), found 0",
+          "no stage run directory exists",
+          "protocol lock and SHA-256 sidecar are required"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "239ec7dfd45ba8fe31516bff105943633fe865420d62736166e3db9b11f684e1",
+        "evaluated_at": "2026-07-15T16:26:51.205341+00:00"
+      }
+    },
+    {
+      "stage_id": "finalize",
+      "title": "Build and Verify the Reproducibility Archive",
+      "state": "PENDING",
+      "reason": "waiting for dependencies to be explicitly verified",
+      "dependencies": [
+        "feature_ablation_aggregate",
+        "execution_stress"
+      ],
+      "run_dir": null,
+      "progress": "0/1 artifact gates",
+      "gate": {
+        "stage_id": "finalize",
+        "passed": false,
+        "base_dir": ".",
+        "run_dir": null,
+        "requirements": [
+          {
+            "name": "verified reproducibility archive",
+            "passed": false,
+            "matches": [],
+            "issues": [
+              "requires 1 match(es), found 0"
+            ]
+          }
+        ],
+        "manifest_expected": 0,
+        "manifest_found": 0,
+        "manifest_complete": 0,
+        "manifest_running": 0,
+        "manifest_failed": 0,
+        "issues": [
+          "verified reproducibility archive: requires 1 match(es), found 0"
+        ],
+        "evidence_files": [],
+        "evidence_fingerprint": "91e0bd986a68ee93af89fff621e6ae1ed84d4530868e0d5c2d443f5f251dcd4d",
+        "evaluated_at": "2026-07-15T16:26:51.205444+00:00"
+      }
+    }
+  ]
+}

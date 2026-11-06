@@ -1,0 +1,36 @@
+{
+  "stage_id": "screening_config",
+  "passed": true,
+  "base_dir": ".",
+  "run_dir": null,
+  "requirements": [
+    {
+      "name": "locked screening configuration with measured vector count",
+      "passed": true,
+      "matches": [
+        "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml"
+      ],
+      "issues": []
+    },
+    {
+      "name": "attempt-bound vector calibration decision provenance",
+      "passed": true,
+      "matches": [
+        "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json"
+      ],
+      "issues": []
+    }
+  ],
+  "manifest_expected": 0,
+  "manifest_found": 0,
+  "manifest_complete": 0,
+  "manifest_running": 0,
+  "manifest_failed": 0,
+  "issues": [],
+  "evidence_files": [
+    "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json",
+    "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml"
+  ],
+  "evidence_fingerprint": "2dbd330edbc5bb6a8e93bb745441bd1751ea4e07bdc2711c1de8ba4e541d039e",
+  "evaluated_at": "2026-07-15T16:24:33.923301+00:00"
+}

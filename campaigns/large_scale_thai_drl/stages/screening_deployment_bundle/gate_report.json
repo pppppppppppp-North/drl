@@ -1,0 +1,52 @@
+{
+  "stage_id": "screening_deployment_bundle",
+  "passed": true,
+  "base_dir": ".",
+  "run_dir": null,
+  "requirements": [
+    {
+      "name": "content-addressed calibrated-screening overlay manifest",
+      "passed": true,
+      "matches": [
+        "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay_manifest.json"
+      ],
+      "issues": []
+    },
+    {
+      "name": "deterministic calibrated-screening overlay bundle",
+      "passed": true,
+      "matches": [
+        "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay.tar.gz"
+      ],
+      "issues": []
+    },
+    {
+      "name": "calibrated-screening overlay bundle SHA-256 sidecar",
+      "passed": true,
+      "matches": [
+        "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay.tar.gz.sha256"
+      ],
+      "issues": []
+    }
+  ],
+  "manifest_expected": 0,
+  "manifest_found": 0,
+  "manifest_complete": 0,
+  "manifest_running": 0,
+  "manifest_failed": 0,
+  "issues": [],
+  "evidence_files": [
+    "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay.tar.gz",
+    "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay.tar.gz.sha256",
+    "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay_manifest.json",
+    "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay_manifest.sha256",
+    "campaigns/large_scale_thai_drl/deployment/bistka_screening_runtime_profile.yaml",
+    "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json",
+    "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json.sha256",
+    "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml",
+    "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml.sha256",
+    "data/processed/features_real_ohlcv_market.csv"
+  ],
+  "evidence_fingerprint": "a2abf652de3695089450b1841ab68ee14683cbed330a5bb48407bdc2bd7a05dd",
+  "evaluated_at": "2026-07-15T16:25:03.968493+00:00"
+}

@@ -1,0 +1,121 @@
+schema_version: 1
+
+registration:
+  id: thai_drl_point_in_time_set100_v3_development
+  status: draft_not_locked
+  purpose: membership_environment_and_evaluation_infrastructure_only
+  approved_by_authors: false
+  replaces_v2: false
+
+scientific_boundary:
+  development_only: true
+  allowed_splits:
+    - train
+    - validation
+  forbidden_splits:
+    - test
+    - all
+  known_2021_2024_results_exist: true
+  known_2021_2024_period_usable_as_new_final_holdout: false
+  final_holdout:
+    status: absent
+    required_start_on_or_after: "2025-01-01"
+    requirement: >-
+      Extend the official constituent archive and embargo a genuinely untouched
+      post-2024 period before any V3 final claim.
+
+membership:
+  index_name: SET100
+  acquisition_universe_is_static_membership: false
+  decision_timing: close_t_to_close_t_plus_1
+  scheduled_record_rule: effective_session_if_published_before_or_on_session
+  same_day_revision_rule: next_observed_session_after_publication
+  source_date_precision: day
+
+eligibility:
+  development_formula:
+    - point_in_time_index_membership
+    - finite_positive_current_ohlc
+    - nonnegative_current_volume
+    - complete_strictly_prior_lookback
+  next_session_price_may_define_current_eligibility: false
+  final_investability_ready: false
+  handling_policy:
+    status: draft
+    path: config/v3/investability_policy_draft.yaml
+    sha256: 6fa6f1c69813dabd450ae7a986033f150ad9cef5c89d699d5809c4e498890c81
+    require_sidecar: true
+    receipt:
+      status: bound
+      path: reports/data_quality_v3/v3_investability_policy_readiness_20260731.json
+      sha256: 20c91cd719da2f57d9b9afb758864a91a72f76614dd254cff066f342a9be7daa
+      require_sidecar: true
+    required_rules:
+      - entry
+      - exit
+      - suspension
+      - halt
+      - no_trade
+      - delisting
+      - stale_valuation
+      - corporate_action
+      - symbol_change
+  missing_final_inputs:
+    - licensed_138_ticker_adjusted_ohlcv
+    - authoritative_set_session_calendar
+    - observable_trading_and_suspension_status
+    - corporate_actions_and_ticker_changes
+    - locked_entry_exit_delisting_and_suspension_policy
+    - extended_post_2024_constituent_history
+
+data_bindings:
+  constituent_history:
+    path: data/reference/set50_set100_membership_2021_2024.csv
+    sha256: 96ea9924830e94ce702f8cd2062dd66670e262a5627774fab5e3b27a4a02c074
+  acquisition_universe:
+    path: data/reference/set50_or_set100_universe.csv
+    sha256: 79a6d4cd357f726cf03a8e41035b7f3737da7189ca957890d051f32f3cb9db7c
+  constituent_receipt:
+    path: reports/data_sources/set_constituent_archive_20260731.json
+    sha256: 21943f3cfa79f3e2afc0b4a3c9f5a1582994617ca60783f642281867ec2aca49
+    require_sidecar: true
+  licensed_market_package_receipt:
+    status: absent
+    requirement: >-
+      Replace with a checksum-bound passing V3 licensed-market package receipt
+      only after the authoritative sessions, bars, status, corporate actions,
+      symbol history, and license bindings pass.
+
+evaluation_policy:
+  status: draft
+  path: config/v3/evaluation_policy_draft.yaml
+  sha256: 05af4b00574d8125fddf831e4158db6722f26409450ccc2af6747a2bd74e1917
+  require_sidecar: true
+  receipt:
+    status: bound
+    path: reports/data_quality_v3/v3_evaluation_policy_readiness_20260820.json
+    sha256: 67609820ec5d291ac59bfd530fe310bcc0c40cae9e7780c86917b5e17af90707
+    require_sidecar: true
+  requirement: >-
+    Replace this provisional-session draft with a separately validated,
+    author-approved, checksum-locked V3 evaluation policy only after the
+    authoritative licensed SET calendar and market package pass. Training,
+    test, and all remain disabled while this binding is draft.
+  required_rules:
+    - deterministic_authoritative_session_folds
+    - no_cross_boundary_transition
+    - context_only_lookback_not_fit_or_scored
+    - train_only_preprocessing
+    - fixed_seeds_and_selection_metric
+    - deterministic_tie_breakers
+    - fixed_candidate_budget
+    - test_and_all_forbidden
+
+execution:
+  training_enabled: false
+  hpc_submission_enabled: false
+  reason: >-
+    This capsule can validate membership timing and environment mechanics, but
+    it cannot train or read a holdout until the protocol is author-approved,
+    checksum-locked, every final-investability input passes readiness, and a
+    separate V3 evaluation/selection policy is implemented and locked.

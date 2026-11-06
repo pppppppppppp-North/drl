@@ -1,0 +1,16 @@
+{
+  "source_name": "bot_policy_rate_mpc_table",
+  "source_url": "https://www.bot.or.th/content/dam/bot/documents/en/our-roles/monetary-policy/mpc-publication/policy-interest-rate/table-mpc-2026-5-5FWvBPSf.xlsx",
+  "source_path": "data/external/original/bot_policy_rate_mpc_table_asof_20261028.xlsx",
+  "source_sha256": "e308250bea01700b15c1051cb58470107fe4c7cf7371d4edbc18a3b4e7136acd",
+  "source_bytes": 46556,
+  "retrieved_at_utc": "2026-11-06T06:48:10Z",
+  "output_path": "data/external/bot_policy_rate_history.csv",
+  "output_sha256": "ffcbbb9aba0fba787dccc30e4bc468db3fef40ba700064efd7be600f4e39250d",
+  "rows": 207,
+  "first_announcement": "2000-05-23",
+  "last_announcement": "2026-10-28",
+  "latest_policy_rate": 1.0,
+  "point_in_time": true,
+  "note": "Announced decisions; level from the announcement date. 14-day repo rate until 2007-01-16, 1-day repo after."
+}

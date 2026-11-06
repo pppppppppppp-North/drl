@@ -1,0 +1,616 @@
+{
+  "accepted_result": {
+    "determinism_steps": 549,
+    "deterministic": true,
+    "feature_sha256": "b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc",
+    "selected_num_envs": 1,
+    "source_slurm_job_id": "3530",
+    "vector_trials": 15
+  },
+  "compatibility": {
+    "allowed_config_differences": [
+      "project.name"
+    ],
+    "combined_job_caveat": "Accepted job 3530 executed both calibration protocols in one allocation; the vector benchmark used its declared 18-CPU/64-GiB envelope and the determinism protocol used no resource-sensitive selection.",
+    "normalized_config_sha256": "7a413f1f023b8ca942092f516bbc6e2463336b02cc39b89c55e67708bfba92e7",
+    "observed_config_differences": [
+      "project.name"
+    ],
+    "observed_data": {
+      "bytes": 2183530,
+      "feature_dates": 580,
+      "feature_rows": 2900,
+      "feature_tickers": 5,
+      "path": "data/processed/features_real_ohlcv_market.csv",
+      "sha256": "b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc",
+      "source": "yahoo_ohlcv",
+      "synthetic": false,
+      "training_split": "train"
+    },
+    "runtime": {
+      "hostname": "bistka-master",
+      "project_root": "/lustrefs/project/25sfcs03/drl_thai_stock",
+      "python_executable": "/lustrefs/project/25sfcs03/envs/drl_env/bin/python3.12",
+      "versions": {
+        "gymnasium": "1.2.3",
+        "numpy": "2.4.6",
+        "pandas": "3.0.3",
+        "platform": "Linux-5.14.0-570.49.1.el9_6.x86_64-x86_64-with-glibc2.34",
+        "python": "3.12.13",
+        "stable_baselines3": "2.8.0",
+        "torch": "2.10.0"
+      }
+    },
+    "scientific_inputs": [
+      {
+        "bytes": 2183530,
+        "path": "data/processed/features_real_ohlcv_market.csv",
+        "sha256": "b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc",
+        "stages": [
+          "determinism",
+          "vector_benchmark"
+        ]
+      },
+      {
+        "bytes": 306,
+        "path": "environment.yml",
+        "sha256": "4bf28e28107d9b1a3f57baaaf097eeb063b797218a241de65fb4c0b4d6436ac4",
+        "stages": [
+          "determinism",
+          "vector_benchmark"
+        ]
+      },
+      {
+        "bytes": 8945,
+        "path": "reports/data_quality_market/market_data_readiness.json",
+        "sha256": "d6be2b82c164dd2f3844381ef9db8518a56c71e1b8ab5e9080e9c389908e8a4d",
+        "stages": [
+          "determinism",
+          "vector_benchmark"
+        ]
+      },
+      {
+        "bytes": 65,
+        "path": "reports/data_quality_market/market_data_readiness.sha256",
+        "sha256": "d5b4f1b987d238738c1c4b16f5968a2fc7c16b8674e099b641069264089bae49",
+        "stages": [
+          "determinism",
+          "vector_benchmark"
+        ]
+      },
+      {
+        "bytes": 173,
+        "path": "requirements.txt",
+        "sha256": "83741566c1d8e03f03430c28bd1881832ba43101deaf4f8d0cbfee57f9175ef3",
+        "stages": [
+          "determinism",
+          "vector_benchmark"
+        ]
+      },
+      {
+        "bytes": 16088,
+        "path": "scripts/benchmark_vectorized_training.py",
+        "sha256": "0497ccd4da64d442d076c4d79a67677a808400c3414095bf35f11a9f530bf7da",
+        "stages": [
+          "vector_benchmark"
+        ]
+      },
+      {
+        "bytes": 9502,
+        "path": "scripts/verify_determinism.py",
+        "sha256": "8344ab10284ece8f3f59ad934b46cf0f7c6a3d5912313299f26d20502390c5e8",
+        "stages": [
+          "determinism"
+        ]
+      },
+      {
+        "bytes": 817,
+        "path": "slurm/benchmark_vectorized_training.sbatch",
+        "sha256": "0a108086f21ee6c58802d9e1f60521329ed1a9a1ad6b52391c3620ed3a04c88c",
+        "stages": [
+          "vector_benchmark"
+        ]
+      },
+      {
+        "bytes": 674,
+        "path": "slurm/verify_determinism.sbatch",
+        "sha256": "d79e279d22ea9d9fe5720a52560ce790cdc67640c65bfe1d0f38b3e94c3d3244",
+        "stages": [
+          "determinism"
+        ]
+      },
+      {
+        "bytes": 15413,
+        "path": "src/campaigns/calibration.py",
+        "sha256": "8e66b424df5b4d8e2283bed8551edc0c79eba667952410f97f6f8cf58469d7f0",
+        "stages": [
+          "determinism",
+          "vector_benchmark"
+        ]
+      },
+      {
+        "bytes": 6912,
+        "path": "src/data/splits.py",
+        "sha256": "52dfba142b8966b4b2ab9d52647fa995b33b796158f3730ec6221b9c6997d059",
+        "stages": [
+          "determinism",
+          "vector_benchmark"
+        ]
+      },
+      {
+        "bytes": 9075,
+        "path": "src/envs/trading_env.py",
+        "sha256": "6b44ae825440794834d70ab2732f7d62ce0367a38533c0c3cacc559ba8348bcb",
+        "stages": [
+          "determinism",
+          "vector_benchmark"
+        ]
+      },
+      {
+        "bytes": 17256,
+        "path": "src/train.py",
+        "sha256": "036c13455311b1a1bbd01e96197774d388346e1628f1f3d2ca01598128ae7f53",
+        "stages": [
+          "determinism",
+          "vector_benchmark"
+        ]
+      },
+      {
+        "bytes": 1538,
+        "path": "src/utils/config.py",
+        "sha256": "f219974a00a2b4575f5a3defb8759de84a798914a820c0da515333d0ed1306be",
+        "stages": [
+          "determinism",
+          "vector_benchmark"
+        ]
+      }
+    ]
+  },
+  "created_at_utc": "2026-07-16T14:51:18.801824+00:00",
+  "decision": "migrated_without_rerun",
+  "evidence_kind": "v1_calibration_evidence_import",
+  "schema_version": 1,
+  "source": {
+    "campaign_dir": "campaigns/large_scale_thai_drl",
+    "campaign_id": "large_scale_thai_drl",
+    "config": {
+      "bytes": 1700,
+      "path": "config/large_scale_screening.yaml",
+      "project_name": "drl_thai_stock_large_scale_screening",
+      "resolved_sha256": "432bbfc0aa39b2d110f6b237ce2c3e3aeea5a8e088a4bd90a8f71ec638d6c9d6",
+      "sha256": "e87738df7ddf844654ac27b83a92efd988ddc3082da0dfa6209785c1d81137fd"
+    },
+    "deployment": {
+      "manifest": {
+        "bytes": 29991,
+        "path": "campaigns/large_scale_thai_drl/deployment/bistka_deployment_manifest.json",
+        "release_id": "6d66448341c780c5b90a2d2d54cf2b4d4bebd972a18885aad727a05ff8236aaa",
+        "sha256": "dbe48d797e7c2767ace11aff2c46cda072674465e0dcba0aa34915616f7e4856",
+        "target_project_root": "/lustrefs/project/25sfcs03/drl_thai_stock"
+      },
+      "preflight": {
+        "bytes": 28740,
+        "hostname": "bistka-master",
+        "packages": {
+          "gymnasium": "1.2.3",
+          "numpy": "2.4.6",
+          "pandas": "3.0.3",
+          "pyyaml": "6.0.3",
+          "stable-baselines3": "2.8.0",
+          "torch": "2.10.0"
+        },
+        "path": "reports/bistka_calibration_preflight.json",
+        "platform": "Linux-5.14.0-570.49.1.el9_6.x86_64-x86_64-with-glibc2.34",
+        "project_root": "/lustrefs/project/25sfcs03/drl_thai_stock",
+        "python_executable": "/lustrefs/project/25sfcs03/envs/drl_env/bin/python3.12",
+        "python_version": "3.12.13",
+        "release_id": "6d66448341c780c5b90a2d2d54cf2b4d4bebd972a18885aad727a05ff8236aaa",
+        "sha256": "6c3b217f1c55240e85eddeb8d8cb1e659c89d8a7632004fc95a3294c83142aa3"
+      }
+    },
+    "stages": {
+      "determinism": {
+        "attempt": {
+          "attempt_id": "determinism_20260715T161221Z_1427b73d",
+          "attempt_sha256": "3c3a1af37acdb964d96442892a724e7f9dc7e51e30743bcdf5453dc84018c956",
+          "immutable_path": "campaigns/large_scale_thai_drl/attempts/determinism_20260715T161221Z_1427b73d.json",
+          "immutable_sha256": "c065d6ae687af5a28a267f30993c06b58e24153d5656323510c1246ce8dc17b3",
+          "latest_path": "campaigns/large_scale_thai_drl/attempts/determinism_latest.json",
+          "latest_sha256": "c065d6ae687af5a28a267f30993c06b58e24153d5656323510c1246ce8dc17b3",
+          "rendered_at_utc": "2026-07-15T16:12:21.052831+00:00",
+          "schema_version": 1
+        },
+        "gate": {
+          "evidence_files": [
+            "campaigns/large_scale_thai_drl/attempts/determinism_20260715T161221Z_1427b73d.json",
+            "campaigns/large_scale_thai_drl/attempts/determinism_latest.json",
+            "campaigns/large_scale_thai_drl/deployment/bistka_deployment_manifest.json",
+            "config/large_scale_screening.yaml",
+            "config/research_campaign.yaml",
+            "data/processed/features_real_ohlcv_market.csv",
+            "environment.yml",
+            "reports/bistka_calibration_preflight.json",
+            "reports/data_quality_market/market_data_readiness.json",
+            "reports/data_quality_market/market_data_readiness.sha256",
+            "reports/determinism_3530.json",
+            "reports/determinism_3530.json.receipt.json",
+            "requirements.txt",
+            "scripts/verify_determinism.py",
+            "slurm/verify_determinism.sbatch",
+            "src/campaigns/calibration.py",
+            "src/data/splits.py",
+            "src/envs/trading_env.py",
+            "src/train.py",
+            "src/utils/config.py"
+          ],
+          "evidence_fingerprint": "256908a60c6a2baa40097d552dcda6702ec11cda679583003ae0ec9083193acc",
+          "gate_report": {
+            "bytes": 1720,
+            "path": "campaigns/large_scale_thai_drl/stages/determinism/gate_report.json",
+            "sha256": "2917682f3ead602c71fd1583c65b37b98fe8e546b76e7c69765e81ba6a8c1c10"
+          },
+          "stage_id": "determinism",
+          "success_marker": {
+            "bytes": 209,
+            "path": "campaigns/large_scale_thai_drl/stages/determinism/_SUCCESS.json",
+            "sha256": "abc15720f3ed71d8362e8b8cfecefe8048a1b66cfbc3b457dc0ff423a4b3da5d"
+          }
+        },
+        "outputs": {
+          "determinism_result": {
+            "bytes": 3741,
+            "path": "reports/determinism_3530.json",
+            "sha256": "2ef43965e451683df3c505b2f65acf156c1c204c52e5c99b1b7566a7e868d643"
+          }
+        },
+        "receipt": {
+          "bytes": 4472,
+          "calibration_kind": "fixed_seed_determinism",
+          "hostname": "bistka-master",
+          "parameters": {
+            "seed": 42,
+            "synthetic": false
+          },
+          "path": "reports/determinism_3530.json.receipt.json",
+          "result": {
+            "code_sha256": "4e006abbfdd22aead0c7de54f5cce67749a93f6f5ebe3094c5ce8ee85e12b433",
+            "config_sha256": "432bbfc0aa39b2d110f6b237ce2c3e3aeea5a8e088a4bd90a8f71ec638d6c9d6",
+            "data_sha256": "b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc",
+            "deterministic": true,
+            "trajectory_sha256": "2f4855bbb4b3a40beb9fad7461845c7df9007244b3fdbfe022824bc5d766c971"
+          },
+          "runtime": {
+            "gymnasium": "1.2.3",
+            "implementation": "CPython",
+            "numpy": "2.4.6",
+            "pandas": "3.0.3",
+            "platform": "Linux-5.14.0-570.49.1.el9_6.x86_64-x86_64-with-glibc2.34",
+            "python": "3.12.13",
+            "stable_baselines3": "2.8.0",
+            "torch": "2.10.0"
+          },
+          "sha256": "d4cd3dbe7fa379a652ea9e5eef100a7f752c53100680b31047ec2fee5d954b9e",
+          "slurm_job_id": "3530"
+        },
+        "result": {
+          "deterministic": true,
+          "independent_subprocess_runs": 2,
+          "steps": 549,
+          "trajectory_sha256": "2f4855bbb4b3a40beb9fad7461845c7df9007244b3fdbfe022824bc5d766c971"
+        },
+        "stage_id": "determinism"
+      },
+      "vector_benchmark": {
+        "attempt": {
+          "attempt_id": "vector_benchmark_20260715T161221Z_8ac0554b",
+          "attempt_sha256": "1e3fecdf3e5eeb590f923ce0895b9cffd75195e0298bcd987fcf5025f0b64dd1",
+          "immutable_path": "campaigns/large_scale_thai_drl/attempts/vector_benchmark_20260715T161221Z_8ac0554b.json",
+          "immutable_sha256": "b723402a0015f3ef3c78bdc6575eb02d0095d275d5e6926cb576fc863044f7dc",
+          "latest_path": "campaigns/large_scale_thai_drl/attempts/vector_benchmark_latest.json",
+          "latest_sha256": "b723402a0015f3ef3c78bdc6575eb02d0095d275d5e6926cb576fc863044f7dc",
+          "rendered_at_utc": "2026-07-15T16:12:21.472790+00:00",
+          "schema_version": 1
+        },
+        "gate": {
+          "evidence_files": [
+            "campaigns/large_scale_thai_drl/attempts/vector_benchmark_20260715T161221Z_8ac0554b.json",
+            "campaigns/large_scale_thai_drl/attempts/vector_benchmark_latest.json",
+            "campaigns/large_scale_thai_drl/deployment/bistka_deployment_manifest.json",
+            "config/large_scale_screening.yaml",
+            "config/research_campaign.yaml",
+            "data/processed/features_real_ohlcv_market.csv",
+            "environment.yml",
+            "reports/bistka_calibration_preflight.json",
+            "reports/data_quality_market/market_data_readiness.json",
+            "reports/data_quality_market/market_data_readiness.sha256",
+            "reports/vectorized_training_benchmark_3530.csv",
+            "reports/vectorized_training_benchmark_3530.csv.receipt.json",
+            "reports/vectorized_training_benchmark_3530.json",
+            "requirements.txt",
+            "scripts/benchmark_vectorized_training.py",
+            "slurm/benchmark_vectorized_training.sbatch",
+            "src/campaigns/calibration.py",
+            "src/data/splits.py",
+            "src/envs/trading_env.py",
+            "src/train.py",
+            "src/utils/config.py"
+          ],
+          "evidence_fingerprint": "a3f9b3b3319eb2e30f08ce82e399341033c635bd0a6a631a4c561123a8b8f09b",
+          "gate_report": {
+            "bytes": 2081,
+            "path": "campaigns/large_scale_thai_drl/stages/vector_benchmark/gate_report.json",
+            "sha256": "653c6a002ac291e712079ed3c34fddacb82b9e8ca5c3002cd405f65b51f83cc3"
+          },
+          "stage_id": "vector_benchmark",
+          "success_marker": {
+            "bytes": 214,
+            "path": "campaigns/large_scale_thai_drl/stages/vector_benchmark/_SUCCESS.json",
+            "sha256": "77d6c1b1c6a654ac5af59696d7c27a0732409bde0bd11d141a766aee213609c2"
+          }
+        },
+        "outputs": {
+          "benchmark_csv": {
+            "bytes": 7694,
+            "path": "reports/vectorized_training_benchmark_3530.csv",
+            "sha256": "eb94c855e95d18d80b73294f74ed4538188bfb2327630b9413edc5326f02f4b7"
+          },
+          "benchmark_metadata": {
+            "bytes": 3762,
+            "path": "reports/vectorized_training_benchmark_3530.json",
+            "sha256": "2cbd60203c83175b02bb9ff53536c5058a917f25103be86d1cfa79836830fa12"
+          }
+        },
+        "receipt": {
+          "bytes": 4878,
+          "calibration_kind": "vectorized_training_benchmark",
+          "hostname": "bistka-master",
+          "parameters": {
+            "backend": "subproc",
+            "env_counts": [
+              1,
+              2,
+              4,
+              8,
+              16
+            ],
+            "repeats": 3,
+            "seed": 42,
+            "synthetic": false,
+            "timesteps": 4096
+          },
+          "path": "reports/vectorized_training_benchmark_3530.csv.receipt.json",
+          "result": {
+            "code_sha256": "37f7ee58ebc0f4d3022076c84862d58952aeb09b2348eead294e38175bdf44b1",
+            "config_sha256": "432bbfc0aa39b2d110f6b237ce2c3e3aeea5a8e088a4bd90a8f71ec638d6c9d6",
+            "data_sha256": "b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc",
+            "selected_num_envs": 1,
+            "trial_count": 15
+          },
+          "runtime": {
+            "gymnasium": "1.2.3",
+            "implementation": "CPython",
+            "numpy": "2.4.6",
+            "pandas": "3.0.3",
+            "platform": "Linux-5.14.0-570.49.1.el9_6.x86_64-x86_64-with-glibc2.34",
+            "python": "3.12.13",
+            "stable_baselines3": "2.8.0",
+            "torch": "2.10.0"
+          },
+          "sha256": "40e043af611629b788d4aa97b79f529472f74fd3a7ae4bf68c4f4ed46db203ae",
+          "slurm_job_id": "3530"
+        },
+        "result": {
+          "selected_num_envs": 1,
+          "selection_fraction_of_max": 0.95,
+          "selection_rule": "smallest num_envs with median throughput at least 95% of maximum median throughput",
+          "summary_by_env_count": [
+            {
+              "max_peak_rss_mib": 602.484375,
+              "max_samples_per_second": 368.45894543462407,
+              "median_samples_per_second": 347.9200209822191,
+              "min_samples_per_second": 249.38784382753937,
+              "num_envs": 1,
+              "repeats": 3
+            },
+            {
+              "max_peak_rss_mib": 1641.06640625,
+              "max_samples_per_second": 277.7437495107818,
+              "median_samples_per_second": 265.90067846994765,
+              "min_samples_per_second": 235.58967576575876,
+              "num_envs": 2,
+              "repeats": 3
+            },
+            {
+              "max_peak_rss_mib": 2661.28125,
+              "max_samples_per_second": 217.5095602295107,
+              "median_samples_per_second": 217.0772968099264,
+              "min_samples_per_second": 216.53261326227806,
+              "num_envs": 4,
+              "repeats": 3
+            },
+            {
+              "max_peak_rss_mib": 4690.12890625,
+              "max_samples_per_second": 143.5920147572585,
+              "median_samples_per_second": 143.41706018777109,
+              "min_samples_per_second": 143.22795400440432,
+              "num_envs": 8,
+              "repeats": 3
+            },
+            {
+              "max_peak_rss_mib": 8768.6171875,
+              "max_samples_per_second": 83.68789290379087,
+              "median_samples_per_second": 83.61038728578342,
+              "min_samples_per_second": 83.13750573457683,
+              "num_envs": 16,
+              "repeats": 3
+            }
+          ],
+          "throughput_statistic": "median_samples_per_second",
+          "trial_count": 15
+        },
+        "stage_id": "vector_benchmark"
+      }
+    }
+  },
+  "source_snapshot": {
+    "bytes": 4204,
+    "path": "campaigns/large_scale_thai_drl/snapshots/v1_accepted_20260715.json",
+    "sha256": "883bebea341c9173acb60a52e19d9a88fb68ca842124be2c4e67190e02cf1c7d",
+    "sidecar": {
+      "bytes": 65,
+      "path": "campaigns/large_scale_thai_drl/snapshots/v1_accepted_20260715.json.sha256",
+      "sha256": "4173c2228b2b73d2c011d9762977c8290c846cc34f6983db188df9e9cddc2620"
+    },
+    "snapshot_id": "large_scale_thai_drl_v1_accepted_20260715",
+    "verification": {
+      "artifact_count": 20,
+      "artifacts": [
+        {
+          "bytes": 59195,
+          "path": "campaigns/large_scale_thai_drl/state.json",
+          "sha256": "4d724f6deeca346004e6f1a8a0ae34bd9460d9a4ea1ff053db0826aa16ac4482"
+        },
+        {
+          "bytes": 10707,
+          "path": "campaigns/large_scale_thai_drl/reports/campaign_status.md",
+          "sha256": "dfb7384486e22e3b44fd32a86afc4f9419d15b3a8a449ca284ccb435ec111a8b"
+        },
+        {
+          "bytes": 29991,
+          "path": "campaigns/large_scale_thai_drl/deployment/bistka_deployment_manifest.json",
+          "sha256": "dbe48d797e7c2767ace11aff2c46cda072674465e0dcba0aa34915616f7e4856"
+        },
+        {
+          "bytes": 1546050,
+          "path": "campaigns/large_scale_thai_drl/deployment/bistka_release.tar.gz",
+          "sha256": "0bb862b432150dd33f2702ce543669f403feb5ddf01e8defd323846afab726a5"
+        },
+        {
+          "bytes": 2602,
+          "path": "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay_manifest.json",
+          "sha256": "3991f603f9f91ef6b0da9299bff8c4adf2fc636698ef558bc89ca065c75b7bf3"
+        },
+        {
+          "bytes": 636057,
+          "path": "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay.tar.gz",
+          "sha256": "e0890e203a2153cb151ecca1af7612604de35d45901e70338e7901308288cfef"
+        },
+        {
+          "bytes": 1022,
+          "path": "campaigns/large_scale_thai_drl/deployment/bistka_screening_runtime_profile.yaml",
+          "sha256": "6c6cf91bcf07672751fb028fe3365c9f912c1e813981f11a45ee788c99b572be"
+        },
+        {
+          "bytes": 1537,
+          "path": "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml",
+          "sha256": "8d66ba4e232900f9c72773afd1b4480ae11d88e7ae378498358564f313dc7158"
+        },
+        {
+          "bytes": 65,
+          "path": "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml.sha256",
+          "sha256": "ec0a32b39720ee7728fcb6b48d9caf52cde11e5fef14f84196ee751c363fc4b2"
+        },
+        {
+          "bytes": 2016,
+          "path": "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json",
+          "sha256": "e7b238be37704100c0549c3021e041a85800e5365029fd98513126905530a459"
+        },
+        {
+          "bytes": 65,
+          "path": "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json.sha256",
+          "sha256": "5d624b3e4e728303f7ba022504b74d995c4da88f155ee2be84102e3855af4167"
+        },
+        {
+          "bytes": 28740,
+          "path": "reports/bistka_calibration_preflight.json",
+          "sha256": "6c3b217f1c55240e85eddeb8d8cb1e659c89d8a7632004fc95a3294c83142aa3"
+        },
+        {
+          "bytes": 5273,
+          "path": "reports/bistka_screening_preflight.json",
+          "sha256": "36ac938a076e398697f9091cd0e5b1ef45d8b8f9affadba80e1d100b22972e20"
+        },
+        {
+          "bytes": 3741,
+          "path": "reports/determinism_3530.json",
+          "sha256": "2ef43965e451683df3c505b2f65acf156c1c204c52e5c99b1b7566a7e868d643"
+        },
+        {
+          "bytes": 4472,
+          "path": "reports/determinism_3530.json.receipt.json",
+          "sha256": "d4cd3dbe7fa379a652ea9e5eef100a7f752c53100680b31047ec2fee5d954b9e"
+        },
+        {
+          "bytes": 7694,
+          "path": "reports/vectorized_training_benchmark_3530.csv",
+          "sha256": "eb94c855e95d18d80b73294f74ed4538188bfb2327630b9413edc5326f02f4b7"
+        },
+        {
+          "bytes": 3762,
+          "path": "reports/vectorized_training_benchmark_3530.json",
+          "sha256": "2cbd60203c83175b02bb9ff53536c5058a917f25103be86d1cfa79836830fa12"
+        },
+        {
+          "bytes": 4878,
+          "path": "reports/vectorized_training_benchmark_3530.csv.receipt.json",
+          "sha256": "40e043af611629b788d4aa97b79f529472f74fd3a7ae4bf68c4f4ed46db203ae"
+        },
+        {
+          "bytes": 19383,
+          "path": "reports/bistka_calibration_execution_20260715.md",
+          "sha256": "6d5f17a2c1f51ba37a41ec5bac1b555b93cf5607071380b46b9bb07a2beb63be"
+        },
+        {
+          "bytes": 117181,
+          "path": "reports/figures/vectorized_training_calibration_3530.png",
+          "sha256": "dcd52bdfecd6c74139bc3f3c4cc62e7d3a24f699f37760d6c22263e71313ed3f"
+        }
+      ],
+      "snapshot_id": "large_scale_thai_drl_v1_accepted_20260715",
+      "snapshot_sha256": "883bebea341c9173acb60a52e19d9a88fb68ca842124be2c4e67190e02cf1c7d",
+      "status": "verified",
+      "total_bytes": 2484431
+    }
+  },
+  "status": "accepted",
+  "submitted_hpc_jobs": 0,
+  "target": {
+    "campaign_dir": "campaigns/large_scale_thai_drl_v2",
+    "campaign_id": "large_scale_thai_drl_v2",
+    "config": {
+      "bytes": 231,
+      "path": "config/large_scale_screening_v2.yaml",
+      "project_name": "drl_thai_stock_large_scale_screening_v2",
+      "resolved_sha256": "b0c15940b53c55ba255171731ce69fff1b3ecedd3edb05b715cc4228eda8bcd0",
+      "sha256": "3284f59a23ae0313fc28515027902024450873592890bbbd3eb5e34ce1a3cdd3"
+    },
+    "deployment": {
+      "manifest": {
+        "bytes": 36185,
+        "path": "campaigns/large_scale_thai_drl_v2/deployment/bistka_deployment_v2_manifest.json",
+        "release_id": "68f6cbaf18c193ce7ff8e1d8363f35458bdc026742150cda634b8d9259b161be",
+        "sha256": "c0e2747c82558322f5b0ff60395662f57e181eed1f63b6382b44cdd25ad0e311",
+        "target_project_root": "/lustrefs/project/25sfcs03/drl_thai_stock"
+      },
+      "preflight": {
+        "bytes": 34107,
+        "hostname": "bistka-master",
+        "packages": {
+          "gymnasium": "1.2.3",
+          "numpy": "2.4.6",
+          "pandas": "3.0.3",
+          "pyyaml": "6.0.3",
+          "stable-baselines3": "2.8.0",
+          "torch": "2.10.0"
+        },
+        "path": "reports/bistka_calibration_v2_preflight.json",
+        "platform": "Linux-5.14.0-570.49.1.el9_6.x86_64-x86_64-with-glibc2.34",
+        "project_root": "/lustrefs/project/25sfcs03/drl_thai_stock",
+        "python_executable": "/lustrefs/project/25sfcs03/envs/drl_env/bin/python3.12",
+        "python_version": "3.12.13",
+        "release_id": "68f6cbaf18c193ce7ff8e1d8363f35458bdc026742150cda634b8d9259b161be",
+        "sha256": "435ae330689c6a83d1b05d27795670fe77ad3461aa800e55bba3831a75fa16a1"
+      }
+    }
+  }
+}

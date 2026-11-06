@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "record_kind": "bistka_slurm_failure_incident",
+  "capture_status": "complete",
+  "captured_at_utc": "2026-07-16T16:27:16Z",
+  "campaign_id": "large_scale_thai_drl_v2",
+  "stage_id": "screening_smoke",
+  "job_id": "3542",
+  "attempt_id": "screening_smoke_20260716T160537Z_132d2047",
+  "attempt_sha256": "70fddb26a0d3d21e9fdade74291352905f093a2721c34f474eed3bca52bda944",
+  "attempt_file_sha256": "23d0804d47425bba465ade42270ee1b21aca751ee28d9414cd63c1ad417d6db7",
+  "rendered_command_sha256": "7ae0f376cd902ed4f3f6fe8714d13ee3d805cd44667f419c3eaaf9a7db0526db",
+  "deployment_release_id": "ef89ff5a738c5b25460ae40ad7789239134d761ce511a36665f857e01e3d74b4",
+  "deployment_manifest_sha256": "d9a1fd96af46cfe022d12b38d2de97642296a4a1f66928bbbbf3669af4dcfd86",
+  "preflight_sha256": "99ff875694ff47b6a02541718b6af93699de1f789ef35effaefe24d2e9655951",
+  "locked_config_sha256": "d7b6ab71ede33ae4c4106fded3078b9a4eb3c56af345e67960061feea1897c1e",
+  "feature_sha256": "b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc",
+  "job_script_sha256": "9f9a370cc2d9574a1bddbc49c4a14c73d075c78420d422b6d347bfd22fec9f52",
+  "remote": {
+    "endpoint": "s00658@10.205.100.101",
+    "project_root": "/lustrefs/project/25sfcs03/drl_thai_stock",
+    "run_dir": "/lustrefs/project/25sfcs03/drl_thai_stock/results/screening_smoke_3542",
+    "stdout": "/lustrefs/project/25sfcs03/drl_thai_stock/logs/screening_smoke_3542.out",
+    "stderr": "/lustrefs/project/25sfcs03/drl_thai_stock/logs/screening_smoke_3542.err"
+  },
+  "expected_scheduler": {
+    "job_name": "drl_screen_smoke",
+    "account": "25sfcs03",
+    "partition": "compute-devel",
+    "alloc_cpus": 2,
+    "requested_memory": "8G",
+    "work_dir": "/lustrefs/project/25sfcs03/drl_thai_stock"
+  },
+  "observed_scheduler": {
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed_seconds": 20,
+    "alloc_cpus": 2,
+    "requested_memory": "8G",
+    "total_cpu": "00:09.632",
+    "node": "bistka-master"
+  },
+  "job_terminal_success": false,
+  "job_outcome": "failed",
+  "normal_evidence_eligible": false,
+  "campaign_gate_eligible": false,
+  "scientific_claim_eligible": false,
+  "retry_reusable": false,
+  "quarantined": true,
+  "run_evidence": {
+    "run_dir_state": "nonempty",
+    "manifest_count": 1,
+    "manifest_status_counts": {
+      "complete": 0,
+      "running": 0,
+      "failed": 1
+    },
+    "summary_present": false,
+    "summary_sidecar_present": false,
+    "completed_algorithms": [],
+    "failed_algorithm": "ppo",
+    "failed_at_timesteps": 2048,
+    "partial_checkpoint_apparent_bytes": 62719
+  },
+  "binding_assessment": {
+    "status": "matched",
+    "campaign_id": true,
+    "stage_id": true,
+    "attempt_id": true,
+    "attempt_sha256": true,
+    "deployment_release_id": true,
+    "preflight_sha256": true,
+    "slurm_job_id": true,
+    "issues": []
+  },
+  "diagnosis": {
+    "status": "confirmed",
+    "exception": "OSError: [Errno 122] Disk quota exceeded",
+    "fail_path": "Stable-Baselines3 PPO CheckpointCallback -> model.save -> zipfile close",
+    "root_cause": "New project outputs inherited Unix group s00658. That group's Lustre soft quota grace had expired even though project-ID quota 25110303 was healthy.",
+    "personal_group_quota_before_kib": {
+      "used": 35546762,
+      "soft": 31457280,
+      "hard": 52428800,
+      "grace": "expired"
+    },
+    "project_id_quota_before_kib": {
+      "used": 38073146,
+      "soft": 262144000,
+      "hard": 314572800,
+      "grace": "none"
+    }
+  },
+  "recovery": {
+    "scheduler_jobs_submitted_during_this_pass": 3,
+    "mamba_cache_before_bytes": 9204777472,
+    "mamba_cache_after_bytes": 58368,
+    "historical_archive_files_relocated": 12,
+    "historical_archive_paths_preserved_by_symlink": true,
+    "historical_archive_hashes_verified": true,
+    "personal_group_quota_after_kib": {
+      "used": 24799894,
+      "soft": 31457280,
+      "hard": 52428800,
+      "grace": "none",
+      "soft_headroom": 6657386
+    },
+    "project_id_quota_after_kib": {
+      "used": 38406065,
+      "soft": 262144000,
+      "hard": 314572800,
+      "grace": "none"
+    },
+    "temporary_project_write_probe": {
+      "bytes": 67108864,
+      "fsynced": true,
+      "removed_after_verification": true
+    }
+  },
+  "gate_exclusion": {
+    "normal_run_glob": "results/screening_smoke_*",
+    "incident_path": "campaigns/large_scale_thai_drl_v2/incidents/screening_smoke_3542",
+    "reason": "The failed job is retained outside the normal scientific evidence namespace so the stage remains eligible for a new immutable attempt."
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "role": "incident_documentation",
+      "bytes": 699,
+      "sha256": "be7a514ce30df079f67eff5f42026ee2345b65c8dd5ed7ffea7b38983f8e39fc"
+    },
+    {
+      "path": "logs/screening_smoke_3542.err",
+      "role": "slurm_stderr",
+      "bytes": 7059,
+      "sha256": "778d2f51b77f4c45cd06f15fb835140242bc42e3209aecefcf25562a805ff98e"
+    },
+    {
+      "path": "logs/screening_smoke_3542.out",
+      "role": "slurm_stdout",
+      "bytes": 5577,
+      "sha256": "040af26d4303e9fbe7eac944d766961a08397d747e399f5c64eae703d406d392"
+    },
+    {
+      "path": "reports/slurm_accounting_screening_smoke_3542.txt",
+      "role": "slurm_accounting",
+      "bytes": 515,
+      "sha256": "92fd9abd67006c86ee24e8bdf3e383a110453e9a34fb3d2f0cc221518300cf5e"
+    },
+    {
+      "path": "results/screening_smoke_3542/algorithm_ppo/checkpoints/ppo/ppo_checkpoint_2048_steps.zip",
+      "role": "partial_checkpoint",
+      "bytes": 62719,
+      "sha256": "eefcb17c806e5c8d088aa563ec814bba50bc3f404fb77dfb3785b0b5aeebb5e2"
+    },
+    {
+      "path": "results/screening_smoke_3542/algorithm_ppo/experiment_manifest.json",
+      "role": "failed_experiment_manifest",
+      "bytes": 2955,
+      "sha256": "1d57e49606b1cf2fbc24bebe09ac5ffc359b61423d425f7f68f71d7999b1c716"
+    },
+    {
+      "path": "results/screening_smoke_3542/algorithm_ppo/resolved_config.json",
+      "role": "resolved_runtime_config",
+      "bytes": 2219,
+      "sha256": "3b095df3407527e486d04575b91ab6831e5eeeefff0ac4c0c1db01b3086c45a0"
+    },
+    {
+      "path": "results/screening_smoke_3542/algorithm_ppo/split_summary.csv",
+      "role": "observed_data_split_summary",
+      "bytes": 171,
+      "sha256": "3f1b57f8e678985ee14340ff7cf25ac58f58af783002ca6e479600feff36206f"
+    },
+    {
+      "path": "results/screening_smoke_3542/algorithm_ppo/tensorboard/PPO_1/events.out.tfevents.1784217965.bistka-master.938709.0",
+      "role": "partial_tensorboard_events",
+      "bytes": 4369,
+      "sha256": "181e408e263ec384cd3516e3ab031bd738e7ceee2a4a8bc278a6cac9c93aadbd"
+    }
+  ]
+}

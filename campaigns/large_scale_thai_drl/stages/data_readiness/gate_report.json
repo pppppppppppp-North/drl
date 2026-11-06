@@ -1,0 +1,64 @@
+{
+  "stage_id": "data_readiness",
+  "passed": true,
+  "base_dir": ".",
+  "run_dir": null,
+  "requirements": [
+    {
+      "name": "real OHLCV prices",
+      "passed": true,
+      "matches": [
+        "data/raw/prices_real_ohlcv.csv"
+      ],
+      "issues": []
+    },
+    {
+      "name": "SET index prices",
+      "passed": true,
+      "matches": [
+        "data/raw/prices_market_indices.csv"
+      ],
+      "issues": []
+    },
+    {
+      "name": "processed market-context features",
+      "passed": true,
+      "matches": [
+        "data/processed/features_real_ohlcv_market.csv"
+      ],
+      "issues": []
+    },
+    {
+      "name": "strict observed-market readiness receipt",
+      "passed": true,
+      "matches": [
+        "reports/data_quality_market/market_data_readiness.json"
+      ],
+      "issues": []
+    },
+    {
+      "name": "readiness receipt SHA-256 sidecar",
+      "passed": true,
+      "matches": [
+        "reports/data_quality_market/market_data_readiness.sha256"
+      ],
+      "issues": []
+    }
+  ],
+  "manifest_expected": 0,
+  "manifest_found": 0,
+  "manifest_complete": 0,
+  "manifest_running": 0,
+  "manifest_failed": 0,
+  "issues": [],
+  "evidence_files": [
+    "data/data_manifest.csv",
+    "data/processed/features_real_ohlcv_market.csv",
+    "data/raw/prices_market_indices.csv",
+    "data/raw/prices_real_ohlcv.csv",
+    "reports/data_quality_market/market_data_readiness.json",
+    "reports/data_quality_market/market_data_readiness.sha256"
+  ],
+  "evidence_fingerprint": "b964fdf9ddbeaa24cbc4fb2a05e68e5b678b1b056a054b1cfebe440191ffa76d",
+  "evaluated_at": "2026-07-15T14:49:27.790297+00:00"
+}

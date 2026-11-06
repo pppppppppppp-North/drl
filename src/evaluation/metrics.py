@@ -25,6 +25,16 @@ def equity_metrics(equity_curve: pd.DataFrame, periods_per_year: int = 252) -> d
     tail_returns = returns[returns <= value_at_risk]
     conditional_value_at_risk = float(tail_returns.mean()) if not tail_returns.empty else 0.0
     turnover = equity_curve["turnover"].astype(float) if "turnover" in equity_curve else pd.Series(0.0, index=equity_curve.index)
+    transaction_cost_paid = (
+        equity_curve["transaction_cost_paid"].astype(float).fillna(0.0)
+        if "transaction_cost_paid" in equity_curve
+        else pd.Series(0.0, index=equity_curve.index)
+    )
+    slippage_paid = (
+        equity_curve["slippage_paid"].astype(float).fillna(0.0)
+        if "slippage_paid" in equity_curve
+        else pd.Series(0.0, index=equity_curve.index)
+    )
     cash_weight = (
         equity_curve["cash_weight"].astype(float)
         if "cash_weight" in equity_curve
@@ -46,6 +56,8 @@ def equity_metrics(equity_curve: pd.DataFrame, periods_per_year: int = 252) -> d
         "conditional_value_at_risk_95": conditional_value_at_risk,
         "avg_turnover": float(turnover.mean()),
         "total_turnover": float(turnover.sum()),
+        "total_transaction_cost": float(transaction_cost_paid.sum()),
+        "total_slippage": float(slippage_paid.sum()),
         "active_trading_steps": float((turnover > 1e-6).sum()),
         "avg_cash_weight": float(cash_weight.mean()) if cash_weight.notna().any() else 0.0,
         "final_portfolio_value": float(values.iloc[-1]),

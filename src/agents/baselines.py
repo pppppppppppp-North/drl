@@ -23,8 +23,8 @@ def _moving_average_crossover_action(env: ThaiStockTradingEnv, short_window: int
     current = env.current_step
     start = max(0, current - long_window + 1)
     short_start = max(0, current - short_window + 1)
-    short_ma = env.close[short_start : current + 1].mean(axis=0)
-    long_ma = env.close[start : current + 1].mean(axis=0)
+    short_ma = env.close_prices[short_start : current + 1].mean(axis=0)
+    long_ma = env.close_prices[start : current + 1].mean(axis=0)
     signal = short_ma > long_ma
     if signal.any():
         return signal.astype(np.float64) / signal.sum()
@@ -34,7 +34,7 @@ def _moving_average_crossover_action(env: ThaiStockTradingEnv, short_window: int
 def _mean_variance_action(env: ThaiStockTradingEnv, window: int = 60, ridge: float = 1e-4) -> np.ndarray:
     current = env.current_step
     start = max(0, current - window)
-    prices = env.close[start : current + 1]
+    prices = env.close_prices[start : current + 1]
     if len(prices) < 3:
         return np.full(env.num_assets, 1.0 / env.num_assets)
 
@@ -60,6 +60,8 @@ def _run_policy(env: ThaiStockTradingEnv, policy_name: str, seed: int = 42) -> p
             "policy": policy_name,
             "net_return": info["net_return"],
             "turnover": info["turnover"],
+            "transaction_cost_paid": info.get("transaction_cost_paid", 0.0),
+            "slippage_paid": info.get("slippage_paid", 0.0),
             "drawdown": info["drawdown"],
             "cash_weight": info["cash_weight"],
         }
@@ -95,12 +97,85 @@ def _run_policy(env: ThaiStockTradingEnv, policy_name: str, seed: int = 42) -> p
                 "policy": policy_name,
                 "net_return": info["net_return"],
                 "turnover": info["turnover"],
+                "transaction_cost_paid": info.get("transaction_cost_paid", 0.0),
+                "slippage_paid": info.get("slippage_paid", 0.0),
                 "drawdown": info["drawdown"],
                 "cash_weight": info["cash_weight"],
             }
         )
         done = terminated or truncated
 
+    return pd.DataFrame(rows)
+
+
+def _run_return_benchmark(
+    features: pd.DataFrame,
+    *,
+    return_column: str,
+    policy_name: str,
+    lookback: int,
+    initial_cash: float,
+    transaction_cost: float,
+    slippage: float = 0.0,
+) -> pd.DataFrame:
+    """Build a buy-and-hold benchmark from a daily index-return column.
+
+    The curve starts on the same date as ``ThaiStockTradingEnv.reset`` and
+    applies the same initial cash-to-asset turnover cost as the stock
+    buy-and-hold policies. Subsequent index holding turnover is zero.
+    """
+    if return_column not in features.columns:
+        raise ValueError(f"configured benchmark return column is missing: {return_column}")
+
+    daily = (
+        features.assign(date=pd.to_datetime(features["date"]))
+        .sort_values(["date", "ticker"])
+        .drop_duplicates("date")[["date", return_column]]
+        .reset_index(drop=True)
+    )
+    if len(daily) <= lookback + 1:
+        raise ValueError(
+            f"benchmark requires more than lookback + 1 dates; found {len(daily)} with lookback={lookback}"
+        )
+
+    value = float(initial_cash)
+    peak = value
+    rows = [
+        {
+            "date": daily.iloc[lookback]["date"].date().isoformat(),
+            "portfolio_value": value,
+            "policy": policy_name,
+            "net_return": 0.0,
+            "turnover": 0.0,
+            "transaction_cost_paid": 0.0,
+            "slippage_paid": 0.0,
+            "drawdown": 0.0,
+            "cash_weight": 0.0,
+        }
+    ]
+    for position in range(lookback + 1, len(daily)):
+        gross_return = float(pd.to_numeric(daily.iloc[position][return_column], errors="coerce"))
+        if not np.isfinite(gross_return):
+            gross_return = 0.0
+        turnover = 2.0 if position == lookback + 1 else 0.0
+        transaction_cost_paid = float(transaction_cost) * turnover
+        slippage_paid = float(slippage) * turnover
+        net_return = gross_return - transaction_cost_paid - slippage_paid
+        value *= 1.0 + net_return
+        peak = max(peak, value)
+        rows.append(
+            {
+                "date": daily.iloc[position]["date"].date().isoformat(),
+                "portfolio_value": value,
+                "policy": policy_name,
+                "net_return": net_return,
+                "turnover": turnover,
+                "transaction_cost_paid": transaction_cost_paid,
+                "slippage_paid": slippage_paid,
+                "drawdown": 1.0 - value / peak if peak else 0.0,
+                "cash_weight": 0.0,
+            }
+        )
     return pd.DataFrame(rows)
 
 
@@ -131,11 +206,32 @@ def run_baselines_on_features(
             lookback=config["features"]["lookback"],
             initial_cash=env_cfg["initial_cash"],
             transaction_cost=env_cfg["transaction_cost"],
+            slippage=env_cfg.get("slippage", 0.0),
+            max_turnover=env_cfg.get("max_turnover"),
+            max_position_weight=env_cfg.get("max_position_weight", 1.0),
+            min_cash_weight=env_cfg.get("min_cash_weight", 0.0),
             reward_config=reward_cfg,
         )
         curve = _run_policy(env, policy, seed or config["project"].get("seed", 42))
         curves.append(curve)
         row = {"policy": policy}
+        row.update(equity_metrics(curve))
+        metrics.append(row)
+
+    benchmark_cfg = config.get("baselines", {}).get("market_index")
+    if benchmark_cfg:
+        policy_name = str(benchmark_cfg.get("policy_name", "set_index"))
+        curve = _run_return_benchmark(
+            features,
+            return_column=str(benchmark_cfg.get("return_column", "set_return_1d")),
+            policy_name=policy_name,
+            lookback=int(config["features"]["lookback"]),
+            initial_cash=float(env_cfg["initial_cash"]),
+            transaction_cost=float(env_cfg["transaction_cost"]),
+            slippage=float(env_cfg.get("slippage", 0.0)),
+        )
+        curves.append(curve)
+        row = {"policy": policy_name}
         row.update(equity_metrics(curve))
         metrics.append(row)
 

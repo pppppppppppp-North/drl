@@ -1,0 +1,36 @@
+{
+  "stage_id": "calibration_lineage",
+  "passed": true,
+  "base_dir": ".",
+  "run_dir": null,
+  "requirements": [
+    {
+      "name": "checksum-bound pre-cutover calibration lineage acceptance",
+      "passed": true,
+      "matches": [
+        "campaigns/large_scale_thai_drl_v2/imports/storage_safe_cutover_calibration_lineage.json"
+      ],
+      "issues": []
+    },
+    {
+      "name": "pre-cutover calibration lineage SHA-256 sidecar",
+      "passed": true,
+      "matches": [
+        "campaigns/large_scale_thai_drl_v2/imports/storage_safe_cutover_calibration_lineage.json.sha256"
+      ],
+      "issues": []
+    }
+  ],
+  "manifest_expected": 0,
+  "manifest_found": 0,
+  "manifest_complete": 0,
+  "manifest_running": 0,
+  "manifest_failed": 0,
+  "issues": [],
+  "evidence_files": [
+    "campaigns/large_scale_thai_drl_v2/imports/storage_safe_cutover_calibration_lineage.json",
+    "campaigns/large_scale_thai_drl_v2/imports/storage_safe_cutover_calibration_lineage.json.sha256"
+  ],
+  "evidence_fingerprint": "a258da78f6dd31daa58898cf496aa5e68e0ccef4153c0197adc7a0b357e30d71",
+  "evaluated_at": "2026-07-17T14:43:14.079535+00:00"
+}

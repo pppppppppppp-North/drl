@@ -1,0 +1,111 @@
+project:
+  name: drl_thai_stock_repeated_seed_robustness
+  seed: 42
+
+paths:
+  raw_prices: data/raw/prices_real_ohlcv.csv
+  base_features: data/processed/features_real_ohlcv.parquet
+  fallback_base_features_csv: data/processed/features_real_ohlcv.csv
+  features: data/processed/features_real_ohlcv_market.parquet
+  fallback_features_csv: data/processed/features_real_ohlcv_market.csv
+  results_dir: results/robustness_real_ohlcv_market
+  models_dir: models/robustness_real_ohlcv_market
+
+data:
+  source: yahoo_ohlcv
+  tickers: [PTT.BK, AOT.BK, CPALL.BK, KBANK.BK, ADVANC.BK]
+  start: "2021-01-01"
+  end: "2024-12-31"
+
+market_indices:
+  primary: set
+  raw_prices: data/raw/prices_market_indices.csv
+  symbols:
+    set: ^SET.BK
+
+features:
+  lookback: 30
+  columns:
+    - return_1d
+    - return_5d
+    - return_20d
+    - volatility_20d
+    - ma_ratio_10
+    - ma_ratio_30
+    - rsi_14
+    - macd
+    - bollinger_z
+    - volume_ratio_20
+    - market_return_1d
+    - set_return_1d
+    - set_return_5d
+    - set_return_20d
+    - set_volatility_20d
+    - set_ma_ratio_20
+    - macro_rate_change
+    - sentiment_score
+
+splits:
+  train_fraction: 0.6
+  validation_fraction: 0.2
+  train_split: train
+  eval_split: validation
+
+walk_forward:
+  train_window: 504
+  validation_window: 126
+  test_window: 126
+  step_size: 126
+  expanding_train: false
+
+environment:
+  initial_cash: 1000000.0
+  transaction_cost: 0.001
+  reward:
+    return_weight: 1.0
+    turnover_penalty: 0.05
+    drawdown_penalty: 0.1
+
+baselines:
+  market_index:
+    policy_name: set_index
+    return_column: set_return_1d
+
+training:
+  algo: ppo
+  total_timesteps: 20000
+  num_envs: 8
+  env_window_dates: 378
+  vectorization_backend: subproc
+  subproc_start_method: forkserver
+  seed: 42
+  checkpoint_freq: 5000
+  save_replay_buffer: false
+
+robustness:
+  algorithms: [ppo, a2c]
+  algorithm_parameters:
+    ppo:
+      learning_rate: 0.00038935069852630283
+      gamma: 0.98
+      gae_lambda: 0.8020776391719847
+      ent_coef: 0.00001
+      n_steps: 256
+      clip_range: 0.14914937716505305
+      batch_size: 256
+    a2c:
+      learning_rate: 0.0007
+      gamma: 0.99
+      gae_lambda: 1.0
+      ent_coef: 0.0
+      n_steps: 64
+      vf_coef: 0.5
+  seeds: [42, 43, 44, 45, 46]
+  window_ids: [0, 1]
+  total_timesteps: 20000
+  primary_baselines: [equal_weight, set_index]
+  stochastic_baselines: [random]
+  confidence: 0.95
+  bootstrap_unit: observation
+  bootstrap_resamples: 10000
+  bootstrap_seed: 20260712

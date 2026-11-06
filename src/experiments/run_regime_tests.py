@@ -6,22 +6,14 @@ from pathlib import Path
 import pandas as pd
 
 from src.agents.baselines import run_baselines_on_features
-from src.envs.trading_env import RewardConfig, ThaiStockTradingEnv, load_feature_table
+from src.envs.trading_env import ThaiStockTradingEnv, load_feature_table
 from src.evaluation.metrics import equity_metrics
-from src.train import _stable_baselines_algorithm, ensure_feature_inputs, evaluate_model
+from src.train import _stable_baselines_algorithm, ensure_feature_inputs, evaluate_model, make_trading_env_from_features
 from src.utils.config import ensure_dirs, load_config
 
 
 def make_env_from_features(config: dict, features: pd.DataFrame) -> ThaiStockTradingEnv:
-    env_cfg = config["environment"]
-    return ThaiStockTradingEnv(
-        features=features,
-        feature_columns=config["features"]["columns"],
-        lookback=config["features"]["lookback"],
-        initial_cash=env_cfg["initial_cash"],
-        transaction_cost=env_cfg["transaction_cost"],
-        reward_config=RewardConfig(**env_cfg.get("reward", {})),
-    )
+    return make_trading_env_from_features(config, features)
 
 
 def filter_date_range(features: pd.DataFrame, start: str, end: str) -> pd.DataFrame:

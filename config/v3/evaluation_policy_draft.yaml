@@ -1,0 +1,163 @@
+schema_version: 1
+
+registration:
+  id: thai_drl_v3_evaluation_selection
+  status: draft_not_approved
+  approved_by_authors: false
+  replaces_v2: false
+
+scientific_boundary:
+  development_only: true
+  training_enabled: false
+  publication_claim_enabled: false
+  known_2021_2024_period_usable_as_new_final_holdout: false
+  allowed_splits:
+    - train
+    - validation
+  forbidden_splits:
+    - test
+    - all
+
+session_contract:
+  timezone: Asia/Bangkok
+  required_final_source: licensed_authoritative_set_session_calendar
+  current_membership_session_role: provisional_schedule_geometry_only
+  input_order_rule: sort_then_validate
+  duplicate_session_rule: reject
+  invalid_or_intraday_session_rule: reject
+  future_suffix_rule: fixed_fold_count_preserves_existing_schedule
+
+fold_geometry:
+  kind: expanding_half_year_validation
+  fold_count: 6
+  initial_train_context_sessions: 30
+  validation_context_sessions: 30
+  transition_horizon_sessions: 1
+  expanding_train: true
+  minimum_train_decision_sessions: 200
+  unused_boundary_rule: train_end_to_validation_start_transition_is_unassigned
+  cross_fold_reuse_rule: permitted_only_in_a_later_chronological_fold
+  validation_periods:
+    - fold_id: fold_01
+      start_on_or_after: "2022-01-01"
+      end_before: "2022-07-01"
+    - fold_id: fold_02
+      start_on_or_after: "2022-07-01"
+      end_before: "2023-01-01"
+    - fold_id: fold_03
+      start_on_or_after: "2023-01-01"
+      end_before: "2023-07-01"
+    - fold_id: fold_04
+      start_on_or_after: "2023-07-01"
+      end_before: "2024-01-01"
+    - fold_id: fold_05
+      start_on_or_after: "2024-01-01"
+      end_before: "2024-07-01"
+    - fold_id: fold_06
+      start_on_or_after: "2024-07-01"
+      end_before: "2025-01-01"
+
+transition_ownership:
+  decision_and_outcome_must_share_scored_split: true
+  cross_boundary_transition: forbidden
+  terminal_outcome_session_required: true
+  validation_context_triggers_new_fit: false
+  portfolio_and_model_state_reset_at_validation_start: true
+
+context_only:
+  scope: per_fold_and_role
+  may_supply_lagged_features: true
+  may_be_decision_or_outcome_target: false
+  preprocessing_fit_allowed: false
+  scoring_allowed: false
+  model_update_allowed: false
+  validation_context_may_overlap_prior_training_role: true
+
+preprocessing:
+  fit_scope: train_decision_dates_only
+  fit_separately_per_fold: true
+  validation_fit_allowed: false
+  context_fit_allowed: false
+  reuse_fitted_state_across_folds: false
+  outcome_derived_feature_fit_allowed: false
+
+candidate_budget:
+  algorithms:
+    - ppo
+    - a2c
+    - ddpg
+    - td3
+    - sac
+  parameter_profiles:
+    - stable_default
+    - low_lr_regularized
+  timestep_budgets:
+    - 50000
+    - 100000
+    - 200000
+  configurations_per_algorithm: 6
+  total_candidate_configurations: 30
+  candidate_design: exact_profile_by_budget_grid_v1
+  candidate_design_seed: 20260820
+  model_seeds:
+    - 42
+    - 43
+    - 44
+  planned_model_fits: 540
+  planned_training_timesteps: 63000000
+  maximum_hpc_array_jobs: 3
+  maximum_concurrent_array_jobs: 2
+  array_job_mapping: two_folds_per_array_job
+  adaptive_candidate_expansion: forbidden
+  unregistered_retries_count_as_new_candidates: true
+
+selection:
+  selection_unit: candidate_configuration
+  required_fold_seed_cells_per_candidate: 18
+  seed_aggregation_within_fold: arithmetic_mean
+  primary_metric: median_fold_annualized_excess_net_log_return_vs_active_equal_weight
+  primary_direction: maximize
+  net_of_transaction_cost_and_slippage: true
+  deterministic_tie_breakers:
+    - worst_fold_mean_annualized_excess_net_log_return_maximize
+    - median_validation_excess_max_drawdown_maximize
+    - median_validation_turnover_minimize
+    - smaller_timestep_budget_preferred
+    - candidate_id_lexicographic_ascending
+  numeric_tie_rounding_decimals: 12
+  incomplete_or_nonfinite_candidate: reject
+  selection_adaptation_between_folds: forbidden
+  seed_runs_are_independent_market_periods: false
+  nonpositive_best_primary_result: select_active_equal_weight_no_drl
+  required_baselines:
+    - active_equal_weight
+    - set_index_buy_and_hold
+  baseline_dates: identical_validation_transitions
+
+result_ledger:
+  exact_cartesian_product_required: true
+  required_numeric_fields:
+    - net_cumulative_return
+    - net_log_return
+    - sharpe
+    - max_drawdown
+    - turnover
+    - equal_weight_net_log_return
+    - equal_weight_max_drawdown
+    - set_index_net_log_return
+  maximum_drawdown_range:
+    - -1.0
+    - 0.0
+  negative_turnover_allowed: false
+
+final_holdout:
+  status: absent
+  required_start_on_or_after: "2025-01-01"
+  test_access_enabled: false
+  all_access_enabled: false
+  changed_policy_requires_new_untouched_holdout: true
+
+author_decisions_required_before_lock:
+  - approve_six_expanding_half_year_folds_after_the_authoritative_calendar_arrives
+  - approve_thirty_candidate_sixty_three_million_timestep_budget_and_three_seed_set
+  - approve_primary_metric_and_deterministic_tie_breaker_order

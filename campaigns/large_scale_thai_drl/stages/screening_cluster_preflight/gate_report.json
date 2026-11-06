@@ -1,0 +1,34 @@
+{
+  "stage_id": "screening_cluster_preflight",
+  "passed": true,
+  "base_dir": ".",
+  "run_dir": null,
+  "requirements": [
+    {
+      "name": "passing calibrated-screening overlay and runtime receipt",
+      "passed": true,
+      "matches": [
+        "reports/bistka_screening_preflight.json"
+      ],
+      "issues": []
+    }
+  ],
+  "manifest_expected": 0,
+  "manifest_found": 0,
+  "manifest_complete": 0,
+  "manifest_running": 0,
+  "manifest_failed": 0,
+  "issues": [],
+  "evidence_files": [
+    "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay_manifest.json",
+    "campaigns/large_scale_thai_drl/deployment/bistka_screening_runtime_profile.yaml",
+    "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json",
+    "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json.sha256",
+    "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml",
+    "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml.sha256",
+    "data/processed/features_real_ohlcv_market.csv",
+    "reports/bistka_screening_preflight.json"
+  ],
+  "evidence_fingerprint": "7723abbb529a4100496f23b43f62a625ffd0be72a514629d2bee54d1018c4e7a",
+  "evaluated_at": "2026-07-15T16:26:50.563289+00:00"
+}

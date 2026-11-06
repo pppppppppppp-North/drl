@@ -1,0 +1,6 @@
+algorithm,observed_test_dates,initial_portfolio_value,final_portfolio_value,cumulative_profit_pct,max_drawdown_pct,evidence_status
+PPO,164,1000000.00,809229.25,-19.0771,22.5215,illustrative smoke-test result; not final ranking
+A2C,164,1000000.00,996674.48,-0.3326,0.4214,illustrative smoke-test result; not final ranking
+DDPG,164,1000000.00,969426.91,-3.0573,10.3239,illustrative smoke-test result; not final ranking
+TD3,164,1000000.00,974290.17,-2.5710,9.8838,illustrative smoke-test result; not final ranking
+SAC,164,1000000.00,956450.62,-4.3549,11.4561,illustrative smoke-test result; not final ranking

@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from src.agents.baselines import run_baselines
@@ -21,6 +22,7 @@ from src.envs.trading_env import RewardConfig, ThaiStockTradingEnv, load_feature
 from src.evaluation.metrics import equity_metrics
 from src.features.build_features import write_features
 from src.features.technical import add_technical_features
+from src.utils.checkpoints import prune_checkpoints
 from src.utils.config import ensure_dirs, load_config
 
 
@@ -92,6 +94,10 @@ def _validate_env_length(features: pd.DataFrame, lookback: int, split: str) -> N
 def make_trading_env(config: dict, split: str = "all") -> ThaiStockTradingEnv:
     features = _features_for_split(config, split)
     _validate_env_length(features, int(config["features"]["lookback"]), split)
+    return make_trading_env_from_features(config, features)
+
+
+def make_trading_env_from_features(config: dict, features: pd.DataFrame) -> ThaiStockTradingEnv:
     env_cfg = config["environment"]
     return ThaiStockTradingEnv(
         features=features,
@@ -99,8 +105,89 @@ def make_trading_env(config: dict, split: str = "all") -> ThaiStockTradingEnv:
         lookback=config["features"]["lookback"],
         initial_cash=env_cfg["initial_cash"],
         transaction_cost=env_cfg["transaction_cost"],
+        slippage=env_cfg.get("slippage", 0.0),
+        max_turnover=env_cfg.get("max_turnover"),
+        max_position_weight=env_cfg.get("max_position_weight", 1.0),
+        min_cash_weight=env_cfg.get("min_cash_weight", 0.0),
         reward_config=RewardConfig(**env_cfg.get("reward", {})),
     )
+
+
+def build_training_feature_slices(
+    features: pd.DataFrame,
+    *,
+    num_envs: int,
+    lookback: int,
+    seed: int,
+    window_dates: int | None = None,
+) -> list[pd.DataFrame]:
+    """Create distinct chronological slices for parallel training environments."""
+    if num_envs <= 0:
+        raise ValueError("num_envs must be positive")
+    dates = pd.Index(pd.to_datetime(features["date"]).drop_duplicates().sort_values())
+    minimum_dates = lookback + 2
+    if len(dates) < minimum_dates:
+        raise ValueError(f"training features need at least {minimum_dates} dates; found {len(dates)}")
+    if num_envs == 1:
+        return [features.copy().reset_index(drop=True)]
+
+    default_window = max(minimum_dates, int(np.ceil(len(dates) * 0.75)))
+    window_dates = int(window_dates or default_window)
+    if window_dates < minimum_dates or window_dates > len(dates):
+        raise ValueError(f"training env window must be between {minimum_dates} and {len(dates)} dates")
+    possible_starts = len(dates) - window_dates + 1
+    if possible_starts < num_envs:
+        raise ValueError(
+            f"cannot build {num_envs} distinct training slices of {window_dates} dates from {len(dates)} dates"
+        )
+
+    rng = np.random.default_rng(seed)
+    starts = sorted(int(value) for value in rng.choice(possible_starts, size=num_envs, replace=False))
+    slices = []
+    for start in starts:
+        selected_dates = dates[start : start + window_dates]
+        part = features[pd.to_datetime(features["date"]).isin(selected_dates)].copy()
+        part["date"] = pd.to_datetime(part["date"])
+        slices.append(part.sort_values(["date", "ticker"]).reset_index(drop=True))
+    return slices
+
+
+def build_vectorized_training_env(config: dict, features: pd.DataFrame, seed: int):
+    """Build one monitored env or genuinely distinct parallel vector envs."""
+    try:
+        from stable_baselines3.common.monitor import Monitor
+        from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
+    except ImportError as exc:  # pragma: no cover - depends on optional training stack.
+        raise ImportError("stable-baselines3 is required for vectorized training") from exc
+
+    training = config.get("training", {})
+    num_envs = int(training.get("num_envs", 1))
+    lookback = int(config["features"]["lookback"])
+    slices = build_training_feature_slices(
+        features,
+        num_envs=num_envs,
+        lookback=lookback,
+        seed=seed,
+        window_dates=training.get("env_window_dates"),
+    )
+
+    def env_factory(part: pd.DataFrame, rank: int):
+        def _make():
+            env = make_trading_env_from_features(config, part)
+            env.reset(seed=seed + rank)
+            return Monitor(env)
+
+        return _make
+
+    factories = [env_factory(part, rank) for rank, part in enumerate(slices)]
+    if num_envs == 1:
+        return factories[0]()
+    backend = str(training.get("vectorization_backend", "subproc")).lower()
+    if backend == "dummy":
+        return DummyVecEnv(factories)
+    if backend != "subproc":
+        raise ValueError("training.vectorization_backend must be 'dummy' or 'subproc'")
+    return SubprocVecEnv(factories, start_method=str(training.get("subproc_start_method", "forkserver")))
 
 
 def evaluate_model(
@@ -118,6 +205,8 @@ def evaluate_model(
             "policy": policy_name,
             "net_return": info["net_return"],
             "turnover": info["turnover"],
+            "transaction_cost_paid": info.get("transaction_cost_paid", 0.0),
+            "slippage_paid": info.get("slippage_paid", 0.0),
             "drawdown": info["drawdown"],
             "cash_weight": info["cash_weight"],
         }
@@ -138,6 +227,8 @@ def evaluate_model(
                 "policy": policy_name,
                 "net_return": info["net_return"],
                 "turnover": info["turnover"],
+                "transaction_cost_paid": info.get("transaction_cost_paid", 0.0),
+                "slippage_paid": info.get("slippage_paid", 0.0),
                 "drawdown": info["drawdown"],
                 "cash_weight": info["cash_weight"],
             }
@@ -182,7 +273,20 @@ def _algorithm_kwargs(algo: str, total_timesteps: int, training_config: dict | N
             "learning_starts": min(1_000, max(100, total_timesteps // 10)),
             "batch_size": 64,
         }
-        allowed = {"learning_rate", "buffer_size", "learning_starts", "batch_size", "gamma", "tau"}
+        allowed = {
+            "learning_rate",
+            "buffer_size",
+            "learning_starts",
+            "batch_size",
+            "gamma",
+            "tau",
+            "train_freq",
+            "gradient_steps",
+        }
+        if algo == "sac":
+            allowed.update({"ent_coef", "target_entropy"})
+        if algo == "td3":
+            allowed.update({"policy_delay", "target_policy_noise", "target_noise_clip"})
 
     for key, value in (training_config or {}).items():
         if key in allowed:
@@ -221,7 +325,6 @@ def write_walk_forward_summary(config: dict, output_dir: Path) -> None:
 def train_with_stable_baselines(config: dict, output_dir: Path) -> bool:
     try:
         from stable_baselines3.common.callbacks import CheckpointCallback
-        from stable_baselines3.common.monitor import Monitor
     except ImportError:
         return False
 
@@ -232,30 +335,35 @@ def train_with_stable_baselines(config: dict, output_dir: Path) -> bool:
 
     train_split = _training_split(config)
     eval_split = _evaluation_split(config)
-    train_env = make_trading_env(config, split=train_split)
+    training_features = _features_for_split(config, train_split)
+    seed = int(config["training"].get("seed", config["project"].get("seed", 42)))
+    train_env = build_vectorized_training_env(config, training_features, seed)
     total_timesteps = int(config["training"].get("total_timesteps", 10000))
     model = model_cls(
         "MlpPolicy",
-        Monitor(train_env),
+        train_env,
         verbose=1,
-        seed=config["training"].get("seed", 42),
+        seed=seed,
         tensorboard_log=str(output_dir / "tensorboard"),
         **_algorithm_kwargs(algo, total_timesteps, config.get("training", {})),
     )
     checkpoint_dir = output_dir / "checkpoints" / algo
     checkpoint_dir.mkdir(parents=True, exist_ok=True)
     checkpoint_freq = int(config["training"].get("checkpoint_freq", max(total_timesteps // 5, 1)))
+    checkpoint_prefix = f"{algo}_checkpoint"
     checkpoint_callback = CheckpointCallback(
-        save_freq=checkpoint_freq,
+        save_freq=max(checkpoint_freq // int(config["training"].get("num_envs", 1)), 1),
         save_path=str(checkpoint_dir),
-        name_prefix=f"{algo}_checkpoint",
-        save_replay_buffer=algo in {"ddpg", "sac", "td3"},
+        name_prefix=checkpoint_prefix,
+        save_replay_buffer=bool(
+            config["training"].get("save_replay_buffer", algo in {"ddpg", "sac", "td3"})
+        ),
         save_vecnormalize=True,
     )
     model.learn(total_timesteps=total_timesteps, callback=checkpoint_callback)
     model.save(output_dir / f"{algo}_model")
+    train_env.close()
 
-    seed = int(config["training"].get("seed", config["project"].get("seed", 42)))
     eval_curve, eval_actions = evaluate_model(
         model,
         make_trading_env(config, split=eval_split),
@@ -269,6 +377,11 @@ def train_with_stable_baselines(config: dict, output_dir: Path) -> bool:
     metrics.update(equity_metrics(eval_curve))
     metrics_df = pd.DataFrame([metrics])
     metrics_df.to_csv(output_dir / f"{algo}_metrics.csv", index=False)
+    prune_checkpoints(
+        checkpoint_dir,
+        name_prefix=checkpoint_prefix,
+        keep_last=int(config["training"].get("checkpoint_keep_last", 2)),
+    )
     print(metrics_df.to_string(index=False))
     return True
 

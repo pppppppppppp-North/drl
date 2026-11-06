@@ -1,0 +1,49 @@
+campaign_release_profile:
+  schema_version: 1
+  name: screening_storage_safe_cutover
+  require_feature_expectations: true
+  base:
+    manifest: "{campaign_dir}/deployment/bistka_screening_storage_safe_v2_manifest.json"
+  include:
+    derived_configs: []
+    decisions: []
+    protocols: []
+    registries: []
+    files:
+      - "{campaign_dir}/cutovers/storage_safe_20260717_pre_cutover/pre_cutover_control_and_release.tar.gz"
+      - "{campaign_dir}/cutovers/storage_safe_20260717_pre_cutover/pre_cutover_control_and_release.tar.gz.sha256"
+      - "{campaign_dir}/cutovers/storage_safe_20260717_pre_cutover/snapshot_receipt.json"
+      - "{campaign_dir}/cutovers/storage_safe_20260717_pre_cutover/snapshot_receipt.json.sha256"
+      - "{campaign_dir}/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_0_gate_report.json"
+      - "{campaign_dir}/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_0_gate_report.json.sha256"
+      - "{campaign_dir}/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_1__SUCCESS.json"
+      - "{campaign_dir}/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_1__SUCCESS.json.sha256"
+      - "{campaign_dir}/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_2_gate_report.json"
+      - "{campaign_dir}/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_2_gate_report.json.sha256"
+      - "{campaign_dir}/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_3__SUCCESS.json"
+      - "{campaign_dir}/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_3__SUCCESS.json.sha256"
+      - "{campaign_dir}/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_4_gate_report.json"
+      - "{campaign_dir}/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_4_gate_report.json.sha256"
+      - "{campaign_dir}/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_5__SUCCESS.json"
+      - "{campaign_dir}/cutovers/storage_safe_20260717_pre_cutover/superseded_transition_5__SUCCESS.json.sha256"
+      - "{campaign_dir}/imports/storage_safe_cutover_calibration_lineage.json"
+      - "{campaign_dir}/imports/storage_safe_cutover_calibration_lineage.json.sha256"
+      - "{campaign_dir}/stages/cluster_preflight/_SUCCESS.json"
+      - "{campaign_dir}/stages/cluster_preflight/gate_report.json"
+      - config/bistka_profiles_v2/screening_storage_safe_cutover.yaml
+      - config/research_campaign_storage_safe.yaml
+      - scripts/apply_bistka_storage_safe_cutover.sh
+      - scripts/create_campaign_cutover_snapshot.py
+      - scripts/fetch_bistka_screening_storage_safe_smoke_results.sh
+      - scripts/materialize_storage_safe_calibration_lineage.py
+      - scripts/validate_screening_storage_safe_smoke.py
+  runtime_configs: []
+  resolve:
+    feature_ablation_configs: []
+    stress_registries: []
+  feature_expectations:
+    "{campaign_dir}/derived/locked_large_scale_screening.yaml":
+      path: data/processed/features_real_ohlcv_market.csv
+      sha256: b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc
+      bytes: 2183530
+      require_readiness: true

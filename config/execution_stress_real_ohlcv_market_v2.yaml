@@ -1,0 +1,8 @@
+extends: execution_stress_real_ohlcv_market.yaml
+
+project:
+  name: drl_thai_stock_execution_stress_v2
+
+paths:
+  features: data/processed/features_real_ohlcv_market.csv
+  fallback_features_csv: data/processed/features_real_ohlcv_market.csv

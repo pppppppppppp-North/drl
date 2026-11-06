@@ -1,0 +1,68 @@
+{
+  "campaign_id": "large_scale_thai_drl_screening_overlay",
+  "content_addressed": true,
+  "data_readiness_path": "reports/data_quality_market/market_data_readiness.json",
+  "file_count": 6,
+  "files": [
+    {
+      "bytes": 1022,
+      "executable": false,
+      "path": "campaigns/large_scale_thai_drl/deployment/bistka_screening_runtime_profile.yaml",
+      "sha256": "6c6cf91bcf07672751fb028fe3365c9f912c1e813981f11a45ee788c99b572be"
+    },
+    {
+      "bytes": 2016,
+      "executable": false,
+      "path": "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json",
+      "sha256": "e7b238be37704100c0549c3021e041a85800e5365029fd98513126905530a459"
+    },
+    {
+      "bytes": 65,
+      "executable": false,
+      "path": "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json.sha256",
+      "sha256": "5d624b3e4e728303f7ba022504b74d995c4da88f155ee2be84102e3855af4167"
+    },
+    {
+      "bytes": 1537,
+      "executable": false,
+      "path": "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml",
+      "sha256": "8d66ba4e232900f9c72773afd1b4480ae11d88e7ae378498358564f313dc7158"
+    },
+    {
+      "bytes": 65,
+      "executable": false,
+      "path": "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml.sha256",
+      "sha256": "ec0a32b39720ee7728fcb6b48d9caf52cde11e5fef14f84196ee751c363fc4b2"
+    },
+    {
+      "bytes": 2183530,
+      "executable": false,
+      "path": "data/processed/features_real_ohlcv_market.csv",
+      "sha256": "b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc"
+    }
+  ],
+  "python_executable": "/lustrefs/project/25sfcs03/envs/drl_env/bin/python",
+  "release_id": "47c3399e62fd5a162c2ea1a6e057af054aedac7604c58242a954a5d44cc1118d",
+  "required_hostname_prefix": "bistka-",
+  "required_packages": [
+    "numpy",
+    "pandas",
+    "torch",
+    "stable-baselines3",
+    "gymnasium",
+    "pyyaml"
+  ],
+  "runtime_feature_bindings": [
+    {
+      "config_path": "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml",
+      "config_sha256": "8d66ba4e232900f9c72773afd1b4480ae11d88e7ae378498358564f313dc7158",
+      "feature_bytes": 2183530,
+      "feature_path": "data/processed/features_real_ohlcv_market.csv",
+      "feature_sha256": "b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc",
+      "resolved_config_sha256": "d8a05023e7ccd1c70cc07ca596e5ed839b90cf85c6e8e367780558926f5b2065"
+    }
+  ],
+  "schema_version": 1,
+  "target_project_root": "/lustrefs/project/25sfcs03/drl_thai_stock",
+  "total_bytes": 2188235
+}

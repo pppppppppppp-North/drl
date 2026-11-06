@@ -1,8 +1,8 @@
 # External Data Handoff Guide
 
-Last updated: 2026-06-09
+Last updated: 2026-07-31
 
-This guide turns the remaining project blockers into a concrete data handoff workflow. The current implementation is a reproducible five-ticker pilot. A full SET50/SET100 study requires external files that are not currently available in the repository.
+This guide turns the remaining project blockers into a concrete data handoff workflow. The current model implementation remains a reproducible five-ticker pilot. Official point-in-time SET50/SET100 membership and sector history is now present, but a broad study still requires licensed OHLCV and the remaining multi-source files.
 
 For a provider-facing request packet and email template, see `docs/external_data_provider_request.md`. After files are received, use `docs/external_data_intake_checklist.md`.
 
@@ -12,13 +12,19 @@ Place the real exported or licensed files at these default paths before claiming
 
 | source | default path | template | minimum required columns |
 | --- | --- | --- | --- |
-| Broader ticker universe | `data/reference/set50_or_set100_universe.csv` | `data/reference/set50_or_set100_universe_template.csv` | `ticker` |
-| Full ticker sector mapping | `data/reference/sector_mapping.csv` | `data/reference/sector_mapping_template.csv` | `ticker`, `sector` |
+| Licensed adjusted OHLCV for the 138-ticker union | Separate candidate file under `data/external/v3_candidate/` | `config/v3/market_package_manifest_template.yaml` | `date`, `ticker`, OHLC, adjusted close, volume, availability, source ID |
+| Daily trading status | `data/external/v3_candidate/trading_status.csv` | Same V3 manifest | date, ticker, explicit state, availability, source ID |
+| Authoritative SET sessions | `data/external/v3_candidate/set_sessions.csv` | Same V3 manifest | date, calendar availability, source ID |
+| Corporate actions | `data/external/v3_candidate/corporate_actions.csv` | Same V3 manifest | action ID/type, announcement, effective date, factor/cash/successor, source ID |
+| Stable-instrument symbol history | `data/external/v3_candidate/symbol_history.csv` | Same V3 manifest | instrument ID, ticker, half-open effective interval, source ID |
+| Point-in-time membership and sectors | **Already complete:** `data/reference/set50_set100_membership_2021_2024.csv` | `docs/set_constituent_history_intake.md` | effective interval, publication date, symbol, sector, SET50/SET100 flags |
 | Historical official macro | `data/external/bot_historical_macro.csv` | `data/reference/official_macro_long_template.csv` | `period`, `metric`, `value` |
 | Historical news or sentiment | `data/external/historical_news.csv` | `data/reference/historical_news_sentiment_template.csv` | `date`, `ticker` |
 | Licensed fundamentals | `data/external/fundamentals.csv` | `data/reference/fundamentals_template.csv` | `ticker`, `metric`, `period_end`, `value` |
 
 The templates are schema examples only. They are not research data and should not be used for final results.
+
+For the five-file V3 market package, the preferred official route is a licensed SETSMART Enterprise extract using `CALENDAR`, `DAILY_SECURITY_TRADING`, `ADJUST_FACTOR`, `RIGHTS_BENEFIT`, `SECURITY`, `SIGN_POSTING`, `SIGN_LIFTING`, and effective-dated symbol-change events. The prepared advisor/institution request is `docs/setsmart_academic_data_request_draft.md`.
 
 ## Readiness Check
 
@@ -28,23 +34,23 @@ Run the source-readiness gate after adding or replacing external files:
 python -m src.data.source_readiness --output reports/source_readiness.csv
 ```
 
-The command exits with status `1` while any required file is missing, empty, or missing required columns. It exits with status `0` only when all required source files are present and structurally ready.
+The command currently reports 3/5 ready and exits with status `1` while historical news/sentiment or licensed fundamentals is missing. The broader-universe and sector rows pass only when their checksum-bound archive receipt also matches.
 
 ## Recommended Handoff Steps
 
-1. Export or license the broader SET50/SET100 ticker universe.
-2. Save the ticker file as `data/reference/set50_or_set100_universe.csv`.
-3. Export sector membership or a full sector-index history source.
-4. Save static sector membership as `data/reference/sector_mapping.csv`, or document a dated sector-index price source separately.
-5. Export historical official macro data with release-date metadata when available.
-6. Save the official macro file as `data/external/bot_historical_macro.csv`.
+1. Use the receipt-bound 138-ticker union only as the provider acquisition list.
+2. Export or license adjusted OHLCV, corporate actions, and trading-status history for that list into separate candidate paths.
+3. Include an authoritative SET session calendar and stable-instrument/ticker history.
+4. Fill a copied V3 market manifest from `config/v3/market_package_manifest_template.yaml`, bind every file by path/hash/bytes/rows, and checksum the completed manifest.
+5. Preserve the existing dated constituent archive; do not overwrite it with a static current list.
+6. Export point-in-time official macro vintages with actual release-date metadata when available.
 7. Export historical Thai news, disclosures, or precomputed sentiment scores.
 8. Save the sentiment/news file as `data/external/historical_news.csv`.
-9. Export licensed fundamentals with period-end and report/effective-date metadata when available.
+9. Export licensed fundamentals with period-end and report/effective-date metadata.
 10. Save fundamentals as `data/external/fundamentals.csv`.
-11. Fill `data/external/external_data_manifest.csv` from `data/reference/external_data_manifest_template.csv`.
-12. Run the readiness check.
-13. Update `data/data_manifest.csv` with access method, license note, date range, symbols, columns, and missing-value rate.
+11. Fill `data/external/external_data_manifest.csv` from `data/reference/external_data_manifest_template.csv` for the non-market sources.
+12. Run the readiness and intake checks.
+13. Update `data/data_manifest.csv` only through a newly built and verified release.
 
 ## Rebuild Commands
 
@@ -89,13 +95,21 @@ python -m src.features.fundamental_context \
   --fundamentals data/external/fundamentals.csv
 ```
 
-Sector context:
+V3 market-package and sector-context intake:
 
 ```bash
-python -m src.features.sector_context --config config/real_ohlcv_sector.yaml
+python -m scripts.build_v3_market_package_gap \
+  --project-root . \
+  --candidate-manifest data/external/v3_candidate/market_package.yaml \
+  --require-pass
+python -m scripts.build_v3_investability_policy_readiness --project-root .
 ```
 
-If `config/real_ohlcv_sector.yaml` still points to `data/reference/sector_mapping_thai_pilot.csv`, update it or pass a config that points to `data/reference/sector_mapping.csv` before using the result for full-universe claims.
+The isolated V3 panel performs the as-of membership and sector join and preserves `sector_as_of` on active rows. `src/v3/sector_context.py` now computes active-member-only dated sector returns with explicit observed-return, contributor-count, peer-count, and availability evidence. Do not point the shared static-label module at `sector_mapping.csv`.
+
+The market package must also cover each active-to-inactive membership transition until a valid liquidation bar or explicit terminal settlement. The current panel contains 62 such transitions. Missing post-exit status is a critical failure even when active-member status coverage is otherwise complete.
+
+Without `--candidate-manifest`, the command assesses the current five-ticker snapshot and intentionally writes a failed gap receipt. A provider package is accepted only when all five bound market files, license declarations, checksum bindings, active-key rules, exit-path rules, and point-in-time timing checks pass.
 
 ## Validation After Rebuild
 
@@ -112,6 +126,6 @@ Then regenerate data-quality reports, leakage checks, ablations, walk-forward su
 
 Until this handoff is complete, report the project as:
 
-> A reproducible five-ticker Thai equity DRL pilot with implemented scaffolding for broader SET50/SET100 data, sector context, official macro data, fundamentals, and historical sentiment.
+> A reproducible five-ticker Thai equity DRL pilot, with a separately validated point-in-time SET50/SET100 archive and an isolated, training-disabled V3 membership-development capsule.
 
 Do not describe current results as a complete SET50/SET100 performance study until the required external files are present, validated, and used in the rebuilt experiments.

@@ -1,0 +1,133 @@
+schema_version: 1
+
+registration:
+  id: thai_drl_five_ticker_pilot_v1
+  status: locked
+  registered_at_utc: "2026-07-15T10:00:00+00:00"
+  amendments_after_test_access: forbidden
+  amendment_rule: >-
+    Any change after test access is a new study version and requires a new,
+    untouched holdout period; the present registration is never overwritten.
+
+research_question:
+  text: >-
+    Across fixed chronological out-of-sample test windows, do
+    validation-selected deep reinforcement-learning policies improve net
+    cumulative return, risk-adjusted return, or maximum drawdown relative to
+    equal-weight and SET-index buy-and-hold baselines in the fixed five-ticker
+    Thai-market pilot?
+  unit_of_analysis: candidate_policy_baseline_window_seed_pair
+  estimand: mean_candidate_minus_baseline_difference_across_paired_test_runs
+
+scope:
+  study_type: fixed_observed_market_pilot
+  data_origin: observed_market
+  evidence_class: restricted_private_research_pilot
+  synthetic_data_allowed: false
+  publication_claim_eligible: false
+  universe:
+    tickers:
+      - ADVANC.BK
+      - AOT.BK
+      - CPALL.BK
+      - KBANK.BK
+      - PTT.BK
+    size: 5
+    policy: fixed_before_test_and_not_survivorship_free
+  period:
+    requested_start: "2021-01-01"
+    requested_end_exclusive: "2024-12-31"
+    observed_start: "2021-01-04"
+    observed_end: "2024-12-30"
+  market_benchmark:
+    id: set_index
+    symbol: ^SET.BK
+    policy: buy_and_hold
+
+primary_baselines:
+  - id: equal_weight
+    label: Equal-weight five-stock portfolio
+    policy: equal_weight_buy_and_hold
+    evaluation_dates: identical_to_candidate_test_window
+  - id: set_index
+    label: SET index buy-and-hold
+    policy: index_buy_and_hold
+    evaluation_dates: identical_to_candidate_test_window
+
+analysis_plan:
+  selection:
+    split: validation
+    use: algorithm_hyperparameter_training_budget_and_nested_trial_selection_only
+    test_data_allowed: false
+  conclusions:
+    split: test
+    use: final_conclusions_only
+    validation_data_allowed: false
+  pairing_keys:
+    - window
+    - seed
+  comparison: candidate_minus_baseline
+  interval: two_sided_95_percent
+  multiplicity_control: holm_familywise_correction
+  post_test_tuning: forbidden
+  test_data_reuse_for_selection: forbidden
+  changed_protocol_requires_new_holdout: true
+
+primary_paired_outcomes:
+  - id: excess_cumulative_return
+    candidate_metric: cumulative_return
+    direction: greater_than_zero_is_better
+    net_of_costs: true
+  - id: excess_sharpe
+    candidate_metric: sharpe
+    direction: greater_than_zero_is_better
+    net_of_costs: true
+  - id: excess_max_drawdown
+    candidate_metric: max_drawdown
+    direction: greater_than_zero_is_better_because_less_negative_drawdown_is_better
+    net_of_costs: true
+
+guardrails:
+  - id: turnover
+    rule: disclose_candidate_level_and_do_not_hide_cost_intensity
+  - id: transaction_costs_and_slippage
+    rule: disclose_configured_costs_and_execution_stress_results
+  - id: finite_accounting
+    rule: reject_nonfinite_metrics_impossible_drawdowns_or_invalid_weights
+  - id: complete_pairing
+    rule: reject_incomplete_candidate_baseline_window_seed_pairs
+
+negative_result_rule:
+  locked: true
+  target_metric: excess_cumulative_return
+  comparison_scope: every_candidate_against_each_primary_baseline
+  pass_condition: corrected_95_percent_interval_lower_bound_strictly_greater_than_zero
+  if_any_comparison_fails: no_reliable_return_outperformance
+  report_all_outcomes_when_negative: true
+  risk_only_claim:
+    allowed_only_if: excess_max_drawdown_interval_lower_bound_strictly_greater_than_zero
+    label: narrower_risk_control_signal
+    may_not_be_described_as_return_outperformance: true
+
+claim_boundary:
+  permitted_scope: private_five_ticker_thai_market_pilot_only
+  excluded_claims:
+    - id: whole_set_generalization
+      reason: The five fixed stocks are not a survivorship-free SET universe.
+    - id: sentiment_effect
+      reason: Sentiment is a constant pipeline scaffold, not observed evidence.
+    - id: official_macro_effect
+      reason: Official point-in-time macro history is not present in this bundle.
+    - id: publication_grade_performance
+      reason: The current public-web snapshot is restricted private-pilot evidence.
+
+evidence_binding:
+  readiness_receipt:
+    path: reports/data_quality_market/market_data_readiness.json
+    sha256: d6be2b82c164dd2f3844381ef9db8518a56c71e1b8ab5e9080e9c389908e8a4d
+    require_sha256_sidecar: true
+    required_status: pass
+    required_data_origin: observed_market
+    required_evidence_class: restricted_private_research_pilot
+    required_execution_eligible: true
+    required_publication_claim_eligible: false

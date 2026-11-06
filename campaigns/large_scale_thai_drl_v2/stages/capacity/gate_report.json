@@ -1,0 +1,31 @@
+{
+  "stage_id": "capacity",
+  "passed": true,
+  "base_dir": ".",
+  "run_dir": null,
+  "requirements": [
+    {
+      "name": "live credit, quota, partition, and queue snapshot",
+      "passed": true,
+      "matches": [
+        "reports/bistka_capacity_20260715_162248.txt",
+        "reports/bistka_capacity_v2_20260716.txt",
+        "reports/bistka_capacity_v2_20260716_login.txt"
+      ],
+      "issues": []
+    }
+  ],
+  "manifest_expected": 0,
+  "manifest_found": 0,
+  "manifest_complete": 0,
+  "manifest_running": 0,
+  "manifest_failed": 0,
+  "issues": [],
+  "evidence_files": [
+    "reports/bistka_capacity_20260715_162248.txt",
+    "reports/bistka_capacity_v2_20260716.txt",
+    "reports/bistka_capacity_v2_20260716_login.txt"
+  ],
+  "evidence_fingerprint": "1bf61d6ee9430595bb0aa3691b4a5b555cdbb0452327ec7b34da3241657bd474",
+  "evaluated_at": "2026-07-17T14:43:09.457849+00:00"
+}

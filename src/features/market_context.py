@@ -10,7 +10,11 @@ from src.features.build_features import write_features
 from src.utils.config import load_config
 
 
-def build_index_context(index_prices: pd.DataFrame, index_name: str = "set") -> pd.DataFrame:
+def build_index_context(
+    index_prices: pd.DataFrame,
+    index_name: str = "set",
+    target_dates: pd.Series | pd.Index | None = None,
+) -> pd.DataFrame:
     df = index_prices.copy()
     df["date"] = pd.to_datetime(df["date"])
     if "index_name" in df.columns:
@@ -18,9 +22,19 @@ def build_index_context(index_prices: pd.DataFrame, index_name: str = "set") -> 
     if df.empty:
         raise ValueError(f"no index rows available for {index_name!r}")
 
-    df = df.sort_values("date")
-    close = pd.to_numeric(df["close"], errors="coerce")
-    context = pd.DataFrame({"date": df["date"]})
+    df = df.sort_values("date").drop_duplicates("date", keep="last")
+    close = pd.Series(pd.to_numeric(df["close"], errors="coerce").to_numpy(), index=df["date"])
+    if target_dates is not None:
+        dates = pd.DatetimeIndex(pd.to_datetime(pd.Series(target_dates).dropna().unique())).sort_values()
+        close = close.reindex(dates)
+        available = close.notna().astype(float)
+        close = close.ffill()
+    else:
+        dates = pd.DatetimeIndex(close.index)
+        available = pd.Series(1.0, index=dates)
+    context = pd.DataFrame({"date": dates})
+    context[f"{index_name}_context_available"] = available.to_numpy(dtype=float)
+    close = close.reset_index(drop=True)
     context[f"{index_name}_return_1d"] = close.pct_change().fillna(0.0)
     context[f"{index_name}_return_5d"] = close.pct_change(5).fillna(0.0)
     context[f"{index_name}_return_20d"] = close.pct_change(20).fillna(0.0)
@@ -36,7 +50,7 @@ def merge_market_context(
 ) -> pd.DataFrame:
     merged = features.copy()
     merged["date"] = pd.to_datetime(merged["date"])
-    context = build_index_context(index_prices, index_name)
+    context = build_index_context(index_prices, index_name, merged["date"])
     merged = merged.merge(context, on="date", how="left")
     context_columns = [column for column in context.columns if column != "date"]
     merged[context_columns] = merged[context_columns].fillna(0.0)

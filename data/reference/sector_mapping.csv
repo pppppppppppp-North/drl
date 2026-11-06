@@ -1,0 +1,139 @@
+ticker,sector,source,coverage_start,coverage_end_exclusive,usage,sector_history_consistent
+AAV.BK,Transportation & Logistics,Stock Exchange of Thailand constituent archive,2021-07-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+ACE.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2024-01-02,latest_reference_only_use_membership_archive_for_as_of_joins,True
+ADVANC.BK,Information & Communication Technology,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+AEONTS.BK,Finance & Securities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+AMATA.BK,Property Development,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+AOT.BK,Transportation & Logistics,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+AP.BK,Property Development,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+AURA.BK,Fashion,Stock Exchange of Thailand constituent archive,2023-07-01,2024-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+AWC.BK,Property Development,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BA.BK,Transportation & Logistics,Stock Exchange of Thailand constituent archive,2024-07-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BAM.BK,Finance & Securities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BANPU.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BBL.BK,Banking,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BCH.BK,Health Care Services,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BCP.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BCPG.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BDMS.BK,Health Care Services,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BEC.BK,Media & Publishing,Stock Exchange of Thailand constituent archive,2021-01-01,2023-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BEM.BK,Transportation & Logistics,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BGRIM.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BH.BK,Health Care Services,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BJC.BK,Commerce,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BLA.BK,Insurance,Stock Exchange of Thailand constituent archive,2022-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BPP.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2022-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BSRC.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2024-01-02,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BTG.BK,Food & Beverage,Stock Exchange of Thailand constituent archive,2023-07-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BTS.BK,Transportation & Logistics,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+BYD.BK,Finance & Securities,Stock Exchange of Thailand constituent archive,2023-01-01,2024-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+CBG.BK,Food & Beverage,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+CENTEL.BK,Tourism & Leisure,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+CHG.BK,Health Care Services,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+CK.BK,Construction Services,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+CKP.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+COM7.BK,Commerce,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+CPALL.BK,Commerce,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+CPF.BK,Food & Beverage,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+CPN.BK,Property Development,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+CRC.BK,Commerce,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+DELTA.BK,Electronic Components,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+DOHOME.BK,Commerce,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+DTAC.BK,Information & Communication Technology,Stock Exchange of Thailand constituent archive,2021-01-01,2023-04-07,latest_reference_only_use_membership_archive_for_as_of_joins,True
+EA.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+EGCO.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+EPG.BK,Construction Materials,Stock Exchange of Thailand constituent archive,2021-01-01,2023-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+ERW.BK,Tourism & Leisure,Stock Exchange of Thailand constituent archive,2023-07-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+ESSO.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2024-01-02,latest_reference_only_use_membership_archive_for_as_of_joins,True
+FORTH.BK,Information & Communication Technology,Stock Exchange of Thailand constituent archive,2022-07-01,2024-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+GFPT.BK,Agribusiness,Stock Exchange of Thailand constituent archive,2021-01-01,2021-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+GLOBAL.BK,Commerce,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+GPSC.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+GULF.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+GUNKUL.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+HANA.BK,Electronic Components,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+HMPRO.BK,Commerce,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+ICHI.BK,Food & Beverage,Stock Exchange of Thailand constituent archive,2021-07-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+INTUCH.BK,Information & Communication Technology,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+IRPC.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+ITC.BK,Food & Beverage,Stock Exchange of Thailand constituent archive,2024-01-02,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+IVL.BK,Petrochemicals & Chemicals,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+JAS.BK,Information & Communication Technology,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+JMART.BK,Information & Communication Technology,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+JMT.BK,Finance & Securities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+KBANK.BK,Banking,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+KCE.BK,Electronic Components,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+KEX.BK,Transportation & Logistics,Stock Exchange of Thailand constituent archive,2022-01-01,2023-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+KKP.BK,Banking,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+KTB.BK,Banking,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+KTC.BK,Finance & Securities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+LH.BK,Property Development,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+M.BK,Food & Beverage,Stock Exchange of Thailand constituent archive,2024-01-02,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+MAJOR.BK,Media & Publishing,Stock Exchange of Thailand constituent archive,2021-01-01,2023-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+MBK.BK,Property Development,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+MEGA.BK,Commerce,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+MINT.BK,Tourism & Leisure,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,False
+MOSHI.BK,Commerce,Stock Exchange of Thailand constituent archive,2024-01-02,2024-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+MTC.BK,Finance & Securities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+NEX.BK,Automotive,Stock Exchange of Thailand constituent archive,2023-01-01,2024-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,False
+NRF.BK,Food & Beverage,Stock Exchange of Thailand constituent archive,2021-07-01,2022-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+ONEE.BK,Media & Publishing,Stock Exchange of Thailand constituent archive,2022-07-01,2023-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+OR.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-02-11,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+ORI.BK,Property Development,Stock Exchange of Thailand constituent archive,2021-01-01,2024-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+OSP.BK,Food & Beverage,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+PLANB.BK,Media & Publishing,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+PRM.BK,Transportation & Logistics,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+PSL.BK,Transportation & Logistics,Stock Exchange of Thailand constituent archive,2021-07-01,2024-01-02,latest_reference_only_use_membership_archive_for_as_of_joins,True
+PTG.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2024-01-02,latest_reference_only_use_membership_archive_for_as_of_joins,True
+PTL.BK,Packaging,Stock Exchange of Thailand constituent archive,2021-07-01,2022-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+PTT.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+PTTEP.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+PTTGC.BK,Petrochemicals & Chemicals,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+QH.BK,Property Development,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+RATCH.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+RBF.BK,Food & Beverage,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+RCL.BK,Transportation & Logistics,Stock Exchange of Thailand constituent archive,2022-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+RS.BK,Commerce,Stock Exchange of Thailand constituent archive,2021-01-01,2022-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+SABUY.BK,Commerce,Stock Exchange of Thailand constituent archive,2023-01-01,2024-01-02,latest_reference_only_use_membership_archive_for_as_of_joins,True
+SAPPE.BK,Food & Beverage,Stock Exchange of Thailand constituent archive,2024-01-02,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+SAWAD.BK,Finance & Securities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+SCB.BK,Banking,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+SCC.BK,Construction Materials,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+SCGP.BK,Packaging,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+SINGER.BK,Commerce,Stock Exchange of Thailand constituent archive,2021-07-01,2023-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+SIRI.BK,Property Development,Stock Exchange of Thailand constituent archive,2022-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+SISB.BK,Professional Services,Stock Exchange of Thailand constituent archive,2024-01-02,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+SJWD.BK,Transportation & Logistics,Stock Exchange of Thailand constituent archive,2023-04-07,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+SKY.BK,Information & Communication Technology,Stock Exchange of Thailand constituent archive,2024-07-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+SNNP.BK,Food & Beverage,Stock Exchange of Thailand constituent archive,2023-07-01,2024-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+SPALI.BK,Property Development,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+SPRC.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+STA.BK,Agribusiness,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+STARK.BK,Industrial Materials & Machinery,Stock Exchange of Thailand constituent archive,2022-01-01,2023-04-07,latest_reference_only_use_membership_archive_for_as_of_joins,True
+STEC.BK,Construction Services,Stock Exchange of Thailand constituent archive,2021-01-01,2024-01-02,latest_reference_only_use_membership_archive_for_as_of_joins,True
+STGT.BK,Personal Products & Pharmaceuticals,Stock Exchange of Thailand constituent archive,2021-07-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+SUPER.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2023-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+SYNEX.BK,Information & Communication Technology,Stock Exchange of Thailand constituent archive,2021-07-01,2023-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TASCO.BK,Construction Materials,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TCAP.BK,Banking,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+THANI.BK,Finance & Securities,Stock Exchange of Thailand constituent archive,2021-01-01,2024-01-02,latest_reference_only_use_membership_archive_for_as_of_joins,True
+THG.BK,Health Care Services,Stock Exchange of Thailand constituent archive,2023-01-01,2024-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TIDLOR.BK,Finance & Securities,Stock Exchange of Thailand constituent archive,2022-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TIPH.BK,Insurance,Stock Exchange of Thailand constituent archive,2022-07-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TISCO.BK,Banking,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TKN.BK,Food & Beverage,Stock Exchange of Thailand constituent archive,2021-01-01,2024-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TLI.BK,Insurance,Stock Exchange of Thailand constituent archive,2023-07-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TMB.BK,Banking,Stock Exchange of Thailand constituent archive,2021-01-01,2021-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TOA.BK,Construction Materials,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TOP.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TPIPP.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2021-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TQM.BK,Insurance,Stock Exchange of Thailand constituent archive,2021-01-01,2024-01-02,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TRUE.BK,Information & Communication Technology,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TTA.BK,Transportation & Logistics,Stock Exchange of Thailand constituent archive,2022-01-01,2023-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TTB.BK,Banking,Stock Exchange of Thailand constituent archive,2021-07-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TTW.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2021-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TU.BK,Food & Beverage,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+TVO.BK,Food & Beverage,Stock Exchange of Thailand constituent archive,2021-01-01,2022-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+VGI.BK,Media & Publishing,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+WHA.BK,Property Development,Stock Exchange of Thailand constituent archive,2021-01-01,2025-01-01,latest_reference_only_use_membership_archive_for_as_of_joins,True
+WHAUP.BK,Energy & Utilities,Stock Exchange of Thailand constituent archive,2021-01-01,2021-07-01,latest_reference_only_use_membership_archive_for_as_of_joins,True

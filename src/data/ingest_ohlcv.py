@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 from collections.abc import Callable
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -31,6 +33,7 @@ def _yahoo_provider(ticker: str, start: str, end: str) -> pd.DataFrame:
         auto_adjust=True,
         actions=False,
         progress=False,
+        repair=True,
         threads=False,
     )
 
@@ -65,7 +68,31 @@ def _normalize_provider_frame(frame: pd.DataFrame, ticker: str) -> pd.DataFrame:
     normalized = normalized.dropna(subset=["date", "open", "high", "low", "close", "volume"])
     if normalized.empty:
         raise ValueError(f"{ticker} data has no valid OHLCV rows after normalization")
-    return normalized[PRICE_COLUMNS]
+    envelope_high = normalized[["open", "high", "close"]].max(axis=1)
+    envelope_low = normalized[["open", "low", "close"]].min(axis=1)
+    tolerance = 1e-10
+    normalized["ohlc_repaired"] = (
+        (envelope_high - normalized["high"] > tolerance)
+        | (normalized["low"] - envelope_low > tolerance)
+    )
+    normalized["high"] = envelope_high
+    normalized["low"] = envelope_low
+    return normalized[[*PRICE_COLUMNS, "ohlc_repaired"]]
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def write_csv_atomic(frame: pd.DataFrame, path: Path) -> None:
+    ensure_dirs(path.parent)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    frame.to_csv(temporary, index=False)
+    temporary.replace(path)
 
 
 def add_placeholder_context_columns(prices: pd.DataFrame) -> pd.DataFrame:
@@ -105,6 +132,7 @@ def write_manifest_row(
     prices: pd.DataFrame,
     raw_file_path: Path,
     license_note: str,
+    source_url: str = "",
 ) -> None:
     ensure_dirs(manifest_path.parent)
     date_range = (
@@ -121,6 +149,13 @@ def write_manifest_row(
         "license_note": license_note,
         "raw_file_path": str(raw_file_path),
         "missing_value_rate": float(prices.isna().mean().mean()),
+        "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
+        "row_count": int(len(prices)),
+        "unique_dates": int(pd.to_datetime(prices["date"]).nunique()),
+        "sha256": _sha256(raw_file_path) if raw_file_path.is_file() else "",
+        "bytes": raw_file_path.stat().st_size if raw_file_path.is_file() else 0,
+        "ohlc_repaired_rows": int(prices.get("ohlc_repaired", pd.Series(False, index=prices.index)).sum()),
+        "source_url": source_url,
     }
     if manifest_path.exists():
         manifest = pd.read_csv(manifest_path)
@@ -128,7 +163,7 @@ def write_manifest_row(
         manifest = pd.concat([manifest, pd.DataFrame([row])], ignore_index=True)
     else:
         manifest = pd.DataFrame([row])
-    manifest.to_csv(manifest_path, index=False)
+    write_csv_atomic(manifest, manifest_path)
 
 
 def main() -> None:
@@ -147,14 +182,18 @@ def main() -> None:
         start=str(config["data"]["start"]),
         end=str(config["data"]["end"]),
     )
-    prices.to_csv(output, index=False)
+    write_csv_atomic(prices, output)
     write_manifest_row(
         Path(args.manifest),
         source_name=args.source_name,
         access_method="Yahoo Finance via yfinance",
         prices=prices,
         raw_file_path=output,
-        license_note="Yahoo Finance data access through yfinance; verify usage rights before publication.",
+        license_note=(
+            "Yahoo Finance data accessed through yfinance with adjusted OHLC and deterministic "
+            "OHLC-envelope repair; verify usage rights before publication."
+        ),
+        source_url="https://finance.yahoo.com/",
     )
     print(f"wrote {output} rows={len(prices)} tickers={prices['ticker'].nunique()}")
 

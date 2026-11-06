@@ -1,0 +1,5 @@
+date,investor_type,buy_value,sell_value
+2024-01-02,foreign,25000.0,24000.0
+2024-01-02,local_institution,9000.0,9500.0
+2024-01-02,proprietary,6000.0,6200.0
+2024-01-02,local_individual,20000.0,20300.0

@@ -1,0 +1,260 @@
+{
+  "active_release": {
+    "manifest_path": "campaigns/large_scale_thai_drl_v2/deployment/bistka_screening_v2_manifest.json",
+    "manifest_sha256": "d9a1fd96af46cfe022d12b38d2de97642296a4a1f66928bbbbf3669af4dcfd86",
+    "release_id": "ef89ff5a738c5b25460ae40ad7789239134d761ce511a36665f857e01e3d74b4"
+  },
+  "archive": {
+    "bytes": 1707398,
+    "file_count": 48,
+    "path": "pre_cutover_control_and_release.tar.gz",
+    "sha256": "5dd485c41ee5e287c893081f760f1f496fb458e1e1097e691fb64e254e822aee"
+  },
+  "created_at_utc": "2026-07-17T14:11:59.845125+00:00",
+  "files": [
+    {
+      "bytes": 5605,
+      "path": "campaigns/large_scale_thai_drl_v2/attempts/archive/screening_20260716T150537Z_5529f328.json",
+      "sha256": "dd39c23d0ff16884692df95afb30b08d5c227c76630472ec7d7ec10c007f07a9"
+    },
+    {
+      "bytes": 5605,
+      "path": "campaigns/large_scale_thai_drl_v2/attempts/archive/screening_latest_obsolete_release_20260716.json",
+      "sha256": "dd39c23d0ff16884692df95afb30b08d5c227c76630472ec7d7ec10c007f07a9"
+    },
+    {
+      "bytes": 5654,
+      "path": "campaigns/large_scale_thai_drl_v2/attempts/determinism_20260716T155437Z_32014fd9.json",
+      "sha256": "46853e4bd82cbd70d32f32deda4ef17091464aebb76cfbb47a9dd7a968b20781"
+    },
+    {
+      "bytes": 5654,
+      "path": "campaigns/large_scale_thai_drl_v2/attempts/determinism_latest.json",
+      "sha256": "46853e4bd82cbd70d32f32deda4ef17091464aebb76cfbb47a9dd7a968b20781"
+    },
+    {
+      "bytes": 5612,
+      "path": "campaigns/large_scale_thai_drl_v2/attempts/screening_smoke_20260716T160537Z_132d2047.json",
+      "sha256": "23d0804d47425bba465ade42270ee1b21aca751ee28d9414cd63c1ad417d6db7"
+    },
+    {
+      "bytes": 5612,
+      "path": "campaigns/large_scale_thai_drl_v2/attempts/screening_smoke_20260716T162849Z_a1c6eb03.json",
+      "sha256": "7d09fb271be793c66ae12569f5938bb7a5e2eeee58f9e624f2ca52df65944005"
+    },
+    {
+      "bytes": 5612,
+      "path": "campaigns/large_scale_thai_drl_v2/attempts/screening_smoke_latest.json",
+      "sha256": "7d09fb271be793c66ae12569f5938bb7a5e2eeee58f9e624f2ca52df65944005"
+    },
+    {
+      "bytes": 5697,
+      "path": "campaigns/large_scale_thai_drl_v2/attempts/vector_benchmark_20260716T155433Z_76f61dd7.json",
+      "sha256": "668ec440f455dfa639ef4bda04acdd998dd79cc4f0a4a7142068d67dd483de3a"
+    },
+    {
+      "bytes": 5697,
+      "path": "campaigns/large_scale_thai_drl_v2/attempts/vector_benchmark_latest.json",
+      "sha256": "668ec440f455dfa639ef4bda04acdd998dd79cc4f0a4a7142068d67dd483de3a"
+    },
+    {
+      "bytes": 382,
+      "path": "campaigns/large_scale_thai_drl_v2/commands/archive/README.md",
+      "sha256": "fc0ecd9c70047fe9a7e75157058c3923de70f483451e8e5f0511ed8ee94ed753"
+    },
+    {
+      "bytes": 881,
+      "path": "campaigns/large_scale_thai_drl_v2/commands/archive/screening_obsolete_release_20260716.sh",
+      "sha256": "20eae3c59fee86d226ccd11d7c0936816c0b3be44a8aa95ca7a2a48afc007ca1"
+    },
+    {
+      "bytes": 1022,
+      "path": "campaigns/large_scale_thai_drl_v2/commands/archive/screening_smoke_job_3542_failed_20260716.sh",
+      "sha256": "28a538dbfd930c7bcc586ec9b4b9b735dcb6095c0174ce02a9fc1b5afbb7855b"
+    },
+    {
+      "bytes": 788,
+      "path": "campaigns/large_scale_thai_drl_v2/commands/determinism.sh",
+      "sha256": "95ac67379b0590b22e74fde7af5ffcc5e951c707ec46339b54827be835cdab50"
+    },
+    {
+      "bytes": 917,
+      "path": "campaigns/large_scale_thai_drl_v2/commands/screening_smoke.sh",
+      "sha256": "c5e6bbee6fa09b9d546ff5b3139379dde3bcf4661381c167fa966e2929f0bdec"
+    },
+    {
+      "bytes": 834,
+      "path": "campaigns/large_scale_thai_drl_v2/commands/vector_benchmark.sh",
+      "sha256": "5c9360ef3b2eca8afb028d575be4de1cdff60b83606867146dda1b847fcaa808"
+    },
+    {
+      "bytes": 1649299,
+      "path": "campaigns/large_scale_thai_drl_v2/deployment/bistka_screening_v2.tar.gz",
+      "sha256": "ef0a6ee2cc0237087b3ac186beb2d8d8423814c7f6b7823f23e678f656773a0d"
+    },
+    {
+      "bytes": 65,
+      "path": "campaigns/large_scale_thai_drl_v2/deployment/bistka_screening_v2.tar.gz.sha256",
+      "sha256": "87678b44da0e6f8cb0b00a6885be62d0fe42cd244a2cca581101fbc8c466e926"
+    },
+    {
+      "bytes": 9273,
+      "path": "campaigns/large_scale_thai_drl_v2/deployment/bistka_screening_v2_deployment.yaml",
+      "sha256": "1a2ac374876f8adb461b869fb6e258a11b580cc7c859d19a0353625b2008e381"
+    },
+    {
+      "bytes": 42817,
+      "path": "campaigns/large_scale_thai_drl_v2/deployment/bistka_screening_v2_manifest.json",
+      "sha256": "d9a1fd96af46cfe022d12b38d2de97642296a4a1f66928bbbbf3669af4dcfd86"
+    },
+    {
+      "bytes": 65,
+      "path": "campaigns/large_scale_thai_drl_v2/deployment/bistka_screening_v2_manifest.sha256",
+      "sha256": "ea9ebc3584a6bff5ee3a4cdc6dfcc440b3940285a3f82c16e4ed11115de47698"
+    },
+    {
+      "bytes": 4059,
+      "path": "campaigns/large_scale_thai_drl_v2/events.jsonl",
+      "sha256": "f11fe636a290d93da5192ed92b3ad411f27f73bc8658223a431ee2c7b6c7d2ee"
+    },
+    {
+      "bytes": 6840,
+      "path": "campaigns/large_scale_thai_drl_v2/plan.json",
+      "sha256": "44bd5bbc5674b145b095944355f6185972b9e5123e082868536c838b57792c65"
+    },
+    {
+      "bytes": 49965,
+      "path": "campaigns/large_scale_thai_drl_v2/resolved_campaign.json",
+      "sha256": "b966e29b561e21b78f65cc8fbcbfb9cd6c38ad63b812780bacf0f0d37fb8317d"
+    },
+    {
+      "bytes": 206,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/capacity/_SUCCESS.json",
+      "sha256": "7d0038a2c90bfb3dbb09d34a9779e7f9cbd800fd77541556cbcf815cf9032bf6"
+    },
+    {
+      "bytes": 885,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/capacity/gate_report.json",
+      "sha256": "6d54e4ba31453d929868122fa54a9f70fa5ddebcb99f15c5bb752a5daa7d81ac"
+    },
+    {
+      "bytes": 215,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/_SUCCESS.json",
+      "sha256": "0e2f6ced32670ab86a28b70882cb21ae982ad61d5f758fdd5784f4ada4ece052"
+    },
+    {
+      "bytes": 8286,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/cluster_preflight/gate_report.json",
+      "sha256": "bb175bb075b05784c08db6ddb24c9e7e681946204fdcab311199d5f8d06ff4d0"
+    },
+    {
+      "bytes": 212,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/data_readiness/_SUCCESS.json",
+      "sha256": "c01aefbc8b4f34276819b2ec2a779d69e174095870e5e6ceed93870ec4771f42"
+    },
+    {
+      "bytes": 1631,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/data_readiness/gate_report.json",
+      "sha256": "505be1057e05ceb1c7e11e2b4589f9d4b0b67d4ae4f104e64dd3e5c194b60cda"
+    },
+    {
+      "bytes": 215,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/deployment_bundle/_SUCCESS.json",
+      "sha256": "ccfc3f6550f5d816f80716edbf60e360a94d1d7b4e34ba25f11f207588007fbd"
+    },
+    {
+      "bytes": 8958,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/deployment_bundle/gate_report.json",
+      "sha256": "bcc3a18d14a5f941af5da0a7b76950e97265e3d91877d72525754af390fe421b"
+    },
+    {
+      "bytes": 209,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/determinism/_SUCCESS.json",
+      "sha256": "88bc5bfef522bc5b73b56ab148351b5f17ee46ff0c3e73b344ea8c966489dbff"
+    },
+    {
+      "bytes": 2098,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/determinism/gate_report.json",
+      "sha256": "0de02de36c2a8e4a06e724f1efa06cb2d559d70c2aedb0e9c272a9da723bd215"
+    },
+    {
+      "bytes": 213,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/preregistration/_SUCCESS.json",
+      "sha256": "5da634495a7659104d1c4cf65aebb0945608f9f80d386d4ca6ba3873458739b4"
+    },
+    {
+      "bytes": 1054,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/preregistration/gate_report.json",
+      "sha256": "31fdc67284fd73f0a8852540da1ae9e2335f40a86b78968b231abfabdef8efe1"
+    },
+    {
+      "bytes": 225,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/screening_cluster_preflight/_SUCCESS.json",
+      "sha256": "35fa79252372a34503fd4d86f2bb4d195fe035a535c46ad6d977f3ca2586781f"
+    },
+    {
+      "bytes": 10102,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/screening_cluster_preflight/gate_report.json",
+      "sha256": "19b835ce3fc775fe8f549e02b02f5dad0dbaa5779b5e94c3844d33802fa7b70e"
+    },
+    {
+      "bytes": 214,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/screening_config/_SUCCESS.json",
+      "sha256": "b512413bf36b3a7f34255e4b269adfc592eb41363dacfe77c81a9d5b024ec6d0"
+    },
+    {
+      "bytes": 1096,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/screening_config/gate_report.json",
+      "sha256": "5fcea3f1c682f9d926333110829eac7fb6855a2a2dca2b4b821de8e4a9acafa8"
+    },
+    {
+      "bytes": 225,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/screening_deployment_bundle/_SUCCESS.json",
+      "sha256": "863bd429e7ca0542cf191746d61d855ce2bf6504348d68629fcf56f1575d1fe9"
+    },
+    {
+      "bytes": 10821,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/screening_deployment_bundle/gate_report.json",
+      "sha256": "87262294fa8aed7a889ebb17c0ac19498d7343d9f2b196493130b446d06e1cc2"
+    },
+    {
+      "bytes": 213,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/screening_smoke/_SUCCESS.json",
+      "sha256": "4ad2996a6c37d3000ac42caf4e8a109e21b311a1897e96bf9023e804ecd87c38"
+    },
+    {
+      "bytes": 2434,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/screening_smoke/gate_report.json",
+      "sha256": "562734543c97a6c1cd7d23f199817dd0db0894bac4ef92b9d9fc3ca1e2e749ee"
+    },
+    {
+      "bytes": 214,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/vector_benchmark/_SUCCESS.json",
+      "sha256": "24a543a87a8de9efeaddef77aaeb6a4a8715840881edf48822da6adb9daa9436"
+    },
+    {
+      "bytes": 2641,
+      "path": "campaigns/large_scale_thai_drl_v2/stages/vector_benchmark/gate_report.json",
+      "sha256": "6a806ec61c814a96da8caa0041968ac25027d0a40ed5e4bac81f31ec22894658"
+    },
+    {
+      "bytes": 100125,
+      "path": "campaigns/large_scale_thai_drl_v2/state.json",
+      "sha256": "efc5441cc802161da1b1c389ff6bcda0c01466d7de412e846a2eeebbba44b3f0"
+    },
+    {
+      "bytes": 39548,
+      "path": "config/research_campaign.yaml",
+      "sha256": "9d0d02ad1890379e72ce8d7513cf93dc83a54e8afc1c6f527c5275e76476a0b4"
+    },
+    {
+      "bytes": 41189,
+      "path": "reports/bistka_screening_v2_preflight.json",
+      "sha256": "99ff875694ff47b6a02541718b6af93699de1f789ef35effaefe24d2e9655951"
+    }
+  ],
+  "project_root": ".",
+  "restore_scope": "Restore this archive only for an intentional rollback to the original research_campaign.yaml control lineage. Remote release rollback remains an explicit deployment operation.",
+  "schema_version": 1,
+  "snapshot_kind": "pre_storage_safe_campaign_cutover"
+}

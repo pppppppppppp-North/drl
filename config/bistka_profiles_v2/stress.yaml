@@ -1,0 +1,27 @@
+campaign_release_profile:
+  schema_version: 1
+  name: stress
+  require_feature_expectations: true
+  base:
+    manifest: "{campaign_dir}/deployment/bistka_protocol_v2_manifest.json"
+  include:
+    derived_configs:
+      - "{campaign_dir}/derived/locked_execution_stress.yaml"
+    decisions: []
+    protocols: []
+    registries:
+      - "{campaign_dir}/derived/model_registry.json"
+      - "{campaign_dir}/derived/model_registry.sha256"
+    files: []
+  runtime_configs:
+    - "{campaign_dir}/derived/locked_execution_stress.yaml"
+  resolve:
+    feature_ablation_configs: []
+    stress_registries:
+      - "{campaign_dir}/derived/model_registry.json"
+  feature_expectations:
+    "{campaign_dir}/derived/locked_execution_stress.yaml":
+      path: data/processed/features_real_ohlcv_market.csv
+      sha256: b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc
+      bytes: 2183530
+      require_readiness: true

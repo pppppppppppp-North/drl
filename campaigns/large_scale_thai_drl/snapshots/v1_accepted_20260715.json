@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "snapshot_id": "large_scale_thai_drl_v1_accepted_20260715",
+  "frozen_at_utc": "2026-07-15T16:42:27Z",
+  "status": "accepted_historical_snapshot",
+  "campaign_state": {
+    "verified": 10,
+    "ready": 1,
+    "pending": 17,
+    "ready_stage": "screening",
+    "screening_submitted": false
+  },
+  "scheduler": {
+    "accepted_job_id": "3530",
+    "total_submissions": 5,
+    "submission_ids": ["3525", "3526", "3528", "3529", "3530"]
+  },
+  "release_ids": {
+    "calibration": "6d66448341c780c5b90a2d2d54cf2b4d4bebd972a18885aad727a05ff8236aaa",
+    "screening": "47c3399e62fd5a162c2ea1a6e057af054aedac7604c58242a954a5d44cc1118d"
+  },
+  "accepted_result": {
+    "selected_num_envs": 1,
+    "deterministic": true,
+    "determinism_steps": 549,
+    "vector_trials": 15,
+    "feature_sha256": "b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc"
+  },
+  "artifacts": [
+    {"path": "campaigns/large_scale_thai_drl/state.json", "sha256": "4d724f6deeca346004e6f1a8a0ae34bd9460d9a4ea1ff053db0826aa16ac4482"},
+    {"path": "campaigns/large_scale_thai_drl/reports/campaign_status.md", "sha256": "dfb7384486e22e3b44fd32a86afc4f9419d15b3a8a449ca284ccb435ec111a8b"},
+    {"path": "campaigns/large_scale_thai_drl/deployment/bistka_deployment_manifest.json", "sha256": "dbe48d797e7c2767ace11aff2c46cda072674465e0dcba0aa34915616f7e4856"},
+    {"path": "campaigns/large_scale_thai_drl/deployment/bistka_release.tar.gz", "sha256": "0bb862b432150dd33f2702ce543669f403feb5ddf01e8defd323846afab726a5"},
+    {"path": "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay_manifest.json", "sha256": "3991f603f9f91ef6b0da9299bff8c4adf2fc636698ef558bc89ca065c75b7bf3"},
+    {"path": "campaigns/large_scale_thai_drl/deployment/bistka_screening_overlay.tar.gz", "sha256": "e0890e203a2153cb151ecca1af7612604de35d45901e70338e7901308288cfef"},
+    {"path": "campaigns/large_scale_thai_drl/deployment/bistka_screening_runtime_profile.yaml", "sha256": "6c6cf91bcf07672751fb028fe3365c9f912c1e813981f11a45ee788c99b572be"},
+    {"path": "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml", "sha256": "8d66ba4e232900f9c72773afd1b4480ae11d88e7ae378498358564f313dc7158"},
+    {"path": "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml.sha256", "sha256": "ec0a32b39720ee7728fcb6b48d9caf52cde11e5fef14f84196ee751c363fc4b2"},
+    {"path": "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json", "sha256": "e7b238be37704100c0549c3021e041a85800e5365029fd98513126905530a459"},
+    {"path": "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.decision.json.sha256", "sha256": "5d624b3e4e728303f7ba022504b74d995c4da88f155ee2be84102e3855af4167"},
+    {"path": "reports/bistka_calibration_preflight.json", "sha256": "6c3b217f1c55240e85eddeb8d8cb1e659c89d8a7632004fc95a3294c83142aa3"},
+    {"path": "reports/bistka_screening_preflight.json", "sha256": "36ac938a076e398697f9091cd0e5b1ef45d8b8f9affadba80e1d100b22972e20"},
+    {"path": "reports/determinism_3530.json", "sha256": "2ef43965e451683df3c505b2f65acf156c1c204c52e5c99b1b7566a7e868d643"},
+    {"path": "reports/determinism_3530.json.receipt.json", "sha256": "d4cd3dbe7fa379a652ea9e5eef100a7f752c53100680b31047ec2fee5d954b9e"},
+    {"path": "reports/vectorized_training_benchmark_3530.csv", "sha256": "eb94c855e95d18d80b73294f74ed4538188bfb2327630b9413edc5326f02f4b7"},
+    {"path": "reports/vectorized_training_benchmark_3530.json", "sha256": "2cbd60203c83175b02bb9ff53536c5058a917f25103be86d1cfa79836830fa12"},
+    {"path": "reports/vectorized_training_benchmark_3530.csv.receipt.json", "sha256": "40e043af611629b788d4aa97b79f529472f74fd3a7ae4bf68c4f4ed46db203ae"},
+    {"path": "reports/bistka_calibration_execution_20260715.md", "sha256": "6d5f17a2c1f51ba37a41ec5bac1b555b93cf5607071380b46b9bb07a2beb63be"},
+    {"path": "reports/figures/vectorized_training_calibration_3530.png", "sha256": "dcd52bdfecd6c74139bc3f3c4cc62e7d3a24f699f37760d6c22263e71313ed3f"}
+  ],
+  "note": "This manifest freezes the accepted v1 evidence before v2 control-plane development. Later code drift does not rewrite or reclassify these historical job-3530 artifacts."
+}

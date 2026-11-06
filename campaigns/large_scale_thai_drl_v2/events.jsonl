@@ -1,0 +1,45 @@
+{"timestamp": "2026-07-16T14:47:49.018274+00:00", "event": "stage_verified", "stage": "data_readiness"}
+{"timestamp": "2026-07-16T14:47:49.292324+00:00", "event": "stage_verified", "stage": "capacity"}
+{"timestamp": "2026-07-16T14:47:49.565974+00:00", "event": "stage_verified", "stage": "preregistration"}
+{"timestamp": "2026-07-16T14:47:50.342897+00:00", "event": "stage_verified", "stage": "deployment_bundle"}
+{"timestamp": "2026-07-16T14:51:12.320804+00:00", "event": "stage_verified", "stage": "cluster_preflight"}
+{"timestamp": "2026-07-16T14:51:18.901782+00:00", "event": "calibration_evidence_migrated", "source_snapshot": "campaigns/large_scale_thai_drl/snapshots/v1_accepted_20260715.json", "migration_receipt": "/Users/nathawat/Documents/final_project_plan/campaigns/large_scale_thai_drl_v2/imports/v1_calibration_evidence.json"}
+{"timestamp": "2026-07-16T14:51:31.646452+00:00", "event": "stage_verified", "stage": "vector_benchmark"}
+{"timestamp": "2026-07-16T14:51:32.547054+00:00", "event": "stage_verified", "stage": "determinism"}
+{"timestamp": "2026-07-16T14:51:33.766273+00:00", "event": "stage_verified", "stage": "screening_config"}
+{"timestamp": "2026-07-16T14:51:40.675744+00:00", "event": "stage_verified", "stage": "screening_deployment_bundle"}
+{"timestamp": "2026-07-16T14:52:40.401615+00:00", "event": "stage_verified", "stage": "screening_cluster_preflight"}
+{"timestamp": "2026-07-16T15:05:37.622500+00:00", "event": "command_rendered", "stage": "screening", "path": "/Users/nathawat/Documents/final_project_plan/campaigns/large_scale_thai_drl_v2/commands/screening.sh"}
+{"timestamp": "2026-07-16T15:36:07.476247+00:00", "event": "plan_built", "workload": {"planned_model_runs": 503, "planned_training_timesteps": 29450240, "array_elements": 23}}
+{"timestamp": "2026-07-16T15:37:33.885173+00:00", "event": "stage_verified", "stage": "data_readiness"}
+{"timestamp": "2026-07-16T15:37:42.803876+00:00", "event": "stage_verified", "stage": "capacity"}
+{"timestamp": "2026-07-16T15:37:48.054319+00:00", "event": "stage_verified", "stage": "preregistration"}
+{"timestamp": "2026-07-16T15:37:53.909377+00:00", "event": "stage_verified", "stage": "deployment_bundle"}
+{"timestamp": "2026-07-16T15:38:49.571224+00:00", "event": "stage_verified", "stage": "cluster_preflight"}
+{"timestamp": "2026-07-16T15:53:38.301369+00:00", "event": "stage_verified", "stage": "deployment_bundle"}
+{"timestamp": "2026-07-16T15:54:28.607744+00:00", "event": "stage_verified", "stage": "cluster_preflight"}
+{"timestamp": "2026-07-16T15:54:33.826998+00:00", "event": "command_rendered", "stage": "vector_benchmark", "path": "/Users/nathawat/Documents/final_project_plan/campaigns/large_scale_thai_drl_v2/commands/vector_benchmark.sh"}
+{"timestamp": "2026-07-16T15:54:38.018259+00:00", "event": "command_rendered", "stage": "determinism", "path": "/Users/nathawat/Documents/final_project_plan/campaigns/large_scale_thai_drl_v2/commands/determinism.sh"}
+{"timestamp": "2026-07-16T16:03:17.815484+00:00", "event": "stage_verified", "stage": "vector_benchmark"}
+{"timestamp": "2026-07-16T16:03:23.032766+00:00", "event": "stage_verified", "stage": "determinism"}
+{"timestamp": "2026-07-16T16:04:01.182207+00:00", "event": "stage_verified", "stage": "screening_config"}
+{"timestamp": "2026-07-16T16:05:01.857374+00:00", "event": "stage_verified", "stage": "screening_deployment_bundle"}
+{"timestamp": "2026-07-16T16:05:28.545744+00:00", "event": "stage_verified", "stage": "screening_cluster_preflight"}
+{"timestamp": "2026-07-16T16:05:37.810171+00:00", "event": "command_rendered", "stage": "screening_smoke", "path": "/Users/nathawat/Documents/final_project_plan/campaigns/large_scale_thai_drl_v2/commands/screening_smoke.sh"}
+{"timestamp": "2026-07-16T16:28:49.423792+00:00", "event": "command_rendered", "stage": "screening_smoke", "path": "/Users/nathawat/Documents/final_project_plan/campaigns/large_scale_thai_drl_v2/commands/screening_smoke.sh"}
+{"timestamp": "2026-07-16T17:04:28.345910+00:00", "event": "stage_verified", "stage": "screening_smoke"}
+{"timestamp": "2026-07-17T14:24:25.226172+00:00", "event": "stage_verified", "stage": "data_readiness"}
+{"timestamp": "2026-07-17T14:24:29.210121+00:00", "event": "stage_verified", "stage": "capacity"}
+{"timestamp": "2026-07-17T14:24:31.566040+00:00", "event": "stage_verified", "stage": "preregistration"}
+{"timestamp": "2026-07-17T14:24:34.902491+00:00", "event": "stage_verified", "stage": "deployment_bundle"}
+{"timestamp": "2026-07-17T14:24:37.648473+00:00", "event": "stage_verified", "stage": "cluster_preflight"}
+{"timestamp": "2026-07-17T14:43:07.630113+00:00", "event": "stage_verified", "stage": "data_readiness"}
+{"timestamp": "2026-07-17T14:43:09.464601+00:00", "event": "stage_verified", "stage": "capacity"}
+{"timestamp": "2026-07-17T14:43:11.297297+00:00", "event": "stage_verified", "stage": "preregistration"}
+{"timestamp": "2026-07-17T14:43:12.951880+00:00", "event": "stage_verified", "stage": "deployment_bundle"}
+{"timestamp": "2026-07-17T14:43:14.084548+00:00", "event": "stage_verified", "stage": "calibration_lineage"}
+{"timestamp": "2026-07-17T14:43:19.567565+00:00", "event": "stage_verified", "stage": "screening_config"}
+{"timestamp": "2026-07-17T14:43:22.059798+00:00", "event": "stage_verified", "stage": "screening_deployment_bundle"}
+{"timestamp": "2026-07-17T14:46:25.133887+00:00", "event": "stage_verified", "stage": "screening_cluster_preflight"}
+{"timestamp": "2026-07-17T14:47:34.893722+00:00", "event": "command_rendered", "stage": "screening_smoke", "path": "/Users/nathawat/Documents/final_project_plan/campaigns/large_scale_thai_drl_v2/commands/screening_smoke.sh"}
+{"timestamp": "2026-07-17T15:41:17.975359+00:00", "event": "stage_verified", "stage": "screening_smoke"}

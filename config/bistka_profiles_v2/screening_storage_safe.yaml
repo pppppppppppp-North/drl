@@ -1,0 +1,29 @@
+campaign_release_profile:
+  schema_version: 1
+  name: screening_storage_safe
+  require_feature_expectations: true
+  base:
+    manifest: "{campaign_dir}/deployment/bistka_screening_v2_manifest.json"
+  include:
+    derived_configs: []
+    decisions: []
+    protocols: []
+    registries: []
+    files:
+      - src/experiments/screening_storage.py
+      - src/experiments/run_screening_storage_safe.py
+      - src/experiments/run_screening_storage_safe_smoke.py
+      - scripts/assess_screening_storage.py
+      - scripts/capture_screening_quota_snapshot.py
+      - slurm/large_scale_screening_storage_safe.sbatch
+      - slurm/screening_storage_safe_smoke.sbatch
+  runtime_configs: []
+  resolve:
+    feature_ablation_configs: []
+    stress_registries: []
+  feature_expectations:
+    "{campaign_dir}/derived/locked_large_scale_screening.yaml":
+      path: data/processed/features_real_ohlcv_market.csv
+      sha256: b877b08ed7a022db47739423291df0232ce377869cb7e0de6162ab82291ac6cc
+      bytes: 2183530
+      require_readiness: true

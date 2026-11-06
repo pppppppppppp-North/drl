@@ -1,0 +1,40 @@
+feature_ablation:
+  task_count: 5
+  algorithm: ppo
+  seeds: [42, 43, 44, 45, 46, 47, 48, 49, 50, 51]
+  window_ids: [0, 1]
+  total_timesteps: 50000
+  confidence: 0.95
+  control_group: technical
+  bootstrap_resamples: 20000
+  randomization_resamples: 50000
+  bootstrap_seed: 20260712
+  training_overrides:
+    num_envs: 8
+    env_window_dates: 378
+    vectorization_backend: subproc
+    subproc_start_method: forkserver
+    checkpoint_freq: 50000
+    checkpoint_keep_last: 2
+    save_replay_buffer: false
+  algorithm_parameters:
+    learning_rate: 0.00038935069852630283
+    gamma: 0.98
+    gae_lambda: 0.8020776391719847
+    ent_coef: 0.00001
+    n_steps: 256
+    clip_range: 0.14914937716505305
+    batch_size: 256
+  groups:
+    - name: returns_only
+      config: config/ablation_returns_real_ohlcv.yaml
+    - name: technical
+      config: config/ablation_technical_real_ohlcv.yaml
+    - name: technical_context
+      config: config/ablation_technical_context_real_ohlcv.yaml
+    - name: set_market
+      config: config/real_ohlcv_market.yaml
+    - name: macro_proxy
+      config: config/real_ohlcv_macro.yaml
+    - name: fundamentals_pilot
+      config: config/real_ohlcv_fundamentals.yaml

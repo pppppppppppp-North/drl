@@ -5,7 +5,12 @@ from pathlib import Path
 
 import pandas as pd
 
-from src.data.ingest_ohlcv import _normalize_provider_frame, _yahoo_provider, write_manifest_row
+from src.data.ingest_ohlcv import (
+    _normalize_provider_frame,
+    _yahoo_provider,
+    write_csv_atomic,
+    write_manifest_row,
+)
 from src.utils.config import ensure_dirs, load_config
 
 
@@ -37,7 +42,7 @@ def main() -> None:
         start=str(config["data"]["start"]),
         end=str(config["data"]["end"]),
     )
-    prices.to_csv(output, index=False)
+    write_csv_atomic(prices, output)
     manifest_prices = prices.rename(columns={"index_name": "source_index"}).copy()
     manifest_prices["ticker"] = manifest_prices["source_index"] + ":" + manifest_prices["ticker"]
     write_manifest_row(
@@ -46,7 +51,11 @@ def main() -> None:
         access_method="Yahoo Finance via yfinance",
         prices=manifest_prices,
         raw_file_path=output,
-        license_note="Yahoo Finance index data access through yfinance; verify usage rights before publication.",
+        license_note=(
+            "Yahoo Finance index data accessed through yfinance with adjusted OHLC and deterministic "
+            "OHLC-envelope repair; verify usage rights before publication."
+        ),
+        source_url="https://finance.yahoo.com/quote/%5ESET.BK/",
     )
     print(
         f"wrote {output} rows={len(prices)} "

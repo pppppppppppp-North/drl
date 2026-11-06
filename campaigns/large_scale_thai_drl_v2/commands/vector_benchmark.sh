@@ -1,0 +1,7 @@
+#!/bin/bash
+set -euo pipefail
+
+mkdir -p logs
+VECTOR_BENCHMARK_SUBMISSION=$(sbatch --parsable --export=BISTKA_PREFLIGHT_SHA256=82d4fe058b4d64142786764362ab3caa9930224d545733d48dfab8c4ff2493e8,CAMPAIGN_ATTEMPT_ID=vector_benchmark_20260716T155433Z_76f61dd7,CAMPAIGN_ATTEMPT_SHA256=55e45948c9d0efe9b2fcf4fcfea2ce4a487f851cd9ac3ec1bc6f7ddaee47dec3,CAMPAIGN_ID=large_scale_thai_drl_v2,CAMPAIGN_STAGE_ID=vector_benchmark,CONFIG_PATH=config/large_scale_screening_v2.yaml,DEPLOYMENT_RELEASE_ID=4b7d1d4b887bf08675bc664683b06f0fb103369016f7233e6caeb594e41ee382,MKL_NUM_THREADS=1,NUMEXPR_NUM_THREADS=1,OMP_NUM_THREADS=1,OPENBLAS_NUM_THREADS=1,PATH=/usr/local/bin:/usr/bin:/bin slurm/benchmark_vectorized_training.sbatch)
+VECTOR_BENCHMARK_JOB_ID="${VECTOR_BENCHMARK_SUBMISSION%%;*}"
+echo "stage=vector_benchmark job_id=${VECTOR_BENCHMARK_JOB_ID}"

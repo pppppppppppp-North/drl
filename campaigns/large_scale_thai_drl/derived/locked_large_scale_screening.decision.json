@@ -1,0 +1,55 @@
+{
+  "campaign_attempt_id": "vector_benchmark_20260715T161221Z_8ac0554b",
+  "campaign_id": "large_scale_thai_drl",
+  "created_at_utc": "2026-07-15T16:24:33.476566+00:00",
+  "decision_kind": "vectorized_training_num_envs",
+  "output": {
+    "bytes": 1537,
+    "path": "campaigns/large_scale_thai_drl/derived/locked_large_scale_screening.yaml",
+    "sha256": "8d66ba4e232900f9c72773afd1b4480ae11d88e7ae378498358564f313dc7158"
+  },
+  "schema_version": 1,
+  "selection": {
+    "median_samples_per_second": {
+      "1": 347.9200209822191,
+      "16": 83.61038728578342,
+      "2": 265.90067846994765,
+      "4": 217.0772968099264,
+      "8": 143.41706018777109
+    },
+    "previous_num_envs": 8,
+    "selected_num_envs": 1,
+    "selection_fraction_of_max": 0.95,
+    "selection_rule": "smallest num_envs with median throughput at least 95% of maximum median throughput",
+    "throughput_statistic": "median_samples_per_second"
+  },
+  "slurm_job_id": "3530",
+  "sources": {
+    "base_config": {
+      "bytes": 1700,
+      "path": "config/large_scale_screening.yaml",
+      "sha256": "e87738df7ddf844654ac27b83a92efd988ddc3082da0dfa6209785c1d81137fd"
+    },
+    "benchmark_csv": {
+      "bytes": 7694,
+      "path": "reports/vectorized_training_benchmark_3530.csv",
+      "sha256": "eb94c855e95d18d80b73294f74ed4538188bfb2327630b9413edc5326f02f4b7"
+    },
+    "benchmark_metadata": {
+      "bytes": 3762,
+      "path": "reports/vectorized_training_benchmark_3530.json",
+      "sha256": "2cbd60203c83175b02bb9ff53536c5058a917f25103be86d1cfa79836830fa12"
+    },
+    "benchmark_receipt": {
+      "bytes": 4878,
+      "path": "reports/vectorized_training_benchmark_3530.csv.receipt.json",
+      "sha256": "40e043af611629b788d4aa97b79f529472f74fd3a7ae4bf68c4f4ed46db203ae"
+    },
+    "latest_attempt": {
+      "bytes": 3243,
+      "path": "campaigns/large_scale_thai_drl/attempts/vector_benchmark_latest.json",
+      "sha256": "b723402a0015f3ef3c78bdc6575eb02d0095d275d5e6926cb576fc863044f7dc"
+    }
+  },
+  "status": "success"
+}
