@@ -24,6 +24,7 @@ import yaml
 from src.envs.long_term_env import LongTermTradingEnv
 from src.evaluation.benchmark_metrics import equity_metrics_with_benchmark
 from src.evaluation.significance import significance_table
+from src.features.macro_context import merge_macro_context
 from src.features.market_context import build_index_context
 from src.features.technical import add_technical_features
 
@@ -50,6 +51,14 @@ def build_feature_table(config: dict, root: Path) -> pd.DataFrame:
     context = build_index_context(index, data_cfg["index_name"], target_dates=features["date"])
     merged = features.merge(context, on="date", how="left")
     merged["benchmark_close"] = merged["date"].map(index.drop_duplicates("date").set_index("date")["close"])
+    macro_path = data_cfg.get("macro")
+    if macro_path:
+        # Daily macro proxies merged backward-only onto Thai trading dates (src.features.macro_context);
+        # the environment's observation window adds one more session of lag before any decision.
+        macro = pd.read_csv(root / macro_path, parse_dates=["date"])
+        names = data_cfg.get("macro_names", {})
+        macro = macro.assign(macro_name=macro["ticker"].map(lambda t: names.get(t, str(t).lower())))
+        merged = merge_macro_context(merged, macro[["date", "macro_name", "close"]])
     return merged.sort_values(["date", "ticker"]).reset_index(drop=True)
 
 
@@ -206,7 +215,7 @@ def main() -> None:
     selected = [v for v in spec["variants"] if not args.variants or v["name"] in args.variants]
     timing = []
     for variant in selected:
-        config = _deep_merge(base, {k: v for k, v in variant.items() if k in {"environment", "training"}})
+        config = _deep_merge(base, {k: v for k, v in variant.items() if k in {"environment", "training", "features"}})
         if args.timesteps:
             config["training"]["total_timesteps"] = args.timesteps
         env_cfg = config["environment"]

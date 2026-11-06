@@ -1,0 +1,108 @@
+# Milestone M4/M6 source ablation (RQ2/RQ3): does each data source improve out-of-sample results?
+# Exploratory tier: Yahoo data, five starter tickers. Same reward/model as plan_main_weekly_lstm in
+# config/long_term_reward_experiment.yaml; only the feature sources change. Walk-forward folds come
+# from --fold-year (2016-2022); the 2023-2024 test years and the sealed holdouts are never read.
+#
+# The "technical + market" arm is identical to plan_main_weekly_lstm in the reward walk-forward, so
+# its seeds 42-44 are reused from that run instead of being retrained.
+project:
+  name: source_ablation_experiment
+  seed: 42
+
+data:
+  prices: data/raw/extended/prices_starter5_2012_2024.csv
+  index: data/raw/extended/index_set50_etf_2012_2024.csv
+  index_name: set50_etf
+  macro: data/raw/extended/macro_proxies_2012_2024.csv
+  macro_names: {"USDTHB=X": usdthb, "BZ=F": brent, "CL=F": wti, "GC=F": gold, "^TNX": us10y}
+  drop_all_zero_volume_dates: true
+
+splits:
+  train_end: "2019-12-31"
+  validation_start: "2020-01-01"
+  validation_end: "2022-12-30"
+
+features:
+  lookback: 30
+  columns: &technical_market
+    - return_1d
+    - return_5d
+    - return_20d
+    - volatility_20d
+    - ma_ratio_10
+    - ma_ratio_30
+    - rsi_14
+    - macd
+    - bollinger_z
+    - atr_14
+    - volume_ratio_20
+    - set50_etf_return_1d
+    - set50_etf_return_5d
+    - set50_etf_return_20d
+    - set50_etf_volatility_20d
+    - set50_etf_ma_ratio_20
+
+base:
+  environment:
+    initial_cash: 1000000.0
+    transaction_cost: 0.0015
+    slippage: 0.0005
+    accounting: self_financing
+    action_transform: softmax
+    rebalance_every: 5
+    train_random_start: true
+    train_episode_length: 504
+    reward:
+      type: plan_main
+      sharpe_weight: 0.1
+      sharpe_eta: 0.01
+      drawdown_penalty: 0.5
+      drawdown_mode: increment
+      turnover_penalty: 0.0
+      scale: 100.0
+  training:
+    algo: ppo
+    total_timesteps: 100000
+    num_envs: 1
+    gamma: 0.99
+    n_steps: 1024
+    batch_size: 128
+    learning_rate: 0.0003
+    ent_coef: 0.0
+    normalize_observations: true
+    verbose: 0
+    policy:
+      features_extractor: asset_lstm
+      market_feature_columns: [set50_etf_return_1d, set50_etf_return_5d, set50_etf_return_20d, set50_etf_volatility_20d, set50_etf_ma_ratio_20]
+      hidden_size: 32
+      fusion_size: 16
+      net_arch: [64, 64]
+
+seeds: [42, 43, 44]
+
+variants:
+  - name: src_technical
+    description: "Stock prices and technical indicators only"
+    features:
+      columns: [return_1d, return_5d, return_20d, volatility_20d, ma_ratio_10, ma_ratio_30, rsi_14, macd, bollinger_z, atr_14, volume_ratio_20]
+    training:
+      policy:
+        features_extractor: asset_lstm
+        market_feature_columns: []
+        hidden_size: 32
+        fusion_size: 16
+        net_arch: [64, 64]
+  - name: src_technical_market_macro
+    description: "Technical + SET50 market context + daily macro proxies (USD/THB, Brent, gold, US 10y)"
+    features:
+      columns: [return_1d, return_5d, return_20d, volatility_20d, ma_ratio_10, ma_ratio_30, rsi_14, macd, bollinger_z, atr_14, volume_ratio_20,
+                set50_etf_return_1d, set50_etf_return_5d, set50_etf_return_20d, set50_etf_volatility_20d, set50_etf_ma_ratio_20,
+                usdthb_return_5d, usdthb_return_20d, brent_return_5d, brent_return_20d, gold_return_5d, gold_return_20d, us10y_change_1d, us10y_return_20d]
+    training:
+      policy:
+        features_extractor: asset_lstm
+        market_feature_columns: [set50_etf_return_1d, set50_etf_return_5d, set50_etf_return_20d, set50_etf_volatility_20d, set50_etf_ma_ratio_20,
+                                 usdthb_return_5d, usdthb_return_20d, brent_return_5d, brent_return_20d, gold_return_5d, gold_return_20d, us10y_change_1d, us10y_return_20d]
+        hidden_size: 32
+        fusion_size: 16
+        net_arch: [64, 64]

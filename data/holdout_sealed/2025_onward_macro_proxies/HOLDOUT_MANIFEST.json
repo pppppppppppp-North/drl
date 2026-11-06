@@ -1,0 +1,25 @@
+{
+  "source": "Yahoo Finance via yfinance (auto_adjust=True, actions=True)",
+  "evidence_tier": "exploratory_yahoo_macro_proxies",
+  "requested_start": "2012-01-01",
+  "download_end_exclusive": "2026-11-06",
+  "retrieved_at_utc": "2026-11-06T06:33:54+00:00",
+  "status": "SEALED",
+  "rule": "Do not load, plot, or evaluate on these files until the protocol (reward, features, algorithm, hyperparameters, and evaluation metrics) is locked and approved; then evaluate exactly once.",
+  "files": {
+    "stocks": {
+      "path": "data/holdout_sealed/2025_onward_macro_proxies/stocks.csv.gz",
+      "rows": 2335,
+      "start": "2025-01-02",
+      "end": "2026-11-05",
+      "sha256": "737055f7d7ed4d808577d13f1904d26a525689389b2cb8da91349f9f287cb828"
+    },
+    "index": {
+      "path": "data/holdout_sealed/2025_onward_macro_proxies/index.csv.gz",
+      "rows": 444,
+      "start": "2025-01-02",
+      "end": "2026-11-04",
+      "sha256": "7d8357543e84256d715c78a839502e800074c26a9070fcea1b409c0d03fbc9f5"
+    }
+  }
+}

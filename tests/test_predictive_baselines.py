@@ -50,3 +50,37 @@ def test_forecaster_policy_uses_latest_completed_row() -> None:
     env.reset()
     weights = forecaster_policy(model, k=1)(None, env, 0)
     assert weights[env.tickers.index("UP")] == pytest.approx(1.0)
+
+
+def test_lstm_forecaster_learns_signal_and_purges_overlapping_targets() -> None:
+    pytest.importorskip("torch")
+    from src.agents.predictive_baselines import LSTMForecaster
+
+    frame = _frame(160)
+    model = LSTMForecaster(["signal"], lookback=5, horizon=5, hidden_size=8, epochs=25, patience=25, seed=0).fit(frame)
+    # Purge: every training target is realized before the early-stopping block starts.
+    assert model.validation_start_ is not None
+    assert model.n_train_ > 0 and model.n_validation_ > 0
+    total = 3 * (160 - 5 - 5)
+    assert model.n_train_ + model.n_validation_ < total
+    windows = np.stack([np.full((5, 1), v) for v in (0.3, 0.0, -0.3)])
+    preds = model.predict(windows)
+    assert preds.shape == (3,)
+    assert preds[0] > preds[2]
+
+
+def test_sequence_policy_reads_only_past_rows() -> None:
+    pytest.importorskip("torch")
+    from src.agents.predictive_baselines import LSTMForecaster, sequence_forecaster_policy
+
+    frame = _frame(160)
+    model = LSTMForecaster(["signal"], lookback=5, horizon=5, hidden_size=8, epochs=3, seed=0).fit(frame)
+    env = LongTermTradingEnv(frame, ["signal"], lookback=5, accounting="self_financing")
+    env.reset()
+    for _ in range(10):
+        env.step(np.array([1 / 3, 1 / 3, 1 / 3]))
+    policy = sequence_forecaster_policy(model, k=1)
+    before = policy(None, env, 0)
+    env.feature_tensor[env.current_step :] = 99.0  # future rows must not matter
+    after = policy(None, env, 0)
+    assert np.array_equal(before, after)
