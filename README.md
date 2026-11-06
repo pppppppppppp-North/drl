@@ -197,6 +197,10 @@ python -m scripts.feature_group_attribution --config config/long_term_reward_exp
 # Data-source ablation (technical / +market / +macro)
 CONFIG=config/source_ablation_experiment.yaml VARIANTS="src_technical src_technical_market_macro" SEEDS="42 43 44" scripts/run_walk_forward_reward.sh results/<ablation-run> 5 100000
 python -m scripts.aggregate_walk_forward_reward --run-dir results/<ablation-run> --extra-run-dirs results/<wf-run> --variants src_technical plan_main_weekly_lstm src_technical_market_macro --seeds 42 43 44 --output-dir results/<ablation-combined>
+# Algorithm per variant: training.algo = ppo | a2c | sac | td3 | ddpg (see config/algorithm_comparison_experiment.yaml)
+# Scale any walk-forward on BistKA as a SLURM array (one task per year x variant x seed, 1 CPU each)
+CONFIG=config/algorithm_comparison_experiment.yaml VARIANTS="algo_sac algo_td3 algo_ddpg" SEEDS="42 43 44" RUN_NAME=algorithm_comparison \
+  sbatch --export=ALL --array=0-62%16 slurm/walk_forward_reward_array.sbatch
 # Official BOT policy-rate history
 python -m src.data.ingest_bot_policy_rate --input data/external/original/bot_policy_rate_mpc_table_asof_20261028.xlsx --output data/external/bot_policy_rate_history.csv --source-url <url> --retrieved-at <utc>
 ```
