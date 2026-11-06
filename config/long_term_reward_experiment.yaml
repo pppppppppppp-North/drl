@@ -1,0 +1,135 @@
+# Milestone M1 reward-design experiment (exploratory tier: Yahoo data, five starter tickers).
+# Validation only: the 2023-2024 test years and the sealed 2025+ holdout are never read.
+project:
+  name: long_term_reward_experiment
+  seed: 42
+
+data:
+  prices: data/raw/extended/prices_starter5_2012_2024.csv
+  index: data/raw/extended/index_set50_etf_2012_2024.csv
+  index_name: set50_etf
+  drop_all_zero_volume_dates: true
+
+splits:
+  train_end: "2019-12-31"
+  validation_start: "2020-01-01"
+  validation_end: "2022-12-30"
+
+features:
+  lookback: 30
+  columns:
+    - return_1d
+    - return_5d
+    - return_20d
+    - volatility_20d
+    - ma_ratio_10
+    - ma_ratio_30
+    - rsi_14
+    - macd
+    - bollinger_z
+    - atr_14
+    - volume_ratio_20
+    - set50_etf_return_1d
+    - set50_etf_return_5d
+    - set50_etf_return_20d
+    - set50_etf_volatility_20d
+    - set50_etf_ma_ratio_20
+  market_columns:
+    - set50_etf_return_1d
+    - set50_etf_return_5d
+    - set50_etf_return_20d
+    - set50_etf_volatility_20d
+    - set50_etf_ma_ratio_20
+
+base:
+  environment:
+    initial_cash: 1000000.0
+    # Thai retail online commission is roughly 0.1-0.2% plus 7% VAT; 0.0015 + 0.0005 slippage per unit turnover.
+    transaction_cost: 0.0015
+    slippage: 0.0005
+  training:
+    algo: ppo
+    total_timesteps: 100000
+    num_envs: 1
+    gamma: 0.99
+    n_steps: 1024
+    batch_size: 128
+    learning_rate: 0.0003
+    ent_coef: 0.0
+    normalize_observations: true
+    verbose: 0
+
+seeds: [42, 43, 44]
+
+variants:
+  - name: v2_legacy
+    description: "Current V2 setup: cash-leg double count, daily simple return, 0.05 turnover and 0.1 drawdown-level penalties"
+    environment:
+      accounting: legacy
+      action_transform: clip
+      reward: {type: simple, turnover_penalty: 0.05, drawdown_penalty: 0.1}
+  - name: daily_simple_fixed
+    description: "Correct accounting, daily simple return, no extra penalties"
+    environment:
+      accounting: self_financing
+      action_transform: softmax
+      train_random_start: true
+      train_episode_length: 504
+      reward: {type: simple, turnover_penalty: 0.0, drawdown_penalty: 0.0, scale: 100.0}
+  - name: log_weekly
+    description: "Correct accounting, log return (log wealth), weekly rebalancing"
+    environment:
+      accounting: self_financing
+      action_transform: softmax
+      rebalance_every: 5
+      train_random_start: true
+      train_episode_length: 504
+      reward: {type: log_return, turnover_penalty: 0.0, drawdown_penalty: 0.0, scale: 100.0}
+  - name: plan_main_weekly
+    description: "Plan reward: log return + 0.1 x differential Sharpe - 0.5 x drawdown increase, weekly rebalancing"
+    environment:
+      accounting: self_financing
+      action_transform: softmax
+      rebalance_every: 5
+      train_random_start: true
+      train_episode_length: 504
+      reward:
+        type: plan_main
+        sharpe_weight: 0.1
+        sharpe_eta: 0.01
+        drawdown_penalty: 0.5
+        drawdown_mode: increment
+        turnover_penalty: 0.0
+        scale: 100.0
+  - name: log_monthly
+    description: "Correct accounting, log return, monthly (21-session) rebalancing"
+    environment:
+      accounting: self_financing
+      action_transform: softmax
+      rebalance_every: 21
+      train_random_start: true
+      train_episode_length: 504
+      reward: {type: log_return, turnover_penalty: 0.0, drawdown_penalty: 0.0, scale: 100.0}
+  - name: plan_main_weekly_lstm
+    description: "Plan reward with the M5 shared per-asset LSTM fusion extractor"
+    environment:
+      accounting: self_financing
+      action_transform: softmax
+      rebalance_every: 5
+      train_random_start: true
+      train_episode_length: 504
+      reward:
+        type: plan_main
+        sharpe_weight: 0.1
+        sharpe_eta: 0.01
+        drawdown_penalty: 0.5
+        drawdown_mode: increment
+        turnover_penalty: 0.0
+        scale: 100.0
+    training:
+      policy:
+        features_extractor: asset_lstm
+        market_feature_columns: [set50_etf_return_1d, set50_etf_return_5d, set50_etf_return_20d, set50_etf_volatility_20d, set50_etf_ma_ratio_20]
+        hidden_size: 32
+        fusion_size: 16
+        net_arch: [64, 64]

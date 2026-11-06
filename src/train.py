@@ -97,8 +97,13 @@ def make_trading_env(config: dict, split: str = "all") -> ThaiStockTradingEnv:
     return make_trading_env_from_features(config, features)
 
 
-def make_trading_env_from_features(config: dict, features: pd.DataFrame) -> ThaiStockTradingEnv:
+def make_trading_env_from_features(
+    config: dict, features: pd.DataFrame, *, training: bool = False
+) -> ThaiStockTradingEnv:
+    """Build the environment; ``training=True`` enables training-only episode sampling options."""
+
     env_cfg = config["environment"]
+    episode_length = env_cfg.get("train_episode_length") if training else None
     return ThaiStockTradingEnv(
         features=features,
         feature_columns=config["features"]["columns"],
@@ -110,6 +115,11 @@ def make_trading_env_from_features(config: dict, features: pd.DataFrame) -> Thai
         max_position_weight=env_cfg.get("max_position_weight", 1.0),
         min_cash_weight=env_cfg.get("min_cash_weight", 0.0),
         reward_config=RewardConfig(**env_cfg.get("reward", {})),
+        accounting=env_cfg.get("accounting", "legacy"),
+        rebalance_every=int(env_cfg.get("rebalance_every", 1)),
+        random_start=bool(env_cfg.get("train_random_start", False)) if training else False,
+        episode_length=int(episode_length) if episode_length is not None else None,
+        action_transform=env_cfg.get("action_transform", "clip"),
     )
 
 
@@ -173,21 +183,29 @@ def build_vectorized_training_env(config: dict, features: pd.DataFrame, seed: in
 
     def env_factory(part: pd.DataFrame, rank: int):
         def _make():
-            env = make_trading_env_from_features(config, part)
+            env = make_trading_env_from_features(config, part, training=True)
             env.reset(seed=seed + rank)
             return Monitor(env)
 
         return _make
 
     factories = [env_factory(part, rank) for rank, part in enumerate(slices)]
-    if num_envs == 1:
+    normalize = bool(training.get("normalize_observations", False))
+    if num_envs == 1 and not normalize:
         return factories[0]()
     backend = str(training.get("vectorization_backend", "subproc")).lower()
-    if backend == "dummy":
-        return DummyVecEnv(factories)
-    if backend != "subproc":
+    if num_envs == 1 or backend == "dummy":
+        vec_env = DummyVecEnv(factories)
+    elif backend != "subproc":
         raise ValueError("training.vectorization_backend must be 'dummy' or 'subproc'")
-    return SubprocVecEnv(factories, start_method=str(training.get("subproc_start_method", "forkserver")))
+    else:
+        vec_env = SubprocVecEnv(factories, start_method=str(training.get("subproc_start_method", "forkserver")))
+    if normalize:
+        from stable_baselines3.common.vec_env import VecNormalize
+
+        # Observation statistics are fitted on training rollouts only and frozen for evaluation.
+        vec_env = VecNormalize(vec_env, norm_obs=True, norm_reward=False, clip_obs=10.0)
+    return vec_env
 
 
 def evaluate_model(
@@ -196,7 +214,17 @@ def evaluate_model(
     seed: int,
     policy_name: str = "ppo",
     return_actions: bool = False,
+    obs_normalizer=None,
 ) -> pd.DataFrame | tuple[pd.DataFrame, pd.DataFrame]:
+    """Roll out a trained model deterministically.
+
+    ``obs_normalizer`` is an optional callable (for example a frozen ``VecNormalize.normalize_obs``)
+    applied to every observation before ``model.predict``.
+    """
+
+    def _prepare(observation):
+        return obs_normalizer(observation) if obs_normalizer is not None else observation
+
     obs, info = env.reset(seed=seed)
     rows = [
         {
@@ -218,7 +246,7 @@ def evaluate_model(
     done = False
 
     while not done:
-        action, _ = model.predict(obs, deterministic=True)
+        action, _ = model.predict(_prepare(obs), deterministic=True)
         obs, reward, terminated, truncated, info = env.step(action)
         rows.append(
             {
@@ -294,6 +322,22 @@ def _algorithm_kwargs(algo: str, total_timesteps: int, training_config: dict | N
     return kwargs
 
 
+def _policy_kwargs(config: dict, features: pd.DataFrame) -> dict:
+    """Build SB3 ``policy_kwargs`` from ``training.policy`` (empty dict keeps the default MLP)."""
+
+    policy_config = config.get("training", {}).get("policy")
+    if not policy_config:
+        return {}
+    from src.models.feature_extractors import build_policy_kwargs
+
+    return build_policy_kwargs(
+        policy_config,
+        lookback=int(config["features"]["lookback"]),
+        num_assets=int(features["ticker"].nunique()),
+        feature_columns=list(config["features"]["columns"]),
+    )
+
+
 def _training_split(config: dict) -> str:
     if "splits" not in config:
         return "all"
@@ -339,13 +383,17 @@ def train_with_stable_baselines(config: dict, output_dir: Path) -> bool:
     seed = int(config["training"].get("seed", config["project"].get("seed", 42)))
     train_env = build_vectorized_training_env(config, training_features, seed)
     total_timesteps = int(config["training"].get("total_timesteps", 10000))
+    model_kwargs = _algorithm_kwargs(algo, total_timesteps, config.get("training", {}))
+    policy_kwargs = _policy_kwargs(config, training_features)
+    if policy_kwargs:
+        model_kwargs["policy_kwargs"] = policy_kwargs
     model = model_cls(
         "MlpPolicy",
         train_env,
-        verbose=1,
+        verbose=int(config["training"].get("verbose", 1)),
         seed=seed,
         tensorboard_log=str(output_dir / "tensorboard"),
-        **_algorithm_kwargs(algo, total_timesteps, config.get("training", {})),
+        **model_kwargs,
     )
     checkpoint_dir = output_dir / "checkpoints" / algo
     checkpoint_dir.mkdir(parents=True, exist_ok=True)
@@ -362,6 +410,11 @@ def train_with_stable_baselines(config: dict, output_dir: Path) -> bool:
     )
     model.learn(total_timesteps=total_timesteps, callback=checkpoint_callback)
     model.save(output_dir / f"{algo}_model")
+    obs_normalizer = None
+    if hasattr(train_env, "normalize_obs") and hasattr(train_env, "obs_rms"):
+        train_env.training = False
+        train_env.save(str(output_dir / f"{algo}_vecnormalize.pkl"))
+        obs_normalizer = train_env.normalize_obs
     train_env.close()
 
     eval_curve, eval_actions = evaluate_model(
@@ -370,6 +423,7 @@ def train_with_stable_baselines(config: dict, output_dir: Path) -> bool:
         seed,
         policy_name=algo,
         return_actions=True,
+        obs_normalizer=obs_normalizer,
     )
     eval_curve.to_csv(output_dir / f"{algo}_equity_curve.csv", index=False)
     eval_actions.to_csv(output_dir / f"{algo}_actions.csv", index=False)

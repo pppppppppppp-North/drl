@@ -1,0 +1,25 @@
+{
+  "source": "Yahoo Finance via yfinance (auto_adjust=True, actions=True)",
+  "evidence_tier": "exploratory_yahoo",
+  "requested_start": "2012-01-01",
+  "download_end_exclusive": "2026-11-06",
+  "retrieved_at_utc": "2026-11-06T01:01:05+00:00",
+  "status": "SEALED",
+  "rule": "Do not load, plot, or evaluate on these files until the protocol (reward, features, algorithm, hyperparameters, and evaluation metrics) is locked and approved; then evaluate exactly once.",
+  "files": {
+    "stocks": {
+      "path": "/Users/nathawat/Documents/03_FINAL_PROJECT/final_project_plan/data/holdout_sealed/2025_onward/stocks.csv.gz",
+      "rows": 2230,
+      "start": "2025-01-02",
+      "end": "2026-11-05",
+      "sha256": "1a8d75511d517be5827dba574d5f1f1a9135d7e87a07c2a11998fc6945ff5d1c"
+    },
+    "index": {
+      "path": "/Users/nathawat/Documents/03_FINAL_PROJECT/final_project_plan/data/holdout_sealed/2025_onward/index.csv.gz",
+      "rows": 444,
+      "start": "2025-01-02",
+      "end": "2026-11-04",
+      "sha256": "5fbd723861963a4eb9ef605512d2bfd16109439f139130372adbeb19e54b6515"
+    }
+  }
+}

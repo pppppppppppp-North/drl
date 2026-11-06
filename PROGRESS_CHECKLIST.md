@@ -1,6 +1,6 @@
 # Project Progress Checklist
 
-Last updated: 2026-09-07
+Last updated: 2026-11-06
 
 Use this file as the single running checklist for what has been completed and what remains. Update it whenever code, data, HPC jobs, results, or report artifacts change.
 
@@ -10,6 +10,22 @@ Use this file as the single running checklist for what has been completed and wh
 - `[~]` Started or partially complete
 - `[ ]` Not started
 - `[!]` Blocked or needs attention
+
+## Title-Alignment Implementation — 2026-11-06
+
+Milestone plan: [`IMPROVEMENT_MILESTONES.md`](IMPROVEMENT_MILESTONES.md). Experiment report: [`docs/long_term_reward_experiment_20261106.md`](docs/long_term_reward_experiment_20261106.md).
+
+- `[x]` **M1 long-term objective.** `src/envs/trading_env.py` gains opt-in `accounting: self_financing` (security-only turnover, multiplicative costs, weight drift), `reward.type` (`simple`, `log_return`, `plan_main` with differential Sharpe, `sortino`), `drawdown_mode: increment`, `rebalance_every`, training-only random episodes, and softmax actions with a cash logit. The defaults are **bit-identical to the previous environment**: a randomized comparison over 60 configurations and 1,740 steps matched observations, rewards, and info exactly, so the locked V2 evidence is unaffected.
+- `[x]` **M2 history and holdout.** Yahoo `auto_adjust` daily history for the five starter stocks and the SET50 ETF `TDEX.BK`, 2012-01-04 → 2024-12-30, in `data/raw/extended/` with SHA-256 receipts. Yahoo returns only one row for `^SET.BK`/`^SET50.BK` as of 2026-11. A **sealed 2025-01-02 → 2026-11-05 holdout** is in `data/holdout_sealed/2025_onward/` with a manifest checksum; the script refuses to overwrite it, and nothing has been evaluated on it.
+- `[x]` **M5 architecture.** `src/models/feature_extractors.py` adds `asset_lstm`, a shared per-asset LSTM over the past window plus a separate market-feature encoder, wired through `training.policy`. `training.normalize_observations` adds train-only `VecNormalize`, frozen at evaluation.
+- `[x]` **M7 rigor.** `equity_metrics(..., benchmark_curve=...)` adds beta, alpha, tracking error, information ratio, and up/down capture. `src/evaluation/significance.py` adds stationary-bootstrap Sharpe CIs, paired Sharpe differences, and Probabilistic and Deflated Sharpe, with a CLI.
+- `[~]` **M4 multi-source.** A real sentiment scorer replaces the hash: an HF sentiment classifier with label checks, or WangchanBERTa embeddings with PCA fitted on training dates only. The hash survives only as an explicit `--scorer placeholder`. A new investor-flow importer and next-session feature builder take SET trading by investor type. Fundamentals gain missing-data flags. Historical news and investor-flow files are still needed.
+- `[~]` **M6 baselines.** Added the SET50 ETF buy-and-hold benchmark, monthly equal weight, and a ridge 21-day forecast top-2 baseline fitted on training dates only (`src/agents/predictive_baselines.py`).
+- `[~]` **M3 Tier B (exploratory) data.** 126/138 acquisition-union tickers, 2012–2024 (325,913 rows), are in `data/raw/extended/prices_set100_union_2012_2024.csv.gz`. A separate sealed holdout is in `data/holdout_sealed/2025_onward_set100_union/`. The 12 delisted, merged, or renamed names (BPP, BSRC, DTAC, ESSO, GULF, INTUCH, KEX, SABUY, STARK, STEC, TIDLOR, TMB) are absent from Yahoo, which measures the survivorship gap the licensed package must close. Not yet used for training.
+- `[x]` **First long-term experiment.** PPO × 6 designs × 3 seeds × 100k timesteps, validated on 2020–2022 under correct accounting. The V2 objective lost 48.8% through overtrading (about 75% of capital paid in costs). Log-wealth reward with weekly decisions lost 2.8%. Plan reward plus the LSTM extractor gained **+1.9% ± 1.1 (all seeds positive, lowest turnover and drawdown)**. The SET50 ETF gained +9.0%. No Sharpe ratio is statistically distinguishable from zero over this window.
+- `[x]` Added 42 focused tests (`tests/test_long_term_env.py`, `test_evaluation_rigor.py`, `test_feature_extractors.py`, `test_multi_source_inputs.py`, `test_predictive_baselines.py`); all pass. 84 tests passed across the locally available suites. 12 existing suites could not be collected because their modules were offloaded iCloud placeholders; they are unrelated to these changes.
+- `[!]` The disk was 96% full, so macOS kept offloading project files to iCloud, and the project `.venv/` is empty. Free space, mark the folder "Keep Downloaded", and recreate the environment before running the full suite.
+- `[!]` Zero HPC jobs submitted. Canonical scientific completion is unchanged at **11/37** because this is local exploratory evidence, not a preregistered campaign stage.
 
 ## V3 Execution Readiness Completion — 2026-09-07
 

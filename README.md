@@ -143,6 +143,44 @@ sbatch --dependency="afterok:${ARRAY_JOB_ID}" --export="ALL,RUN_DIR=${RUN_DIR}" 
 
 See `docs/robustness_experiment.md` for the locked design, smoke-run command, output files, and interpretation rules.
 
+## Long-Term Objective, Fusion Model, and Rigor Extensions (2026-11-06)
+
+These options are all **opt-in**. With none of them set, the environment behaves exactly as before.
+
+```yaml
+environment:
+  accounting: self_financing      # security-only turnover, weight drift (default: legacy)
+  rebalance_every: 5              # decide weekly; hold and drift in between
+  action_transform: softmax       # N+1 logits incl. cash
+  train_random_start: true        # training envs only
+  train_episode_length: 504
+  reward:
+    type: plan_main               # simple | log_return | plan_main | sortino
+    sharpe_weight: 0.1            # differential Sharpe term
+    drawdown_mode: increment      # penalize new drawdown only
+    drawdown_penalty: 0.5
+    turnover_penalty: 0.0
+training:
+  normalize_observations: true    # train-only VecNormalize, frozen for evaluation
+  policy:
+    features_extractor: asset_lstm
+    market_feature_columns: [set50_etf_return_1d, set50_etf_volatility_20d]
+```
+
+```bash
+# Extended 2012-2024 history plus a sealed 2025+ holdout (never overwritten)
+python -m scripts.download_extended_history --tickers-csv data/reference/set50_or_set100_universe.csv \
+  --dev-output data/raw/extended/prices.csv.gz --index-dev-output data/raw/extended/index.csv \
+  --holdout-dir data/holdout_sealed/<name>
+# Reward/rebalancing experiment and figure
+python -m scripts.run_reward_variant_experiment --config config/long_term_reward_experiment.yaml --output-dir results/<run>
+python -m scripts.plot_reward_experiment --run-dir results/<run>
+# Bootstrap, probabilistic, and deflated Sharpe for any long equity-curve CSV
+python -m src.evaluation.significance --curves results/<run>/validation_equity_curves.csv --reference equal_weight_buy_hold --n-trials 6 --output results/<run>/significance.csv
+```
+
+See [`docs/long_term_reward_experiment_20261106.md`](docs/long_term_reward_experiment_20261106.md) for the first results and [`IMPROVEMENT_MILESTONES.md`](IMPROVEMENT_MILESTONES.md) for what is left.
+
 ## Research Campaign Control Plane
 
 The large campaign is now managed by a render-only, dependency-gated controller. It never submits jobs itself:

@@ -24,8 +24,13 @@ test -x "$PYTHON"
 
 set -u
 
+# WangchanBERTa base has no sentiment head, so it is used for embeddings (PCA fitted on training
+# dates only). For a sentiment score, rerun with --scorer classifier and a sentiment-fine-tuned model.
 "$PYTHON" -m src.sentiment.extract_embeddings \
   --input data/processed/news_clean.parquet \
   --output data/processed/sentiment/wangchanberta_daily.parquet \
+  --scorer embedding \
   --model airesearch/wangchanberta-base-att-spm-uncased \
+  --fit-end-date "${FIT_END_DATE:-2021-12-31}" \
+  --device cuda \
   --batch-size 32
