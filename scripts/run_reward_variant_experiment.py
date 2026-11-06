@@ -59,6 +59,12 @@ def build_feature_table(config: dict, root: Path) -> pd.DataFrame:
         names = data_cfg.get("macro_names", {})
         macro = macro.assign(macro_name=macro["ticker"].map(lambda t: names.get(t, str(t).lower())))
         merged = merge_macro_context(merged, macro[["date", "macro_name", "close"]])
+    policy_path = data_cfg.get("policy_rate")
+    if policy_path:
+        # Official BOT policy-rate decisions, available from the session after each announcement.
+        from src.features.policy_rate_context import merge_policy_rate_context
+
+        merged = merge_policy_rate_context(merged, pd.read_csv(root / policy_path)).drop(columns=["bot_source_announcement"])
     return merged.sort_values(["date", "ticker"]).reset_index(drop=True)
 
 
