@@ -3,7 +3,8 @@
 # run through `xargs -P` so at most WORKERS processes run at once (shell job control is not
 # available in detached, non-interactive shells). Validation years never exceed the config's
 # validation_end (2022), so the 2023-2024 test years and the sealed 2025+ holdout are never read.
-# Finished tasks are skipped, so the script can be re-run to resume after an interruption.
+# Finished tasks are skipped, so the script can be re-run to resume after an interruption, and a
+# per-task lock lets several launchers share one run directory without duplicate work.
 #
 # Usage: scripts/run_walk_forward_reward.sh <run-dir> [workers] [timesteps]
 #   PYTHON=/path/to/python scripts/run_walk_forward_reward.sh results/walk_forward_reward_<date> 5 100000
@@ -13,6 +14,11 @@ if [[ "${1:-}" == "--task" ]]; then
   y=$2 v=$3 s=$4
   out="$RUN_DIR/fold_${y}/${v}_seed${s}"
   if [[ -f "$out/validation_equity_curves.csv" ]]; then echo "skip $y $v $s"; exit 0; fi
+  # Atomic per-task lock so concurrent launchers on the same run directory never train the same task.
+  lock="$RUN_DIR/locks/fold${y}_${v}_seed${s}"
+  mkdir -p "$RUN_DIR/locks"
+  if ! mkdir "$lock" 2>/dev/null; then echo "busy $y $v $s (locked by another launcher; remove $lock if stale)"; exit 0; fi
+  trap 'rmdir "$lock" 2>/dev/null' EXIT
   if "$PYTHON" -c "import torch; torch.set_num_threads(1); import runpy, sys; sys.argv=['x','--config','$CONFIG','--output-dir','$out','--variants','$v','--seeds','$s','--fold-year','$y','--timesteps','$TIMESTEPS']; runpy.run_module('scripts.run_reward_variant_experiment', run_name='__main__')" \
       > "$RUN_DIR/logs/fold${y}_${v}_seed${s}.log" 2>&1; then
     echo "done $y $v $s"

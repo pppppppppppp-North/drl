@@ -196,6 +196,7 @@ python -m scripts.aggregate_walk_forward_reward --run-dir results/<wf-run>
 python -m scripts.feature_group_attribution --config config/long_term_reward_experiment.yaml --run-dir results/<wf-run> --variant plan_main_weekly_lstm
 # Data-source ablation (technical / +market / +macro)
 CONFIG=config/source_ablation_experiment.yaml VARIANTS="src_technical src_technical_market_macro" SEEDS="42 43 44" scripts/run_walk_forward_reward.sh results/<ablation-run> 5 100000
+python -m scripts.aggregate_walk_forward_reward --run-dir results/<ablation-run> --extra-run-dirs results/<wf-run> --variants src_technical plan_main_weekly_lstm src_technical_market_macro --seeds 42 43 44 --output-dir results/<ablation-combined>
 # Official BOT policy-rate history
 python -m src.data.ingest_bot_policy_rate --input data/external/original/bot_policy_rate_mpc_table_asof_20261028.xlsx --output data/external/bot_policy_rate_history.csv --source-url <url> --retrieved-at <utc>
 ```
