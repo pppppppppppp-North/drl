@@ -81,6 +81,8 @@ Results are in `validation_significance.csv`: stationary block bootstrap with 1,
 
 ## Recommendation for the next run (M6)
 
+> **Follow-up done:** the seven-year walk-forward of the two carried-forward designs is in [`walk_forward_reward_20261106.md`](walk_forward_reward_20261106.md).
+
 - Carry **`plan_main_weekly_lstm`** and **`log_weekly`** forward. Drop the daily-decision variants.
 - Use ≥ 5 seeds and ≥ 500k timesteps on BistKA, with expanding walk-forward folds (2016–2022 validation years), the Tier B universe, and the multi-source features from M4.
 - Before any test-period or holdout read, the authors should record the chosen reward in the protocol. This is the same human-approval step as the V3 decision packet.

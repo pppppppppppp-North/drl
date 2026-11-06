@@ -23,6 +23,7 @@ import numpy as np
 import pandas as pd
 
 from src.evaluation.benchmark_metrics import equity_metrics_with_benchmark
+from src.evaluation.significance import significance_table
 
 BENCHMARK = "set50_etf_buy_hold"
 
@@ -100,6 +101,14 @@ def chained_equity(fold_curves: dict[int, pd.DataFrame]) -> pd.DataFrame:
     return chained
 
 
+def chained_significance(chained: pd.DataFrame, reference: str, n_trials: int, n_boot: int = 2000) -> pd.DataFrame:
+    """Bootstrap/probabilistic/deflated Sharpe on chained OOS daily returns (seed-mean curve per variant)."""
+
+    mean_curves = chained.groupby(["variant", "date"], as_index=False)["value"].mean()
+    curves = mean_curves.rename(columns={"variant": "policy", "value": "portfolio_value"})
+    return significance_table(curves, reference=reference, n_trials=n_trials, n_boot=n_boot)
+
+
 def plot(chained: pd.DataFrame, output: Path) -> None:
     import matplotlib
 
@@ -134,6 +143,7 @@ def plot(chained: pd.DataFrame, output: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--run-dir", required=True)
+    parser.add_argument("--n-trials", type=int, default=6, help="designs tried before choosing these (deflated Sharpe)")
     args = parser.parse_args()
 
     run_dir = Path(args.run_dir)
@@ -149,6 +159,10 @@ def main() -> None:
     chained = chained_equity(fold_curves)
     chained.to_csv(run_dir / "walk_forward_chained_equity.csv", index=False)
     plot(chained, run_dir / "walk_forward_chained_equity.png")
+    for reference in (BENCHMARK, "equal_weight_monthly"):
+        if reference in set(chained["variant"]):
+            sig = chained_significance(chained, reference, n_trials=args.n_trials)
+            sig.to_csv(run_dir / f"walk_forward_significance_vs_{reference}.csv", index=False)
     pd.set_option("display.width", 200)
     print(summary.round(4).to_string(index=False))
     print()
