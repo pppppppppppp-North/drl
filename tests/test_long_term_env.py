@@ -6,9 +6,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.envs.trading_env import (
-    RewardConfig,
-    ThaiStockTradingEnv,
+from src.envs.long_term_env import (
+    LongTermRewardConfig,
+    LongTermTradingEnv,
     differential_downside_ratio,
     differential_sharpe,
 )
@@ -23,9 +23,9 @@ def _panel(prices: dict[str, list[float]]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def _env(prices=None, **kwargs) -> ThaiStockTradingEnv:
+def _env(prices=None, **kwargs) -> LongTermTradingEnv:
     prices = prices or {"AAA": [100, 110, 121, 110, 121, 133.1], "BBB": [100, 100, 100, 100, 100, 100]}
-    return ThaiStockTradingEnv(_panel(prices), ["f1"], lookback=1, transaction_cost=0.01, **kwargs)
+    return LongTermTradingEnv(_panel(prices), ["f1"], lookback=1, transaction_cost=0.01, **kwargs)
 
 
 def test_defaults_reproduce_legacy_cash_leg_turnover() -> None:
@@ -58,7 +58,7 @@ def test_self_financing_counts_security_turnover_once_and_drifts_weights() -> No
 def test_log_return_reward_and_incremental_drawdown() -> None:
     env = _env(
         accounting="self_financing",
-        reward_config=RewardConfig(type="log_return", turnover_penalty=0.0, drawdown_penalty=1.0, drawdown_mode="increment"),
+        reward_config=LongTermRewardConfig(type="log_return", turnover_penalty=0.0, drawdown_penalty=1.0, drawdown_mode="increment"),
     )
     env.step(np.array([1.0, 0.0]))  # 110 -> 121: +10% less the entry cost
     _, reward_down, _, _, info_down = env.step(np.array([1.0, 0.0]))  # 121 -> 110: new drawdown
@@ -70,7 +70,7 @@ def test_log_return_reward_and_incremental_drawdown() -> None:
 
 
 def test_level_drawdown_mode_matches_legacy_definition() -> None:
-    cfg = RewardConfig(type="simple", turnover_penalty=0.0, drawdown_penalty=1.0)
+    cfg = LongTermRewardConfig(type="simple", turnover_penalty=0.0, drawdown_penalty=1.0)
     env = _env(accounting="self_financing", reward_config=cfg)
     for _ in range(3):
         _, reward, _, _, info = env.step(np.array([1.0, 0.0]))
@@ -78,7 +78,7 @@ def test_level_drawdown_mode_matches_legacy_definition() -> None:
 
 
 def test_plan_main_adds_clipped_differential_sharpe() -> None:
-    cfg = RewardConfig(type="plan_main", turnover_penalty=0.0, drawdown_penalty=0.0, sharpe_weight=0.5, sharpe_eta=0.1)
+    cfg = LongTermRewardConfig(type="plan_main", turnover_penalty=0.0, drawdown_penalty=0.0, sharpe_weight=0.5, sharpe_eta=0.1)
     env = _env(accounting="self_financing", reward_config=cfg)
     _, first, _, _, info = env.step(np.array([1.0, 0.0]))
     # No variance history on the first step: the differential Sharpe term is zero.
@@ -155,7 +155,7 @@ def test_softmax_actions_include_cash_and_accept_direct_weights() -> None:
 )
 def test_reward_config_rejects_invalid_values(kwargs) -> None:
     with pytest.raises(ValueError):
-        RewardConfig(**kwargs)
+        LongTermRewardConfig(**kwargs)
 
 
 @pytest.mark.parametrize(
@@ -168,7 +168,7 @@ def test_env_rejects_invalid_options(kwargs) -> None:
 
 
 def test_train_helper_enables_random_start_only_for_training() -> None:
-    from src.train import make_trading_env_from_features
+    from src.train_long_term import make_long_term_env_from_features
 
     prices = {"AAA": list(np.linspace(100, 140, 40)), "BBB": list(np.linspace(100, 90, 40))}
     config = {
@@ -184,10 +184,65 @@ def test_train_helper_enables_random_start_only_for_training() -> None:
             "reward": {"type": "log_return", "turnover_penalty": 0.0, "drawdown_penalty": 0.0},
         },
     }
-    train_env = make_trading_env_from_features(config, _panel(prices), training=True)
-    eval_env = make_trading_env_from_features(config, _panel(prices))
+    train_env = make_long_term_env_from_features(config, _panel(prices), training=True)
+    eval_env = make_long_term_env_from_features(config, _panel(prices))
     assert train_env.random_start and train_env.episode_length == 10
     assert not eval_env.random_start and eval_env.episode_length is None
     assert eval_env.start_step == eval_env.lookback
     assert eval_env.rebalance_every == 5 and eval_env.accounting == "self_financing"
     assert eval_env.reward_config.type == "log_return"
+
+
+def test_defaults_are_bit_identical_to_locked_v2_environment() -> None:
+    """With default options the long-term env must reproduce the locked V2 env exactly."""
+
+    from src.envs.trading_env import RewardConfig as V2RewardConfig
+    from src.envs.trading_env import ThaiStockTradingEnv as V2Env
+
+    rng = np.random.default_rng(2026)
+    checked = 0
+    for trial in range(20):
+        n_assets, n_dates, n_feats = int(rng.integers(1, 5)), int(rng.integers(12, 40)), int(rng.integers(1, 3))
+        lookback = int(rng.integers(1, 6))
+        dates = pd.bdate_range("2020-01-01", periods=n_dates)
+        rows = []
+        for a in range(n_assets):
+            close = 100 * np.cumprod(1 + rng.normal(0, 0.02, n_dates))
+            for i, d in enumerate(dates):
+                row = {"date": d, "ticker": f"T{a}", "close": close[i]}
+                row.update({f"f{f}": rng.normal() if rng.random() > 0.05 else np.nan for f in range(n_feats)})
+                rows.append(row)
+        frame = pd.DataFrame(rows)
+        kwargs = dict(
+            feature_columns=[f"f{f}" for f in range(n_feats)],
+            lookback=lookback,
+            transaction_cost=float(rng.uniform(0, 0.01)),
+            slippage=float(rng.uniform(0, 0.005)),
+            max_turnover=float(rng.uniform(0.1, 2.0)) if rng.random() < 0.5 else None,
+            max_position_weight=float(rng.uniform(0.2, 1.0)),
+            min_cash_weight=float(rng.uniform(0, 0.3)),
+        )
+        reward = dict(
+            return_weight=float(rng.uniform(0.5, 2)),
+            turnover_penalty=float(rng.uniform(0, 0.1)),
+            drawdown_penalty=float(rng.uniform(0, 0.5)),
+        )
+        old = V2Env(frame, reward_config=V2RewardConfig(**reward), **kwargs)
+        new = LongTermTradingEnv(frame, reward_config=LongTermRewardConfig(**reward), **kwargs)
+        assert old.observation_space.shape == new.observation_space.shape
+        assert old.action_space.shape == new.action_space.shape
+        assert np.array_equal(old.reset(seed=trial)[0], new.reset(seed=trial)[0])
+        done = False
+        while not done:
+            action = rng.uniform(-0.5, 1.5, n_assets)
+            o1, r1, d1, _, i1 = old.step(action)
+            o2, r2, d2, _, i2 = new.step(action)
+            assert np.array_equal(o1, o2) and r1 == r2 and d1 == d2
+            for key, value in i1.items():
+                if isinstance(value, np.ndarray):
+                    assert np.array_equal(value, i2[key]), key
+                else:
+                    assert value == i2[key], key
+            checked += 1
+            done = d1
+    assert checked > 100

@@ -4,7 +4,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.evaluation.metrics import benchmark_relative_metrics, equity_metrics
+from src.evaluation.benchmark_metrics import benchmark_relative_metrics, equity_metrics_with_benchmark
+from src.evaluation.metrics import equity_metrics
 from src.evaluation.significance import (
     bootstrap_sharpe_ci,
     bootstrap_sharpe_difference,
@@ -38,7 +39,7 @@ def test_benchmark_relative_metrics_identity_and_leverage() -> None:
     levered = benchmark_relative_metrics(_curve(2 * bench), _curve(bench))
     assert levered["beta"] == pytest.approx(2.0, rel=1e-6)
     assert levered["tracking_error"] > 0
-    with_bench = equity_metrics(_curve(2 * bench), benchmark_curve=_curve(bench))
+    with_bench = equity_metrics_with_benchmark(_curve(2 * bench), _curve(bench))
     assert with_bench["beta"] == pytest.approx(2.0, rel=1e-6)
 
 

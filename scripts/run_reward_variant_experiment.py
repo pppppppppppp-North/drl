@@ -21,8 +21,8 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from src.envs.trading_env import ThaiStockTradingEnv
-from src.evaluation.metrics import equity_metrics
+from src.envs.long_term_env import LongTermTradingEnv
+from src.evaluation.benchmark_metrics import equity_metrics_with_benchmark
 from src.evaluation.significance import significance_table
 from src.features.market_context import build_index_context
 from src.features.technical import add_technical_features
@@ -67,9 +67,9 @@ def split_with_context(features: pd.DataFrame, start: str | None, end: str, look
     return features[features["date"].isin(keep)].reset_index(drop=True)
 
 
-def _eval_env(config: dict, features: pd.DataFrame, *, action_transform: str, rebalance_every: int) -> ThaiStockTradingEnv:
+def _eval_env(config: dict, features: pd.DataFrame, *, action_transform: str, rebalance_every: int) -> LongTermTradingEnv:
     env_cfg = config["environment"]
-    return ThaiStockTradingEnv(
+    return LongTermTradingEnv(
         features=features,
         feature_columns=config["features"]["columns"],
         lookback=int(config["features"]["lookback"]),
@@ -82,7 +82,7 @@ def _eval_env(config: dict, features: pd.DataFrame, *, action_transform: str, re
     )
 
 
-def _rollout(env: ThaiStockTradingEnv, policy, name: str) -> tuple[pd.DataFrame, pd.DataFrame]:
+def _rollout(env: LongTermTradingEnv, policy, name: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     obs, info = env.reset(seed=0)
     rows, actions = [dict(date=info["date"], policy=name, portfolio_value=info["portfolio_value"], turnover=0.0,
                           transaction_cost_paid=0.0, slippage_paid=0.0, cash_weight=info["cash_weight"])], []
@@ -129,13 +129,14 @@ def baseline_curves(config: dict, features: pd.DataFrame, train_features: pd.Dat
 
 
 def train_variant(config: dict, train_features: pd.DataFrame, seed: int, out_dir: Path):
-    from src.train import _algorithm_kwargs, _policy_kwargs, build_vectorized_training_env
+    from src.train import _algorithm_kwargs
+    from src.train_long_term import build_long_term_training_env, policy_kwargs_from_config
     from stable_baselines3 import PPO
 
     training = config["training"]
-    env = build_vectorized_training_env(config, train_features, seed)
+    env = build_long_term_training_env(config, train_features, seed)
     kwargs = _algorithm_kwargs("ppo", int(training["total_timesteps"]), training)
-    policy_kwargs = _policy_kwargs(config, train_features)
+    policy_kwargs = policy_kwargs_from_config(config, train_features)
     if policy_kwargs:
         kwargs["policy_kwargs"] = policy_kwargs
     model = PPO("MlpPolicy", env, seed=seed, verbose=int(training.get("verbose", 0)), device="cpu", **kwargs)
@@ -161,6 +162,8 @@ def main() -> None:
     parser.add_argument("--timesteps", type=int, default=None)
     parser.add_argument("--aggregate-dirs", nargs="*", default=None, help="merge finished per-variant output dirs")
     parser.add_argument("--baselines-only", action="store_true", help="evaluate only the non-learning baselines")
+    parser.add_argument("--fold-year", type=int, default=None,
+                        help="walk-forward fold: train through Dec 31 of the previous year, validate on this calendar year")
     args = parser.parse_args()
 
     if args.aggregate_dirs:
@@ -168,6 +171,15 @@ def main() -> None:
         return
     root = Path(args.root)
     spec = yaml.safe_load(Path(args.config).read_text())
+    if args.fold_year is not None:
+        limit = pd.Timestamp(spec["splits"]["validation_end"])
+        if pd.Timestamp(f"{args.fold_year}-12-31") > limit:
+            raise SystemExit(f"--fold-year {args.fold_year} would read past the configured validation end {limit.date()}")
+        spec["splits"] = {
+            "train_end": f"{args.fold_year - 1}-12-31",
+            "validation_start": f"{args.fold_year}-01-01",
+            "validation_end": f"{args.fold_year}-12-31",
+        }
     out = Path(args.output_dir)
     out.mkdir(parents=True, exist_ok=True)
     lookback = int(spec["features"]["lookback"])
@@ -230,7 +242,7 @@ def aggregate(all_curves: pd.DataFrame, out: Path, n_trials: int) -> None:
     rows = []
     for name, curve in all_curves.groupby("policy", sort=False):
         m = {"policy": name}
-        m.update(equity_metrics(curve.reset_index(drop=True), benchmark_curve=bench.reset_index(drop=True)))
+        m.update(equity_metrics_with_benchmark(curve.reset_index(drop=True), bench.reset_index(drop=True)))
         rows.append(m)
     metrics = pd.DataFrame(rows)
     metrics["variant"] = metrics["policy"].str.replace(r"_seed\d+$", "", regex=True)

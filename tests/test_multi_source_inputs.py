@@ -7,9 +7,9 @@ import pandas as pd
 import pytest
 
 from src.data.ingest_investor_flow import INVESTOR_TYPES, normalize_investor_flow
-from src.features.fundamental_context import merge_fundamental_context
+from src.features.fundamental_flags import merge_fundamental_context_with_flags
 from src.features.investor_flow_context import build_investor_flow_features, merge_investor_flow_context
-from src.sentiment.extract_embeddings import (
+from src.sentiment.score_news import (
     daily_embeddings,
     resolve_label_values,
     score_with_classifier,
@@ -146,7 +146,7 @@ def test_fundamental_missing_flags() -> None:
             "value": [100.0, 10.0, 500.0],
         }
     )
-    merged = merge_fundamental_context(features, fundamentals, reporting_lag_days=60)
+    merged = merge_fundamental_context_with_flags(features, fundamentals, reporting_lag_days=60)
     effective = pd.Timestamp("2021-03-31") + pd.Timedelta(days=60)
     before = merged[merged["date"] < effective]
     after = merged[merged["date"] >= effective]

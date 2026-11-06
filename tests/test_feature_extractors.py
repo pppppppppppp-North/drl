@@ -7,7 +7,7 @@ import pytest
 torch = pytest.importorskip("torch")
 pytest.importorskip("stable_baselines3")
 
-from src.envs.trading_env import ThaiStockTradingEnv
+from src.envs.long_term_env import LongTermTradingEnv
 from src.models.feature_extractors import AssetTemporalExtractor, build_policy_kwargs
 
 
@@ -24,7 +24,7 @@ def _features(n_dates: int = 60, tickers=("AAA", "BBB", "CCC")) -> pd.DataFrame:
 
 
 def test_extractor_output_shape_and_market_branch() -> None:
-    env = ThaiStockTradingEnv(_features(), ["ret", "mkt"], lookback=5, action_transform="softmax")
+    env = LongTermTradingEnv(_features(), ["ret", "mkt"], lookback=5, action_transform="softmax")
     extractor = AssetTemporalExtractor(
         env.observation_space, lookback=5, num_assets=3, num_features=2, market_feature_indices=[1], hidden_size=8, fusion_size=4
     )
@@ -75,7 +75,7 @@ def test_build_policy_kwargs_resolves_market_columns() -> None:
 def test_ppo_trains_with_fusion_extractor_and_softmax_actions() -> None:
     from stable_baselines3 import PPO
 
-    env = ThaiStockTradingEnv(
+    env = LongTermTradingEnv(
         _features(), ["ret", "mkt"], lookback=5, action_transform="softmax", accounting="self_financing"
     )
     kwargs = build_policy_kwargs(

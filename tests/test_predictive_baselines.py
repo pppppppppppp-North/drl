@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from src.agents.predictive_baselines import RidgeForecaster, forecaster_policy, top_k_allocation
-from src.envs.trading_env import ThaiStockTradingEnv
+from src.envs.long_term_env import LongTermTradingEnv
 
 
 def _frame(n_dates: int = 120) -> pd.DataFrame:
@@ -46,7 +46,7 @@ def test_top_k_allocation_and_cash_fallback() -> None:
 def test_forecaster_policy_uses_latest_completed_row() -> None:
     frame = _frame()
     model = RidgeForecaster(["signal"], horizon=5).fit(frame)
-    env = ThaiStockTradingEnv(frame, ["signal"], lookback=3, accounting="self_financing")
+    env = LongTermTradingEnv(frame, ["signal"], lookback=3, accounting="self_financing")
     env.reset()
     weights = forecaster_policy(model, k=1)(None, env, 0)
     assert weights[env.tickers.index("UP")] == pytest.approx(1.0)

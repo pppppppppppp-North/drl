@@ -27,10 +27,6 @@ def _first_available(row: pd.Series, names: list[str]) -> float:
     return 0.0
 
 
-def _metric_observed(row: pd.Series, names: list[str]) -> bool:
-    return any(name in row and pd.notna(row[name]) for name in names)
-
-
 def build_fundamental_context(fundamentals: pd.DataFrame, reporting_lag_days: int = 60) -> pd.DataFrame:
     required = {"ticker", "metric", "period_end", "value"}
     missing = required - set(fundamentals.columns)
@@ -72,11 +68,6 @@ def build_fundamental_context(fundamentals: pd.DataFrame, reporting_lag_days: in
                 "fundamental_return_on_equity": net_income / equity if equity else 0.0,
                 "fundamental_debt_to_equity": total_debt / equity if equity else 0.0,
                 "fundamental_fcf_margin": free_cash_flow / total_revenue if total_revenue else 0.0,
-                # Share of the six core metrics actually reported, so a zero is distinguishable from "missing".
-                "fundamental_metric_coverage": sum(
-                    _metric_observed(row, aliases) for aliases in METRIC_ALIASES.values()
-                )
-                / len(METRIC_ALIASES),
             }
         )
 
@@ -121,15 +112,6 @@ def merge_fundamental_context(
         merged_frames.append(merged)
 
     merged = pd.concat(merged_frames, ignore_index=True).sort_values(["date", "ticker"]).reset_index(drop=True)
-    # Missing-data indicators: zero-filled fundamentals before the first lagged report are otherwise
-    # indistinguishable from genuinely zero values.
-    effective = pd.to_datetime(merged["effective_date"]) if "effective_date" in merged.columns else pd.Series(
-        pd.NaT, index=merged.index
-    )
-    merged["fundamental_available"] = effective.notna().astype(float)
-    merged["fundamental_report_age_years"] = ((merged["date"] - effective).dt.days / 365.25).where(
-        effective.notna(), 0.0
-    )
     fundamental_columns = [column for column in merged.columns if column.startswith("fundamental_")]
     merged[fundamental_columns] = merged[fundamental_columns].fillna(0.0)
     for column in ["period_end", "effective_date"]:
