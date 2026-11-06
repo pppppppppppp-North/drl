@@ -152,7 +152,10 @@ These extensions live in new modules, so no file in the manifest-locked V2 relea
 - `src/models/feature_extractors.py`: the `asset_lstm` fusion extractor.
 - `src/evaluation/benchmark_metrics.py` and `src/evaluation/significance.py`: benchmark-relative metrics and Sharpe significance.
 - `src/features/fundamental_flags.py`, `src/features/investor_flow_context.py`, `src/data/ingest_investor_flow.py`, `src/sentiment/score_news.py` (GPU job: `slurm/sentiment_embeddings_gpu.sbatch`): multi-source inputs.
-- `src/agents/predictive_baselines.py`: the ridge forecast-then-allocate baseline.
+- `src/agents/predictive_baselines.py`: ridge and LSTM (Bi-LSTM over the past window) forecast-then-allocate baselines.
+- `src/data/ingest_bot_policy_rate.py` and `src/features/policy_rate_context.py`: the official BOT policy-rate decision history as a point-in-time macro source.
+- `src/evaluation/attribution.py`: permutation attribution of data-source groups for trained agents.
+- `src/envs/thai_costs.py`: the published Thai cost schedule (about 0.176% per side including VAT).
 
 Config options read by `src.train_long_term` and the experiment scripts:
 
@@ -186,6 +189,15 @@ python -m scripts.run_reward_variant_experiment --config config/long_term_reward
 python -m scripts.plot_reward_experiment --run-dir results/<run>
 # Bootstrap, probabilistic, and deflated Sharpe for any long equity-curve CSV
 python -m src.evaluation.significance --curves results/<run>/validation_equity_curves.csv --reference equal_weight_buy_hold --n-trials 6 --output results/<run>/significance.csv
+# Walk-forward (one validation year per fold, 2016-2022) with a worker cap; resumable
+PYTHON=python scripts/run_walk_forward_reward.sh results/<wf-run> 5 100000
+python -m scripts.evaluate_forecast_baselines --config config/long_term_reward_experiment.yaml --run-dir results/<wf-run> --years 2016 2017 2018 2019 2020 2021 2022
+python -m scripts.aggregate_walk_forward_reward --run-dir results/<wf-run>
+python -m scripts.feature_group_attribution --config config/long_term_reward_experiment.yaml --run-dir results/<wf-run> --variant plan_main_weekly_lstm
+# Data-source ablation (technical / +market / +macro)
+CONFIG=config/source_ablation_experiment.yaml VARIANTS="src_technical src_technical_market_macro" SEEDS="42 43 44" scripts/run_walk_forward_reward.sh results/<ablation-run> 5 100000
+# Official BOT policy-rate history
+python -m src.data.ingest_bot_policy_rate --input data/external/original/bot_policy_rate_mpc_table_asof_20261028.xlsx --output data/external/bot_policy_rate_history.csv --source-url <url> --retrieved-at <utc>
 ```
 
 See [`docs/long_term_reward_experiment_20261106.md`](docs/long_term_reward_experiment_20261106.md) for the first results and [`IMPROVEMENT_MILESTONES.md`](IMPROVEMENT_MILESTONES.md) for what is left.
