@@ -76,7 +76,7 @@ Results are in `validation_significance.csv`: stationary block bootstrap with 1,
 - Five hand-picked current mega-caps carry survivorship bias. The Tier B 138-ticker download is the next step.
 - The data is Yahoo (exploratory tier), not licensed SETSMART data. TDEX is a SET50 ETF, not the SET index.
 - There is one validation window, 3 seeds, 100k timesteps, PPO only, and no hyperparameter search.
-- Costs are an approximation; the broker schedule still needs confirming.
+- Costs: the 0.20% per side charged here covers the published explicit cost of about 0.176% per side (`src/envs/thai_costs.py`). Market impact beyond about 0.025% is not modeled; mid-cap universes need more.
 - The differential-Sharpe reward weight (0.1) and drawdown weight (0.5) were set by hand, not tuned.
 
 ## Recommendation for the next run (M6)

@@ -91,3 +91,18 @@ def test_significance_table_from_long_curves() -> None:
     assert set(table["policy"]) == {"ppo", "equal_weight"}
     ppo = table.set_index("policy").loc["ppo"]
     assert "sharpe_difference" in ppo and np.isfinite(ppo["deflated_sharpe"])
+
+
+def test_thai_cost_model_matches_published_schedule() -> None:
+    from src.envs.thai_costs import ThaiEquityCosts, commission_for_daily_value, environment_cost_settings
+
+    costs = ThaiEquityCosts()
+    assert costs.per_side == pytest.approx((0.00157 + 0.00007) * 1.07)
+    assert costs.round_trip == pytest.approx(2 * costs.per_side)
+    assert commission_for_daily_value(1_000_000) == 0.00157
+    assert commission_for_daily_value(15_000_000) == 0.00117
+    assert commission_for_daily_value(1e9) == 0.00107
+    settings = environment_cost_settings()
+    assert settings["transaction_cost"] == pytest.approx(0.0017548, abs=1e-7)
+    # The experiments' 0.15% + 0.05% slippage covers the explicit per-side cost.
+    assert 0.0015 + 0.0005 >= costs.per_side
