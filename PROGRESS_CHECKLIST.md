@@ -26,7 +26,7 @@ Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md)
 - `[x]` **Diagnostics.** `scripts/walk_forward_agent_diagnostics.py` finds the following.
   - **Costs:** the agent turned over its capital 28 times a year (the five-stock agent 3.9 times). Costs explain 5.3 of its 6.7-point gap to equal weight.
   - **Slot reshuffles:** members that changed slot between weekly decisions caused 79% of rebalance turnover.
-- `[~]` **Sticky-slot follow-up.** `universe.slot_order: sticky` cuts slot changes per weekly decision from 44–51% of members to 0.2–0.3%. The variant `pit_plan_weekly_lstm_sticky` is configured but **not yet run**. It needs 21 runs: about 5–6 hours locally with 4 workers, or a BistKA array.
+- `[~]` **Sticky-slot follow-up.** `universe.slot_order: sticky` cuts slot changes per weekly decision from 44–51% of members to 0.2–0.3%. The variant `pit_plan_weekly_lstm_sticky` is configured but **not yet run**. It needs 21 runs: roughly 2.5–3 hours locally with 4 workers (an estimate), or a BistKA array.
 - `[!]` **Local memory limit.** Each worker needs about 750 MB. Seven workers on the 8 GB Mac exhausted RAM and swap, and three runs were paused and resumed. Use at most four workers locally.
 
 ## Point-in-Time Universe 2012–2024 (M3) — 2026-11-07
