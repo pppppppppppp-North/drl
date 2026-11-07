@@ -99,8 +99,9 @@ Goal: move from 5 hand-picked stocks to a point-in-time SET50/SET100 universe.
   - **After 2024:** the six official 2025–2026 files are archived with checksums but stay unparsed until the sealed holdout opens.
 - `[~]` **Keep delisted and exited names where data exists.**
   - **Done:** the 2012–2024 acquisition list names all 227 tickers, including 89 that left the index before 2021.
-  - **Price gap:** local Yahoo prices cover only 70% of 2012–2020 SET100 member-lists (78% of SET50); 101 tickers have no price file.
-  - **Next:** fetch them (mapping renamed symbols with `data/reference/set_symbol_changes_2012_2020.csv`), then measure survivorship bias by comparing the fixed 5-ticker set with the point-in-time universe.
+  - **Prices fetched (2026-11-07):** a second Yahoo download for the 101 tickers without prices raised coverage of 2012–2020 SET100 member-lists from 70% to 87% (SET50 from 78% to 86%). Renamed members use their current symbol.
+  - **Still missing:** 38 delisted or merged tickers have no Yahoo prices at all. SCB (before 2022) and BANPU (before 2016-10) are gaps in otherwise covered series.
+  - **Next:** build the 2012–2024 session mask from `member_price_map_2012_2024.csv`, then measure survivorship bias by comparing the fixed 5-ticker set with the point-in-time universe.
 - `[ ]` If the final universe ends up as SET50 only, tighten the title wording (for example "…in the Thai Stock Market (SET50)…") so the claim matches the evidence.
 
 **Exit criteria:** DRL trained and evaluated on a point-in-time universe of 30 or more tickers.

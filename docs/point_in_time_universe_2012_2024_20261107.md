@@ -11,7 +11,7 @@ The July archive covered 2021–2024. This work extends the point-in-time SET50/
 - **34 lists, 3,400 rows, 227 tickers, 25 sectors**, with exactly 50 SET50 and 100 SET100 members in every list and no gap between lists from 2012-01-01 to 2025-01-01.
 - The 2021–2024 rows are copied **byte for byte** from the July archive. Its SHA-256 is pinned, and the build refuses to run if that file changes.
 - Every list that prints its own changes was checked against the actual change from the list before it: **93 of 93 checks match**. That includes the 2020→2021 seam, where the 2021 H1 PDF's notes match the change from the new 2020 list to the July archive's first list.
-- **89 tickers appear only in 2012–2020 lists.** Local prices cover 70% of 2012–2020 SET100 member-lists, so 101 of the 227 tickers still need price data (see "Survivorship gap").
+- **89 tickers appear only in 2012–2020 lists.** A second Yahoo download raised local price coverage of 2012–2020 SET100 member-lists from 70% to 87%. 38 tickers, mostly delisted or merged, have no Yahoo prices at all (see "Survivorship gap").
 
 ## Sources
 
@@ -96,21 +96,36 @@ The July parser assumes one line per row. The 2015–2020 PDFs break that assump
 
 ## Survivorship gap
 
-The Tier B Yahoo prices in `data/raw/extended/prices_set100_union_2012_2024.csv.gz` were downloaded for the 138 tickers of the 2021–2024 union only. Against the 2012–2024 membership, they cover this share of member-lists (a member counts as covered if its prices span the list's dates, within 10 days):
+All prices are Yahoo Finance daily history (`auto_adjust=True`) and stay **exploratory**. A member counts as covered in a list if one price series spans the list's dates, within 10 days.
+
+**Two downloads:**
+
+- **6 November:** the Tier B download in `data/raw/extended/prices_set100_union_2012_2024.csv.gz` covered only the 138 tickers of the 2021–2024 union. That union is chosen with hindsight, which is why the early years were thin: the names that left the index are exactly the ones missing.
+- **7 November:** I requested the 101 tickers that had no price file, plus STECON (STEC's successor).
+  - 58 returned 2012–2024 data: 169,342 rows in `data/raw/extended/set100_2012_2024_additions/`, which is git-ignored and has a SHA-256 receipt.
+  - Their 2025–2026 rows went straight into the sealed holdout `data/holdout_sealed/2025_onward_set100_2012_2024_additions/`. Only row counts were printed.
+
+**Renamed members** use the current symbol's history where Yahoo keeps it: KH→BCH, KK→KKP, BGH→BDMS, TUF→TU, MTLS→MTC and TMB→TTB. BECL and BMCL are not mapped to BEM, because BEM's pre-2016 series can belong to only one of them.
 
 | Year | 2012 | 2013 | 2014 | 2015 | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| SET100 | 50% | 52% | 58% | 59% | 65% | 72% | 76% | 84% | 88% | 93% | 91% | 93% | 96% |
-| SET50 | 63% | 67% | 71% | 71% | 80% | 80% | 83% | 86% | 88% | 91% | 91% | 93% | 95% |
+| SET100, 6 Nov | 50% | 52% | 58% | 59% | 65% | 72% | 76% | 84% | 88% | 93% | 91% | 93% | 96% |
+| **SET100, 7 Nov** | **80%** | **82%** | **81%** | **82%** | **87%** | **91%** | **92%** | **91%** | **93%** | 93% | 91% | 93% | 96% |
+| SET50, 6 Nov | 63% | 67% | 71% | 71% | 80% | 80% | 83% | 86% | 88% | 91% | 91% | 93% | 95% |
+| **SET50, 7 Nov** | **79%** | **81%** | **82%** | **82%** | **87%** | **89%** | **89%** | **88%** | **90%** | **92%** | 91% | 93% | 95% |
 
-The five starter stocks and the 2021–2024 union are both chosen with hindsight. That is why the coverage of the early years is low: the names that left the index are exactly the ones missing.
+Over 2012–2020, coverage rose from 70% to 87% of SET100 member-lists and from 78% to 86% of SET50. 189 of the 227 tickers now have prices.
 
-101 tickers have no local price file:
+**What is still missing:**
 
-- 89 left the index before 2021 and were never requested;
-- 12 are delisted, merged or renamed names Yahoo does not serve.
+- **No Yahoo prices at all (38 tickers).** Mostly delisted, merged or taken-private names, for example INTUCH, DTAC, ROBINS, GLOW, ESSO, BIGC, HEMRAJ, PS, BECL, BMCL, BPP, THCOM, TICON, MAKRO, SVI, and GULF before its 2025 amalgamation. Their absence is the survivorship bias that remains in any Yahoo backtest.
+- **Partial series:**
+  - SCB.BK starts on 2022-04-20. That series is SCB X after the holding-company restructuring; the Siam Commercial Bank series for 2012–2022 is not on Yahoo, which leaves a SET50 bank uncovered in 28 lists.
+  - BANPU.BK starts on 2016-10-28.
+  - STECON.BK starts on 2024-10-30.
+- **A reused symbol.** KK.BK on Yahoo begins in 2020 and is a different company from the KK (Kiatnakin Bank) of 2012–2013. It is never used.
 
-Training on the early years without them would reintroduce the survivorship bias this archive exists to remove.
+`data/raw/extended/set100_2012_2024_additions/member_price_map_2012_2024.csv` records, for every list and member, which series to use: the own symbol, the current symbol, or none. It is the input for the 2012–2024 session mask.
 
 ## Limitations
 
@@ -142,6 +157,6 @@ python -m pytest tests/test_ingest_set_constituent_history_extended.py
 
 ## Next steps
 
-1. **Prices for the 101 missing tickers.** Fetch Yahoo history for them, mapping renamed symbols with the symbol-change table. Then rebuild the session membership mask for 2012–2024 and run the walk-forward on the point-in-time universe, which is the M3 exit criterion.
+1. **Point-in-time walk-forward.** Prices are fetched (done 7 November). Next, build the 2012–2024 session membership mask from `member_price_map_2012_2024.csv` and run the walk-forward on the point-in-time universe, which is the M3 exit criterion. Report the 38 names with no prices, and the SCB and BANPU gaps, as an explicit survivorship limitation.
 2. **Licensed data (Tier A).** The SETSMART package is still needed for delisted names and publication-grade results.
 3. **2025–2026 lists.** Parse the archived files only when the sealed holdout is opened for the final evaluation.

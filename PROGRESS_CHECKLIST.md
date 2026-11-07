@@ -26,7 +26,12 @@ Report: [`docs/point_in_time_universe_2012_2024_20261107.md`](docs/point_in_time
   - **Corporate actions:** six symbol changes and the BECL/BMCL→BEM merger are recorded in `data/reference/set_symbol_changes_2012_2020.csv`.
 - `[x]` 27 new tests (`tests/test_ingest_set_constituent_history_extended.py`) pass. They cover parser agreement, the layout cases above, manifest gaps and early revisions, the change checks, byte-identity of the July rows, and reproduction of the committed outputs.
   - **Neighbouring tests:** 45 of 56 constituent and V3 tests pass. The other 11 also fail on a clean checkout of the parent commit, because they need git-ignored files (`data/raw/*.csv`, `reports/…`) that the clone does not have.
-- `[~]` **Survivorship gap measured, not closed.** Local Yahoo prices cover 70% of 2012–2020 SET100 member-lists (50% in 2012). 101 of the 227 tickers have no price file: 89 left the index before 2021 and 12 are delisted names Yahoo does not serve. Next: fetch them, rebuild the session mask for 2012–2024, and run the point-in-time walk-forward.
+- `[~]` **Survivorship gap narrowed, not closed.** Before: local Yahoo prices covered 70% of 2012–2020 SET100 member-lists. A second download on 2026-11-07 requested the 101 tickers without prices plus STECON.
+  - **Result:** 58 returned data (169,342 rows, in git-ignored `data/raw/extended/set100_2012_2024_additions/` with a receipt). Their 2025–2026 rows went into the sealed holdout `data/holdout_sealed/2025_onward_set100_2012_2024_additions/`; only counts were printed.
+  - **Coverage:** 2012–2020 SET100 rose from 70% to **87%** and SET50 from 78% to **86%**. 189 of 227 tickers now have prices, with renamed members mapped to their current symbol (KH→BCH, KK→KKP, BGH→BDMS, TUF→TU, MTLS→MTC, TMB→TTB).
+  - **Still missing:** 38 tickers have no Yahoo prices at all (delisted or merged, for example INTUCH, DTAC, ROBINS, GLOW, ESSO, BIGC). SCB.BK only starts in 2022, as SCB X, and BANPU.BK in 2016-10. KK.BK is a different company reusing the symbol and is excluded.
+  - **Map:** `member_price_map_2012_2024.csv` gives the series to use for every list and member.
+  - **Next:** build the 2012–2024 session mask and run the point-in-time walk-forward.
 - `[x]` `xlrd` (needed only for the 2012–2014 workbooks) is listed in `requirements-data-extensions.txt`, because `requirements.txt` belongs to the locked V2 release.
 
 ## Title-Alignment Implementation — 2026-11-06
