@@ -25,7 +25,7 @@ The project now includes a checksum-bound official SET50/SET100 constituent and 
 - 138 unique tickers in an acquisition-only union; and
 - 23 canonical sectors with dated changes preserved.
 
-**Extended to 2012 (2026-11-07):** `data/reference/set50_set100_membership_2012_2024.csv` adds 24 lists for 2012–2020 from 25 more official SET files (Excel 2012–2014, PDF 2015–2020). The result is 34 continuous lists, 3,400 rows and 227 tickers. The 2021–2024 rows are byte-identical to the archive above. Every printed Inclusion/Exclusion note matches the list changes (93/93). Rebuild with `pip install -r requirements-data-extensions.txt` and then `python -m src.data.ingest_set_constituent_history_extended`. See [`docs/point_in_time_universe_2012_2024_20261107.md`](docs/point_in_time_universe_2012_2024_20261107.md).
+**Extended to 2012 (2026-11-07):** `data/reference/set50_set100_membership_2012_2024.csv` adds 24 lists for 2012–2020 from 25 more official SET files (Excel 2012–2014, PDF 2015–2020). The result is 34 continuous lists, 3,400 rows and 227 tickers. The 2021–2024 rows are byte-identical to the archive above. Every printed Inclusion/Exclusion note matches the list changes (93/93). Rebuild with `pip install -r requirements-data-extensions.txt` and then `python -m src.data.ingest_set_constituent_history_extended`. See [`docs/point_in_time_universe_2012_2024_20261107.md`](docs/point_in_time_universe_2012_2024_20261107.md). The DRL walk-forward on this point-in-time SET50 membership is reported in [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md).
 
 Rebuild and validate it with:
 
@@ -158,6 +158,8 @@ These extensions live in new modules, so no file in the manifest-locked V2 relea
 - `src/data/ingest_bot_policy_rate.py` and `src/features/policy_rate_context.py`: the official BOT policy-rate decision history as a point-in-time macro source.
 - `src/evaluation/attribution.py`: permutation attribution of data-source groups for trained agents.
 - `src/envs/thai_costs.py`: the published Thai cost schedule (about 0.176% per side including VAT).
+- `src/data/point_in_time_panel.py` and `src/envs/point_in_time_env.py`: the 2012–2024 point-in-time SET50 session mask and feature panel, and `PointInTimeSlotEnv`, which trades the index membership of each session through 50 masked slots (`universe.slot_order: traded_value | sticky`).
+- `scripts/run_pit_walk_forward.py`, `scripts/pit_universe_baselines.py` and `scripts/walk_forward_agent_diagnostics.py`: the point-in-time walk-forward, its survivorship baselines, and cost, turnover and concentration diagnostics for any walk-forward agent.
 
 Config options read by `src.train_long_term` and the experiment scripts:
 
@@ -203,6 +205,12 @@ python -m scripts.aggregate_walk_forward_reward --run-dir results/<ablation-run>
 # Scale any walk-forward on BistKA as a SLURM array (one task per year x variant x seed, 1 CPU each)
 CONFIG=config/algorithm_comparison_experiment.yaml VARIANTS="algo_sac algo_td3 algo_ddpg" SEEDS="42 43 44" RUN_NAME=algorithm_comparison \
   sbatch --export=ALL --array=0-62%16 slurm/walk_forward_reward_array.sbatch
+# Point-in-time SET50 walk-forward (2012-2024 official membership; see docs/pit_walk_forward_20261107.md)
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm SEEDS="42 43 44" \
+  scripts/run_walk_forward_reward.sh results/<pit-run> 7 100000
+python -m scripts.pit_universe_baselines --config config/pit_walk_forward_experiment.yaml --run-dir results/<pit-run> --years 2016 2017 2018 2019 2020 2021 2022
+python -m scripts.aggregate_walk_forward_reward --run-dir results/<pit-run> --n-trials 6
+python -m scripts.walk_forward_agent_diagnostics --run-dir results/<pit-run> --variant pit_plan_weekly_lstm --pit-config config/pit_walk_forward_experiment.yaml
 # Official BOT policy-rate history
 python -m src.data.ingest_bot_policy_rate --input data/external/original/bot_policy_rate_mpc_table_asof_20261028.xlsx --output data/external/bot_policy_rate_history.csv --source-url <url> --retrieved-at <utc>
 ```

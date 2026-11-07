@@ -11,6 +11,24 @@ Use this file as the single running checklist for what has been completed and wh
 - `[ ]` Not started
 - `[!]` Blocked or needs attention
 
+## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07
+
+Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md). Outputs: `results/pit_walk_forward_20261107/` (git-ignored). All 21 runs were local; no HPC job was submitted.
+
+- `[x]` **Session mask and panel.** `src/data/point_in_time_panel.py` builds the 2012–2024 SET50/SET100 session mask (revisions apply from their publication date) and the per-ticker feature panel. Between 39 and 48 SET50 members are tradable on every session.
+- `[x]` **Environment.** `PointInTimeSlotEnv` (`src/envs/point_in_time_env.py`) has 50 masked slots and a one-session information lag. It forces exits on any session and uses self-financing accounting. `tests/test_point_in_time_env.py` (13 tests) and `tests/test_walk_forward_agent_diagnostics.py` (4) pass.
+- `[x]` **Walk-forward.** 7 folds (2016–2022) × 3 seeds × 100k timesteps, with the plan reward, weekly decisions and the shared per-asset LSTM.
+  - **Result:** the agent made **−1.1% a year** and beat the ETF in 0 of 7 years. Point-in-time equal weight made 5.6% and the SET50 ETF 7.1%.
+  - **Significance:** the Sharpe difference is significantly negative against both: −0.51 (95% CI −0.87 to −0.26) against the ETF and −0.40 (−0.58 to −0.28) against equal weight.
+- `[x]` **Survivorship measured.** Equal weight over the 2024 H2 SET50 names made 12.2% a year and beat the ETF in 7 of 7 years. Over each session's actual members it made 5.6%.
+  - **Significance:** the Sharpe difference is +0.36 (95% CI 0.22–0.55).
+  - **Ridge baseline:** the ridge forecaster's five-stock edge disappears (5.7% a year).
+- `[x]` **Diagnostics.** `scripts/walk_forward_agent_diagnostics.py` finds the following.
+  - **Costs:** the agent turned over its capital 28 times a year (the five-stock agent 3.9 times). Costs explain 5.3 of its 6.7-point gap to equal weight.
+  - **Slot reshuffles:** members that changed slot between weekly decisions caused 79% of rebalance turnover.
+- `[~]` **Sticky-slot follow-up.** `universe.slot_order: sticky` cuts slot changes per weekly decision from 44–51% of members to 0.2–0.3%. The variant `pit_plan_weekly_lstm_sticky` is configured but **not yet run**. It needs 21 runs: about 5–6 hours locally with 4 workers, or a BistKA array.
+- `[!]` **Local memory limit.** Each worker needs about 750 MB. Seven workers on the 8 GB Mac exhausted RAM and swap, and three runs were paused and resumed. Use at most four workers locally.
+
 ## Point-in-Time Universe 2012–2024 (M3) — 2026-11-07
 
 Report: [`docs/point_in_time_universe_2012_2024_20261107.md`](docs/point_in_time_universe_2012_2024_20261107.md).
@@ -31,7 +49,7 @@ Report: [`docs/point_in_time_universe_2012_2024_20261107.md`](docs/point_in_time
   - **Coverage:** 2012–2020 SET100 rose from 70% to **87%** and SET50 from 78% to **86%**. 189 of 227 tickers now have prices, with renamed members mapped to their current symbol (KH→BCH, KK→KKP, BGH→BDMS, TUF→TU, MTLS→MTC, TMB→TTB).
   - **Still missing:** 38 tickers have no Yahoo prices at all (delisted or merged, for example INTUCH, DTAC, ROBINS, GLOW, ESSO, BIGC). SCB.BK only starts in 2022, as SCB X, and BANPU.BK in 2016-10. KK.BK is a different company reusing the symbol and is excluded.
   - **Map:** `member_price_map_2012_2024.csv` gives the series to use for every list and member.
-  - **Next:** build the 2012–2024 session mask and run the point-in-time walk-forward.
+  - **Done:** the session mask and the point-in-time walk-forward are in the section above.
 - `[x]` `xlrd` (needed only for the 2012–2014 workbooks) is listed in `requirements-data-extensions.txt`, because `requirements.txt` belongs to the locked V2 release.
 
 ## Title-Alignment Implementation — 2026-11-06
@@ -44,7 +62,7 @@ Milestone plan: [`IMPROVEMENT_MILESTONES.md`](IMPROVEMENT_MILESTONES.md). Experi
 - `[x]` **M7 rigor.** `src/evaluation/benchmark_metrics.py` adds beta, alpha, tracking error, information ratio, and up/down capture. `src/evaluation/significance.py` adds stationary-bootstrap Sharpe CIs, paired Sharpe differences, and Probabilistic and Deflated Sharpe, with a CLI.
 - `[~]` **M4 multi-source.** A real sentiment scorer (`src/sentiment/score_news.py`) replaces the hash: an HF sentiment classifier with label checks, or WangchanBERTa embeddings with PCA fitted on training dates only. The hash survives only as an explicit `--scorer placeholder`. A new investor-flow importer and next-session feature builder take SET trading by investor type. Fundamentals gain missing-data flags (`src/features/fundamental_flags.py`). Historical news and investor-flow files are still needed.
 - `[x]` **M6 baselines.** Added the SET50 ETF buy-and-hold benchmark, monthly equal weight, a ridge 21-day forecast top-2 baseline, and an LSTM (Bi-LSTM over the past window) forecaster. Both forecasters are fitted on training dates only (`src/agents/predictive_baselines.py`, `scripts/evaluate_forecast_baselines.py`).
-- `[~]` **M3 Tier B (exploratory) data.** 126/138 acquisition-union tickers, 2012–2024 (325,913 rows), are in `data/raw/extended/prices_set100_union_2012_2024.csv.gz`. A separate sealed holdout is in `data/holdout_sealed/2025_onward_set100_union/`. The 12 delisted, merged, or renamed names (BPP, BSRC, DTAC, ESSO, GULF, INTUCH, KEX, SABUY, STARK, STEC, TIDLOR, TMB) are absent from Yahoo, which measures the survivorship gap the licensed package must close. Not yet used for training.
+- `[~]` **M3 Tier B (exploratory) data.** 126/138 acquisition-union tickers, 2012–2024 (325,913 rows), are in `data/raw/extended/prices_set100_union_2012_2024.csv.gz`. A separate sealed holdout is in `data/holdout_sealed/2025_onward_set100_union/`. The 12 delisted, merged, or renamed names (BPP, BSRC, DTAC, ESSO, GULF, INTUCH, KEX, SABUY, STARK, STEC, TIDLOR, TMB) are absent from Yahoo, which measures the survivorship gap the licensed package must close. Used to train the point-in-time SET50 walk-forward (2026-11-07).
 - `[x]` **First long-term experiment.** PPO × 6 designs × 3 seeds × 100k timesteps, validated on 2020–2022 under correct accounting. The V2 objective lost 48.8% through overtrading (about 75% of capital paid in costs). Log-wealth reward with weekly decisions lost 2.8%. Plan reward plus the LSTM extractor gained **+1.9% ± 1.1 (all seeds positive, lowest turnover and drawdown)**. The SET50 ETF gained +9.0%. No Sharpe ratio is statistically distinguishable from zero over this window.
 - `[x]` **Seven-year walk-forward (M6/RQ5).** 7 expanding one-year folds (2016–2022) × 5 seeds × 2 DRL designs (70 models), plus ridge and LSTM forecasters and passive baselines; report in [`docs/walk_forward_reward_20261106.md`](docs/walk_forward_reward_20261106.md). The DRL LSTM agent averaged 7.7% a year against 7.1% for the SET50 ETF (beating it in 3 of 7 years), with the lowest drawdown (−11.1%). Monthly equal weight made 10.1%, and the LSTM and ridge forecasters 13.8% and 12.8%. No Sharpe difference is significant except that the MLP agent is worse than equal weight.
 - `[x]` **Source ablation (M4/M6, RQ2/RQ3).** Same reward/model/seeds over the 7 walk-forward years ([`docs/source_ablation_20261106.md`](docs/source_ablation_20261106.md)): technical only 6.8% a year, + SET50 market context 8.2% (Sharpe +0.10, borderline significant), + daily macro proxies 7.1% (no gain). Fundamentals, sentiment and flow arms await data.

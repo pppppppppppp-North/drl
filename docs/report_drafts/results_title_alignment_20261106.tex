@@ -2,9 +2,10 @@
 % Insert with \input{docs/report_drafts/results_title_alignment_20261106} immediately before
 % \chapter{DISCUSSION}. It uses the report's own packages and column types (L, Y, booktabs, float).
 % New references are in docs/report_drafts/references_additions_20261106.tex.
-% Evidence tier: exploratory (Yahoo data, five starter stocks, validation years only). Numbers come
-% from docs/long_term_reward_experiment_20261106.md, docs/walk_forward_reward_20261106.md and
-% docs/source_ablation_20261106.md.
+% Evidence tier: exploratory (Yahoo data; the five starter stocks and the point-in-time SET50;
+% validation years only). Numbers come from docs/long_term_reward_experiment_20261106.md,
+% docs/walk_forward_reward_20261106.md, docs/source_ablation_20261106.md,
+% docs/algorithm_comparison_20261107.md and docs/pit_walk_forward_20261107.md.
 
 \chapter{LONG-TERM, MULTI-SOURCE EXTENSION}
 
@@ -12,7 +13,8 @@ This chapter reports experiments that align the implementation with the project 
 \emph{long-term} objective, \emph{multi-source} inputs, and multi-year out-of-sample evaluation.
 All results are exploratory. They use Yahoo Finance prices for the five starter stocks (ADVANC, AOT,
 CPALL, KBANK, PTT) and the SET50 exchange-traded fund TDEX as the market series, because Yahoo now
-returns only one row for the SET indices. Only validation years were read. The 2023--2024 test years
+returns only one row for the SET indices. Section~\ref{sec:pit} repeats the evaluation on the
+point-in-time SET50 membership. Only validation years were read. The 2023--2024 test years
 and the sealed post-2024 holdouts remain untouched for a single final evaluation after the protocol
 is locked.
 
@@ -180,13 +182,125 @@ SET50 ETF buy-and-hold & 7.1\% & -- & -- & $-11.3\%$ \\
 \end{tabularx}
 \end{table}
 
+\section{Point-in-Time SET50 Evaluation}
+\label{sec:pit}
+
+The five starter stocks were chosen in 2026 and are survivors by construction. To test whether the
+results hold on the actual index, the walk-forward was repeated on the SET50 membership in force on
+each session. The membership comes from the 34 official half-yearly SET50/SET100 lists for 2012--2024,
+parsed from 35 files published by the Stock Exchange of Thailand. Every inclusion and exclusion that
+the files print matches the change between consecutive lists. Prices are from Yahoo Finance. Of the 227
+tickers that were ever members, 189 have prices. Most of the 38 without prices are delisted or merged
+companies, so 13\% of SET50 member-sessions cannot be traded. The ETF benchmark tracks the whole index,
+including those names.
+
+The agent allocates over 50 slots. On each session, the members that are tradable under the previous
+session's list fill the slots in order of their mean traded value over the previous 60 sessions, and
+empty slots are excluded from the softmax. Between 39 and 48 members were tradable on every session. A
+holding that leaves the index, or whose prices stop, is sold at that session's close with costs. The
+reward, weekly decisions, LSTM model, inputs, costs, training budget, and folds are those of
+Table~\ref{tab:walk-forward}, with three seeds per fold. The baselines in Table~\ref{tab:pit} use the
+same sessions, costs, and accounting; only the stock universe differs.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Point-in-time SET50 walk-forward, validation 2016--2022: mean over seven annual folds (DRL: three seeds per fold). Equal-weight portfolios rebalance monthly, and all strategies pay the same costs.}
+\label{tab:pit}
+\begin{tabularx}{\textwidth}{@{}Yrrrr@{}}
+\toprule
+Strategy (universe) & Annual return & vs ETF & Years ahead & Max DD \\
+\midrule
+Equal weight (2024 SET50 members, hindsight) & 12.2\% & $+5.1\%$ & 7/7 & $-11.9\%$ \\
+Equal weight (five starter stocks) & 10.1\% & $+3.0\%$ & 4/7 & $-13.9\%$ \\
+SET50 ETF buy-and-hold & 7.1\% & -- & -- & $-11.2\%$ \\
+Ridge forecast, top ten (point-in-time SET50) & 5.7\% & $-1.4\%$ & 3/7 & $-17.6\%$ \\
+Equal weight (point-in-time SET50) & 5.6\% & $-1.5\%$ & 2/7 & $-12.7\%$ \\
+DRL, plan reward + LSTM (point-in-time SET50) & $-1.1\%$ & $-8.3\%$ & 0/7 & $-14.8\%$ \\
+\midrule
+DRL, plan reward + LSTM (five starter stocks) & 7.7\% & $+0.5\%$ & 3/7 & $-11.1\%$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Selecting today's index members with hindsight added 6.6 percentage points a year to an equal-weight
+backtest, and that portfolio beat the market in every year. On chained daily returns, its Sharpe ratio
+exceeded that of equal weight over each year's actual members by 0.36 (95\% interval 0.22 to 0.55) and
+that of the ETF by 0.24 (0.04 to 0.49). Equal weight over the actual members trailed the
+capitalization-weighted ETF, though not significantly.
+The ridge forecaster, which earned 12.8\% a year on the five starter stocks, earned 5.7\% on the
+point-in-time universe, so its earlier advantage came from the universe rather than from forecasting
+skill.
+
+The DRL agent lost money: $-1.1\%$ a year, against 5.6\% for equal weight over the same members and
+7.1\% for the ETF. It trailed both in every year, including a 15.1\% loss in 2020, and its mean maximum
+drawdown was deeper than either. Unlike the five-stock results, these differences are statistically
+significant. The agent's Sharpe ratio was $-0.02$ (95\% interval $-0.74$ to $0.70$), and the Sharpe
+difference was $-0.51$ relative to the ETF (interval $-0.87$ to $-0.26$) and $-0.40$ relative to
+point-in-time equal weight ($-0.58$ to $-0.28$). Table~\ref{tab:pit-costs} shows where the return went.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Return before costs, cost drag, and trading: means over the seven validation years. Turnover is the sum of absolute weight changes over a year, including the initial purchase; cash is the average cash weight.}
+\label{tab:pit-costs}
+\begin{tabularx}{\textwidth}{@{}Yrrrrr@{}}
+\toprule
+Strategy (universe) & Before costs & Cost drag & After costs & Turnover & Cash \\
+\midrule
+DRL (point-in-time SET50) & 4.6\% & 5.8\% & $-1.1\%$ & 28.2 & 3.7\% \\
+Equal weight (point-in-time SET50) & 6.0\% & 0.4\% & 5.6\% & 1.9 & 0.7\% \\
+DRL (five starter stocks) & 8.5\% & 0.8\% & 7.7\% & 3.9 & 20.3\% \\
+Equal weight (five starter stocks) & 10.4\% & 0.3\% & 10.1\% & 1.4 & 0.0\% \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Before costs, the agent was only 1.4 percentage points a year behind equal weight over the same
+members. After costs it was 6.7 points behind, because it paid 5.3 points more in costs, so trading
+costs explain about 80\% of the gap. It turned over 28 times its capital a year, seven times as much
+as the five-stock agent. Its weights were spread rather than concentrated: on rebalance days it held
+about 23 effective names out of 44 tradable members, and its daily returns correlated 0.95 with equal
+weight. Splitting each rebalance's weight changes shows the cause. Because the slots follow the
+traded-value order, 48\% of members changed slot between consecutive weekly decisions. Those members
+accounted for 79\% of rebalance turnover, and their weight changes were four times as large as those
+of members that kept their slot. The policy network scores slot positions, not stocks, so a change in
+the order changes the weights even when nothing about the stocks has changed. The five-stock agent never
+faced this problem, because its stocks never changed position. A \emph{sticky} slot order, in which a
+member keeps its slot while it stays tradable, reduces slot changes to 0.2--0.3\% of members per
+decision. It is implemented and is the next experiment.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{docs/figures/pit_walk_forward_chained_equity_20261107.png}
+\caption{Point-in-time SET50: chained out-of-sample value over the seven validation years. Each year uses models trained only on earlier years; the band shows the range across three seeds.}
+\label{fig:pit}
+\end{figure}
+
 \section{Interpretation}
 
-The long-term DRL design fixed the overtrading failure of the V2 objective. Over seven years it
-roughly matched the SET50 market with the lowest drawdown of any strategy tested. However, it did not
-outperform equal weighting of the same stocks or the supervised forecast-then-allocate baselines, and
-no comparison among these strategies was statistically significant. The five starter stocks are
-current large capitalization survivors chosen with hindsight, so even their equal-weight portfolio
-outperformed the market index. Extending the evaluation to the point-in-time SET50/SET100 universe,
-and adding fundamentals, news sentiment, investor flow, and official point-in-time macro data, are
-required before any claim about Thai markets in general.
+On the five starter stocks, the long-term DRL design fixed the overtrading failure of the V2 objective.
+Over seven years it roughly matched the SET50 market with the lowest drawdown of any strategy tested.
+It did not, however, outperform equal weighting of the same stocks or the supervised
+forecast-then-allocate baselines, and no comparison among those strategies was statistically
+significant. The point-in-time evaluation shows that the choice of stocks flattered these results.
+Equal weight over today's SET50 members beat the market in every year, equal weight over each year's
+actual members trailed it, and the forecasting baseline lost its edge. On the actual index, the same
+DRL design lost money and was significantly worse than both the market and equal weight. The main
+reason is that a policy that scores slot positions overtrades when the investable set changes. The
+evidence therefore does not support a claim that this DRL design improves long-term profit in the
+Thai stock market. Such a claim would need a policy that is invariant to the order of the stocks,
+survivorship-free licensed data, and the remaining data sources (fundamentals, news sentiment,
+investor flow, and point-in-time official macro data), evaluated once on the untouched test years.
+
+\section{Limitations of the Extension}
+
+\begin{enumerate}
+  \item \textbf{Exploratory data tier.} Prices, the ETF series, and the macro proxies come from Yahoo Finance, not from the licensed SETSMART package requested for the project. Yahoo prices are adjusted for splits and dividends but carry no trading-status, suspension, or corporate-action records, so a suspended stock and a missing price look the same.
+  \item \textbf{Survivorship.} The point-in-time membership is official, but 38 of its 227 tickers, mostly delisted or merged companies, have no prices. They account for 13\% of SET50 member-sessions. The missing names bias the results in both directions: failed companies that Yahoo dropped would have lowered an equal-weight return, and companies taken over at a premium would have raised it. Only the ETF benchmark is free of this gap. Results on fixed stock lists are biased in a known direction: choosing today's SET50 members with hindsight added 6.6 percentage points a year to equal weight (Section~\ref{sec:pit}).
+  \item \textbf{Cost model.} Every trade pays 0.15\% commission plus 0.05\% slippage per side, which covers the published explicit cost of about 0.176\%. Market impact, the wider bid--ask spreads of smaller members, board lots, daily price limits, and the minimum tick are not modelled. The costs of high-turnover policies are therefore, if anything, understated.
+  \item \textbf{Macro and alternative data.} The daily macro proxies are market prices and therefore point-in-time. The Bank of Thailand macro history, however, is a current revised vintage, so it was kept out of the models. The official policy-rate decision history is point-in-time but has not yet been used in an experiment. Fundamentals cover only recent years for the five starter stocks, and news sentiment and investor flow are implemented without historical data. The \emph{multi-source} claim therefore rests on price, technical, market, and macro-proxy inputs only.
+  \item \textbf{Validation years only.} Designs were compared and chosen on the validation years, so the chosen design's validation performance is optimistic. The deflated Sharpe ratio corrects for this only in part. The 2023--2024 test years and the sealed post-2024 holdout have not been read.
+  \item \textbf{Training budget and seeds.} Each model trained for 100{,}000 timesteps with three to five seeds on the 8~GB development machine. Longer training, more seeds, and the off-policy algorithms require the HPC cluster.
+  \item \textbf{Slot-based policy.} In the point-in-time environment the policy scores slot positions rather than stocks, so any change in the slot order changes portfolio weights. A sticky slot order removes almost all of these changes. A policy that scores each stock with shared weights would remove the dependence entirely.
+\end{enumerate}
