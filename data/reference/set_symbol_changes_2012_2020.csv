@@ -1,0 +1,9 @@
+old_symbol,new_symbol,kind,first_record_with_new_symbol,old_company_name,new_company_name,note
+KH,BCH,symbol_change,set_2013_h1,BANGKOK CHAIN HOSPITAL PUBLIC COMPANY LIMITED,BANGKOK CHAIN HOSPITAL PUBLIC COMPANY LIMITED,Bangkok Chain Hospital changed its symbol
+GSTEEL,GSTEL,symbol_change,set_2013_h2,G STEEL PUBLIC COMPANY LIMITED,G STEEL PUBLIC COMPANY LIMITED,G Steel changed its symbol
+KK,KKP,symbol_change,set_2014_h1,KIATNAKIN BANK PUBLIC COMPANY LIMITED,ธนาคารเกียรตินาคิน จํากัด (มหาชน),Kiatnakin Bank changed its symbol; the 2014 H1 notes already use KKP
+BGH,BDMS,symbol_change,set_2015_h2,BANGKOK DUSIT MEDICAL SERVICES PUBLIC COMPANY LIMITED,BANGKOK DUSIT MEDICAL SERVICES PCL.,Bangkok Dusit Medical Services changed its symbol
+TUF,TU,symbol_change,set_2016_h1_original,THAI UNION FROZEN PRODUCTS PUBLIC COMPANY LIMITED,THAI UNION GROUP PCL.,Thai Union Frozen Products became Thai Union Group
+BECL,BEM,merger,set_2016_h1_revised,BANGKOK EXPRESSWAY PUBLIC COMPANY LIMITED,BANGKOK EXPRESSWAY AND METRO PCL.,Bangkok Expressway and Bangkok Metro amalgamated into Bangkok Expressway and Metro
+BMCL,BEM,merger,set_2016_h1_revised,บริษัท รถไฟฟ้ากรุงเทพ จํากัด (มหาชน),BANGKOK EXPRESSWAY AND METRO PCL.,Bangkok Expressway and Bangkok Metro amalgamated into Bangkok Expressway and Metro
+MTLS,MTC,symbol_change,set_2018_h2,MUANGTHAI LEASING PCL.,MUANGTHAI CAPITAL PCL.,Muangthai Leasing became Muangthai Capital

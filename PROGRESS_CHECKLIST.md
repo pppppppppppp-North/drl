@@ -1,6 +1,6 @@
 # Project Progress Checklist
 
-Last updated: 2026-11-06
+Last updated: 2026-11-07
 
 Use this file as the single running checklist for what has been completed and what remains. Update it whenever code, data, HPC jobs, results, or report artifacts change.
 
@@ -10,6 +10,24 @@ Use this file as the single running checklist for what has been completed and wh
 - `[~]` Started or partially complete
 - `[ ]` Not started
 - `[!]` Blocked or needs attention
+
+## Point-in-Time Universe 2012–2024 (M3) — 2026-11-07
+
+Report: [`docs/point_in_time_universe_2012_2024_20261107.md`](docs/point_in_time_universe_2012_2024_20261107.md).
+
+- `[x]` **Official sources.** 25 SET50/SET100 constituent files for 2012–2020 were downloaded from the SET's direct `media.set.or.th` links: 6 Excel workbooks and 19 PDFs, including 7 revisions. They are preserved in `data/external/original/set_constituent_history/` with SHA-256, size, URL and retrieval time in `data/external/set_constituent_source_manifest_2012_2020.csv`. The six 2025–2026 files are archived and hashed but **not parsed** (sealed holdout years).
+- `[x]` **Importer.** `src/data/ingest_set_constituent_history_extended.py` is additive; the July importer and its 2021–2024 outputs are unchanged.
+  - **PDF layouts:** it handles wrapped sector and company cells, the reserve list that restarts at rank 1, pages drawn at 4× scale, highlighted rows drawn twice, a row with no rank number, and disclaimer text overlaid on a table.
+  - **Excel workbooks:** it reads the English 2012–2013 sheets and the Thai 2014 sheets. Thai sectors are mapped with the SET's own summary tables.
+  - **Agreement:** on the seven 2019–2020 files the July parser can read, members, ranks and sectors agree exactly.
+- `[x]` **Archive.** `data/reference/set50_set100_membership_2012_2024.csv` holds 34 lists, 3,400 rows and 227 tickers, with 50/100 members in every list and continuous intervals from 2012-01-01 to 2025-01-01.
+  - **July rows:** the 2021–2024 rows are byte-identical to the July file (SHA-256 pinned), and the combined file passes the July validator.
+  - **Change checks:** all 93 match. The change from each list to the next equals the source's printed Inclusion/Exclusion notes or "New Entry" marks. Revisions are checked against the list they replace, and the 2020→2021 seam against the 2021 H1 PDF.
+  - **Corporate actions:** six symbol changes and the BECL/BMCL→BEM merger are recorded in `data/reference/set_symbol_changes_2012_2020.csv`.
+- `[x]` 27 new tests (`tests/test_ingest_set_constituent_history_extended.py`) pass. They cover parser agreement, the layout cases above, manifest gaps and early revisions, the change checks, byte-identity of the July rows, and reproduction of the committed outputs.
+  - **Neighbouring tests:** 45 of 56 constituent and V3 tests pass. The other 11 also fail on a clean checkout of the parent commit, because they need git-ignored files (`data/raw/*.csv`, `reports/…`) that the clone does not have.
+- `[~]` **Survivorship gap measured, not closed.** Local Yahoo prices cover 70% of 2012–2020 SET100 member-lists (50% in 2012). 101 of the 227 tickers have no price file: 89 left the index before 2021 and 12 are delisted names Yahoo does not serve. Next: fetch them, rebuild the session mask for 2012–2024, and run the point-in-time walk-forward.
+- `[x]` `xlrd` (needed only for the 2012–2014 workbooks) is listed in `requirements-data-extensions.txt`, because `requirements.txt` belongs to the locked V2 release.
 
 ## Title-Alignment Implementation — 2026-11-06
 

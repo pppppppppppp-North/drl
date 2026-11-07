@@ -25,6 +25,8 @@ The project now includes a checksum-bound official SET50/SET100 constituent and 
 - 138 unique tickers in an acquisition-only union; and
 - 23 canonical sectors with dated changes preserved.
 
+**Extended to 2012 (2026-11-07):** `data/reference/set50_set100_membership_2012_2024.csv` adds 24 lists for 2012–2020 from 25 more official SET files (Excel 2012–2014, PDF 2015–2020). The result is 34 continuous lists, 3,400 rows and 227 tickers. The 2021–2024 rows are byte-identical to the archive above. Every printed Inclusion/Exclusion note matches the list changes (93/93). Rebuild with `pip install -r requirements-data-extensions.txt` and then `python -m src.data.ingest_set_constituent_history_extended`. See [`docs/point_in_time_universe_2012_2024_20261107.md`](docs/point_in_time_universe_2012_2024_20261107.md).
+
 Rebuild and validate it with:
 
 ```bash

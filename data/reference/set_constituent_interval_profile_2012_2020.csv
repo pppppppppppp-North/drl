@@ -1,0 +1,25 @@
+record_id,period_label,effective_from,effective_to_exclusive,published_at,revision_status,source_format,set50_count,set100_count,set50_added,set50_removed,set100_added,set100_removed,sector_count
+set_2012_h1,2012 H1,2012-01-01,2012-07-01,2012-01-01,original,xls_en_sheets,50,100,0,0,0,0,19
+set_2012_h2,2012 H2,2012-07-01,2013-01-01,2012-07-01,original,xls_en_sheets,50,100,2,2,6,6,19
+set_2013_h1,2013 H1,2013-01-01,2013-07-01,2013-01-01,original,xls_en_sheets,50,100,3,3,7,7,19
+set_2013_h2,2013 H2,2013-07-01,2014-01-01,2013-07-01,original,xls_en_sheets,50,100,3,3,12,12,18
+set_2014_h1,2014 H1,2014-01-01,2014-07-01,2013-12-16,original,xls_th_set100_marker,50,100,2,2,12,12,17
+set_2014_h2,2014 H2,2014-07-01,2015-01-01,2014-06-16,original,xls_th_sheets,50,100,2,2,9,9,17
+set_2015_h1_original,2015 H1 original,2015-01-01,2015-04-29,2014-12-15,original,pdf_two_column,50,100,4,4,10,10,17
+set_2015_h1_revised,2015 H1 revised,2015-04-29,2015-07-01,2015-04-29,revised,pdf_two_column,50,100,1,1,1,1,18
+set_2015_h2,2015 H2,2015-07-01,2016-01-01,2015-06-16,original,pdf_two_column,50,100,8,8,14,14,16
+set_2016_h1_revised,2016 H1 revised,2016-01-01,2016-07-01,2015-12-30,revised,pdf_two_column,50,100,4,4,16,16,16
+set_2016_h2_original,2016 H2 original,2016-07-01,2016-12-01,2016-06-17,original,pdf_two_column,50,100,4,4,9,9,16
+set_2016_h2_revised,2016 H2 revised,2016-12-01,2017-01-01,2016-12-01,revised,pdf_two_column,50,100,1,1,1,1,16
+set_2017_h1,2017 H1,2017-01-01,2017-07-01,2016-12-16,original,pdf_two_column,50,100,5,5,8,8,16
+set_2017_h2,2017 H2,2017-07-01,2018-01-01,2017-06-16,original,pdf_two_column,50,100,7,7,13,13,18
+set_2018_h1,2018 H1,2018-01-01,2018-07-01,2017-12-13,original,pdf_two_column,50,100,6,6,13,13,16
+set_2018_h2,2018 H2,2018-07-01,2019-01-01,2018-06-18,original,pdf_two_column,50,100,7,7,12,12,17
+set_2019_h1_original,2019 H1 original,2019-01-01,2019-05-28,2018-12-17,original,pdf_two_column,50,100,2,2,6,6,16
+set_2019_h1_revised,2019 H1 revised,2019-05-28,2019-07-01,2019-05-28,revised,pdf_two_column,50,100,1,1,1,1,16
+set_2019_h2_original,2019 H2 original,2019-07-01,2019-10-10,2019-06-18,original,pdf_two_column,50,100,2,2,3,3,16
+set_2019_h2_revised,2019 H2 revised,2019-10-10,2020-01-01,2019-10-10,revised,pdf_two_column,50,100,1,1,1,1,16
+set_2020_h1_original,2020 H1 original,2020-01-01,2020-02-20,2019-12-18,original,pdf_two_column,50,100,1,1,5,5,18
+set_2020_h1_revised,2020 H1 revised,2020-02-20,2020-07-01,2020-02-20,revised,pdf_two_column,50,100,1,1,1,1,18
+set_2020_h2_original,2020 H2 original,2020-07-01,2020-10-22,2020-06-15,original,pdf_two_column,50,100,2,2,7,7,17
+set_2020_h2_revised,2020 H2 revised,2020-10-22,2021-01-01,2020-10-22,revised,pdf_two_column,50,100,1,1,1,1,18
