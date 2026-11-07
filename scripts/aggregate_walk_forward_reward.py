@@ -120,6 +120,10 @@ def plot(chained: pd.DataFrame, output: Path, labels: dict[str, str] | None = No
         BENCHMARK: ("SET50 ETF buy & hold (TDEX)", "#111111", "-"),
         "ridge_forecast_top2_monthly": ("Ridge forecast top-2, monthly", "#7a7a7a", "--"),
         "equal_weight_monthly": ("Equal weight, monthly", "#7a7a7a", ":"),
+        "pit_equal_weight_monthly": ("Point-in-time SET50 equal weight, monthly", "#7a7a7a", "-."),
+        "pit_ridge_forecast_top10_monthly": ("Point-in-time ridge forecast top-10, monthly", "#7a7a7a", "--"),
+        "hindsight_set50_equal_weight_monthly": ("Hindsight: 2024 SET50 names, equal weight", "#b07aa1", ":"),
+        "starter5_equal_weight_monthly": ("Five starter stocks, equal weight", "#b07aa1", "-."),
     }
     fig, ax = plt.subplots(figsize=(10, 5.5), dpi=150)
     learned = [v for v in chained["variant"].unique() if v not in baselines and chained.loc[chained["variant"] == v, "policy"].str.contains("_seed").any()]
@@ -183,7 +187,7 @@ def main() -> None:
     chained.to_csv(run_dir / "walk_forward_chained_equity.csv", index=False)
     labels = dict(item.split("=", 1) for item in args.labels)
     plot(chained, run_dir / "walk_forward_chained_equity.png", labels=labels, title=args.title)
-    for reference in (BENCHMARK, "equal_weight_monthly"):
+    for reference in (BENCHMARK, "equal_weight_monthly", "pit_equal_weight_monthly"):
         if reference in set(chained["variant"]):
             sig = chained_significance(chained, reference, n_trials=args.n_trials)
             sig.to_csv(run_dir / f"walk_forward_significance_vs_{reference}.csv", index=False)

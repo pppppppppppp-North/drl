@@ -31,6 +31,8 @@ PROJECT_DIR="${PROJECT_DIR:-/lustrefs/project/25sfcs03/drl_thai_stock}"
 ENV_DIR="${ENV_DIR:-/lustrefs/project/25sfcs03/envs/drl_env}"
 PYTHON="${PYTHON:-$ENV_DIR/bin/python}"
 CONFIG="${CONFIG:-config/long_term_reward_experiment.yaml}"
+# RUNNER=scripts.run_pit_walk_forward runs the point-in-time SET50 walk-forward instead.
+RUNNER="${RUNNER:-scripts.run_reward_variant_experiment}"
 VARIANTS="${VARIANTS:-plan_main_weekly_lstm log_weekly}"
 YEARS="${YEARS:-2016 2017 2018 2019 2020 2021 2022}"
 SEEDS="${SEEDS:-42 43 44 45 46}"
@@ -60,4 +62,4 @@ echo "task ${TASK_ID}/${#TASKS[@]}: year=${YEAR} variant=${VARIANT} seed=${SEED}
 
 export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1
 export PYTHONPYCACHEPREFIX="${PYTHONPYCACHEPREFIX:-${TMPDIR:-/tmp}/pycache_${USER:-drl}}"
-"$PYTHON" -c "import torch; torch.set_num_threads(1); import runpy, sys; sys.argv=['x','--config','${CONFIG}','--output-dir','${OUT}','--variants','${VARIANT}','--seeds','${SEED}','--fold-year','${YEAR}','--timesteps','${TIMESTEPS}']; runpy.run_module('scripts.run_reward_variant_experiment', run_name='__main__')"
+"$PYTHON" -c "import torch; torch.set_num_threads(1); import runpy, sys; sys.argv=['x','--config','${CONFIG}','--output-dir','${OUT}','--variants','${VARIANT}','--seeds','${SEED}','--fold-year','${YEAR}','--timesteps','${TIMESTEPS}']; runpy.run_module('${RUNNER}', run_name='__main__')"
