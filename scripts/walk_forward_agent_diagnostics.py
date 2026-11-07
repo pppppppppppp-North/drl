@@ -5,7 +5,9 @@ return before costs and the cost drag, and both are compared with a reference ba
 sessions (the point-in-time monthly equal weight by default). Where the runner saved holdings
 (``runs/<variant>_seed<S>/validation_holdings.csv``), it also measures, on rebalance sessions, how
 spread out the weights are (effective number of holdings, largest weight, top-10 share) and their
-distance from equal weight over the tradable members.
+distance from equal weight over the tradable members. With ``--pit-config`` it rebuilds the slot
+assignment of each validation session and splits rebalance turnover between members that changed
+slot since the previous decision and those that kept it.
 
 Accounting follows ``PointInTimeSlotEnv.step`` and ``LongTermTradingEnv``: a session's net growth is
 ``(1 - cost - slippage) * (1 + gross)``, so the gross growth is the net growth divided by
@@ -104,13 +106,75 @@ def holdings_diagnostics(holdings: pd.DataFrame, curve: pd.DataFrame, rebalance_
     return pd.DataFrame(stats).mean().to_dict()
 
 
+def slot_change_diagnostics(holdings: pd.DataFrame, curve: pd.DataFrame, slots_by_date: dict[str, dict[str, int]],
+                            rebalance_every: int) -> dict[str, float]:
+    """Split rebalance weight changes between members that changed slot since the previous decision and the rest.
+
+    The point-in-time policy scores slots, not stocks, so a member that moves slot (because the order by
+    trailing traded value changed) can get a new weight even if its own features did not change. A weight
+    change is the holdings on a rebalance row minus those on the row before, both after one session of
+    drift. Slots are those of the decision sessions, which are the rows before. Entries and exits count as
+    slot changes.
+    """
+    dates = list(curve["date"])
+    weights = {date: dict(zip(group["ticker"], group["weight"])) for date, group in holdings.groupby("date")}
+    moved = {"turnover": 0.0, "names": 0}
+    kept = {"turnover": 0.0, "names": 0}
+    for k in range(1 + rebalance_every, len(dates), rebalance_every):
+        now, before = slots_by_date.get(dates[k - 1]), slots_by_date.get(dates[k - 1 - rebalance_every])
+        if now is None or before is None:
+            continue
+        new, old = weights.get(dates[k], {}), weights.get(dates[k - 1], {})
+        for ticker in set(new) | set(old):
+            bucket = kept if ticker in now and before.get(ticker) == now[ticker] else moved
+            bucket["turnover"] += abs(new.get(ticker, 0.0) - old.get(ticker, 0.0))
+            bucket["names"] += 1
+    total = moved["turnover"] + kept["turnover"]
+    names = moved["names"] + kept["names"]
+    if not names or total <= 0:
+        return {}
+    return {
+        "slot_moved_name_share": moved["names"] / names,
+        "slot_moved_turnover_share": moved["turnover"] / total,
+        "mean_weight_change_slot_moved": moved["turnover"] / moved["names"] if moved["names"] else np.nan,
+        "mean_weight_change_slot_kept": kept["turnover"] / kept["names"] if kept["names"] else np.nan,
+    }
+
+
+def pit_slots_by_date(config_path: Path, root: Path, years: list[int],
+                      variant: str | None = None) -> dict[int, dict[str, dict[str, int]]]:
+    """Slot assignment of every validation session, rebuilt from the point-in-time config (no model needed).
+
+    ``variant`` applies that variant's ``universe`` overrides (for example ``slot_order``)."""
+    import yaml
+
+    from scripts.run_pit_walk_forward import _deep_merge, load_inputs, make_env, window
+
+    spec = yaml.safe_load(config_path.read_text())
+    base = _deep_merge({"features": spec["features"], "universe": spec["universe"]}, spec["base"])
+    for entry in spec.get("variants", []):
+        if entry.get("name") == variant and "universe" in entry:
+            base = _deep_merge(base, {"universe": entry["universe"]})
+    mask, panel, _ = load_inputs(spec, root)
+    limit = pd.Timestamp(spec["splits"]["validation_end"])
+    lookback = int(spec["features"]["lookback"])
+    out = {}
+    for year in years:
+        end = min(pd.Timestamp(f"{year}-12-31"), limit).date().isoformat()
+        env = make_env(base, window(panel, f"{year}-01-01", end, lookback), mask, training=False)
+        out[year] = {pd.Timestamp(date).date().isoformat(): {env.tickers[u]: j for j, u in enumerate(row) if u >= 0}
+                     for date, row in zip(env.dates, env.slots)}
+    return out
+
+
 def load_holdings(fold_dir: Path, policy: str) -> pd.DataFrame | None:
     paths = sorted(fold_dir.glob(f"*/runs/{policy}/validation_holdings.csv"))
     return pd.read_csv(paths[0]) if paths else None
 
 
 def diagnose(run_dir: Path, variant: str, reference: str, rebalance_every: int,
-             reference_rebalance_every: int | None = 21) -> pd.DataFrame:
+             reference_rebalance_every: int | None = 21,
+             slots: dict[int, dict[str, dict[str, int]]] | None = None) -> pd.DataFrame:
     rows = []
     for fold_dir in sorted(p for p in run_dir.glob("fold_*") if p.is_dir()):
         year = int(fold_dir.name.split("_")[1])
@@ -131,6 +195,8 @@ def diagnose(run_dir: Path, variant: str, reference: str, rebalance_every: int,
             holdings = load_holdings(fold_dir, policy)
             if holdings is not None:
                 row.update(holdings_diagnostics(holdings, curve, rebalance_every))
+                if slots and year in slots:
+                    row.update(slot_change_diagnostics(holdings, curve, slots[year], rebalance_every))
             rows.append(row)
     if not rows:
         raise FileNotFoundError(f"no {variant}_seed* curves under {run_dir}/fold_*")
@@ -157,12 +223,19 @@ def main() -> None:
     parser.add_argument("--reference-rebalance-every", type=int, default=21)
     parser.add_argument("--output-dir", default=None)
     parser.add_argument("--prefix", default="agent_diagnostics")
+    parser.add_argument("--pit-config", default=None,
+                        help="point-in-time config; adds the split of turnover by slot changes (rebuilds the slots)")
+    parser.add_argument("--root", default=".")
     args = parser.parse_args()
 
     run_dir = Path(args.run_dir)
     out = Path(args.output_dir or run_dir)
     out.mkdir(parents=True, exist_ok=True)
-    frame = diagnose(run_dir, args.variant, args.reference, args.rebalance_every, args.reference_rebalance_every)
+    slots = None
+    if args.pit_config:
+        years = sorted(int(p.name.split("_")[1]) for p in run_dir.glob("fold_*") if p.is_dir())
+        slots = pit_slots_by_date(Path(args.pit_config), Path(args.root), years, variant=args.variant)
+    frame = diagnose(run_dir, args.variant, args.reference, args.rebalance_every, args.reference_rebalance_every, slots)
     summary = summarize(frame)
     frame.to_csv(out / f"{args.prefix}_runs.csv", index=False)
     summary.to_csv(out / f"{args.prefix}_summary.csv", index=False)

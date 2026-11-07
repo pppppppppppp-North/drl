@@ -69,3 +69,9 @@ seeds: [42, 43, 44]
 variants:
   - name: pit_plan_weekly_lstm
     description: "Plan reward, weekly decisions, shared per-asset LSTM over 50 point-in-time SET50 slots"
+  # Follow-up after the first run's diagnostics: members that changed slot (re-ordered by traded value)
+  # caused most of the turnover. Here a member keeps its slot while it stays tradable.
+  - name: pit_plan_weekly_lstm_sticky
+    description: "As pit_plan_weekly_lstm, but each member keeps its slot while it stays tradable"
+    universe:
+      slot_order: sticky

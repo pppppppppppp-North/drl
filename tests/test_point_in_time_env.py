@@ -177,3 +177,55 @@ def test_sessions_drop_zero_volume_holidays_and_series_come_from_one_file(tmp_pa
     assert list(session_calendar(prices)) == [pd.Timestamp("2020-01-02")]
     with pytest.raises(ValueError, match="more than one price file"):
         load_prices([tmp_path / "a.csv", tmp_path / "b.csv"])
+
+
+def _seats(env: PointInTimeSlotEnv, step: int) -> list[str | None]:
+    return [env.tickers[u] if u >= 0 else None for u in env.slots[step]]
+
+
+def _listed(panel: pd.DataFrame, ranges: dict[str, list[tuple[int, int]]]) -> pd.DataFrame:
+    dates = sorted(panel["date"].unique())
+    return pd.DataFrame([{"date": d, "ticker": t, "price_ticker": t}
+                         for t, spans in ranges.items() for first, last in spans for d in dates[first:last]])
+
+
+def test_sticky_slots_do_not_move_members_when_their_ranks_change() -> None:
+    panel = _panel(value={"A.BK": 3.0, "B.BK": 2.0, "C.BK": 1.0})
+    later = panel["date"] >= sorted(panel["date"].unique())[40]
+    panel.loc[later & (panel["ticker"] == "C.BK"), "rank_value"] = 9.0  # C becomes the most traded
+    members = _membership(panel, {t: (0, 80) for t in ("A.BK", "B.BK", "C.BK")})
+    by_value, sticky = _env(panel, members), _env(panel, members, slot_order="sticky")
+    assert _seats(by_value, 30) == ["A.BK", "B.BK", "C.BK"] and _seats(by_value, 50) == ["C.BK", "A.BK", "B.BK"]
+    assert _seats(sticky, 30) == _seats(sticky, 50) == ["A.BK", "B.BK", "C.BK"]
+    with pytest.raises(ValueError, match="slot_order"):
+        _env(panel, members, slot_order="alphabetical")
+
+
+def test_sticky_slots_seat_rejoiners_in_their_old_slot_and_joiners_in_the_lowest_free_one() -> None:
+    tickers = ("A.BK", "B.BK", "C.BK", "D.BK", "E.BK")
+    panel = _panel(tickers=tickers, value={"A.BK": 10.0, "D.BK": 9.0, "C.BK": 8.0, "B.BK": 7.0, "E.BK": 6.0})
+    members = _listed(panel, {"A.BK": [(0, 80)], "C.BK": [(0, 80)], "D.BK": [(0, 20)],
+                              "B.BK": [(0, 30), (50, 80)], "E.BK": [(60, 80)]})
+    env = _env(panel, members, num_slots=4, slot_order="sticky")
+    assert _seats(env, 5) == ["A.BK", "D.BK", "C.BK", "B.BK"]
+    assert _seats(env, 25) == ["A.BK", None, "C.BK", "B.BK"]  # D left; nobody moves up
+    assert _seats(env, 40) == ["A.BK", None, "C.BK", None]
+    assert _seats(env, 55) == ["A.BK", None, "C.BK", "B.BK"]  # B returns to its old slot, not the lowest free one
+    assert _seats(env, 65) == ["A.BK", "E.BK", "C.BK", "B.BK"]  # a new joiner takes the lowest free slot
+    assert _seats(_env(panel, members, num_slots=4), 65) == ["A.BK", "C.BK", "B.BK", "E.BK"]
+
+
+def test_accounting_reconciles_with_sticky_slots_and_gaps() -> None:
+    panel = _panel(tickers=("A.BK", "B.BK", "C.BK", "D.BK"))
+    members = _listed(panel, {"A.BK": [(0, 80)], "B.BK": [(0, 35)], "C.BK": [(0, 80)], "D.BK": [(45, 80)]})
+    env = _env(panel, members, num_slots=4, slot_order="sticky", rebalance_every=3)
+    env.reset(seed=0)
+    rng = np.random.default_rng(2)
+    value, done = env.initial_cash, False
+    while not done:
+        slots = env.slots[env.current_step]
+        _, _, done, _, info = env.step(rng.normal(size=5))
+        value *= 1 + info["net_return"]
+        assert sum(info["holdings"].values()) + info["cash_weight"] == pytest.approx(1.0)
+        assert info["portfolio_value"] == pytest.approx(value)
+        assert set(info["holdings"]) <= {env.tickers[u] for u in slots if u >= 0}

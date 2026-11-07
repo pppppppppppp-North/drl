@@ -1,9 +1,14 @@
 """Point-in-time index environment with a fixed number of asset slots (milestone M3).
 
 ``LongTermTradingEnv`` trades a fixed list of stocks. Here the investable set is the index's
-membership on each session, which changes at every review. The agent sees ``K`` slots. On every
-session the tradable members fill the slots in order of trailing traded value (as of the previous
-session), and empty slots are masked out of the allocation.
+membership on each session, which changes at every review. The agent sees ``K`` slots, and empty
+slots are masked out of the allocation. ``slot_order`` sets how the tradable members fill them:
+
+- ``traded_value`` (default): on every session, in order of trailing traded value as of the
+  previous session. A member moves slot whenever its rank changes.
+- ``sticky``: a member keeps its slot for as long as it stays tradable. Joiners, in traded-value
+  order, take their previous slot if it is free, otherwise the lowest free slot. Slots then change
+  only when members join or leave, as in a fixed-stock environment.
 
 - **Information lag:** a decision at session ``t`` uses features up to ``t-1`` and the membership
   list in force at ``t-1``.
@@ -32,6 +37,8 @@ import pandas as pd
 from src.envs.long_term_env import LongTermRewardConfig, LongTermTradingEnv
 from src.envs.trading_env import gym, spaces
 
+SLOT_ORDERS = ("traded_value", "sticky")
+
 
 class PointInTimeSlotEnv(LongTermTradingEnv):
     metadata = {"render_modes": []}
@@ -53,8 +60,12 @@ class PointInTimeSlotEnv(LongTermTradingEnv):
         rebalance_every: int = 1,
         random_start: bool = False,
         episode_length: int | None = None,
+        slot_order: str = "traded_value",
     ) -> None:
         gym.Env.__init__(self)
+        if slot_order not in SLOT_ORDERS:
+            raise ValueError(f"slot_order must be one of {SLOT_ORDERS}, got {slot_order!r}")
+        self.slot_order = slot_order
         self.stock_feature_columns = list(stock_feature_columns)
         self.market_feature_columns = list(market_feature_columns)
         self.feature_columns = self.stock_feature_columns + self.market_feature_columns + ["slot_valid"]
@@ -138,6 +149,8 @@ class PointInTimeSlotEnv(LongTermTradingEnv):
         self.stock_tensor = np.nan_to_num(self.stock_tensor, nan=0.0, posinf=0.0, neginf=0.0)
 
         self.slots = np.full((len(self.dates), self.num_slots), -1, dtype=np.int64)
+        row = np.full(self.num_slots, -1, dtype=np.int64)
+        last_slot: dict[int, int] = {}
         for step in range(len(self.dates)):
             candidates = np.flatnonzero(self.tradable[step])
             if candidates.size > self.num_slots:
@@ -145,7 +158,19 @@ class PointInTimeSlotEnv(LongTermTradingEnv):
                     f"{candidates.size} tradable members at {self.dates[step].date()} exceed {self.num_slots} slots"
                 )
             order = sorted(candidates, key=lambda u: (-self.rank_values[step, u], self.tickers[u]))
-            self.slots[step, : len(order)] = order
+            if self.slot_order == "traded_value":
+                self.slots[step, : len(order)] = order
+                continue
+            # sticky: members keep their slot while tradable; joiners (in traded-value order) take their
+            # previous slot if it is free, otherwise the lowest free slot.
+            row = np.where(np.isin(row, candidates), row, -1)
+            seated = set(row[row >= 0].tolist())
+            for u in (u for u in order if u not in seated):
+                free = np.flatnonzero(row < 0)
+                slot = last_slot.get(int(u), -1)
+                row[slot if slot in free else free[0]] = u
+            last_slot.update({int(u): j for j, u in enumerate(row) if u >= 0})
+            self.slots[step] = row
 
         if self.episode_length is not None and self.lookback + self.episode_length > len(self.dates) - 1:
             raise ValueError("episode_length is longer than the available sessions after the lookback")

@@ -90,6 +90,7 @@ def make_env(config: dict, panel: pd.DataFrame, mask: pd.DataFrame, *, training:
         rebalance_every=int(rebalance_every or env_cfg.get("rebalance_every", 1)),
         random_start=bool(env_cfg.get("train_random_start", False)) if training else False,
         episode_length=int(episode) if episode is not None else None,
+        slot_order=str(config["universe"].get("slot_order", "traded_value")),
     )
 
 
