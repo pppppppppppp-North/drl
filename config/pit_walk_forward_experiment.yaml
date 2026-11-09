@@ -75,3 +75,16 @@ variants:
     description: "As pit_plan_weekly_lstm, but each member keeps its slot while it stays tradable"
     universe:
       slot_order: sticky
+  # M5, after the sticky run: the dense actor still scores slot positions, and VecNormalize keeps
+  # separate statistics for every slot. Here the actor scores every member with the same weights
+  # (src/models/shared_asset_policy.py), and features are standardized with one mean and standard
+  # deviation per feature from the training years, so allocations do not depend on the slot order.
+  # Slots stay sticky, as in the run it is compared with.
+  - name: pit_plan_weekly_lstm_shared
+    description: "As pit_plan_weekly_lstm_sticky, but a shared-weight actor and shared feature standardization"
+    universe:
+      slot_order: sticky
+    training:
+      normalize_observations: false
+      policy:
+        actor: shared_asset

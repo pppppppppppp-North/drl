@@ -134,7 +134,7 @@ def train(config: dict, train_panel: pd.DataFrame, mask: pd.DataFrame, seed: int
     from stable_baselines3.common.monitor import Monitor
     from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 
-    from src.models.feature_extractors import build_policy_kwargs
+    from src.models.shared_asset_policy import feature_statistics, policy_from_config
     from src.train import _algorithm_kwargs
 
     training = config["training"]
@@ -153,16 +153,24 @@ def train(config: dict, train_panel: pd.DataFrame, mask: pd.DataFrame, seed: int
     probe = vec_env.envs[0] if hasattr(vec_env, "envs") else vec_env.venv.envs[0]
     feature_columns = probe.unwrapped.feature_columns
     kwargs = _algorithm_kwargs(algo, int(training["total_timesteps"]), training)
-    policy_kwargs = build_policy_kwargs(training.get("policy"), lookback=int(config["features"]["lookback"]),
-                                        num_assets=int(config["universe"]["num_slots"]), feature_columns=feature_columns)
+    policy_config = training.get("policy")
+    actor = str((policy_config or {}).get("actor", "dense"))
+    # The shared-asset actor standardizes features with statistics from the training window only.
+    stats = (feature_statistics(train_panel, config["features"]["stock_columns"], config["features"]["market_columns"])
+             if actor == "shared_asset" else None)
+    policy, policy_kwargs = policy_from_config(
+        policy_config, lookback=int(config["features"]["lookback"]), num_assets=int(config["universe"]["num_slots"]),
+        feature_columns=feature_columns, feature_stats=stats,
+        normalize_observations=bool(training.get("normalize_observations", False)))
     if policy_kwargs:
         kwargs["policy_kwargs"] = policy_kwargs
     model_cls = getattr(sb3, algo.upper())
-    model = model_cls("MlpPolicy", vec_env, seed=seed, verbose=int(training.get("verbose", 0)), device="cpu", **kwargs)
+    model = model_cls(policy, vec_env, seed=seed, verbose=int(training.get("verbose", 0)), device="cpu", **kwargs)
     model.learn(total_timesteps=int(training["total_timesteps"]))
     out_dir.mkdir(parents=True, exist_ok=True)
     model.save(out_dir / f"{algo}_model")
-    (out_dir / "model_info.json").write_text(json.dumps({"algo": algo, "timesteps": int(training["total_timesteps"]),
+    (out_dir / "model_info.json").write_text(json.dumps({"algo": algo, "actor": actor,
+                                                          "timesteps": int(training["total_timesteps"]),
                                                           "feature_columns": feature_columns}) + "\n")
     normalizer = None
     if isinstance(vec_env, VecNormalize):

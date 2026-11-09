@@ -152,6 +152,7 @@ These extensions live in new modules, so no file in the manifest-locked V2 relea
 - `src/envs/long_term_env.py`: `LongTermTradingEnv`; with default options it is bit-identical to `ThaiStockTradingEnv`.
 - `src/train_long_term.py`: the training entrypoint for the options below (`python -m src.train_long_term --config <config>`).
 - `src/models/feature_extractors.py`: the `asset_lstm` fusion extractor.
+- `src/models/shared_asset_policy.py`: `SharedAssetPolicy`, an actor-critic whose actor scores every asset with the same weights and whose features are standardized with statistics shared by all assets, so allocations do not depend on slot order (`training.policy.actor: shared_asset`; the point-in-time runner only).
 - `src/evaluation/benchmark_metrics.py` and `src/evaluation/significance.py`: benchmark-relative metrics and Sharpe significance.
 - `src/features/fundamental_flags.py`, `src/features/investor_flow_context.py`, `src/data/ingest_investor_flow.py`, `src/sentiment/score_news.py` (GPU job: `slurm/sentiment_embeddings_gpu.sbatch`): multi-source inputs.
 - `src/agents/predictive_baselines.py`: ridge and LSTM (Bi-LSTM over the past window) forecast-then-allocate baselines.
@@ -160,6 +161,7 @@ These extensions live in new modules, so no file in the manifest-locked V2 relea
 - `src/envs/thai_costs.py`: the published Thai cost schedule (about 0.176% per side including VAT).
 - `src/data/point_in_time_panel.py` and `src/envs/point_in_time_env.py`: the 2012–2024 point-in-time SET50 session mask and feature panel, and `PointInTimeSlotEnv`, which trades the index membership of each session through 50 masked slots (`universe.slot_order: traded_value | sticky`).
 - `scripts/run_pit_walk_forward.py`, `scripts/pit_universe_baselines.py` and `scripts/walk_forward_agent_diagnostics.py`: the point-in-time walk-forward, its survivorship baselines, and cost, turnover and concentration diagnostics for any walk-forward agent.
+- `scripts/check_slot_order_invariance.py`: rolls a trained point-in-time model out under sticky and traded-value slot orders and reports how far apart the two equity curves end.
 
 Config options read by `src.train_long_term` and the experiment scripts:
 
@@ -181,6 +183,7 @@ training:
   policy:
     features_extractor: asset_lstm
     market_feature_columns: [set50_etf_return_1d, set50_etf_volatility_20d]
+    # actor: shared_asset          # point-in-time runner: shared-weight actor; needs normalize_observations: false
 ```
 
 ```bash

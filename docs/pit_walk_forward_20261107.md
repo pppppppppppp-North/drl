@@ -158,9 +158,9 @@ Turnover is the sum of absolute weight changes over the year, including the firs
 **What it means:**
 - **Diagnosis confirmed:** the slot reshuffles were the first run's main defect, and removing them recovered 4.8 points a year.
 - **No outperformance:** the design still does not beat equal weight or the market on the actual index.
-- **Remaining problem:** turnover is the problem again, but now it comes from the policy's own reweighting, not from the slot order. Neither of the following has been tried:
-  - **Policy head:** a head that scores each stock with shared weights (an M5 item) would remove the dependence on slot order by construction.
-  - **Reweighting:** reducing the policy's own reweighting is a separate problem.
+- **Remaining problem:** turnover is the problem again, but now it comes from the policy's own reweighting, not from the slot order. Next steps:
+  - **Policy head (implemented 2026-11-09, not yet run):** `SharedAssetPolicy` (`src/models/shared_asset_policy.py`) scores each stock with shared weights, an M5 item, which removes the dependence on slot order by construction. Its variant is `pit_plan_weekly_lstm_shared`.
+  - **Reweighting (not tried):** reducing the policy's own reweighting is a separate problem.
 
 ## Run it
 
@@ -194,6 +194,13 @@ python -m scripts.aggregate_walk_forward_reward --run-dir results/pit_walk_forwa
   --labels pit_plan_weekly_lstm="DRL, traded-value slots" pit_plan_weekly_lstm_sticky="DRL, sticky slots"
 python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_walk_forward_sticky --variant pit_plan_weekly_lstm_sticky \
   --pit-config config/pit_walk_forward_experiment.yaml
+```
+
+The shared-weight actor runs the same way with `VARIANTS=pit_plan_weekly_lstm_shared`. It standardizes its own features, so it uses no `VecNormalize`. To check that a trained model ignores the slot order, roll it out under both orders:
+
+```bash
+python -m scripts.check_slot_order_invariance --config config/pit_walk_forward_experiment.yaml --fold-year 2019 \
+  --run-dirs results/<run>/fold_2019/<variant>_seed42/runs/<variant>_seed42
 ```
 
 **On BistKA**, with more seeds and longer training:

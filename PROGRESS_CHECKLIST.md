@@ -41,7 +41,19 @@ Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md)
   - **First run:** seven workers on the 8 GB Mac exhausted RAM and swap, and three runs were paused and resumed.
   - **Sticky run:** four workers thrashed with the usual desktop apps open; three ran at full speed.
   - **Guidance:** use three workers locally, or four with few other apps open.
-- `[ ]` **Next for the point-in-time agent (not started).** The M5 permutation-equivariant policy head would remove the slot-order dependence, but limiting the policy's own reweighting is a separate problem. Any new design adds to the deflated-Sharpe trial count.
+- `[~]` **Shared-weight policy head (M5), 2026-11-09.** `SharedAssetPolicy` (`src/models/shared_asset_policy.py`, `training.policy.actor: shared_asset`) scores every member with the same weights. Features are standardized with training-year statistics shared by all members, instead of `VecNormalize`'s separate statistics for every slot.
+  - **Tests:** `tests/test_shared_asset_policy.py` (10) pass.
+    - **Slot order:** permuting the slots permutes the allocation and leaves the value and the log-probability unchanged. The dense head fails the same check.
+    - **Rollouts:** deterministic rollouts are the same under sticky and traded-value orders.
+    - **Empty slots:** they have no effect.
+    - **Save and reload:** PPO trains, saves and reloads the policy.
+  - **Real-data check (`scripts/check_slot_order_invariance.py`, 4,096-timestep smoke model, 2019 validation):** the two slot orders seat members differently on 242 sessions.
+    - **Shared model:** its rollouts ended within 1 baht of each other (relative gap 3×10⁻¹⁰).
+    - **Dense sticky model:** its rollouts ended about 5,000 baht apart (gap 0.65%).
+    - **Speed:** training ran at the same speed as the dense head.
+  - **Not yet run:** the variant `pit_plan_weekly_lstm_shared` (sticky slots) is configured.
+    - **Turnover:** it does not limit the policy's own reweighting.
+    - **Trial count:** it would be the eighth design in the deflated-Sharpe count.
 
 ## Point-in-Time Universe 2012–2024 (M3) — 2026-11-07
 
