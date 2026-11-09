@@ -10,7 +10,9 @@ where each ``<part>`` holds baselines or one DRL variant for that validation yea
 - ``walk_forward_fold_returns.csv``: seed-averaged annual return per fold x variant;
 - ``walk_forward_summary.csv``: across-fold summary per variant (mean return, mean excess vs the SET50
   ETF, folds beating the ETF, worst-fold excess, mean drawdown and turnover, seed dispersion);
-- ``walk_forward_chained_equity.png``: out-of-sample equity chained across validation years.
+- ``walk_forward_chained_equity.png``: out-of-sample equity chained across validation years;
+- ``walk_forward_significance_vs_<reference>.csv``: Sharpe significance of every series against the SET50
+  ETF, the equal-weight references present, and any variant named with ``--references``.
 
     python -m scripts.aggregate_walk_forward_reward --run-dir results/walk_forward_reward_20261106
 """
@@ -155,6 +157,8 @@ def main() -> None:
     parser.add_argument("--output-dir", default=None, help="where to write results (default: --run-dir)")
     parser.add_argument("--labels", nargs="*", default=[], help="legend labels as variant=label")
     parser.add_argument("--title", default=None, help="figure title")
+    parser.add_argument("--references", nargs="*", default=[],
+                        help="more variants to test the others against, for example an earlier DRL run")
     args = parser.parse_args()
 
     run_dirs = [Path(args.run_dir)] + [Path(d) for d in args.extra_run_dirs]
@@ -187,7 +191,7 @@ def main() -> None:
     chained.to_csv(run_dir / "walk_forward_chained_equity.csv", index=False)
     labels = dict(item.split("=", 1) for item in args.labels)
     plot(chained, run_dir / "walk_forward_chained_equity.png", labels=labels, title=args.title)
-    for reference in (BENCHMARK, "equal_weight_monthly", "pit_equal_weight_monthly"):
+    for reference in (BENCHMARK, "equal_weight_monthly", "pit_equal_weight_monthly", *args.references):
         if reference in set(chained["variant"]):
             sig = chained_significance(chained, reference, n_trials=args.n_trials)
             sig.to_csv(run_dir / f"walk_forward_significance_vs_{reference}.csv", index=False)

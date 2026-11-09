@@ -1,14 +1,14 @@
 # Point-in-Time SET50 Walk-Forward (Milestone M3)
 
-Date: 2026-11-07
+Date: 2026-11-07; sticky-slot follow-up 2026-11-09
 Evidence tier: **exploratory**. The index membership is official, but the prices are Yahoo's, and 13% of SET50 member-sessions (mostly delisted or merged names) have no prices.
-Outputs: `results/pit_walk_forward_20261107/` (ignored by git) · Config: `config/pit_walk_forward_experiment.yaml` · Figure: [`figures/pit_walk_forward_chained_equity_20261107.png`](figures/pit_walk_forward_chained_equity_20261107.png)
+Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `results/pit_walk_forward_sticky_20261109/` (sticky slots) and `results/pit_walk_forward_combined_20261109/` (both runs together) · Config: `config/pit_walk_forward_experiment.yaml` · Figures: [first run](figures/pit_walk_forward_chained_equity_20261107.png), [both runs](figures/pit_walk_forward_sticky_chained_equity_20261109.png)
 
 **Summary.**
 - **Result:** on the actual SET50 membership of each session, the DRL design that roughly matched the market on five hand-picked stocks lost money: −1.1% a year, against 7.1% for the SET50 ETF and 5.6% for equal weight. Unlike the five-stock comparisons, the Sharpe differences are statistically significant.
 - **Survivorship:** choosing today's index members with hindsight inflates an equal-weight backtest by 6.6 points a year, also a significant difference.
 - **Why the agent lost:** most of the shortfall is trading costs. The policy scores slot positions, so it reacts to the weekly reshuffling of slots and turns over 28 times its capital a year.
-- **Fix:** a sticky slot order that removes the reshuffling is implemented but not yet run.
+- **Fix (run 2026-11-09):** a sticky slot order, which keeps each member in its slot, cut turnover to a third and raised the agent's return to 3.7% a year. It beat the first run in all seven years, and the improvement is significant. The agent still trailed equal weight and the ETF, again mostly through trading costs. Both shortfalls are statistically significant, but only just.
 
 ## Question
 
@@ -108,18 +108,71 @@ Turnover is the sum of absolute weight changes over the year, including the firs
   - **Share of turnover:** those members accounted for 79% of rebalance turnover. Their average weight change was 2.1%, against 0.5% for members that kept their slot.
   - **Cause:** the policy network (the per-asset LSTM, then a dense head over all 50 slots) scores slot positions, not stocks. A change in the order therefore changes weights even when nothing about the stocks has changed. The five-stock agent never had this problem because its stocks never changed position.
 
-### Follow-up: sticky slots (implemented, not yet run)
+## Follow-up: sticky slots (2026-11-09)
 
-- **The option:** `universe.slot_order: sticky` keeps a member in its slot while it stays tradable. Joiners take their previous slot if it is free, otherwise the lowest free slot.
-- **Effect on slots:** on 2016, 2019 and 2022 it cuts slot changes from 44–51% of members per weekly decision to 0.2–0.3%. Only joins and exits remain.
-- **To run:** the variant `pit_plan_weekly_lstm_sticky` is in the config, and the command is below.
-- **What it tests:** whether removing the reshuffles brings the agent's costs down to the five-stock level and its return to at least equal weight. A policy head that scores each stock with shared weights (an M5 item) would remove the dependence on slot order entirely.
+**The change.** `universe.slot_order: sticky` keeps a member in its slot while it stays tradable. Joiners take their previous slot if it is free, otherwise the lowest free slot. Nothing else changed: the variant `pit_plan_weekly_lstm_sticky` uses the same reward, model, folds, seeds and budget (21 models, 7 folds × 3 seeds × 100k timesteps), all trained locally.
+
+**What it tests:** whether removing the reshuffles brings the agent's costs down and its return to at least equal weight.
+
+| Strategy | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | **Mean** | Years beating ETF | Mean max DD |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| SET50 ETF buy-and-hold (TDEX) | 24.5% | 18.2% | −6.5% | 5.7% | −11.8% | 12.1% | 7.8% | **7.1%** | — | −11.2% |
+| Point-in-time SET50 equal weight | 22.2% | 16.5% | −10.0% | 6.5% | −8.5% | 11.9% | 0.7% | **5.6%** | 2/7 | −12.7% |
+| **DRL, sticky slots** (± s.d. over 3 seeds) | 20.4% ± 6.3 | 15.5% ± 5.8 | −9.3% ± 3.3 | 4.4% ± 4.1 | −10.0% ± 1.7 | 8.0% ± 3.5 | −3.3% ± 2.3 | **3.7%** | 1/7 | −14.2% |
+| DRL, traded-value slots (first run) | 15.7% ± 5.4 | 5.8% ± 3.4 | −15.0% ± 3.6 | 1.9% ± 5.2 | −15.1% ± 0.3 | 3.4% ± 5.2 | −4.5% ± 1.0 | **−1.1%** | 0/7 | −14.8% |
+
+**Better than the first run, still behind both references.**
+- **Return:** 3.7% a year against −1.1%, and higher in every year. Chained over the seven years, 1 baht became 1.24 (1.12–1.37 across seeds), against 0.89 in the first run, 1.41 in equal weight and 1.55 in the ETF ([figure](figures/pit_walk_forward_sticky_chained_equity_20261109.png)).
+- **Against the references:** it beat equal weight only in 2018 and the ETF only in 2020. Even its best seed (5.2% a year) fell short of equal weight.
+- **Drawdown:** its mean maximum drawdown (−14.2%) remained deeper than the ETF's (−11.2%) and equal weight's (−12.7%).
+
+**Significance.** Sharpe ratios on the same 1,699 chained daily returns, with the same stationary bootstrap:
+
+| Comparison | Sharpe difference | 95% interval |
+| --- | ---: | ---: |
+| DRL sticky − DRL first run | +0.29 | +0.16 to +0.47 |
+| DRL sticky − point-in-time equal weight | −0.11 | −0.24 to −0.004 |
+| DRL sticky − ETF | −0.23 | −0.52 to −0.01 |
+
+- **DRL:** the sticky agent's Sharpe ratio was 0.27 (−0.45 to +1.03). Its deflated Sharpe ratio was 0.25, counting seven designs: the six screened earlier, plus the sticky order, which was chosen after seeing the first run's validation results. Counting seven designs, the first run's value would be 0.08 rather than 0.09.
+- **Reading:** the improvement over the first run is significant. The shortfalls against equal weight and the ETF are also significant, but only just, because their intervals end at −0.004 and −0.01.
+
+**Where the return went.** The same diagnostics as above, as means over the seven years:
+
+| Strategy | Return before costs | Cost drag | Return after costs | Turnover a year | Average cash |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| **DRL, sticky slots** | 5.6% | 2.0% | 3.7% | 9.4× | 2.7% |
+| DRL, traded-value slots (first run) | 4.6% | 5.8% | −1.1% | 28.2× | 3.7% |
+| Equal weight, point-in-time SET50 | 6.0% | 0.4% | 5.6% | 1.9× | 0.7% |
+
+- **The slot reshuffles are gone.** Counting joins and exits, only 0.4% of members changed slot between weekly decisions (48% before). They caused 2% of rebalance turnover (79% before).
+- **Turnover fell to a third:** from 28.2 to 9.4 times capital a year, or from 0.57 to 0.17 per weekly decision. The cost drag fell from 5.8 to 2.0 points a year.
+- **Return before costs rose too:** from 4.6% to 5.6%, now only 0.4 points a year behind equal weight.
+- **Costs are still most of the gap.** After costs, the agent was 1.9 points a year behind equal weight, and 1.6 of those points were extra costs. After the initial purchase it still turned over 8.4 times its capital a year, against 0.9 for equal weight. 98% of its rebalance turnover now came from members that kept their slot, so the remaining trading is the policy's own week-to-week reweighting.
+- **Slightly more concentrated:**
+  - **Holdings:** about 19 effective names (23 before).
+  - **Top ten positions:** 59% of capital (53% before).
+  - **Distance from equal weight:** a total-variation distance of 0.40 (0.36 before).
+  - **Correlation:** its daily returns still correlated 0.94 with equal weight.
+
+**What it means:**
+- **Diagnosis confirmed:** the slot reshuffles were the first run's main defect, and removing them recovered 4.8 points a year.
+- **No outperformance:** the design still does not beat equal weight or the market on the actual index.
+- **Remaining problem:** turnover is the problem again, but now it comes from the policy's own reweighting, not from the slot order. Neither of the following has been tried:
+  - **Policy head:** a head that scores each stock with shared weights (an M5 item) would remove the dependence on slot order by construction.
+  - **Reweighting:** reducing the policy's own reweighting is a separate problem.
 
 ## Run it
 
 Local: on the 8-core development Mac (4 performance and 4 efficiency cores), seven workers took about 65 minutes per 100k-timestep run.
 
-**Memory limits the worker count there.** Each worker needs about 750 MB. Seven workers plus the usual desktop apps exhausted the Mac's 8 GB of memory: 10.7 of 11.3 GB of swap was in use, and training slowed to 10–50% of a core per worker. Pausing three workers (`kill -STOP`, later `kill -CONT`) brought the other four back to about 95% of a core. **Use at most four workers on that machine.**
+**Memory limits the worker count there.** Each worker needs about 750 MB.
+- **First run:** seven workers plus the usual desktop apps exhausted the Mac's 8 GB of memory. 10.7 of 11.3 GB of swap was in use, and training slowed to 10–50% of a core per worker. Pausing three workers (`kill -STOP`, later `kill -CONT`) brought the other four back to about 95% of a core.
+- **Sticky run:** with more desktop apps open, even four workers thrashed. Three ran at about 95% of a core each.
+
+**Use three workers on that machine, or four with few other apps open.**
+
+**Sticky run time (three workers):** a run took 29–37 minutes while the Mac was awake and on AC power. All 21 runs took 8 h 42 min of wall time, of which the Mac was asleep for about 3.8 hours. Low Power Mode on battery also slows training.
 
 ```bash
 RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm SEEDS="42 43 44" \
@@ -131,7 +184,17 @@ python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_walk_forw
   --pit-config config/pit_walk_forward_experiment.yaml
 ```
 
-The sticky-slot follow-up is the same command with `VARIANTS=pit_plan_weekly_lstm_sticky`.
+The sticky-slot follow-up trains into its own folder. Its baselines come from the first run, so it is aggregated together with it:
+
+```bash
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm_sticky SEEDS="42 43 44" \
+  PYTHON=python scripts/run_walk_forward_reward.sh results/pit_walk_forward_sticky 3 100000
+python -m scripts.aggregate_walk_forward_reward --run-dir results/pit_walk_forward_sticky --extra-run-dirs results/pit_walk_forward \
+  --n-trials 7 --output-dir results/pit_walk_forward_combined --references pit_plan_weekly_lstm \
+  --labels pit_plan_weekly_lstm="DRL, traded-value slots" pit_plan_weekly_lstm_sticky="DRL, sticky slots"
+python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_walk_forward_sticky --variant pit_plan_weekly_lstm_sticky \
+  --pit-config config/pit_walk_forward_experiment.yaml
+```
 
 **On BistKA**, with more seeds and longer training:
 
@@ -148,3 +211,5 @@ The sticky-slot follow-up is the same command with `VARIANTS=pit_plan_weekly_lst
    ```
 
 3. **Add the baselines and aggregate**, with the two commands above pointed at `results/pit_walk_forward_bistka`.
+
+For the sticky variant, set `VARIANTS=pit_plan_weekly_lstm_sticky`. The array size is the same.

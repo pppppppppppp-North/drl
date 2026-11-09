@@ -1,6 +1,6 @@
 # Project Progress Checklist
 
-Last updated: 2026-11-07
+Last updated: 2026-11-09
 
 Use this file as the single running checklist for what has been completed and what remains. Update it whenever code, data, HPC jobs, results, or report artifacts change.
 
@@ -11,9 +11,9 @@ Use this file as the single running checklist for what has been completed and wh
 - `[ ]` Not started
 - `[!]` Blocked or needs attention
 
-## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07
+## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07, sticky slots 2026-11-09
 
-Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md). Outputs: `results/pit_walk_forward_20261107/` (git-ignored). All 21 runs were local; no HPC job was submitted.
+Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md). Outputs (git-ignored): `results/pit_walk_forward_20261107/`, `results/pit_walk_forward_sticky_20261109/` and `results/pit_walk_forward_combined_20261109/`. All 42 runs were local; no HPC job was submitted.
 
 - `[x]` **Session mask and panel.** `src/data/point_in_time_panel.py` builds the 2012–2024 SET50/SET100 session mask (revisions apply from their publication date) and the per-ticker feature panel. Between 39 and 48 SET50 members are tradable on every session.
 - `[x]` **Environment.** `PointInTimeSlotEnv` (`src/envs/point_in_time_env.py`) has 50 masked slots and a one-session information lag. It forces exits on any session and uses self-financing accounting. `tests/test_point_in_time_env.py` (13 tests) and `tests/test_walk_forward_agent_diagnostics.py` (4) pass.
@@ -26,8 +26,22 @@ Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md)
 - `[x]` **Diagnostics.** `scripts/walk_forward_agent_diagnostics.py` finds the following.
   - **Costs:** the agent turned over its capital 28 times a year (the five-stock agent 3.9 times). Costs explain 5.3 of its 6.7-point gap to equal weight.
   - **Slot reshuffles:** members that changed slot between weekly decisions caused 79% of rebalance turnover.
-- `[~]` **Sticky-slot follow-up.** `universe.slot_order: sticky` cuts slot changes per weekly decision from 44–51% of members to 0.2–0.3%. The variant `pit_plan_weekly_lstm_sticky` is configured but **not yet run**. It needs 21 runs: roughly 2.5–3 hours locally with 4 workers (an estimate), or a BistKA array.
-- `[!]` **Local memory limit.** Each worker needs about 750 MB. Seven workers on the 8 GB Mac exhausted RAM and swap, and three runs were paused and resumed. Use at most four workers locally.
+- `[x]` **Sticky-slot follow-up (2026-11-09).** The variant `pit_plan_weekly_lstm_sticky` uses `universe.slot_order: sticky`, with the same 7 folds × 3 seeds × 100k timesteps.
+  - **Result:** the agent made **3.7% a year** (first run −1.1%) and did better than the first run in all 7 years. It still trailed point-in-time equal weight (5.6%) and the ETF (7.1%), beating each in 1 of 7 years.
+  - **Significance:** the Sharpe ratio rose by 0.29 over the first run (95% CI 0.16–0.47).
+    - **Shortfalls:** −0.11 (−0.24 to −0.004) against equal weight and −0.23 (−0.52 to −0.01) against the ETF. Both are significant, but only just.
+    - **Deflated Sharpe:** 0.25, counting seven designs.
+  - **Diagnostics:** slot changes now cause 2% of rebalance turnover (79% before).
+    - **Turnover and costs:** turnover fell from 28.2× to 9.4× a year, and the cost drag from 5.8 to 2.0 points.
+    - **Remaining gap:** costs still explain 1.6 of the 1.9-point gap to equal weight. Almost all of the remaining turnover is the policy's own reweighting of members that kept their slot.
+  - **Run time:** 8 h 42 min of wall time with 3 workers, including about 3.8 hours with the Mac asleep.
+    - **Per run:** 29–37 minutes while awake on AC power.
+    - **Earlier estimate:** 2.5–3 hours, which assumed four full-speed workers.
+- `[!]` **Local memory limit.** Each worker needs about 750 MB.
+  - **First run:** seven workers on the 8 GB Mac exhausted RAM and swap, and three runs were paused and resumed.
+  - **Sticky run:** four workers thrashed with the usual desktop apps open; three ran at full speed.
+  - **Guidance:** use three workers locally, or four with few other apps open.
+- `[ ]` **Next for the point-in-time agent (not started).** The M5 permutation-equivariant policy head would remove the slot-order dependence, but limiting the policy's own reweighting is a separate problem. Any new design adds to the deflated-Sharpe trial count.
 
 ## Point-in-Time Universe 2012–2024 (M3) — 2026-11-07
 

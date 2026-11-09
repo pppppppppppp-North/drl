@@ -211,6 +211,11 @@ RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.ya
 python -m scripts.pit_universe_baselines --config config/pit_walk_forward_experiment.yaml --run-dir results/<pit-run> --years 2016 2017 2018 2019 2020 2021 2022
 python -m scripts.aggregate_walk_forward_reward --run-dir results/<pit-run> --n-trials 6
 python -m scripts.walk_forward_agent_diagnostics --run-dir results/<pit-run> --variant pit_plan_weekly_lstm --pit-config config/pit_walk_forward_experiment.yaml
+# Sticky slot order, aggregated with the run above (whose baselines it reuses) and tested against it
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm_sticky SEEDS="42 43 44" \
+  scripts/run_walk_forward_reward.sh results/<pit-sticky-run> 3 100000
+python -m scripts.aggregate_walk_forward_reward --run-dir results/<pit-sticky-run> --extra-run-dirs results/<pit-run> --n-trials 7 --references pit_plan_weekly_lstm --output-dir results/<pit-combined>
+python -m scripts.walk_forward_agent_diagnostics --run-dir results/<pit-sticky-run> --variant pit_plan_weekly_lstm_sticky --pit-config config/pit_walk_forward_experiment.yaml
 # Official BOT policy-rate history
 python -m src.data.ingest_bot_policy_rate --input data/external/original/bot_policy_rate_mpc_table_asof_20261028.xlsx --output data/external/bot_policy_rate_history.csv --source-url <url> --retrieved-at <utc>
 ```
