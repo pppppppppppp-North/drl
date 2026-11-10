@@ -103,6 +103,7 @@ def main() -> None:
     parser.add_argument("--fold-years", nargs="*", type=int, default=None)
     parser.add_argument("--band", type=float, default=0.005, help="no-trade band for the band modes")
     parser.add_argument("--modes", nargs="*", default=list(MODES), choices=MODES)
+    parser.add_argument("--suffix", default="", help="appended to the new policies' names, for example _b0100 in a band sensitivity run")
     parser.add_argument("--root", default=".")
     args = parser.parse_args()
 
@@ -146,18 +147,18 @@ def main() -> None:
                 raise SystemExit(f"fold {year} seed {seed}: replay differs from the saved curve (gap {gap:.2e})")
 
         if "ensemble" in args.modes:
-            name = f"{args.variant}_ensemble"
+            name = f"{args.variant}_ensemble{args.suffix}"
             curve, holdings = rollout(make_env(config, val, mask, training=False), ensemble_policy(members), name)
             _save(fold_out, "ensemble", baselines, [(name, curve, holdings)])
         if "evalband" in args.modes:
             results = []
             for seed, model, normalize, _ in members:
-                name = f"{args.variant}_evalband_seed{seed}"
+                name = f"{args.variant}_evalband{args.suffix}_seed{seed}"
                 curve, holdings = rollout(make_env(banded, val, mask, training=False), seed_policy(model, normalize), name)
                 results.append((name, curve, holdings))
             _save(fold_out, "evalband", baselines, results)
         if "ensemble_band" in args.modes:
-            name = f"{args.variant}_ensemble_band"
+            name = f"{args.variant}_ensemble_band{args.suffix}"
             curve, holdings = rollout(make_env(banded, val, mask, training=False), ensemble_policy(members), name)
             _save(fold_out, "ensemble_band", baselines, [(name, curve, holdings)])
 
@@ -171,7 +172,7 @@ def main() -> None:
     except (OSError, subprocess.CalledProcessError):
         commit = None
     receipt = {"source_run": str(source), "variant": args.variant, "seeds": seeds, "fold_years": years,
-               "band": float(args.band), "modes": list(args.modes), "code_commit": commit,
+               "band": float(args.band), "modes": list(args.modes), "suffix": args.suffix, "code_commit": commit,
                "max_replay_gap": max(g["max_relative_gap"] for g in replay_gaps)}
     (out / "ensemble_receipt.json").write_text(json.dumps(receipt, indent=2) + "\n")
     pd.DataFrame(replay_gaps).to_csv(out / "replay_check.csv", index=False)

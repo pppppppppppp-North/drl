@@ -2,7 +2,7 @@
 
 Date: 2026-11-07; sticky-slot follow-up 2026-11-09; shared-weight actor, seed ensemble and no-trade band 2026-11-10
 Evidence tier: **exploratory**. The index membership is official, but the prices are Yahoo's, and 13% of SET50 member-sessions (mostly delisted or merged names) have no prices.
-Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `results/pit_walk_forward_sticky_20261109/` (sticky slots), `results/pit_walk_forward_shared_20261110/` (shared-weight actor), `results/pit_walk_forward_combined_20261109/` (first two runs together) `results/pit_walk_forward_combined_20261110/` (all three), `results/pit_seed_ensemble_20261110/` (seed ensemble and no-trade band, no training) `results/pit_seed_ensemble_combined_20261110/` (with the shared-weight run) and `results/pit_heuristic_baselines_20261110/` (momentum, inverse volatility and minimum variance) · Config: `config/pit_walk_forward_experiment.yaml` · Figures: [first run](figures/pit_walk_forward_chained_equity_20261107.png), [first two runs](figures/pit_walk_forward_sticky_chained_equity_20261109.png), [all three runs](figures/pit_walk_forward_shared_chained_equity_20261110.png), [seed ensemble with no-trade band](figures/pit_seed_ensemble_chained_equity_20261110.png)
+Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `results/pit_walk_forward_sticky_20261109/` (sticky slots), `results/pit_walk_forward_shared_20261110/` (shared-weight actor), `results/pit_walk_forward_combined_20261109/` (first two runs together) `results/pit_walk_forward_combined_20261110/` (all three), `results/pit_seed_ensemble_20261110/` (seed ensemble and no-trade band, no training) `results/pit_seed_ensemble_combined_20261110/` (with the shared-weight run) and `results/pit_heuristic_baselines_20261110/` (momentum, inverse volatility and minimum variance) and `results/pit_band_sensitivity_20261110/` (band widths) · Config: `config/pit_walk_forward_experiment.yaml` · Figures: [first run](figures/pit_walk_forward_chained_equity_20261107.png), [first two runs](figures/pit_walk_forward_sticky_chained_equity_20261109.png), [all three runs](figures/pit_walk_forward_shared_chained_equity_20261110.png), [seed ensemble with no-trade band](figures/pit_seed_ensemble_chained_equity_20261110.png)
 
 **Summary.**
 - **Result:** on the actual SET50 membership of each session, the DRL design that roughly matched the market on five hand-picked stocks lost money: −1.1% a year, against 7.1% for the SET50 ETF and 5.6% for equal weight. Unlike the five-stock comparisons, the Sharpe differences are statistically significant.
@@ -292,6 +292,23 @@ The reward, encoder, folds, seeds and budget are unchanged: 21 models (7 folds �
 - **Still close to equal weight:** daily correlation 0.998 with equal weight, and 43.9 effective holdings out of 44.5 tradable members.
 - **The remaining 0.07-point gap:** 0.13 points lower return before costs, partly offset by 0.06 points lower costs.
 
+**Band width, a sensitivity check.** The same ensemble with other band widths (`results/pit_band_sensitivity_20261110/`). None of them was used to choose the band. Counted as designs, they would raise the total from 13 to 16.
+
+| Band (points) | Mean annual return | 2020 | Mean without 2020 | Turnover after entry | Cost drag | Average cash | Sharpe | Sharpe vs equal weight (95% CI) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0 (ensemble only) | 4.8% | −6.5% | 6.7% | 2.4× | 0.7% | 10.6% | 0.36 | −0.02 (−0.10 to +0.05) |
+| 0.25 | 5.3% | −5.4% | 7.0% | 1.2× | 0.4% | 10.7% | 0.39 | +0.01 (−0.07 to +0.08) |
+| **0.5 (chosen in advance)** | 5.5% | −3.8% | 7.1% | 0.7× | 0.3% | 10.5% | 0.42 | +0.04 (−0.05 to +0.11) |
+| 1.0 | 5.8% | −5.3% | 7.7% | 0.4× | 0.3% | 9.9% | 0.44 | +0.06 (−0.05 to +0.16) |
+| 2.0 | 9.3% | +19.0% | 7.7% | 0.5× | 0.3% | 16.9% | 0.69 | +0.31 (−0.05 to +0.67) |
+| Equal weight | 5.6% | −8.5% | 8.0% | 0.9× | 0.4% | 0.7% | 0.38 | — |
+
+- **Up to 1 point:** a wider band cuts trading further and adds a little return. Outside 2020, none of these widths beats equal weight (7.0–7.7% against 8.0%), and no Sharpe difference is significant.
+- **At 2 points the band stops working as a band.** It is about the size of a whole position: the ensemble's targets are about 2%, so most stocks are never bought.
+  - **2019:** the portfolio held 72% cash.
+  - **2020:** it held 98% cash in January and bought during the March crash. That made 2020 its best year (+19%), by accident.
+- **The chosen 0.5 points** lies in the range where the band works as intended, and the conclusion does not depend on it.
+
 **What it means:**
 - **Engineering, not learning, closed most of the gap.** The two weaknesses of the shared-weight run were trading and seed dependence. An execution rule and averaging over seeds removed most of the gap to equal weight without new training.
 - **Indistinguishable from equal weight, with less trading.** The agent now has a slightly higher Sharpe ratio and a slightly lower return than equal weight.
@@ -389,6 +406,22 @@ for v in ensemble ensemble_band evalband; do
   python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_seed_ensemble \
     --variant pit_plan_weekly_lstm_shared_$v --prefix diagnostics_$v
 done
+```
+
+The band-width sensitivity names each width's policy with a suffix, so that the runs can be aggregated together:
+
+```bash
+for pair in "0.0025 _b0025" "0.01 _b0100" "0.02 _b0200"; do
+  set -- ${=pair}   # zsh; in bash: set -- $pair
+  python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_experiment.yaml \
+    --source-run results/pit_walk_forward_shared --variant pit_plan_weekly_lstm_shared \
+    --output-dir results/pit_band_sensitivity/band$2 --band $1 --modes ensemble_band --suffix $2
+  python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_band_sensitivity/band$2 \
+    --variant pit_plan_weekly_lstm_shared_ensemble_band$2 --prefix diagnostics
+done
+python -m scripts.aggregate_walk_forward_reward --run-dir results/pit_band_sensitivity/band_b0025 \
+  --extra-run-dirs results/pit_band_sensitivity/band_b0100 results/pit_band_sensitivity/band_b0200 results/pit_seed_ensemble \
+  --n-trials 13 --output-dir results/pit_band_sensitivity/combined
 ```
 
 The heuristic benchmarks need no training and take under a minute:
