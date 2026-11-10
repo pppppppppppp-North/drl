@@ -10,6 +10,9 @@ and rolls them out deterministically on that fold's validation year:
   evaluation only (the models were trained without it);
 - ``<variant>_ensemble_band``: the ensemble with the same band.
 
+A variant trained with a band (``environment.no_trade_band``) is evaluated in its own environment,
+band included, so only ``--modes ensemble`` applies to it.
+
 Each seed's model is also replayed without changes, and the run stops if that replay does not match
 the validation curve saved by the walk-forward run. The baselines are recomputed on the same
 sessions. Output: ``<out>/fold_<Y>/<mode>/validation_equity_curves.csv`` and
@@ -125,8 +128,9 @@ def main() -> None:
     base = _deep_merge({"features": spec["features"], "universe": spec["universe"]}, spec["base"])
     config = _deep_merge(base, {k: v for k, v in entry.items() if k in {"environment", "training", "features", "universe"}})
     banded = _deep_merge(config, {"environment": {"no_trade_band": float(args.band)}})
-    if float(config["environment"].get("no_trade_band", 0.0)) > 0:
-        raise SystemExit("the source variant already trades with a band; the band modes would not change it")
+    if float(config["environment"].get("no_trade_band", 0.0)) > 0 and {"evalband", "ensemble_band"} & set(args.modes):
+        raise SystemExit("the source variant already trades with a band, so the band modes would not change it; "
+                         "pass --modes ensemble")
 
     replay_gaps = []
     for year in years:
