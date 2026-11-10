@@ -164,6 +164,8 @@ These extensions live in new modules, so no file in the manifest-locked V2 relea
 - `scripts/check_slot_order_invariance.py`: rolls a trained point-in-time model out under sticky and traded-value slot orders and reports how far apart the two equity curves end.
 - `scripts/pit_heuristic_baselines.py`: momentum, inverse-volatility and minimum-variance benchmarks on the point-in-time SET50, on the same sessions, costs and accounting as the walk-forward.
 - `scripts/evaluate_pit_seed_ensemble.py`: evaluates trained point-in-time models as a seed ensemble (the mean of the seeds' target weights) and with a no-trade band (`environment.no_trade_band`), without training. It first replays every model against its saved validation curve.
+- `scripts/pit_lstm_forecast_baseline.py`: the LSTM forecast-then-allocate benchmark on the point-in-time SET50. A Bi-LSTM fitted per fold on the training years buys its ten best positive 21-session forecasts every month; it also records the forecasts' information coefficient.
+- `scripts/build_slim_results_archive.py`: a verified tar.gz of code, configs, documents, input receipts and run outputs, without trained models, worker logs or price files ([runbook](docs/reproduce_20261111.md)).
 
 Config options read by `src.train_long_term` and the experiment scripts:
 
@@ -232,6 +234,10 @@ python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_ex
 python -m scripts.aggregate_walk_forward_reward --run-dir results/<pit-ensemble> --extra-run-dirs results/<pit-shared-run> --n-trials 13 --references pit_plan_weekly_lstm_shared --output-dir results/<pit-ensemble-combined>
 # Heuristic benchmarks (momentum, inverse volatility, minimum variance) on the point-in-time SET50
 python -m scripts.pit_heuristic_baselines --config config/pit_walk_forward_experiment.yaml --run-dir results/<pit-heuristics> --years 2016 2017 2018 2019 2020 2021 2022
+# LSTM forecast-then-allocate benchmark (Bi-LSTM per fold, ten best forecasts monthly) on the point-in-time SET50
+python -m scripts.pit_lstm_forecast_baseline --config config/pit_walk_forward_experiment.yaml --run-dir results/<pit-lstm-forecast> --years 2016 2017 2018 2019 2020 2021 2022
+# Slim archive of code, configs, receipts and run outputs, without models (see docs/reproduce_20261111.md)
+python -m scripts.build_slim_results_archive --output results/<slim-archive>.tar.gz --run-dir results/<run> --run-dir results/<another-run>
 # Shared-weight actor trained with the no-trade band, and its seed ensemble (in its own environment, band included)
 RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm_shared_band SEEDS="42 43 44" \
   scripts/run_walk_forward_reward.sh results/<pit-band-run> 3 100000

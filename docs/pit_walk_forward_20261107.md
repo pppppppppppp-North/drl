@@ -1,8 +1,8 @@
 # Point-in-Time SET50 Walk-Forward (Milestone M3)
 
-Date: 2026-11-07; sticky-slot follow-up 2026-11-09; shared-weight actor, seed ensemble and no-trade band 2026-11-10; training with the band 2026-11-11
+Date: 2026-11-07; sticky-slot follow-up 2026-11-09; shared-weight actor, seed ensemble and no-trade band 2026-11-10; training with the band and LSTM forecast benchmark 2026-11-11
 Evidence tier: **exploratory**. The index membership is official, but the prices are Yahoo's, and 13% of SET50 member-sessions (mostly delisted or merged names) have no prices.
-Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `results/pit_walk_forward_sticky_20261109/` (sticky slots), `results/pit_walk_forward_shared_20261110/` (shared-weight actor), `results/pit_walk_forward_combined_20261109/` (first two runs together), `results/pit_walk_forward_combined_20261110/` (all three), `results/pit_seed_ensemble_20261110/` (seed ensemble and no-trade band, no training), `results/pit_seed_ensemble_combined_20261110/` (with the shared-weight run), `results/pit_heuristic_baselines_20261110/` (momentum, inverse volatility and minimum variance), `results/pit_band_sensitivity_20261110/` (band widths), `results/pit_walk_forward_band_20261110/` (trained with the band), `results/pit_band_ensemble_20261111/` (its seed ensemble) and `results/pit_walk_forward_combined_band_20261111/` (both, with the shared-weight and ensemble runs) · Config: `config/pit_walk_forward_experiment.yaml` · Figures: [first run](figures/pit_walk_forward_chained_equity_20261107.png), [first two runs](figures/pit_walk_forward_sticky_chained_equity_20261109.png), [all three runs](figures/pit_walk_forward_shared_chained_equity_20261110.png), [seed ensemble with no-trade band](figures/pit_seed_ensemble_chained_equity_20261110.png), [training with the band](figures/pit_band_training_chained_equity_20261111.png)
+Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `results/pit_walk_forward_sticky_20261109/` (sticky slots), `results/pit_walk_forward_shared_20261110/` (shared-weight actor), `results/pit_walk_forward_combined_20261109/` (first two runs together), `results/pit_walk_forward_combined_20261110/` (all three), `results/pit_seed_ensemble_20261110/` (seed ensemble and no-trade band, no training), `results/pit_seed_ensemble_combined_20261110/` (with the shared-weight run), `results/pit_heuristic_baselines_20261110/` (momentum, inverse volatility and minimum variance), `results/pit_band_sensitivity_20261110/` (band widths), `results/pit_walk_forward_band_20261110/` (trained with the band), `results/pit_band_ensemble_20261111/` (its seed ensemble), `results/pit_walk_forward_combined_band_20261111/` (both, with the shared-weight and ensemble runs), `results/pit_lstm_forecast_20261111/` (LSTM forecast benchmark) and `results/pit_lstm_forecast_combined_20261111/` (with the other benchmarks) · Config: `config/pit_walk_forward_experiment.yaml` · Figures: [first run](figures/pit_walk_forward_chained_equity_20261107.png), [first two runs](figures/pit_walk_forward_sticky_chained_equity_20261109.png), [all three runs](figures/pit_walk_forward_shared_chained_equity_20261110.png), [seed ensemble with no-trade band](figures/pit_seed_ensemble_chained_equity_20261110.png), [training with the band](figures/pit_band_training_chained_equity_20261111.png), [LSTM forecast benchmark](figures/pit_lstm_forecast_chained_equity_20261111.png)
 
 **Summary.**
 - **Result:** on the actual SET50 membership of each session, the DRL design that roughly matched the market on five hand-picked stocks lost money: −1.1% a year, against 7.1% for the SET50 ETF and 5.6% for equal weight. Unlike the five-stock comparisons, the Sharpe differences are statistically significant.
@@ -13,6 +13,7 @@ Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `res
 - **Seed ensemble and no-trade band (2026-11-10, no new training):** averaging the three seeds' portfolios and skipping trades smaller than 0.5 percentage points brought the shared-weight agent to 5.5% a year, level with equal weight (5.6%), while trading less than equal weight. Its Sharpe ratio was slightly above equal weight's and below the ETF's; neither difference is significant. Part of the gain came from cash it happened to hold through the 2020 crash.
 - **Heuristic benchmarks (2026-11-10):** momentum (5.3% a year), inverse-volatility weighting (5.0%) and long-only minimum variance (4.0%) did no better than equal weight or the ETF on the point-in-time SET50. No difference between the active strategies is significant.
 - **Training with the band (run 2026-11-11):** trained with the same 0.5-point band, the agent made 5.1% a year (its seed ensemble 5.2%), against 4.6% without the band. It halved its trading but doubled its average cash, to 19%: five of its 21 models held more than a third of the portfolio in cash over their year. It did no better than adding the band after training (5.5%) or equal weight (5.6%), and no difference is significant.
+- **LSTM forecast benchmark (2026-11-11):** the five-stock study's supervised LSTM forecaster, scaled to the index and buying its ten best forecasts monthly, made 8.1% a year, the highest mean return here. Almost all of its lead came from the rally of late 2020; its seeds disagree (−14.9% to +31.2% in 2020), and it trades 16 times its capital a year. Its Sharpe ratio (0.46) is below the ETF's (0.50), and no difference is significant.
 
 ## Question
 
@@ -419,6 +420,56 @@ The ETF's turnover is its initial purchase. Sharpe ratios are on the 1,699 chain
 - **Best design so far:** the seed ensemble with the band at evaluation remains the best point-in-time DRL design on the validation years. It was fixed before this run, and the deflated Sharpe ratio counts all 13 designs.
 - **Next:** penalizing or capping cash in training would target the remaining weakness. It would be design 14 and has not been started.
 
+## Follow-up: LSTM forecast benchmark (2026-11-11)
+
+**What it adds:** the supervised sequence benchmark of the five-stock study, scaled to the point-in-time SET50. The plan lists it among the benchmarks (M6); until now only its ridge version had run on this universe. `scripts/pit_lstm_forecast_baseline.py` (`results/pit_lstm_forecast_20261111/`):
+- **Forecaster:** for each fold, a bidirectional LSTM is fitted on the training years only.
+  - **Input:** a member's last 30 completed sessions of the agent's 16 inputs (11 technical, 5 SET50 ETF).
+  - **Target:** the return over the next 21 sessions.
+  - **Samples:** members on sessions where they were tradable, every fifth session: 6,000 to 16,800 per fold. No target extends past the training end.
+  - **Settings:** those of the five-stock study (the `LSTMForecaster` defaults), with early stopping on the last 15% of the training sessions.
+- **Allocation:** every 21 sessions, equal weight in the ten highest positive forecasts among the tradable members, like the ridge benchmark. It uses the same sessions, costs and accounting as the agent.
+- **Fixed in advance:** the sampling stride, the ten holdings and the three seeds (42–44) were set before any result was seen. All 21 fits took 3.5 minutes.
+
+| Strategy | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | **Mean** | Years beating ETF | Mean max DD |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| SET50 ETF buy-and-hold (TDEX) | 24.5% | 18.2% | −6.5% | 5.7% | −11.8% | 12.1% | 7.8% | **7.1%** | — | −11.2% |
+| **LSTM forecast, top ten monthly (± s.d. over 3 seeds)** | 19.4% ± 7.4 | 20.4% ± 1.0 | −13.6% ± 4.9 | 13.4% ± 1.8 | 10.8% ± 23.5 | 7.7% ± 6.3 | −1.7% ± 0.8 | **8.1%** | 3/7 | −14.7% |
+| Ridge forecast, top ten monthly | 1.2% | 16.2% | −6.4% | 16.8% | 7.9% | 4.1% | 0.3% | **5.7%** | 3/7 | −17.6% |
+| Point-in-time SET50 equal weight | 22.2% | 16.5% | −10.0% | 6.5% | −8.5% | 11.9% | 0.7% | **5.6%** | 2/7 | −12.7% |
+| DRL, seed ensemble + no-trade band | 21.2% | 15.3% | −9.7% | 5.6% | −3.8% | 10.0% | 0.2% | **5.5%** | 1/7 | −11.3% |
+
+**The highest mean return on the point-in-time index, from one rally:**
+- **Return:** 8.1% a year, above the ETF (7.1%) and equal weight (5.6%). Chained, 1 baht became 1.62 (the mean of the seeds, which range from 1.52 to 1.76), against 1.55 for the ETF and 1.41 for equal weight ([figure](figures/pit_lstm_forecast_chained_equity_20261111.png)).
+- **Late 2020 carries the lead.**
+  - **The rally:** in November and December 2020, all three seeds gained 42–50%, against 23% for equal weight. On 10 November, after the first vaccine trial results, two seeds gained 9.8% and 8.4% in a day, against 6.0% for equal weight.
+  - **Amplified, not different:** its largest daily moves were the market's, only larger.
+  - **Outside 2020** it made 7.6% a year, against 8.0% for equal weight and 10.3% for the ETF.
+- **Seeds disagree.** In 2020 they made +31.2%, +16.1% and −14.9%. The seed standard deviation of annual returns is 6.5 points, against 1.5 for the DRL agent.
+- **Trading:** it replaces most of its ten holdings every month.
+  - **Turnover:** 15.8 times capital a year, with a cost drag of 3.5 points.
+  - **Before costs:** it made 11.5% a year, against 6.0% for equal weight.
+- **Forecast skill is weak.** The information coefficient is the rank correlation between its forecasts and the realized 21-session returns on the validation decisions.
+  - **Mean:** 0.03, positive in 13 of the 21 fits.
+  - **By fold:** from −0.04 (2021) to 0.10 (2020).
+
+**Significance.** Sharpe ratios on the same 1,699 chained daily returns, with the same stationary bootstrap:
+
+| Comparison | Sharpe difference | 95% interval |
+| --- | ---: | ---: |
+| LSTM forecast − point-in-time equal weight | +0.08 | −0.23 to +0.36 |
+| LSTM forecast − ETF | −0.03 | −0.42 to +0.31 |
+| LSTM forecast − DRL seed ensemble + band | +0.05 | −0.25 to +0.33 |
+| LSTM forecast − ridge forecast | +0.10 | −0.38 to +0.62 |
+
+- **Sharpe ratio:** 0.46 (−0.27 to 1.25), between the DRL ensemble with the band (0.42) and the ETF (0.50).
+- **No difference is significant.** The lead of a concentrated, high-turnover portfolio in one rally is well within what seven years can produce by chance.
+
+**What it means:**
+- **Supervised forecasting did not reliably beat the references either.** The LSTM forecaster has the highest mean return on the point-in-time index. But its lead came from one rally, its seeds disagree, and its Sharpe ratio is below the ETF's; no difference is significant.
+- **Against the DRL agent:** the agent's return is lower, but steadier across seeds, and it trades a tenth as much.
+- **Against the five-stock study:** there the LSTM forecaster made 13.8% a year. On the actual index it makes 8.1%, so, like the ridge forecaster, part of its earlier result came from the hand-picked universe.
+
 ## Run it
 
 Local: on the 8-core development Mac (4 performance and 4 efficiency cores), seven workers took about 65 minutes per 100k-timestep run.
@@ -531,6 +582,22 @@ python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_walk_forw
   --pit-config config/pit_walk_forward_experiment.yaml
 python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_band_ensemble \
   --variant pit_plan_weekly_lstm_shared_band_ensemble --prefix diagnostics_ensemble
+```
+
+The LSTM forecast benchmark needs no DRL training; its 21 fits take a few minutes. It is aggregated with the other benchmarks and the DRL ensemble with the band:
+
+```bash
+python -m scripts.pit_lstm_forecast_baseline --config config/pit_walk_forward_experiment.yaml \
+  --run-dir results/pit_lstm_forecast --years 2016 2017 2018 2019 2020 2021 2022
+python -m scripts.aggregate_walk_forward_reward --run-dir results/pit_lstm_forecast \
+  --extra-run-dirs results/pit_heuristic_baselines results/pit_seed_ensemble results/pit_walk_forward \
+  --variants pit_lstm_forecast_top10_monthly --n-trials 13 --output-dir results/pit_lstm_forecast_combined \
+  --drop hindsight_set50_equal_weight_monthly starter5_equal_weight_monthly pit_plan_weekly_lstm_shared_ensemble \
+  --references pit_lstm_forecast_top10_monthly pit_plan_weekly_lstm_shared_ensemble_band pit_ridge_forecast_top10_monthly \
+  --labels pit_lstm_forecast_top10_monthly="LSTM forecast, top ten monthly" \
+  pit_plan_weekly_lstm_shared_ensemble_band="DRL, seed ensemble + no-trade band"
+python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_lstm_forecast \
+  --variant pit_lstm_forecast_top10_monthly --rebalance-every 21 --prefix diagnostics
 ```
 
 To check that trained models ignore the slot order, roll them out under both orders, one validation year at a time:
