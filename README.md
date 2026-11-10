@@ -232,9 +232,10 @@ python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_ex
 python -m scripts.aggregate_walk_forward_reward --run-dir results/<pit-ensemble> --extra-run-dirs results/<pit-shared-run> --n-trials 13 --references pit_plan_weekly_lstm_shared --output-dir results/<pit-ensemble-combined>
 # Heuristic benchmarks (momentum, inverse volatility, minimum variance) on the point-in-time SET50
 python -m scripts.pit_heuristic_baselines --config config/pit_walk_forward_experiment.yaml --run-dir results/<pit-heuristics> --years 2016 2017 2018 2019 2020 2021 2022
-# Shared-weight actor trained with the no-trade band
+# Shared-weight actor trained with the no-trade band, and its seed ensemble (in its own environment, band included)
 RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm_shared_band SEEDS="42 43 44" \
   scripts/run_walk_forward_reward.sh results/<pit-band-run> 3 100000
+python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_experiment.yaml --source-run results/<pit-band-run> --variant pit_plan_weekly_lstm_shared_band --output-dir results/<pit-band-ensemble> --modes ensemble
 # Official BOT policy-rate history
 python -m src.data.ingest_bot_policy_rate --input data/external/original/bot_policy_rate_mpc_table_asof_20261028.xlsx --output data/external/bot_policy_rate_history.csv --source-url <url> --retrieved-at <utc>
 ```

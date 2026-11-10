@@ -205,7 +205,7 @@ same sessions, costs, and accounting; only the stock universe differs.
 \begin{table}[H]
 \centering
 \small
-\caption{Point-in-time SET50 walk-forward, validation 2016--2022: mean over seven annual folds (DRL: three seeds per fold). Equal-weight portfolios rebalance monthly, and all strategies pay the same costs. The point-in-time DRL rows differ only in the slot order, the policy head and, for the seed ensemble, how the trained models are combined and traded (see text).}
+\caption{Point-in-time SET50 walk-forward, validation 2016--2022: mean over seven annual folds (DRL: three seeds per fold). Equal-weight portfolios rebalance monthly, and all strategies pay the same costs. The point-in-time DRL rows differ only in the slot order, the policy head, whether a no-trade band applies in training and, for the seed ensembles, how the trained models are combined and traded (see text).}
 \label{tab:pit}
 \begin{tabularx}{\textwidth}{@{}Yrrrr@{}}
 \toprule
@@ -220,6 +220,8 @@ Inverse volatility (point-in-time SET50) & 5.0\% & $-2.1\%$ & 1/7 & $-12.2\%$ \\
 Minimum variance (point-in-time SET50) & 4.0\% & $-3.1\%$ & 3/7 & $-10.9\%$ \\
 Equal weight (point-in-time SET50) & 5.6\% & $-1.5\%$ & 2/7 & $-12.7\%$ \\
 DRL, shared-weight actor, seed ensemble + no-trade band (point-in-time SET50) & 5.5\% & $-1.6\%$ & 1/7 & $-11.3\%$ \\
+DRL, shared-weight actor trained with the band, seed ensemble (point-in-time SET50) & 5.2\% & $-1.9\%$ & 1/7 & $-10.8\%$ \\
+DRL, shared-weight actor trained with the band (point-in-time SET50) & 5.1\% & $-2.0\%$ & 1/7 & $-10.8\%$ \\
 DRL, plan reward + LSTM, shared-weight actor (point-in-time SET50) & 4.6\% & $-2.5\%$ & 1/7 & $-11.7\%$ \\
 DRL, plan reward + LSTM, sticky slots (point-in-time SET50) & 3.7\% & $-3.5\%$ & 1/7 & $-14.2\%$ \\
 DRL, plan reward + LSTM, traded-value slots (point-in-time SET50) & $-1.1\%$ & $-8.3\%$ & 0/7 & $-14.8\%$ \\
@@ -261,6 +263,8 @@ DRL, traded-value slots (point-in-time SET50) & 4.6\% & 5.8\% & $-1.1\%$ & 28.2 
 DRL, sticky slots (point-in-time SET50) & 5.6\% & 2.0\% & 3.7\% & 9.4 & 2.7\% \\
 DRL, shared-weight actor (point-in-time SET50) & 5.5\% & 0.9\% & 4.6\% & 4.3 & 10.7\% \\
 DRL, seed ensemble + no-trade band (point-in-time SET50) & 5.9\% & 0.3\% & 5.5\% & 1.6 & 10.5\% \\
+DRL, trained with the band (point-in-time SET50) & 5.6\% & 0.4\% & 5.1\% & 2.0 & 19.2\% \\
+DRL, trained with the band, seed ensemble (point-in-time SET50) & 5.6\% & 0.3\% & 5.2\% & 1.5 & 18.0\% \\
 Equal weight (point-in-time SET50) & 6.0\% & 0.4\% & 5.6\% & 1.9 & 0.7\% \\
 DRL (five starter stocks) & 8.5\% & 0.8\% & 7.7\% & 3.9 & 20.3\% \\
 Equal weight (five starter stocks) & 10.4\% & 0.3\% & 10.1\% & 1.4 & 0.0\% \\
@@ -324,8 +328,16 @@ the ensemble alone. Part of its gain came from 2020. In the March crash, the ban
 the agent made without it and so left cash in place; outside 2020 it added about 0.4 points a year,
 close to its cost saving. The ensemble's Sharpe ratio, 0.42 ($-0.33$ to $1.18$), was above that of equal
 weight by 0.04 ($-0.05$ to $0.11$) and below that of the ETF by 0.08 ($-0.36$ to $0.15$); neither
-difference is significant. Counting thirteen designs, including two that train with the band, its
+difference is significant. Counting thirteen designs, including the two that train with the band, its
 deflated Sharpe ratio was 0.27.
+
+Training with the band, instead of adding it afterwards, did not improve on this. Trained with the same
+0.5-point band, the agent made 5.1\% a year and its seed ensemble 5.2\%, against 4.6\% without the band
+and 5.5\% for the band added after training. Turnover halved, to 2.0 times capital a year, but the
+average cash holding doubled, to 19\%. Five of the 21 models held more than a third of the portfolio in
+cash over their year; one held 93\% through the falling year 2018, which accounts for most of the gain.
+The ensemble's Sharpe ratio, 0.39, was 0.01 above that of equal weight ($-0.06$ to $0.12$) and 0.05
+above that of the shared-weight agent ($-0.06$ to $0.18$); neither difference is significant.
 
 \begin{figure}[H]
 \centering
@@ -351,7 +363,8 @@ A policy head that scores every stock with shared weights then removed the depen
 order entirely, halved turnover again, and raised the return to 4.6\% a year. What it learned,
 however, was close to equal weight, and it remained below both references, though no longer
 significantly. Averaging the three seeds and adding a no-trade band then brought it level with equal
-weight, with less trading, but not significantly ahead of it.
+weight, with less trading, but not significantly ahead of it. Training with the band instead of adding
+it afterwards also cut trading, but the agent learned to hold more cash and did no better.
 The evidence therefore does not support a claim that this DRL design improves long-term profit in the
 Thai stock market. Such a claim would need a policy that adds value over equal weight after costs,
 survivorship-free licensed data, and the remaining data sources (fundamentals, news sentiment,
@@ -366,5 +379,5 @@ investor flow, and point-in-time official macro data), evaluated once on the unt
   \item \textbf{Macro and alternative data.} The daily macro proxies are market prices and therefore point-in-time. The Bank of Thailand macro history, however, is a current revised vintage, so it was kept out of the models. The official policy-rate decision history is point-in-time but has not yet been used in an experiment. Fundamentals cover only recent years for the five starter stocks, and news sentiment and investor flow are implemented without historical data. The \emph{multi-source} claim therefore rests on price, technical, market, and macro-proxy inputs only.
   \item \textbf{Validation years only.} Designs were compared and chosen on the validation years, so the chosen design's validation performance is optimistic. The sticky slot order, the shared-weight actor, the seed ensemble and the no-trade band, for example, were chosen after seeing earlier point-in-time runs. The deflated Sharpe ratio corrects for this only in part. The 2023--2024 test years and the sealed post-2024 holdout have not been read.
   \item \textbf{Training budget and seeds.} Each model trained for 100{,}000 timesteps with three to five seeds on the 8~GB development machine. Longer training, more seeds, and the off-policy algorithms require the HPC cluster.
-  \item \textbf{Slot order and turnover.} With the dense policy head, the agent scores slot positions rather than stocks, so any change in the slot order changes portfolio weights. The sticky slot order removes almost all of these changes, and the shared-weight actor removes the dependence entirely, as checked on all 21 of its trained models. Neither limits the policy's own week-to-week reweighting: after the initial purchase, the shared-weight agent still turned over 3.4 times its capital a year, against 0.9 for equal weight. A 0.5-point no-trade band cut this to 0.7 times a year in the seed ensemble. Its width was not tuned, and part of its gain, in 2020, came from cash it happened to leave in place.
+  \item \textbf{Slot order and turnover.} With the dense policy head, the agent scores slot positions rather than stocks, so any change in the slot order changes portfolio weights. The sticky slot order removes almost all of these changes, and the shared-weight actor removes the dependence entirely, as checked on all 21 of its trained models. Neither limits the policy's own week-to-week reweighting: after the initial purchase, the shared-weight agent still turned over 3.4 times its capital a year, against 0.9 for equal weight. A 0.5-point no-trade band cut this to 0.7 times a year in the seed ensemble. Its width was not tuned, and part of its gain, in 2020, came from cash it happened to leave in place. Training with the band cut turnover as well, but doubled the average cash holding, to 19\%.
 \end{enumerate}

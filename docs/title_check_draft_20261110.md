@@ -1,6 +1,6 @@
 # Title Check (draft)
 
-Date: 2026-11-10
+Date: 2026-11-10; band-training result added 2026-11-11
 Status: **draft** for the M8 item "every phrase in the title is supported by a result table". It maps each phrase to the evidence in the repository now and to what is still missing. It does not choose the final wording; that is the authors' decision.
 
 Title: **Deep Reinforcement Learning for Long-Term Profit Optimization in Thai Stock Markets Using Multi-Source Data**
@@ -16,7 +16,7 @@ Title: **Deep Reinforcement Learning for Long-Term Profit Optimization in Thai S
 
 A narrower claim than the title's:
 - **Point-in-time result:** on the point-in-time SET50 over 2016–2022, a DRL agent with a long-term (log-wealth) reward reached equal-weight performance while trading less. With a seed ensemble and a no-trade band it made 5.5% a year, against 5.6%, with a Sharpe ratio of 0.42 against 0.38.
-- **No edge:** it did not beat equal weight or the SET50 ETF (7.1%), and neither did three standard heuristic strategies.
+- **No edge:** it did not beat equal weight or the SET50 ETF (7.1%). Neither did the agent trained with the band (5.1% a year, 5.2% as a seed ensemble) or three standard heuristic strategies.
 - **Five stocks:** the earlier advantage on five hand-picked stocks came from choosing those stocks with hindsight.
 
 ## Options for the authors (not decided)

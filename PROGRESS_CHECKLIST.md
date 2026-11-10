@@ -11,7 +11,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[ ]` Not started
 - `[!]` Blocked or needs attention
 
-## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07, sticky slots 2026-11-09, shared-weight actor, seed ensemble and no-trade band 2026-11-10
+## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07, sticky slots 2026-11-09, shared-weight actor, seed ensemble and no-trade band 2026-11-10, training with the band 2026-11-11
 
 Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md). Outputs (git-ignored): `results/pit_walk_forward_20261107/`, `results/pit_walk_forward_sticky_20261109/`, `results/pit_walk_forward_shared_20261110/`, `results/pit_walk_forward_combined_20261109/`, `results/pit_walk_forward_combined_20261110/`, `results/pit_seed_ensemble_20261110/`, `results/pit_seed_ensemble_combined_20261110/` and `results/pit_heuristic_baselines_20261110/`. All 63 runs were local; no HPC job was submitted.
 
@@ -71,8 +71,12 @@ Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md)
 - `[x]` **Heuristic benchmarks (2026-11-10).** `scripts/pit_heuristic_baselines.py` adds momentum (top ten by 12-1 month return), inverse volatility (60 days) and long-only minimum variance (252 days, covariance shrunk halfway to its diagonal, 10% cap), rebalanced every 21 sessions with parameters fixed in advance. `tests/test_pit_heuristic_baselines.py` (3) pass.
   - **Result:** 5.3%, 5.0% and 4.0% a year, against 5.6% for equal weight and 7.1% for the ETF. Momentum had the deepest drawdowns (−26.5% in 2018) and 6.4× turnover a year; minimum variance lost 22.4% in 2020.
   - **Significance:** no Sharpe difference against equal weight or the ETF is significant. The DRL ensemble with the band has the highest Sharpe ratio of the active strategies (0.42 against 0.30–0.38), also not significantly.
-- `[~]` **BOT policy-rate source ablation (queued 2026-11-10).** `config/pit_walk_forward_policy_rate.yaml`, variant `pit_plan_weekly_lstm_shared_policy`: the shared-weight agent plus five official BOT policy-rate inputs (`data.policy_rate`; each decision available from the next session; nothing after 2022). It is the same 7 folds × 3 seeds × 100k timesteps, compared with the shared-weight run. It starts automatically, with 3 local workers, when the band run below finishes cleanly (`results/pit_walk_forward_policy_20261111/`). `tests/test_pit_policy_rate.py` passes.
-- `[~]` **Training with the band (started 2026-11-10 23:08).** The variant `pit_plan_weekly_lstm_shared_band`, 7 folds × 3 seeds × 100k timesteps, 3 local workers (`results/pit_walk_forward_band_20261110/`). Its seed ensemble is the 13th design.
+- `[~]` **BOT policy-rate source ablation (queued 2026-11-10).** `config/pit_walk_forward_policy_rate.yaml`, variant `pit_plan_weekly_lstm_shared_policy`: the shared-weight agent plus five official BOT policy-rate inputs (`data.policy_rate`; each decision available from the next session; nothing after 2022). It is the same 7 folds × 3 seeds × 100k timesteps, compared with the shared-weight run. It started automatically at 2026-11-11 02:38, with 3 local workers, when the band run below finished cleanly (`results/pit_walk_forward_policy_20261111/`). `tests/test_pit_policy_rate.py` passes.
+- `[x]` **Training with the band (2026-11-10 23:08 to 2026-11-11 02:38).** The variant `pit_plan_weekly_lstm_shared_band`, 7 folds × 3 seeds × 100k timesteps, 3 local workers, 21 of 21 tasks done (`results/pit_walk_forward_band_20261110/`). Its seed ensemble (`results/pit_band_ensemble_20261111/`) is the 13th design; every model replayed its saved curve exactly.
+  - **Result:** **5.1% a year**, and 5.2% for its seed ensemble, against 4.6% without the band, 5.5% for the band added after training and 5.6% for equal weight ([report](docs/pit_walk_forward_20261107.md#follow-up-training-with-the-no-trade-band-2026-11-11)).
+  - **Trading and cash:** turnover halved (2.0× a year, from 4.3×), but average cash doubled (19.2%, from 10.7%). Five of the 21 models held more than a third of the portfolio in cash over their year; one held 93% through 2018, which accounts for most of the gain.
+  - **Significance (13 designs):** the ensemble against equal weight +0.01 (95% CI −0.06 to +0.12), against the shared actor +0.05 (−0.06 to +0.18), against the band at evaluation −0.02 (−0.12 to +0.12); none is significant. Deflated Sharpe 0.25.
+  - **Fix in passing:** `scripts/evaluate_pit_seed_ensemble.py` refused any variant trained with a band; it now refuses only the band modes, so `--modes ensemble` evaluates such a variant in its own environment.
 
 ## Point-in-Time Universe 2012–2024 (M3) — 2026-11-07
 
