@@ -200,7 +200,7 @@ Goal: final evidence for each research question in the implementation plan.
 - `[~]` Write a limitations section covering licensed versus exploratory data, survivorship bias, the cost model, and the revised macro data. *Drafted as "Limitations of the Extension" in the drop-in chapter (2026-11-07). It still needs merging with the report's existing pilot limitations.*
 - `[ ]` Update the Beamer deck and posters. Add the team photo and the approved member paragraphs, which are still pending.
 - `[ ]` Package reproducibility: one documented command per stage, a slim archive of configs, receipts, and metrics, with large checkpoints excluded.
-- `[ ]` Final title check: every phrase in the title is supported by a result table.
+- `[~]` Final title check: every phrase in the title is supported by a result table. *Draft (2026-11-10): [`docs/title_check_draft_20261110.md`](docs/title_check_draft_20261110.md) maps each phrase to its evidence and gaps and lists wording options; the choice is the authors'.*
 
 ---
 
