@@ -5,6 +5,10 @@ Project title: **Deep Reinforcement Learning for Long-Term Profit Optimization i
 
 This file lists what to improve so that the project's results match each part of its title. It uses the same legend as `PROGRESS_CHECKLIST.md` (`[x]` done, `[~]` partial, `[ ]` not started, `[!]` blocked). Weeks are counted from the start of the work (W1 = first week), not from fixed calendar dates. Adjust them to the real submission deadline.
 
+> **Progress update 2026-11-10:** the shared-weight policy head (M5) ran on the point-in-time SET50 (21 local models; [report](docs/pit_walk_forward_20261107.md#follow-up-shared-weight-actor-2026-11-10)).
+> - **Effect:** the trained models no longer depend on the slot order. Turnover halved again (4.3× a year, from 9.4×), and the return rose to 4.6% a year from 3.7%.
+> - **Still behind:** it trails equal weight (5.6%) and the SET50 ETF (7.1%), though no longer significantly. What it learned is close to equal weight; there is no evidence yet that the agent adds value over it.
+>
 > **Progress update 2026-11-09:** the sticky slot order ran on the point-in-time SET50 (21 local models; [report](docs/pit_walk_forward_20261107.md#follow-up-sticky-slots-2026-11-09)).
 > - **Effect:** it removed the slot reshuffles (2% of rebalance turnover, from 79%) and cut turnover to a third. The agent's return rose from −1.1% to 3.7% a year, a significant improvement.
 > - **Still behind:** it trails equal weight (5.6%) and the SET50 ETF (7.1%), narrowly but significantly. Costs from the policy's own reweighting are now most of the gap.
@@ -141,7 +145,7 @@ Goal: a network that can actually use multi-source input across many assets.
 - `[ ]` The flattened MLP input is `30 × N × F`. That is about 9k dimensions for 5 tickers with fundamentals and grows linearly with N, so it will not scale to SET50/SET100.
 - `[x]` Normalize features with train-only statistics (reuse `src/v3/fold_preprocessing.py`, or `VecNormalize` with frozen evaluation statistics). *`training.normalize_observations: true`; statistics are saved as `<algo>_vecnormalize.pkl`.*
 - `[x]` Output portfolio weights through N+1 logits → softmax (cash included) instead of clipping Box(0,1) values.
-- `[x]` **Score each stock with shared weights in the policy head** (a permutation-equivariant actor), so allocations do not depend on slot order. *Implemented 2026-11-09; not yet trained on the walk-forward.*
+- `[x]` **Score each stock with shared weights in the policy head** (a permutation-equivariant actor), so allocations do not depend on slot order. *Implemented 2026-11-09; walk-forward run 2026-11-10: 4.6% a year, against 3.7% for the sticky dense head and 5.6% for equal weight.*
   - **Why:** the point-in-time SET50 run (M3) found that the dense head scores slot positions. Members that changed slot between weekly decisions caused 79% of rebalance turnover ([report](docs/pit_walk_forward_20261107.md)). The `sticky` slot order (`universe.slot_order`) was the interim fix: it cut that share to 2% and raised the agent from −1.1% to 3.7% a year, still below equal weight (5.6%).
   - **Design:** `SharedAssetPolicy` (`src/models/shared_asset_policy.py`, `training.policy.actor: shared_asset`).
     - **Scoring:** one network scores every stock from its own embedding and the mean embedding of the stocks in slots. Cash and the value use only that mean.
@@ -149,9 +153,10 @@ Goal: a network that can actually use multi-source input across many assets.
   - **Normalization:** features are standardized with training-year statistics shared by all stocks. `VecNormalize` keeps separate statistics for every slot, so it would bring the slot dependence back.
   - **Tests:** permuting the slots permutes the allocation and leaves the value unchanged. The dense head fails the same check (`tests/test_shared_asset_policy.py`).
   - **Real-data check:** on the 2019 validation year, a briefly trained shared model gave the same deterministic rollout under sticky and traded-value slot orders (relative gap 3×10⁻¹⁰). The dense model's two rollouts differed by 0.65%.
-  - **Next:**
-    - **Not yet run:** the variant `pit_plan_weekly_lstm_shared` is configured. It uses sticky slots, as in the run it is compared with.
-    - **Limit:** the head does not limit the policy's own reweighting, which caused most of the sticky agent's remaining turnover.
+  - **Walk-forward (2026-11-10):** the variant `pit_plan_weekly_lstm_shared` (sticky slots), 7 folds × 3 seeds × 100k timesteps ([report](docs/pit_walk_forward_20261107.md#follow-up-shared-weight-actor-2026-11-10)).
+    - **Slot order:** all 21 trained models gave the same rollout under both orders (within 3×10⁻⁸). The dense sticky models' annual returns moved by a median of 3.6 points.
+    - **Result:** 4.6% a year and turnover 4.3× a year (sticky dense head 3.7% and 9.4×). The portfolio is close to equal weight (correlation 0.995). The gaps to equal weight (Sharpe −0.03, 95% CI −0.11 to +0.04) and to the ETF (−0.15, −0.42 to +0.08) are not significant.
+  - **Limit:** the head does not limit the policy's own reweighting: after the initial purchase it still turns over 3.4× a year, against 0.9× for equal weight.
 - `[ ]` Optionally compare against `RecurrentPPO` (sb3-contrib).
 
 **Exit criteria:** architecture ablation (MLP vs. fusion encoder) on validation with 5 or more seeds. *First version done with 3 seeds. Under the same reward, the fusion encoder gave +1.9% ± 1.1 and the MLP −8.8% ± 17.2 (2020–2022 validation). Repeat with ≥ 5 seeds on the broader universe.*

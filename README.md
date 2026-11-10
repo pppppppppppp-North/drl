@@ -219,6 +219,12 @@ RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.ya
   scripts/run_walk_forward_reward.sh results/<pit-sticky-run> 3 100000
 python -m scripts.aggregate_walk_forward_reward --run-dir results/<pit-sticky-run> --extra-run-dirs results/<pit-run> --n-trials 7 --references pit_plan_weekly_lstm --output-dir results/<pit-combined>
 python -m scripts.walk_forward_agent_diagnostics --run-dir results/<pit-sticky-run> --variant pit_plan_weekly_lstm_sticky --pit-config config/pit_walk_forward_experiment.yaml
+# Shared-weight actor (sticky slots), aggregated with both runs above and tested against both
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm_shared SEEDS="42 43 44" \
+  scripts/run_walk_forward_reward.sh results/<pit-shared-run> 3 100000
+python -m scripts.aggregate_walk_forward_reward --run-dir results/<pit-shared-run> --extra-run-dirs results/<pit-sticky-run> results/<pit-run> --n-trials 8 --references pit_plan_weekly_lstm_sticky pit_plan_weekly_lstm --output-dir results/<pit-combined-shared>
+python -m scripts.walk_forward_agent_diagnostics --run-dir results/<pit-shared-run> --variant pit_plan_weekly_lstm_shared --pit-config config/pit_walk_forward_experiment.yaml
+python -m scripts.check_slot_order_invariance --config config/pit_walk_forward_experiment.yaml --fold-year 2019 --run-dirs results/<pit-shared-run>/fold_2019/pit_plan_weekly_lstm_shared_seed42/runs/pit_plan_weekly_lstm_shared_seed42
 # Official BOT policy-rate history
 python -m src.data.ingest_bot_policy_rate --input data/external/original/bot_policy_rate_mpc_table_asof_20261028.xlsx --output data/external/bot_policy_rate_history.csv --source-url <url> --retrieved-at <utc>
 ```

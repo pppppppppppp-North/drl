@@ -1,14 +1,15 @@
 # Point-in-Time SET50 Walk-Forward (Milestone M3)
 
-Date: 2026-11-07; sticky-slot follow-up 2026-11-09
+Date: 2026-11-07; sticky-slot follow-up 2026-11-09; shared-weight actor 2026-11-10
 Evidence tier: **exploratory**. The index membership is official, but the prices are Yahoo's, and 13% of SET50 member-sessions (mostly delisted or merged names) have no prices.
-Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `results/pit_walk_forward_sticky_20261109/` (sticky slots) and `results/pit_walk_forward_combined_20261109/` (both runs together) · Config: `config/pit_walk_forward_experiment.yaml` · Figures: [first run](figures/pit_walk_forward_chained_equity_20261107.png), [both runs](figures/pit_walk_forward_sticky_chained_equity_20261109.png)
+Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `results/pit_walk_forward_sticky_20261109/` (sticky slots), `results/pit_walk_forward_shared_20261110/` (shared-weight actor), `results/pit_walk_forward_combined_20261109/` (first two runs together) and `results/pit_walk_forward_combined_20261110/` (all three) · Config: `config/pit_walk_forward_experiment.yaml` · Figures: [first run](figures/pit_walk_forward_chained_equity_20261107.png), [first two runs](figures/pit_walk_forward_sticky_chained_equity_20261109.png), [all three runs](figures/pit_walk_forward_shared_chained_equity_20261110.png)
 
 **Summary.**
 - **Result:** on the actual SET50 membership of each session, the DRL design that roughly matched the market on five hand-picked stocks lost money: −1.1% a year, against 7.1% for the SET50 ETF and 5.6% for equal weight. Unlike the five-stock comparisons, the Sharpe differences are statistically significant.
 - **Survivorship:** choosing today's index members with hindsight inflates an equal-weight backtest by 6.6 points a year, also a significant difference.
 - **Why the agent lost:** most of the shortfall is trading costs. The policy scores slot positions, so it reacts to the weekly reshuffling of slots and turns over 28 times its capital a year.
 - **Fix (run 2026-11-09):** a sticky slot order, which keeps each member in its slot, cut turnover to a third and raised the agent's return to 3.7% a year. It beat the first run in all seven years, and the improvement is significant. The agent still trailed equal weight and the ETF, again mostly through trading costs. Both shortfalls are statistically significant, but only just.
+- **Shared-weight actor (run 2026-11-10):** a policy head that scores every stock with the same weights no longer depends on the slot order at all. It halved turnover again and raised the return to 4.6% a year, with a portfolio close to equal weight. It still trailed equal weight (5.6%) and the ETF (7.1%), but neither shortfall is statistically significant.
 
 ## Question
 
@@ -159,8 +160,75 @@ Turnover is the sum of absolute weight changes over the year, including the firs
 - **Diagnosis confirmed:** the slot reshuffles were the first run's main defect, and removing them recovered 4.8 points a year.
 - **No outperformance:** the design still does not beat equal weight or the market on the actual index.
 - **Remaining problem:** turnover is the problem again, but now it comes from the policy's own reweighting, not from the slot order. Next steps:
-  - **Policy head (implemented 2026-11-09, not yet run):** `SharedAssetPolicy` (`src/models/shared_asset_policy.py`) scores each stock with shared weights, an M5 item, which removes the dependence on slot order by construction. Its variant is `pit_plan_weekly_lstm_shared`.
+  - **Policy head (run 2026-11-10):** `SharedAssetPolicy` (`src/models/shared_asset_policy.py`) scores each stock with shared weights, an M5 item, which removes the dependence on slot order by construction. See the next section.
   - **Reweighting (not tried):** reducing the policy's own reweighting is a separate problem.
+
+## Follow-up: shared-weight actor (2026-11-10)
+
+**The change.** The variant `pit_plan_weekly_lstm_shared` keeps the sticky slots and replaces the dense policy head with `SharedAssetPolicy` (`src/models/shared_asset_policy.py`, `training.policy.actor: shared_asset`):
+- **Scoring:** one network scores every stock from its own LSTM embedding and the mean embedding of the members in slots. Cash and the value estimate use only that mean.
+- **Noise and empty slots:** one noise level is shared by all stocks, and empty slots are left out.
+- **Normalization:** features are standardized with training-window statistics shared by all stocks. `VecNormalize` is not used, because it keeps separate statistics for every slot.
+
+The reward, encoder, folds, seeds and budget are unchanged: 21 models (7 folds × 3 seeds × 100k timesteps), all trained locally.
+
+**What it tests:** whether a policy that cannot depend on the slot order trades less and earns more than the sticky agent.
+
+| Strategy | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | **Mean** | Years beating ETF | Mean max DD |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| SET50 ETF buy-and-hold (TDEX) | 24.5% | 18.2% | −6.5% | 5.7% | −11.8% | 12.1% | 7.8% | **7.1%** | — | −11.2% |
+| Point-in-time SET50 equal weight | 22.2% | 16.5% | −10.0% | 6.5% | −8.5% | 11.9% | 0.7% | **5.6%** | 2/7 | −12.7% |
+| **DRL, shared-weight actor** (± s.d. over 3 seeds) | 20.5% ± 0.7 | 14.5% ± 1.8 | −10.2% ± 0.6 | 4.7% ± 3.0 | −6.8% ± 2.0 | 9.8% ± 1.9 | −0.4% ± 0.4 | **4.6%** | 1/7 | −11.7% |
+| DRL, sticky slots | 20.4% ± 6.3 | 15.5% ± 5.8 | −9.3% ± 3.3 | 4.4% ± 4.1 | −10.0% ± 1.7 | 8.0% ± 3.5 | −3.3% ± 2.3 | **3.7%** | 1/7 | −14.2% |
+| DRL, traded-value slots (first run) | 15.7% ± 5.4 | 5.8% ± 3.4 | −15.0% ± 3.6 | 1.9% ± 5.2 | −15.1% ± 0.3 | 3.4% ± 5.2 | −4.5% ± 1.0 | **−1.1%** | 0/7 | −14.8% |
+
+**The best DRL result so far, but still not ahead of either reference.**
+- **Return:** 4.6% a year, against 3.7% for the sticky agent and −1.1% for the first run. It beat the sticky agent in five of the seven years and the first run in all seven. Chained over the seven years, 1 baht became 1.32 (1.24–1.41 across seeds), against 1.24 for the sticky agent, 1.41 in equal weight and 1.55 in the ETF ([figure](figures/pit_walk_forward_shared_chained_equity_20261110.png)).
+- **Against the references:** it beat equal weight and the ETF only in 2020. Its best seed (5.5% a year) ended level with equal weight: 1 baht became 1.41 in both.
+- **Drawdown:** its mean maximum drawdown (−11.7%) was shallower than equal weight's (−12.7%) and close to the ETF's (−11.2%). In 2020 its maximum drawdown was 32.8%, against 32.6% for the ETF and 37.0% for equal weight.
+- **Seeds agree more closely:** the seed s.d. of yearly returns averaged 1.5 points, against 3.9 for the sticky agent.
+
+**Significance.** Sharpe ratios on the same 1,699 chained daily returns, with the same stationary bootstrap:
+
+| Comparison | Sharpe difference | 95% interval |
+| --- | ---: | ---: |
+| DRL shared − DRL sticky | +0.08 | −0.06 to +0.23 |
+| DRL shared − DRL first run | +0.36 | +0.24 to +0.54 |
+| DRL shared − point-in-time equal weight | −0.03 | −0.11 to +0.04 |
+| DRL shared − ETF | −0.15 | −0.42 to +0.08 |
+
+- **DRL:** the shared agent's Sharpe ratio was 0.35 (−0.38 to +1.13). Its deflated Sharpe ratio was 0.29, counting eight designs: the six screened earlier, the sticky order and this head, both chosen after seeing earlier validation results. Counting eight designs, the sticky agent's value would be 0.23 rather than 0.25, and the first run's 0.07.
+- **Reading:** only the improvement over the first run is significant. The gain over the sticky agent is not. Unlike the sticky agent's, the shortfalls against equal weight and the ETF are not significant either: both intervals include zero. That does not make the agent as good as equal weight; the point estimates are still below both references.
+
+**Where the return went.** The same diagnostics as above, as means over the seven years:
+
+| Strategy | Return before costs | Cost drag | Return after costs | Turnover a year | Average cash |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| **DRL, shared-weight actor** | 5.5% | 0.9% | 4.6% | 4.3× | 10.7% |
+| DRL, sticky slots | 5.6% | 2.0% | 3.7% | 9.4× | 2.7% |
+| DRL, traded-value slots (first run) | 4.6% | 5.8% | −1.1% | 28.2× | 3.7% |
+| Equal weight, point-in-time SET50 | 6.0% | 0.4% | 5.6% | 1.9× | 0.7% |
+
+- **The slot order no longer matters.** `scripts/check_slot_order_invariance.py` rolled every trained model out on its validation year twice, once per slot order. The two orders seat members differently on every session.
+  - **Shared head:** each of the 21 shared models ended at the same value under both orders, to within 3×10⁻⁸.
+  - **Dense head:** the 21 dense sticky models, given the same test, ended a median 3.6 points of annual return apart, and up to 24.7 points.
+- **Turnover halved again:** from 9.4 to 4.3 times capital a year, or from 0.17 to 0.07 per weekly decision. The cost drag fell from 2.0 to 0.9 points a year. After the initial purchase it still turned over 3.4 times its capital a year, against 0.9 for equal weight.
+- **It learned a portfolio close to equal weight:**
+  - **Holdings:** 43.7 effective names out of 44.5 tradable members on average (about 19 for the sticky agent).
+  - **Top ten positions:** 23% of capital (59%).
+  - **Distance from equal weight:** a total-variation distance of 0.13 (0.40).
+  - **Correlation:** its daily returns correlated 0.995 with equal weight (0.94).
+- **Cash depended on the seed; it was not market timing.**
+  - **Spread:** average cash was 10.7%, but the median model held 3.7%. Four of the 21 models held 19–79% cash on average over their validation year (2017 and 2019 seed 44, 2020 seed 43, 2021 seed 42).
+  - **Timing:** for most models the cash weight stayed within a few points all year. It did not rise in the 2020 crash: averaged over seeds, it fell from about 21% in February to 11% in March.
+- **The 1.0-point gap to equal weight splits evenly:** 0.5 points of extra costs and 0.5 points of lower return before costs. At equal weight's yearly returns, the cash holdings would have cost about 0.4 points a year, so cash explains most of the second half.
+
+**What it means:**
+- **The head fixed what it was built to fix.** The policy no longer depends on the slot order, it trades half as much as the sticky agent, and its seeds agree more closely.
+- **What it learned is close to equal weight, with somewhat higher costs and a seed-dependent cash holding.** The return is still below equal weight and the ETF, though no longer significantly. Across the three runs there is no evidence that the agent adds value over equal weight on the point-in-time index.
+- **Possible next steps (not run):** each would add a design to the deflated Sharpe count.
+  - **Turnover:** a no-trade band, a turnover penalty or monthly decisions would target the remaining 3.4 times a year after entry.
+  - **Cash:** averaging the three seeds' weights would damp the seed-specific cash holdings.
 
 ## Run it
 
@@ -173,6 +241,8 @@ Local: on the 8-core development Mac (4 performance and 4 efficiency cores), sev
 **Use three workers on that machine, or four with few other apps open.**
 
 **Sticky run time (three workers):** a run took 29–37 minutes while the Mac was awake and on AC power. All 21 runs took 8 h 42 min of wall time, of which the Mac was asleep for about 3.8 hours. Low Power Mode on battery also slows training.
+
+**Shared-weight run time (three workers):** all 21 runs took 9 h 56 min of wall time. Batches of three took between 50 minutes and about 3 hours: the Mac ran on battery in Low Power Mode for part of the morning, and other heavy work shared the CPU in the afternoon.
 
 ```bash
 RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm SEEDS="42 43 44" \
@@ -196,11 +266,25 @@ python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_walk_forw
   --pit-config config/pit_walk_forward_experiment.yaml
 ```
 
-The shared-weight actor runs the same way with `VARIANTS=pit_plan_weekly_lstm_shared`. It standardizes its own features, so it uses no `VecNormalize`. To check that a trained model ignores the slot order, roll it out under both orders:
+The shared-weight actor runs the same way. It standardizes its own features, so it uses no `VecNormalize`. It is aggregated with both earlier runs, counting eight designs, and its significance is also tested against both earlier DRL runs:
+
+```bash
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm_shared SEEDS="42 43 44" \
+  PYTHON=python scripts/run_walk_forward_reward.sh results/pit_walk_forward_shared 3 100000
+python -m scripts.aggregate_walk_forward_reward --run-dir results/pit_walk_forward_shared \
+  --extra-run-dirs results/pit_walk_forward_sticky results/pit_walk_forward --n-trials 8 \
+  --output-dir results/pit_walk_forward_combined_shared --references pit_plan_weekly_lstm_sticky pit_plan_weekly_lstm \
+  --labels pit_plan_weekly_lstm="DRL, traded-value slots" pit_plan_weekly_lstm_sticky="DRL, sticky slots" \
+  pit_plan_weekly_lstm_shared="DRL, shared-weight actor"
+python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_walk_forward_shared --variant pit_plan_weekly_lstm_shared \
+  --pit-config config/pit_walk_forward_experiment.yaml
+```
+
+To check that trained models ignore the slot order, roll them out under both orders, one validation year at a time:
 
 ```bash
 python -m scripts.check_slot_order_invariance --config config/pit_walk_forward_experiment.yaml --fold-year 2019 \
-  --run-dirs results/<run>/fold_2019/<variant>_seed42/runs/<variant>_seed42
+  --run-dirs results/pit_walk_forward_shared/fold_2019/pit_plan_weekly_lstm_shared_seed4{2,3,4}/runs/pit_plan_weekly_lstm_shared_seed4?
 ```
 
 **On BistKA**, with more seeds and longer training:
@@ -219,4 +303,4 @@ python -m scripts.check_slot_order_invariance --config config/pit_walk_forward_e
 
 3. **Add the baselines and aggregate**, with the two commands above pointed at `results/pit_walk_forward_bistka`.
 
-For the sticky variant, set `VARIANTS=pit_plan_weekly_lstm_sticky`. The array size is the same.
+For the sticky or shared-weight variant, set `VARIANTS=pit_plan_weekly_lstm_sticky` or `VARIANTS=pit_plan_weekly_lstm_shared`. The array size is the same.

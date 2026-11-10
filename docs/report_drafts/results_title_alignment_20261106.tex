@@ -205,7 +205,7 @@ same sessions, costs, and accounting; only the stock universe differs.
 \begin{table}[H]
 \centering
 \small
-\caption{Point-in-time SET50 walk-forward, validation 2016--2022: mean over seven annual folds (DRL: three seeds per fold). Equal-weight portfolios rebalance monthly, and all strategies pay the same costs. The two point-in-time DRL rows differ only in the slot order (see text).}
+\caption{Point-in-time SET50 walk-forward, validation 2016--2022: mean over seven annual folds (DRL: three seeds per fold). Equal-weight portfolios rebalance monthly, and all strategies pay the same costs. The three point-in-time DRL rows differ only in the slot order and the policy head (see text).}
 \label{tab:pit}
 \begin{tabularx}{\textwidth}{@{}Yrrrr@{}}
 \toprule
@@ -216,6 +216,7 @@ Equal weight (five starter stocks) & 10.1\% & $+3.0\%$ & 4/7 & $-13.9\%$ \\
 SET50 ETF buy-and-hold & 7.1\% & -- & -- & $-11.2\%$ \\
 Ridge forecast, top ten (point-in-time SET50) & 5.7\% & $-1.4\%$ & 3/7 & $-17.6\%$ \\
 Equal weight (point-in-time SET50) & 5.6\% & $-1.5\%$ & 2/7 & $-12.7\%$ \\
+DRL, plan reward + LSTM, shared-weight actor (point-in-time SET50) & 4.6\% & $-2.5\%$ & 1/7 & $-11.7\%$ \\
 DRL, plan reward + LSTM, sticky slots (point-in-time SET50) & 3.7\% & $-3.5\%$ & 1/7 & $-14.2\%$ \\
 DRL, plan reward + LSTM, traded-value slots (point-in-time SET50) & $-1.1\%$ & $-8.3\%$ & 0/7 & $-14.8\%$ \\
 \midrule
@@ -251,6 +252,7 @@ Strategy (universe) & Before costs & Cost drag & After costs & Turnover & Cash \
 \midrule
 DRL, traded-value slots (point-in-time SET50) & 4.6\% & 5.8\% & $-1.1\%$ & 28.2 & 3.7\% \\
 DRL, sticky slots (point-in-time SET50) & 5.6\% & 2.0\% & 3.7\% & 9.4 & 2.7\% \\
+DRL, shared-weight actor (point-in-time SET50) & 5.5\% & 0.9\% & 4.6\% & 4.3 & 10.7\% \\
 Equal weight (point-in-time SET50) & 6.0\% & 0.4\% & 5.6\% & 1.9 & 0.7\% \\
 DRL (five starter stocks) & 8.5\% & 0.8\% & 7.7\% & 3.9 & 20.3\% \\
 Equal weight (five starter stocks) & 10.4\% & 0.3\% & 10.1\% & 1.4 & 0.0\% \\
@@ -285,10 +287,27 @@ turnover now came almost entirely from its week-to-week reweighting of members t
 Because the sticky order was chosen after seeing the first run, its deflated Sharpe ratio (0.25)
 counts it as a seventh design.
 
+Even with sticky slots, the dense policy head still scores slot positions. It was therefore replaced
+with a head that treats every stock alike: a single network scores each stock from its own LSTM
+embedding and the mean embedding of the members in slots, cash and the value estimate use only that
+mean, and features are standardized with statistics shared by all stocks. Everything else, including
+the sticky slots, was unchanged. Rolling each of the 21 trained models out under both slot orders gave
+the same equity curve to within $3\times10^{-8}$, whereas the annual returns of the dense sticky
+models moved by a median of 3.6 percentage points. Turnover halved again, to 4.3 times capital a year,
+and the cost drag fell to 0.9 points. The return rose to 4.6\% a year with a mean maximum drawdown of
+$-11.7\%$, and the seed standard deviation of annual returns fell from 3.9 to 1.5 points. The learned
+portfolio was close to equal weight: about 44 effective names, and a daily-return correlation of 0.995
+with equal weight. Average cash was 10.7\%, but it came from four of the 21 models, which held 19--79\%
+cash on average over their validation year, not from market timing. The agent's Sharpe ratio was 0.35
+(95\% interval $-0.38$ to $1.13$). Its Sharpe differences against equal weight, $-0.03$ ($-0.11$ to
+$0.04$), and against the ETF, $-0.15$ ($-0.42$ to $0.08$), are no longer significant, and neither is its
+gain of 0.08 ($-0.06$ to $0.23$) over the sticky agent. Counted as an eighth design, its deflated Sharpe
+ratio was 0.29.
+
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{docs/figures/pit_walk_forward_sticky_chained_equity_20261109.png}
-\caption{Point-in-time SET50: chained out-of-sample value over the seven validation years for the DRL agent with traded-value and sticky slot orders and for the baselines. Each year uses models trained only on earlier years; bands show the range across three seeds.}
+\includegraphics[width=\textwidth]{docs/figures/pit_walk_forward_shared_chained_equity_20261110.png}
+\caption{Point-in-time SET50: chained out-of-sample value over the seven validation years for the DRL agent with traded-value slots, with sticky slots, and with the shared-weight actor, and for the baselines. Each year uses models trained only on earlier years; bands show the range across three seeds.}
 \label{fig:pit}
 \end{figure}
 
@@ -305,11 +324,14 @@ DRL design lost money and was significantly worse than both the market and equal
 because a policy that scores slot positions overtrades when the order of the stocks changes. Keeping
 each stock in its slot removed that overtrading and raised the return to 3.7\% a year, but the agent
 remained narrowly yet significantly below both references, again mostly because of trading costs.
+A policy head that scores every stock with shared weights then removed the dependence on the slot
+order entirely, halved turnover again, and raised the return to 4.6\% a year. What it learned,
+however, was close to equal weight, and it remained below both references, though no longer
+significantly.
 The evidence therefore does not support a claim that this DRL design improves long-term profit in the
-Thai stock market. Such a claim would need a policy that does not depend on the order of the stocks
-and trades less, survivorship-free licensed data, and the remaining data sources (fundamentals, news
-sentiment, investor flow, and point-in-time official macro data), evaluated once on the untouched
-test years.
+Thai stock market. Such a claim would need a policy that adds value over equal weight after costs,
+survivorship-free licensed data, and the remaining data sources (fundamentals, news sentiment,
+investor flow, and point-in-time official macro data), evaluated once on the untouched test years.
 
 \section{Limitations of the Extension}
 
@@ -318,7 +340,7 @@ test years.
   \item \textbf{Survivorship.} The point-in-time membership is official, but 38 of its 227 tickers, mostly delisted or merged companies, have no prices. They account for 13\% of SET50 member-sessions. The missing names bias the results in both directions: failed companies that Yahoo dropped would have lowered an equal-weight return, and companies taken over at a premium would have raised it. Only the ETF benchmark is free of this gap. Results on fixed stock lists are biased in a known direction: choosing today's SET50 members with hindsight added 6.6 percentage points a year to equal weight (Section~\ref{sec:pit}).
   \item \textbf{Cost model.} Every trade pays 0.15\% commission plus 0.05\% slippage per side, which covers the published explicit cost of about 0.176\%. Market impact, the wider bid--ask spreads of smaller members, board lots, daily price limits, and the minimum tick are not modelled. The costs of high-turnover policies are therefore, if anything, understated.
   \item \textbf{Macro and alternative data.} The daily macro proxies are market prices and therefore point-in-time. The Bank of Thailand macro history, however, is a current revised vintage, so it was kept out of the models. The official policy-rate decision history is point-in-time but has not yet been used in an experiment. Fundamentals cover only recent years for the five starter stocks, and news sentiment and investor flow are implemented without historical data. The \emph{multi-source} claim therefore rests on price, technical, market, and macro-proxy inputs only.
-  \item \textbf{Validation years only.} Designs were compared and chosen on the validation years, so the chosen design's validation performance is optimistic. The sticky slot order, for example, was chosen after seeing the first point-in-time run. The deflated Sharpe ratio corrects for this only in part. The 2023--2024 test years and the sealed post-2024 holdout have not been read.
+  \item \textbf{Validation years only.} Designs were compared and chosen on the validation years, so the chosen design's validation performance is optimistic. The sticky slot order and the shared-weight actor, for example, were chosen after seeing earlier point-in-time runs. The deflated Sharpe ratio corrects for this only in part. The 2023--2024 test years and the sealed post-2024 holdout have not been read.
   \item \textbf{Training budget and seeds.} Each model trained for 100{,}000 timesteps with three to five seeds on the 8~GB development machine. Longer training, more seeds, and the off-policy algorithms require the HPC cluster.
-  \item \textbf{Slot-based policy.} In the point-in-time environment the policy scores slot positions rather than stocks, so any change in the slot order changes portfolio weights. The sticky slot order removes almost all of these changes, but the policy's output still depends on which slot a stock occupies. A policy that scores each stock with shared weights would remove the dependence entirely. Neither design limits the policy's own week-to-week reweighting, which caused most of the sticky agent's remaining turnover.
+  \item \textbf{Slot order and turnover.} With the dense policy head, the agent scores slot positions rather than stocks, so any change in the slot order changes portfolio weights. The sticky slot order removes almost all of these changes, and the shared-weight actor removes the dependence entirely, as checked on all 21 of its trained models. Neither limits the policy's own week-to-week reweighting: after the initial purchase, the shared-weight agent still turned over 3.4 times its capital a year, against 0.9 for equal weight.
 \end{enumerate}

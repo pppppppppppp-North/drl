@@ -11,9 +11,9 @@ Use this file as the single running checklist for what has been completed and wh
 - `[ ]` Not started
 - `[!]` Blocked or needs attention
 
-## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07, sticky slots 2026-11-09
+## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07, sticky slots 2026-11-09, shared-weight actor 2026-11-10
 
-Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md). Outputs (git-ignored): `results/pit_walk_forward_20261107/`, `results/pit_walk_forward_sticky_20261109/` and `results/pit_walk_forward_combined_20261109/`. All 42 runs were local; no HPC job was submitted.
+Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md). Outputs (git-ignored): `results/pit_walk_forward_20261107/`, `results/pit_walk_forward_sticky_20261109/`, `results/pit_walk_forward_shared_20261110/`, `results/pit_walk_forward_combined_20261109/` and `results/pit_walk_forward_combined_20261110/`. All 63 runs were local; no HPC job was submitted.
 
 - `[x]` **Session mask and panel.** `src/data/point_in_time_panel.py` builds the 2012–2024 SET50/SET100 session mask (revisions apply from their publication date) and the per-ticker feature panel. Between 39 and 48 SET50 members are tradable on every session.
 - `[x]` **Environment.** `PointInTimeSlotEnv` (`src/envs/point_in_time_env.py`) has 50 masked slots and a one-session information lag. It forces exits on any session and uses self-financing accounting. `tests/test_point_in_time_env.py` (13 tests) and `tests/test_walk_forward_agent_diagnostics.py` (4) pass.
@@ -41,7 +41,7 @@ Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md)
   - **First run:** seven workers on the 8 GB Mac exhausted RAM and swap, and three runs were paused and resumed.
   - **Sticky run:** four workers thrashed with the usual desktop apps open; three ran at full speed.
   - **Guidance:** use three workers locally, or four with few other apps open.
-- `[~]` **Shared-weight policy head (M5), 2026-11-09.** `SharedAssetPolicy` (`src/models/shared_asset_policy.py`, `training.policy.actor: shared_asset`) scores every member with the same weights. Features are standardized with training-year statistics shared by all members, instead of `VecNormalize`'s separate statistics for every slot.
+- `[x]` **Shared-weight policy head (M5), built 2026-11-09, run 2026-11-10.** `SharedAssetPolicy` (`src/models/shared_asset_policy.py`, `training.policy.actor: shared_asset`) scores every member with the same weights. Features are standardized with training-year statistics shared by all members, instead of `VecNormalize`'s separate statistics for every slot.
   - **Tests:** `tests/test_shared_asset_policy.py` (10) pass.
     - **Slot order:** permuting the slots permutes the allocation and leaves the value and the log-probability unchanged. The dense head fails the same check.
     - **Rollouts:** deterministic rollouts are the same under sticky and traded-value orders.
@@ -51,9 +51,14 @@ Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md)
     - **Shared model:** its rollouts ended within 1 baht of each other (relative gap 3×10⁻¹⁰).
     - **Dense sticky model:** its rollouts ended about 5,000 baht apart (gap 0.65%).
     - **Speed:** training ran at the same speed as the dense head.
-  - **Not yet run:** the variant `pit_plan_weekly_lstm_shared` (sticky slots) is configured.
-    - **Turnover:** it does not limit the policy's own reweighting.
-    - **Trial count:** it would be the eighth design in the deflated-Sharpe count.
+  - **Walk-forward (2026-11-10):** the variant `pit_plan_weekly_lstm_shared` (sticky slots), 7 folds × 3 seeds × 100k timesteps.
+    - **Result:** the agent made **4.6% a year** (sticky 3.7%, first run −1.1%) and did better than the sticky agent in 5 of 7 years. It still trailed point-in-time equal weight (5.6%) and the ETF (7.1%), beating each only in 2020. Mean maximum drawdown −11.7% (equal weight −12.7%, ETF −11.2%).
+    - **Significance (8 designs):** +0.08 (95% CI −0.06 to +0.23) over the sticky agent and +0.36 (+0.24 to +0.54) over the first run. Against equal weight −0.03 (−0.11 to +0.04) and against the ETF −0.15 (−0.42 to +0.08), so neither shortfall is significant. Deflated Sharpe 0.29.
+    - **Slot order:** all 21 trained models gave the same rollout under both orders, to within 3×10⁻⁸. The 21 dense sticky models' annual returns moved by a median of 3.6 points (up to 24.7).
+    - **Diagnostics:** turnover fell from 9.4× to 4.3× a year and the cost drag from 2.0 to 0.9 points. The portfolio is close to equal weight: 43.7 effective names out of 44.5 tradable members, a daily-return correlation of 0.995. Seed s.d. of yearly returns fell from 3.9 to 1.5 points.
+    - **Cash:** 10.7% on average, but from four of the 21 models (19–79% cash each), not from market timing.
+    - **Run time:** 9 h 56 min of wall time with 3 workers. Batches of three took 50 minutes to about 3 hours, slowed by battery Low Power Mode and by other heavy work on the Mac.
+  - **Remaining turnover:** after the initial purchase the agent still turns over 3.4× a year (equal weight 0.9×). The head does not limit the policy's own reweighting.
 
 ## Point-in-Time Universe 2012–2024 (M3) — 2026-11-07
 
