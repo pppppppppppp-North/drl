@@ -5,6 +5,10 @@ Project title: **Deep Reinforcement Learning for Long-Term Profit Optimization i
 
 This file lists what to improve so that the project's results match each part of its title. It uses the same legend as `PROGRESS_CHECKLIST.md` (`[x]` done, `[~]` partial, `[ ]` not started, `[!]` blocked). Weeks are counted from the start of the work (W1 = first week), not from fixed calendar dates. Adjust them to the real submission deadline.
 
+> **Progress update 2026-11-10 (evening):** a seed ensemble and a no-trade band, applied to the 21 trained shared-weight models without new training, brought the agent level with equal weight ([report](docs/pit_walk_forward_20261107.md#follow-up-seed-ensemble-and-no-trade-band-2026-11-10)).
+> - **Effect:** 5.5% a year (equal weight 5.6%, ETF 7.1%). After the initial purchase it now turns over 0.7× a year, less than equal weight (0.9×).
+> - **Still no evidence of added value:** neither the Sharpe difference against equal weight (+0.04, 95% CI −0.05 to +0.11) nor the one against the ETF (−0.08) is significant. Part of the gain came from cash the band left in place in the 2020 crash. A run that trains with the band started the same night.
+>
 > **Progress update 2026-11-10:** the shared-weight policy head (M5) ran on the point-in-time SET50 (21 local models; [report](docs/pit_walk_forward_20261107.md#follow-up-shared-weight-actor-2026-11-10)).
 > - **Effect:** the trained models no longer depend on the slot order. Turnover halved again (4.3× a year, from 9.4×), and the return rose to 4.6% a year from 3.7%.
 > - **Still behind:** it trails equal weight (5.6%) and the SET50 ETF (7.1%), though no longer significantly. What it learned is close to equal weight; there is no evidence yet that the agent adds value over it.
@@ -157,6 +161,7 @@ Goal: a network that can actually use multi-source input across many assets.
     - **Slot order:** all 21 trained models gave the same rollout under both orders (within 3×10⁻⁸). The dense sticky models' annual returns moved by a median of 3.6 points.
     - **Result:** 4.6% a year and turnover 4.3× a year (sticky dense head 3.7% and 9.4×). The portfolio is close to equal weight (correlation 0.995). The gaps to equal weight (Sharpe −0.03, 95% CI −0.11 to +0.04) and to the ETF (−0.15, −0.42 to +0.08) are not significant.
   - **Limit:** the head does not limit the policy's own reweighting: after the initial purchase it still turns over 3.4× a year, against 0.9× for equal weight.
+  - **Seed ensemble and no-trade band (2026-11-10, no new training):** averaging the three seeds' target weights and trading a holding only when its target is more than 0.5 percentage points away gave 5.5% a year and 0.7× turnover after entry, level with equal weight (Sharpe +0.04, 95% CI −0.05 to +0.11). Training with the band (`pit_plan_weekly_lstm_shared_band`) started the same night.
 - `[ ]` Optionally compare against `RecurrentPPO` (sb3-contrib).
 
 **Exit criteria:** architecture ablation (MLP vs. fusion encoder) on validation with 5 or more seeds. *First version done with 3 seeds. Under the same reward, the fusion encoder gave +1.9% ± 1.1 and the MLP −8.8% ± 17.2 (2020–2022 validation). Repeat with ≥ 5 seeds on the broader universe.*

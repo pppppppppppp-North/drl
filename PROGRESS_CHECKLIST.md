@@ -11,9 +11,9 @@ Use this file as the single running checklist for what has been completed and wh
 - `[ ]` Not started
 - `[!]` Blocked or needs attention
 
-## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07, sticky slots 2026-11-09, shared-weight actor 2026-11-10
+## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07, sticky slots 2026-11-09, shared-weight actor, seed ensemble and no-trade band 2026-11-10
 
-Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md). Outputs (git-ignored): `results/pit_walk_forward_20261107/`, `results/pit_walk_forward_sticky_20261109/`, `results/pit_walk_forward_shared_20261110/`, `results/pit_walk_forward_combined_20261109/` and `results/pit_walk_forward_combined_20261110/`. All 63 runs were local; no HPC job was submitted.
+Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md). Outputs (git-ignored): `results/pit_walk_forward_20261107/`, `results/pit_walk_forward_sticky_20261109/`, `results/pit_walk_forward_shared_20261110/`, `results/pit_walk_forward_combined_20261109/`, `results/pit_walk_forward_combined_20261110/`, `results/pit_seed_ensemble_20261110/` and `results/pit_seed_ensemble_combined_20261110/`. All 63 runs were local; no HPC job was submitted.
 
 - `[x]` **Session mask and panel.** `src/data/point_in_time_panel.py` builds the 2012–2024 SET50/SET100 session mask (revisions apply from their publication date) and the per-ticker feature panel. Between 39 and 48 SET50 members are tradable on every session.
 - `[x]` **Environment.** `PointInTimeSlotEnv` (`src/envs/point_in_time_env.py`) has 50 masked slots and a one-session information lag. It forces exits on any session and uses self-financing accounting. `tests/test_point_in_time_env.py` (13 tests) and `tests/test_walk_forward_agent_diagnostics.py` (4) pass.
@@ -59,6 +59,15 @@ Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md)
     - **Cash:** 10.7% on average, but from four of the 21 models (19–79% cash each), not from market timing.
     - **Run time:** 9 h 56 min of wall time with 3 workers. Batches of three took 50 minutes to about 3 hours, slowed by battery Low Power Mode and by other heavy work on the Mac.
   - **Remaining turnover:** after the initial purchase the agent still turns over 3.4× a year (equal weight 0.9×). The head does not limit the policy's own reweighting.
+- `[x]` **Seed ensemble and no-trade band (2026-11-10), evaluated on the 21 trained shared-weight models without new training.** `scripts/evaluate_pit_seed_ensemble.py` first replays every unchanged model; all matched their saved curves (gap 2×10⁻¹⁶).
+  - **Designs:**
+    - **Seed ensemble:** the mean of the three seeds' target weights on every decision.
+    - **No-trade band:** `environment.no_trade_band: 0.005`. A holding is traded only when its target is more than 0.5 percentage points away; the width was fixed before any result. `tests/test_point_in_time_env.py` (16 tests) pass.
+  - **Result:** the ensemble with the band made **5.5% a year** (equal weight 5.6%, ETF 7.1%, shared actor 4.6%). Chained, 1 baht became 1.41, as in equal weight. The band alone gave 5.3% and the ensemble alone 4.8%.
+  - **Significance (13 designs):** the ensemble with the band is better than the shared actor (+0.07, 95% CI +0.03 to +0.10). Against equal weight it is +0.04 (−0.05 to +0.11) and against the ETF −0.08 (−0.36 to +0.15); neither is significant. Deflated Sharpe 0.27.
+  - **Diagnostics:** after the initial purchase, turnover is 0.7× a year (equal weight 0.9×) and the cost drag 0.3 points (0.4). Average cash stays at about 10.5%, but no year depends on one seed.
+  - **Caveat:** in 2020 the band added 2.7 points by leaving cash in place during the crash; outside 2020 it added 0.4 points a year, about its cost saving.
+- `[~]` **Training with the band (started 2026-11-10 23:08).** The variant `pit_plan_weekly_lstm_shared_band`, 7 folds × 3 seeds × 100k timesteps, 3 local workers (`results/pit_walk_forward_band_20261110/`). Its seed ensemble is the 13th design.
 
 ## Point-in-Time Universe 2012–2024 (M3) — 2026-11-07
 

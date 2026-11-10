@@ -1,8 +1,8 @@
 # Point-in-Time SET50 Walk-Forward (Milestone M3)
 
-Date: 2026-11-07; sticky-slot follow-up 2026-11-09; shared-weight actor 2026-11-10
+Date: 2026-11-07; sticky-slot follow-up 2026-11-09; shared-weight actor, seed ensemble and no-trade band 2026-11-10
 Evidence tier: **exploratory**. The index membership is official, but the prices are Yahoo's, and 13% of SET50 member-sessions (mostly delisted or merged names) have no prices.
-Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `results/pit_walk_forward_sticky_20261109/` (sticky slots), `results/pit_walk_forward_shared_20261110/` (shared-weight actor), `results/pit_walk_forward_combined_20261109/` (first two runs together) and `results/pit_walk_forward_combined_20261110/` (all three) · Config: `config/pit_walk_forward_experiment.yaml` · Figures: [first run](figures/pit_walk_forward_chained_equity_20261107.png), [first two runs](figures/pit_walk_forward_sticky_chained_equity_20261109.png), [all three runs](figures/pit_walk_forward_shared_chained_equity_20261110.png)
+Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `results/pit_walk_forward_sticky_20261109/` (sticky slots), `results/pit_walk_forward_shared_20261110/` (shared-weight actor), `results/pit_walk_forward_combined_20261109/` (first two runs together) `results/pit_walk_forward_combined_20261110/` (all three), `results/pit_seed_ensemble_20261110/` (seed ensemble and no-trade band, no training) and `results/pit_seed_ensemble_combined_20261110/` (with the shared-weight run) · Config: `config/pit_walk_forward_experiment.yaml` · Figures: [first run](figures/pit_walk_forward_chained_equity_20261107.png), [first two runs](figures/pit_walk_forward_sticky_chained_equity_20261109.png), [all three runs](figures/pit_walk_forward_shared_chained_equity_20261110.png), [seed ensemble with no-trade band](figures/pit_seed_ensemble_chained_equity_20261110.png)
 
 **Summary.**
 - **Result:** on the actual SET50 membership of each session, the DRL design that roughly matched the market on five hand-picked stocks lost money: −1.1% a year, against 7.1% for the SET50 ETF and 5.6% for equal weight. Unlike the five-stock comparisons, the Sharpe differences are statistically significant.
@@ -10,6 +10,7 @@ Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `res
 - **Why the agent lost:** most of the shortfall is trading costs. The policy scores slot positions, so it reacts to the weekly reshuffling of slots and turns over 28 times its capital a year.
 - **Fix (run 2026-11-09):** a sticky slot order, which keeps each member in its slot, cut turnover to a third and raised the agent's return to 3.7% a year. It beat the first run in all seven years, and the improvement is significant. The agent still trailed equal weight and the ETF, again mostly through trading costs. Both shortfalls are statistically significant, but only just.
 - **Shared-weight actor (run 2026-11-10):** a policy head that scores every stock with the same weights no longer depends on the slot order at all. It halved turnover again and raised the return to 4.6% a year, with a portfolio close to equal weight. It still trailed equal weight (5.6%) and the ETF (7.1%), but neither shortfall is statistically significant.
+- **Seed ensemble and no-trade band (2026-11-10, no new training):** averaging the three seeds' portfolios and skipping trades smaller than 0.5 percentage points brought the shared-weight agent to 5.5% a year, level with equal weight (5.6%), while trading less than equal weight. Its Sharpe ratio was slightly above equal weight's and below the ETF's; neither difference is significant. Part of the gain came from cash it happened to hold through the 2020 crash.
 
 ## Question
 
@@ -226,9 +227,75 @@ The reward, encoder, folds, seeds and budget are unchanged: 21 models (7 folds �
 **What it means:**
 - **The head fixed what it was built to fix.** The policy no longer depends on the slot order, it trades half as much as the sticky agent, and its seeds agree more closely.
 - **What it learned is close to equal weight, with somewhat higher costs and a seed-dependent cash holding.** The return is still below equal weight and the ETF, though no longer significantly. Across the three runs there is no evidence that the agent adds value over equal weight on the point-in-time index.
-- **Possible next steps (not run):** each would add a design to the deflated Sharpe count.
+- **Next steps:** each adds a design to the deflated Sharpe count. Both were tried next (see the next section).
   - **Turnover:** a no-trade band, a turnover penalty or monthly decisions would target the remaining 3.4 times a year after entry.
   - **Cash:** averaging the three seeds' weights would damp the seed-specific cash holdings.
+
+## Follow-up: seed ensemble and no-trade band (2026-11-10)
+
+**What it tests:** whether the shared-weight agent's two remaining weaknesses, extra trading and seed-dependent cash, can be removed without training. Both changes were applied to the 21 trained shared-weight models (`scripts/evaluate_pit_seed_ensemble.py`):
+- **Seed ensemble:** on every weekly decision, the three seeds' models score the same observation, and the portfolio holds the mean of their target weights, cash included.
+- **No-trade band:** a holding is traded only when the policy's target differs from its current weight by more than 0.5 percentage points, about a fifth of an equal-weight position. (A 25% relative band at 44 holdings would be 0.57 points.) Otherwise the holding is left as it is, and cash takes up the difference (`environment.no_trade_band` in `src/envs/point_in_time_env.py`).
+  - **Fixed in advance:** the width was set before any band result was seen.
+  - **Evaluation only:** the models were trained without the band.
+- **Check:** before the new evaluations, every unchanged model replayed its saved validation curve exactly (largest relative gap 2×10⁻¹⁶).
+
+| Strategy | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | **Mean** | Years beating ETF | Mean max DD |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| SET50 ETF buy-and-hold (TDEX) | 24.5% | 18.2% | −6.5% | 5.7% | −11.8% | 12.1% | 7.8% | **7.1%** | — | −11.2% |
+| Point-in-time SET50 equal weight | 22.2% | 16.5% | −10.0% | 6.5% | −8.5% | 11.9% | 0.7% | **5.6%** | 2/7 | −12.7% |
+| **Seed ensemble + no-trade band** | 21.2% | 15.3% | −9.7% | 5.6% | −3.8% | 10.0% | 0.2% | **5.5%** | 1/7 | −11.3% |
+| No-trade band at evaluation (± s.d. over 3 seeds) | 20.8% ± 1.1 | 15.0% ± 1.9 | −10.1% ± 0.8 | 5.1% ± 3.4 | −4.4% ± 4.3 | 10.5% ± 2.3 | 0.0% ± 0.3 | **5.3%** | 1/7 | −11.5% |
+| Seed ensemble | 20.7% | 14.6% | −9.9% | 4.8% | −6.5% | 10.0% | −0.1% | **4.8%** | 1/7 | −11.7% |
+| DRL, shared-weight actor (± s.d. over 3 seeds) | 20.5% ± 0.7 | 14.5% ± 1.8 | −10.2% ± 0.6 | 4.7% ± 3.0 | −6.8% ± 2.0 | 9.8% ± 1.9 | −0.4% ± 0.4 | **4.6%** | 1/7 | −11.7% |
+
+**Level with equal weight, mostly through the band:**
+- **Return:** with both changes the agent made 5.5% a year, against 5.6% for equal weight. Chained over the seven years, 1 baht became 1.41 in both ([figure](figures/pit_seed_ensemble_chained_equity_20261110.png)). It beat equal weight in 2018 and 2020, and the ETF only in 2020.
+- **Each change on its own:** the band raised the return from 4.6% to 5.3% a year; the ensemble raised it to 4.8%.
+- **2020 carries part of the band's gain.** Outside 2020, the band added 0.4 points a year to the ensemble, about what it saved in costs. In 2020 it added 2.7 points. In March the ensemble without the band cut its cash from 21% to 11%, buying into the crash. With the band, most of those purchases were smaller than the band, and cash fell only to 17%. The agent did not choose to hold that cash; the band left it in place.
+
+**Significance.** Sharpe ratios on the same 1,699 chained daily returns, with the same stationary bootstrap:
+
+| Comparison | Sharpe difference | 95% interval |
+| --- | ---: | ---: |
+| Seed ensemble + band − shared actor | +0.07 | +0.03 to +0.10 |
+| Band at evaluation − shared actor | +0.05 | +0.03 to +0.06 |
+| Seed ensemble − shared actor | +0.01 | +0.01 to +0.02 |
+| Seed ensemble + band − point-in-time equal weight | +0.04 | −0.05 to +0.11 |
+| Seed ensemble + band − ETF | −0.08 | −0.36 to +0.15 |
+
+- **DRL:** the ensemble with the band had a Sharpe ratio of 0.42 (−0.33 to +1.18), against 0.38 for equal weight, 0.50 for the ETF and 0.35 for the shared actor.
+- **Deflated Sharpe:** 0.27, counting 13 designs, all chosen after seeing earlier validation results:
+  - the eight above;
+  - the three here;
+  - the run that trains with the band (below) and its seed ensemble.
+
+  At 13 designs the shared actor's value is 0.22 (0.29 at eight).
+- **Reading:** all three changes improve significantly on the shared agent. The curves are highly correlated, so even small differences are measurable. Against equal weight, the ensemble with the band has a slightly higher Sharpe ratio and a slightly lower return; neither difference is significant. It stays below the ETF, also not significantly.
+
+**Where the return went.** The same diagnostics as above, as means over the seven years:
+
+| Strategy | Return before costs | Cost drag | Return after costs | Turnover a year | after the initial purchase | Average cash |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| **Seed ensemble + no-trade band** | 5.9% | 0.3% | 5.5% | 1.6× | 0.7× | 10.5% |
+| No-trade band at evaluation | 5.7% | 0.5% | 5.3% | 2.2× | 1.4× | 11.0% |
+| Seed ensemble | 5.5% | 0.7% | 4.8% | 3.3× | 2.4× | 10.6% |
+| DRL, shared-weight actor | 5.5% | 0.9% | 4.6% | 4.3× | 3.4× | 10.7% |
+| Equal weight, point-in-time SET50 | 6.0% | 0.4% | 5.6% | 1.9× | 0.9× | 0.7% |
+
+- **It now trades less than equal weight.** After the initial purchase, the ensemble with the band turned over 0.7 times its capital a year, against 0.9 for equal weight. Its cost drag of 0.3 points was below equal weight's 0.4.
+- **Averaging the seeds smooths the trading.** The ensemble alone cut turnover from 4.3 to 3.3 times a year, because the seeds' week-to-week changes partly cancel.
+- **The ensemble did not remove the cash.**
+  - **Average:** the ensemble holds the seeds' mean cash, so the average stays at about 10.6%.
+  - **Spread:** no year now depends on one seed. The highest yearly average fell from 79% (2019, seed 44) to 29%.
+- **Still close to equal weight:** daily correlation 0.998 with equal weight, and 43.9 effective holdings out of 44.5 tradable members.
+- **The remaining 0.07-point gap:** 0.13 points lower return before costs, partly offset by 0.06 points lower costs.
+
+**What it means:**
+- **Engineering, not learning, closed most of the gap.** The two weaknesses of the shared-weight run were trading and seed dependence. An execution rule and averaging over seeds removed most of the gap to equal weight without new training.
+- **Indistinguishable from equal weight, with less trading.** The agent now has a slightly higher Sharpe ratio and a slightly lower return than equal weight.
+- **Still no evidence that it adds value.** What it learned is close to equal weight, and part of the remaining gain came from cash the band left in place during the 2020 crash.
+- **Next:** training with the band (variant `pit_plan_weekly_lstm_shared_band`, 21 models) started on 2026-11-10 and will be reported here.
 
 ## Run it
 
@@ -278,6 +345,23 @@ python -m scripts.aggregate_walk_forward_reward --run-dir results/pit_walk_forwa
   pit_plan_weekly_lstm_shared="DRL, shared-weight actor"
 python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_walk_forward_shared --variant pit_plan_weekly_lstm_shared \
   --pit-config config/pit_walk_forward_experiment.yaml
+```
+
+The seed ensemble and the no-trade band reuse the trained shared-weight models, so they need no training. They take about a minute. Before evaluating, the script replays every unchanged model and stops if a replay differs from its saved curve:
+
+```bash
+python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_experiment.yaml \
+  --source-run results/pit_walk_forward_shared --variant pit_plan_weekly_lstm_shared \
+  --output-dir results/pit_seed_ensemble --band 0.005
+python -m scripts.aggregate_walk_forward_reward --run-dir results/pit_seed_ensemble \
+  --extra-run-dirs results/pit_walk_forward_shared --n-trials 13 --output-dir results/pit_seed_ensemble_combined \
+  --references pit_plan_weekly_lstm_shared --labels pit_plan_weekly_lstm_shared="DRL, shared-weight actor" \
+  pit_plan_weekly_lstm_shared_ensemble="Seed ensemble" pit_plan_weekly_lstm_shared_ensemble_band="Seed ensemble, no-trade band" \
+  pit_plan_weekly_lstm_shared_evalband="No-trade band at evaluation"
+for v in ensemble ensemble_band evalband; do
+  python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_seed_ensemble \
+    --variant pit_plan_weekly_lstm_shared_$v --prefix diagnostics_$v
+done
 ```
 
 To check that trained models ignore the slot order, roll them out under both orders, one validation year at a time:
