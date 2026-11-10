@@ -190,7 +190,7 @@ Goal: final evidence for each research question in the implementation plan.
 - `[x]` Add block-bootstrap confidence intervals for the Sharpe and return difference versus each benchmark (*`src/evaluation/significance.py`, using a stationary bootstrap with paired differences*).
 - `[x]` Apply the **Deflated Sharpe Ratio** or a similar multiple-testing correction. The 30-configuration × 6-fold × 3-seed grid has 540 cells, so the best cell will look good partly by chance. *Probabilistic and Deflated Sharpe are implemented, with a CLI: `python -m src.evaluation.significance --curves ... --n-trials N`.*
 - `[x]` Add policy attribution (permutation importance or SHAP on the actor) so "which source contributes most" has evidence beyond ablations. *`src/evaluation/attribution.py` and `scripts/feature_group_attribution.py` shuffle each data-source group over time and re-run the trained agents. Across 35 models per design, the LSTM agent's weights moved 5.8% (technical) and 2.5% (market) with no return effect. The MLP agent's weights moved 27% and 19%, and its return fell about 2% a year.*
-- `[ ]` Write the final metric formulas into the evaluation policy. This is decision 7 in the decision packet.
+- `[~]` Write the final metric formulas into the evaluation policy. This is decision 7 in the decision packet. *The formulas the code uses now, and where they differ from the decision-7 default, are written up for the review in [`docs/evaluation_metric_formulas_20261110.md`](docs/evaluation_metric_formulas_20261110.md) (2026-11-10). Two Sharpe definitions are in use, and the primary score's reference and statistic are not fixed. The decision itself still needs the review meeting (M0).*
 
 ---
 
