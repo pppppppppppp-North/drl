@@ -110,6 +110,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
     - **2020:** the ensemble with the band lost 3.8% against 8.5%, because the band left cash in place during the March crash.
     - **2018:** the agent trained with the band lost 7.2% against 10.0%, because one of its three models held 93% cash all year.
   - **Seeds:** in neither case was the cash holding consistent across seeds.
+  - **Not market timing:** eleven models across three designs held 37–86% cash on average over their year. Re-running them with an input group shuffled across sessions moved their cash by 5 points or less in ten of them. Holding their inputs at the training mean lowered it by at most 18 points. The cash is a fixed bias each seed learned, not a response to the market ([attribution](pit_walk_forward_20261107.md#follow-up-bot-policy-rate-as-an-input-2026-11-11)).
   - **2022:** every equal-weight-like strategy trailed the ETF (agent 0.2%, equal weight 0.7%, ETF 7.8%), as the largest members led.
 
 ## RQ6. Can BistKA HPC be used efficiently for reproducible training, hyperparameter tuning and sentiment feature extraction?
