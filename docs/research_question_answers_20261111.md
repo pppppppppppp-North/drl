@@ -11,7 +11,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 | # | Question (abridged) | Short answer | Evidence |
 | --- | --- | --- | --- |
 | 1 | Can a continuous-action DRL agent learn profitable long-term allocation for Thai equities? | **Profitable, but no better than simple benchmarks.** | Strong for the negative part |
-| 2 | Does multi-source data beat price-only and technical-only agents? | **Only market-index context helped, and only borderline;** macro proxies did not. | Weak; point-in-time arms pending |
+| 2 | Does multi-source data beat price-only and technical-only agents? | **Only market-index context helped, and only borderline;** macro proxies did not, and the official policy rate lowered the return. | Weak; the point-in-time macro arm is running |
 | 3 | Which data sources contribute most? | **Market-index context, among the sources tested;** most planned sources have no historical data. | Weak, incomplete |
 | 4 | Which DRL algorithm is most stable? | **PPO over A2C, not significantly;** the off-policy algorithms are not run. | Partial |
 | 5 | Does the policy generalize across regimes, including COVID-19? | **Its behaviour is stable across regimes, but it shows no regime skill;** its crash-year gains came from cash that depended on the seed. | Moderate |
@@ -30,7 +30,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
   - **First design:** −1.1% a year, significantly worse than the ETF (Sharpe −0.51, 95% CI −0.87 to −0.26) and equal weight (−0.40, −0.58 to −0.28). It overtraded because it scored slot positions rather than stocks.
   - **Best design:** after four follow-ups (sticky slots, a shared-weight actor, a seed ensemble and a no-trade band), it made 5.5% a year, against 5.6% for equal weight and 7.1% for the ETF. Chained over 2016–2022, 1 baht became 1.41, as for equal weight; the ETF reached 1.55.
   - **Sharpe ratios:** 0.42 for the best design, 0.38 for equal weight and 0.50 for the ETF. Neither difference is significant: +0.04 (−0.05 to +0.11) and −0.08 (−0.36 to +0.15).
-  - **Deflated Sharpe:** 0.27, counting the 13 designs tried.
+  - **Deflated Sharpe:** 0.25, counting the 15 designs tried so far (0.27 at 13).
   - **Training with the band:** 5.1% a year, and 5.2% as a seed ensemble.
 - **What it learned:** close to equal weight. Its daily correlation with equal weight is 0.998, with 43.9 effective holdings out of 44.5 tradable members.
 - **Other benchmarks on the same universe:** none is significantly better or worse than the agent.
@@ -39,7 +39,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 
 ## RQ2. Does adding multi-source data improve out-of-sample performance compared with price-only and technical-indicator-only agents?
 
-**Answer:** only weakly, and only for market-index context. The daily macro proxies did not help. The other sources have not been tested, and the point-in-time arms are still running.
+**Answer:** only weakly, and only for market-index context. The daily macro proxies did not help on five stocks. On the point-in-time index, the official policy rate lowered the return. The other sources have not been tested, and the point-in-time macro-proxy arm is still running.
 
 - **Five stocks** ([source ablation](source_ablation_20261106.md); 7 folds × 3 seeds per arm, everything else fixed):
 
@@ -51,10 +51,16 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 
   The market-context gain is borderline. Its interval touches zero, and three comparisons were made.
 - **Not run:** a price-only arm. Technical-only is the lowest arm.
-- **Point-in-time SET50, in progress:**
-  - **BOT policy rate:** the shared-weight agent plus five official policy-rate inputs. It started on 2026-11-11 at 02:38 (`config/pit_walk_forward_policy_rate.yaml`).
-  - **Macro proxies:** the same agent plus the eight daily macro-proxy inputs. It is queued to start right after (`config/pit_walk_forward_macro.yaml`).
-  - **Comparison:** both arms will be compared with the shared-weight run, which differs only in its inputs.
+- **Point-in-time SET50** ([report](pit_walk_forward_20261107.md#follow-up-bot-policy-rate-as-an-input-2026-11-11); the shared-weight agent, 7 folds × 3 seeds, only the inputs changed):
+
+  | Inputs | Mean annual return | Seed ensemble + band | Ensemble Sharpe difference (95% CI) |
+  | --- | ---: | ---: | --- |
+  | Technical + SET50 market context | 4.6% | 5.5% | — |
+  | + BOT policy rate (5 inputs) | 4.1% | 4.5% | −0.06 vs without it (−0.11 to −0.01) |
+
+  - **Policy rate:** the ensemble's shortfall is significant; the single models' is not (−0.02, −0.09 to +0.03).
+  - **Why:** the trained models barely use the new inputs. So the shortfall reflects how training turned out with them, chiefly cash that depended on the seed, not information in the rate.
+  - **Macro proxies:** the same agent plus the eight daily macro-proxy inputs. It started on 2026-11-11 at 06:16 (`config/pit_walk_forward_macro.yaml`) and is compared in the same way.
 
 ## RQ3. Which data sources contribute most to performance?
 
@@ -64,8 +70,8 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 | --- | --- | --- |
 | Technical indicators | Tested (every arm) | The base of every agent; on its own, 6.8% a year on five stocks |
 | Market index context (SET50 ETF) | Tested | +1.4 points a year and +0.10 Sharpe on five stocks, borderline |
-| Daily macro proxies (USD/THB, oil, gold, US 10-year yield) | Tested on five stocks; point-in-time arm queued | No gain. The agent reads them: shuffling them moves its weights by 2.9%, against 1.9% for market context. Shuffling any group changes the return by 0.25 points or less |
-| Official BOT policy rate | Point-in-time arm running | Pending |
+| Daily macro proxies (USD/THB, oil, gold, US 10-year yield) | Tested on five stocks; point-in-time arm running | No gain. The agent reads them: shuffling them moves its weights by 2.9%, against 1.9% for market context. Shuffling any group changes the return by 0.25 points or less |
+| Official BOT policy rate | Tested on the point-in-time index | Lowered the return: 4.1% against 4.6% a year, and 4.5% against 5.5% for the seed ensemble with the band (Sharpe −0.06, significant). The agent barely reads it: shuffling it moves the weights by 0.7%, against 0.9% for market context and 3.5% for the technical inputs |
 | Financial statements | Not tested | Five stocks and recent years only; no shares outstanding for P/E and P/BV |
 | Thai news sentiment | Not tested | The scorer exists; there is no historical news for 2014–2024 |
 | Sector context | Not tested | Implemented for the V3 universe; not switched on in the point-in-time runs |
@@ -126,6 +132,6 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 ## What would change these answers
 
 - **RQ1, RQ5:** the single evaluation of the final configuration on the 2023–2024 test years and the sealed 2025+ holdout, after the design is locked. Licensed SETSMART data would remove the survivorship gap.
-- **RQ2, RQ3:** the point-in-time policy-rate and macro arms (running and queued), then historical news, investor flow and point-in-time fundamentals.
+- **RQ2, RQ3:** the point-in-time macro-proxy arm (running), then historical news, investor flow and point-in-time fundamentals.
 - **RQ4:** the SAC, TD3 and DDPG array on BistKA.
 - **RQ6:** that array, with its service hours, queue time and measured speed-up.

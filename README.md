@@ -165,6 +165,7 @@ These extensions live in new modules, so no file in the manifest-locked V2 relea
 - `scripts/pit_heuristic_baselines.py`: momentum, inverse-volatility and minimum-variance benchmarks on the point-in-time SET50, on the same sessions, costs and accounting as the walk-forward.
 - `scripts/evaluate_pit_seed_ensemble.py`: evaluates trained point-in-time models as a seed ensemble (the mean of the seeds' target weights) and with a no-trade band (`environment.no_trade_band`), without training. It first replays every model against its saved validation curve.
 - `scripts/pit_lstm_forecast_baseline.py`: the LSTM forecast-then-allocate benchmark on the point-in-time SET50. A Bi-LSTM fitted per fold on the training years buys its ten best positive 21-session forecasts every month; it also records the forecasts' information coefficient.
+- `scripts/pit_feature_group_attribution.py`: re-runs each trained point-in-time model with one input group (technical, market, policy rate, macro) shuffled across sessions or held at its training mean, and reports how far its portfolio, return and cash move.
 - `scripts/build_slim_results_archive.py`: a verified tar.gz of code, configs, documents, input receipts and run outputs, without trained models, worker logs or price files ([runbook](docs/reproduce_20261111.md)).
 
 Config options read by `src.train_long_term` and the experiment scripts:
@@ -242,6 +243,11 @@ python -m scripts.build_slim_results_archive --output results/<slim-archive>.tar
 RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm_shared_band SEEDS="42 43 44" \
   scripts/run_walk_forward_reward.sh results/<pit-band-run> 3 100000
 python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_experiment.yaml --source-run results/<pit-band-run> --variant pit_plan_weekly_lstm_shared_band --output-dir results/<pit-band-ensemble> --modes ensemble
+# Source arm: the shared-weight agent plus the BOT policy rate, its seed ensemble with the band, and the input attribution
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_policy_rate.yaml VARIANTS=pit_plan_weekly_lstm_shared_policy SEEDS="42 43 44" \
+  scripts/run_walk_forward_reward.sh results/<pit-policy-run> 3 100000
+python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_policy_rate.yaml --source-run results/<pit-policy-run> --variant pit_plan_weekly_lstm_shared_policy --output-dir results/<pit-policy-ensemble> --band 0.005 --modes ensemble_band
+python -m scripts.pit_feature_group_attribution --config config/pit_walk_forward_policy_rate.yaml --run-dir results/<pit-policy-run> --variant pit_plan_weekly_lstm_shared_policy
 # Official BOT policy-rate history
 python -m src.data.ingest_bot_policy_rate --input data/external/original/bot_policy_rate_mpc_table_asof_20261028.xlsx --output data/external/bot_policy_rate_history.csv --source-url <url> --retrieved-at <utc>
 ```

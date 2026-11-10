@@ -119,6 +119,9 @@ python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_ex
 python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_experiment.yaml \
   --source-run results/pit_walk_forward_band_20261110 --variant pit_plan_weekly_lstm_shared_band \
   --output-dir results/pit_band_ensemble_20261111 --modes ensemble
+python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_policy_rate.yaml \
+  --source-run results/pit_walk_forward_policy_20261111 --variant pit_plan_weekly_lstm_shared_policy \
+  --output-dir results/pit_policy_ensemble_20261111 --band 0.005 --modes ensemble_band
 ```
 
 ## 6. Point-in-time SET50: benchmarks (M3, M6)
@@ -145,7 +148,7 @@ python -m scripts.pit_lstm_forecast_baseline --config config/pit_walk_forward_ex
 - the chained equity figure;
 - the bootstrap Sharpe tests against the ETF, equal weight and every `--references` variant.
 
-`--n-trials` is the number of designs counted by the deflated Sharpe ratio: 13 for the point-in-time results. The exact combinations behind each table are in each report's "Run it" section. For example, the band-training tables:
+`--n-trials` is the number of designs counted by the deflated Sharpe ratio on the point-in-time results: 13 up to the band training, 15 with the policy-rate arm, and 17 with the macro-proxy arm. The exact combinations behind each table are in each report's "Run it" section. For example, the band-training tables:
 
 ```bash
 python -m scripts.aggregate_walk_forward_reward --run-dir results/pit_walk_forward_band_20261110 \
@@ -155,6 +158,16 @@ python -m scripts.aggregate_walk_forward_reward --run-dir results/pit_walk_forwa
   pit_plan_weekly_lstm_shared_band_ensemble --output-dir results/pit_walk_forward_combined_band_20261111
 python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_walk_forward_band_20261110 \
   --variant pit_plan_weekly_lstm_shared_band --pit-config config/pit_walk_forward_experiment.yaml
+```
+
+The input attribution re-runs every saved model with one input group shuffled or held at its training mean. It takes a few minutes per run:
+
+```bash
+python -m scripts.pit_feature_group_attribution --config config/pit_walk_forward_policy_rate.yaml \
+  --run-dir results/pit_walk_forward_policy_20261111 --variant pit_plan_weekly_lstm_shared_policy
+python -m scripts.pit_feature_group_attribution --config config/pit_walk_forward_experiment.yaml \
+  --run-dir results/pit_walk_forward_shared_20261110 --variant pit_plan_weekly_lstm_shared \
+  --output-dir results/pit_attribution_shared_20261111
 ```
 
 The formulas are in [`evaluation_metric_formulas_20261110.md`](evaluation_metric_formulas_20261110.md).
