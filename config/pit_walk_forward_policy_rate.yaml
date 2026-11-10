@@ -1,0 +1,107 @@
+# Source ablation on the point-in-time SET50 (milestones M4 and M6): the shared-weight agent of
+# config/pit_walk_forward_experiment.yaml (variant pit_plan_weekly_lstm_shared) plus the official Bank of
+# Thailand policy-rate features as market-level inputs (src/features/policy_rate_context.py): the rate, its
+# one-year change, the last change, the time since it, and the MPC dissent share. Each decision is available
+# from the session after its announcement, and decisions after splits.validation_end are dropped before the
+# merge. Everything else, including data, splits, base settings and seeds, is generated from
+# pit_walk_forward_experiment.yaml and must stay identical to it, so the comparison with the shared run
+# changes only the inputs. The constant bot_policy_available flag is not used.
+project:
+  name: pit_walk_forward_policy_rate
+  seed: 42
+data:
+  membership: data/reference/set50_set100_membership_2012_2024.csv
+  price_map: data/raw/extended/set100_2012_2024_additions/member_price_map_2012_2024.csv
+  prices:
+  - data/raw/extended/prices_set100_union_2012_2024.csv.gz
+  - data/raw/extended/set100_2012_2024_additions/prices_set100_2012_2024_additions.csv.gz
+  index: data/raw/extended/index_set50_etf_2012_2024.csv
+  index_name: set50_etf
+  universe: set50
+  policy_rate: data/external/bot_policy_rate_history.csv
+splits:
+  validation_end: '2022-12-30'
+universe:
+  num_slots: 50
+  min_history_sessions: 60
+features:
+  lookback: 30
+  stock_columns:
+  - return_1d
+  - return_5d
+  - return_20d
+  - volatility_20d
+  - ma_ratio_10
+  - ma_ratio_30
+  - rsi_14
+  - macd
+  - bollinger_z
+  - atr_14
+  - volume_ratio_20
+  market_columns:
+  - set50_etf_return_1d
+  - set50_etf_return_5d
+  - set50_etf_return_20d
+  - set50_etf_volatility_20d
+  - set50_etf_ma_ratio_20
+base:
+  environment:
+    initial_cash: 1000000.0
+    transaction_cost: 0.0015
+    slippage: 0.0005
+    rebalance_every: 5
+    train_random_start: true
+    train_episode_length: 504
+    reward:
+      type: plan_main
+      sharpe_weight: 0.1
+      sharpe_eta: 0.01
+      drawdown_penalty: 0.5
+      drawdown_mode: increment
+      turnover_penalty: 0.0
+      scale: 100.0
+  training:
+    algo: ppo
+    total_timesteps: 100000
+    gamma: 0.99
+    normalize_observations: true
+    verbose: 0
+    policy:
+      features_extractor: asset_lstm
+      market_feature_columns:
+      - set50_etf_return_1d
+      - set50_etf_return_5d
+      - set50_etf_return_20d
+      - set50_etf_volatility_20d
+      - set50_etf_ma_ratio_20
+      hidden_size: 32
+      fusion_size: 16
+      net_arch:
+      - 64
+      - 64
+seeds:
+- 42
+- 43
+- 44
+variants:
+- name: pit_plan_weekly_lstm_shared_policy
+  description: As pit_plan_weekly_lstm_shared, plus the official BOT policy-rate features as market inputs
+  universe:
+    slot_order: sticky
+  features:
+    market_columns: &id001
+    - set50_etf_return_1d
+    - set50_etf_return_5d
+    - set50_etf_return_20d
+    - set50_etf_volatility_20d
+    - set50_etf_ma_ratio_20
+    - bot_policy_rate
+    - bot_policy_rate_change_1y
+    - bot_last_change_bp
+    - bot_years_since_change
+    - bot_last_dissent_share
+  training:
+    normalize_observations: false
+    policy:
+      actor: shared_asset
+      market_feature_columns: *id001

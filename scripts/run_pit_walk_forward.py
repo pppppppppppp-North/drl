@@ -9,6 +9,9 @@ archive, restricted to members with Yahoo prices. Baselines on the same sessions
 - ``set50_etf_buy_hold``: the SET50 ETF (TDEX), which tracks the full index, including members
   that Yahoo has no prices for.
 
+With ``data.policy_rate`` set, the official BOT policy-rate features are added as market-level
+inputs (see ``add_policy_rate``); a variant uses them by listing them in its market columns.
+
 Validation never reads past ``splits.validation_end`` (2022-12-30), so the 2023-2024 test years
 and the sealed 2025+ holdouts are never loaded. The output layout matches
 ``scripts.aggregate_walk_forward_reward`` (``<run>/fold_<Y>/<part>/validation_equity_curves.csv``).
@@ -53,7 +56,24 @@ def load_inputs(spec: dict, root: Path) -> tuple[pd.DataFrame, pd.DataFrame, dic
     )
     if data.get("universe", "set50") == "set50":
         mask = mask[mask["in_set50"]]
+    if data.get("policy_rate"):
+        history = pd.read_csv(root / data["policy_rate"])
+        panel = add_policy_rate(panel, history, spec["splits"]["validation_end"])
+        receipt = {**receipt, "policy_rate": str(data["policy_rate"])}
     return mask.reset_index(drop=True), panel, receipt
+
+
+def add_policy_rate(panel: pd.DataFrame, history: pd.DataFrame, validation_end: str) -> pd.DataFrame:
+    """Add the official BOT policy-rate features (``src.features.policy_rate_context``) to every row.
+
+    They are market-level: one value per session, the same for every stock. A decision becomes
+    available from the session after its announcement. Decisions announced after ``validation_end``
+    are dropped first, so nothing from the test years or the holdout enters.
+    """
+    from src.features.policy_rate_context import merge_policy_rate_context
+
+    history = history[pd.to_datetime(history["announcement_date"]) <= pd.Timestamp(validation_end)]
+    return merge_policy_rate_context(panel, history).drop(columns=["bot_source_announcement"])
 
 
 def window(panel: pd.DataFrame, start: str | None, end: str, lookback: int) -> pd.DataFrame:
