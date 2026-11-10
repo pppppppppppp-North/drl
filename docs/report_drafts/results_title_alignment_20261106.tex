@@ -215,6 +215,9 @@ Equal weight (2024 SET50 members, hindsight) & 12.2\% & $+5.1\%$ & 7/7 & $-11.9\
 Equal weight (five starter stocks) & 10.1\% & $+3.0\%$ & 4/7 & $-13.9\%$ \\
 SET50 ETF buy-and-hold & 7.1\% & -- & -- & $-11.2\%$ \\
 Ridge forecast, top ten (point-in-time SET50) & 5.7\% & $-1.4\%$ & 3/7 & $-17.6\%$ \\
+Momentum, top ten (point-in-time SET50) & 5.3\% & $-1.8\%$ & 3/7 & $-17.3\%$ \\
+Inverse volatility (point-in-time SET50) & 5.0\% & $-2.1\%$ & 1/7 & $-12.2\%$ \\
+Minimum variance (point-in-time SET50) & 4.0\% & $-3.1\%$ & 3/7 & $-10.9\%$ \\
 Equal weight (point-in-time SET50) & 5.6\% & $-1.5\%$ & 2/7 & $-12.7\%$ \\
 DRL, shared-weight actor, seed ensemble + no-trade band (point-in-time SET50) & 5.5\% & $-1.6\%$ & 1/7 & $-11.3\%$ \\
 DRL, plan reward + LSTM, shared-weight actor (point-in-time SET50) & 4.6\% & $-2.5\%$ & 1/7 & $-11.7\%$ \\
@@ -233,7 +236,10 @@ that of the ETF by 0.24 (0.04 to 0.49). Equal weight over the actual members tra
 capitalization-weighted ETF, though not significantly.
 The ridge forecaster, which earned 12.8\% a year on the five starter stocks, earned 5.7\% on the
 point-in-time universe, so its earlier advantage came from the universe rather than from forecasting
-skill.
+skill. Three standard heuristics, rebalanced monthly with parameters fixed in advance, did no better:
+momentum (the ten members with the highest return from twelve months to one month earlier) made 5.3\%
+a year, inverse-volatility weighting 5.0\%, and a long-only minimum-variance portfolio 4.0\%. None of
+their Sharpe differences against equal weight or the ETF is significant.
 
 With the slots ordered by traded value, the DRL agent lost money: $-1.1\%$ a year, against 5.6\% for equal weight over the same members and
 7.1\% for the ETF. It trailed both in every year, including a 15.1\% loss in 2020, and its mean maximum

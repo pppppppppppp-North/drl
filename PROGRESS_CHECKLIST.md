@@ -13,7 +13,7 @@ Use this file as the single running checklist for what has been completed and wh
 
 ## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07, sticky slots 2026-11-09, shared-weight actor, seed ensemble and no-trade band 2026-11-10
 
-Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md). Outputs (git-ignored): `results/pit_walk_forward_20261107/`, `results/pit_walk_forward_sticky_20261109/`, `results/pit_walk_forward_shared_20261110/`, `results/pit_walk_forward_combined_20261109/`, `results/pit_walk_forward_combined_20261110/`, `results/pit_seed_ensemble_20261110/` and `results/pit_seed_ensemble_combined_20261110/`. All 63 runs were local; no HPC job was submitted.
+Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md). Outputs (git-ignored): `results/pit_walk_forward_20261107/`, `results/pit_walk_forward_sticky_20261109/`, `results/pit_walk_forward_shared_20261110/`, `results/pit_walk_forward_combined_20261109/`, `results/pit_walk_forward_combined_20261110/`, `results/pit_seed_ensemble_20261110/`, `results/pit_seed_ensemble_combined_20261110/` and `results/pit_heuristic_baselines_20261110/`. All 63 runs were local; no HPC job was submitted.
 
 - `[x]` **Session mask and panel.** `src/data/point_in_time_panel.py` builds the 2012–2024 SET50/SET100 session mask (revisions apply from their publication date) and the per-ticker feature panel. Between 39 and 48 SET50 members are tradable on every session.
 - `[x]` **Environment.** `PointInTimeSlotEnv` (`src/envs/point_in_time_env.py`) has 50 masked slots and a one-session information lag. It forces exits on any session and uses self-financing accounting. `tests/test_point_in_time_env.py` (13 tests) and `tests/test_walk_forward_agent_diagnostics.py` (4) pass.
@@ -67,6 +67,9 @@ Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md)
   - **Significance (13 designs):** the ensemble with the band is better than the shared actor (+0.07, 95% CI +0.03 to +0.10). Against equal weight it is +0.04 (−0.05 to +0.11) and against the ETF −0.08 (−0.36 to +0.15); neither is significant. Deflated Sharpe 0.27.
   - **Diagnostics:** after the initial purchase, turnover is 0.7× a year (equal weight 0.9×) and the cost drag 0.3 points (0.4). Average cash stays at about 10.5%, but no year depends on one seed.
   - **Caveat:** in 2020 the band added 2.7 points by leaving cash in place during the crash; outside 2020 it added 0.4 points a year, about its cost saving.
+- `[x]` **Heuristic benchmarks (2026-11-10).** `scripts/pit_heuristic_baselines.py` adds momentum (top ten by 12-1 month return), inverse volatility (60 days) and long-only minimum variance (252 days, covariance shrunk halfway to its diagonal, 10% cap), rebalanced every 21 sessions with parameters fixed in advance. `tests/test_pit_heuristic_baselines.py` (3) pass.
+  - **Result:** 5.3%, 5.0% and 4.0% a year, against 5.6% for equal weight and 7.1% for the ETF. Momentum had the deepest drawdowns (−26.5% in 2018) and 6.4× turnover a year; minimum variance lost 22.4% in 2020.
+  - **Significance:** no Sharpe difference against equal weight or the ETF is significant. The DRL ensemble with the band has the highest Sharpe ratio of the active strategies (0.42 against 0.30–0.38), also not significantly.
 - `[~]` **Training with the band (started 2026-11-10 23:08).** The variant `pit_plan_weekly_lstm_shared_band`, 7 folds × 3 seeds × 100k timesteps, 3 local workers (`results/pit_walk_forward_band_20261110/`). Its seed ensemble is the 13th design.
 
 ## Point-in-Time Universe 2012–2024 (M3) — 2026-11-07

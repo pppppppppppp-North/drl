@@ -2,7 +2,7 @@
 
 Date: 2026-11-07; sticky-slot follow-up 2026-11-09; shared-weight actor, seed ensemble and no-trade band 2026-11-10
 Evidence tier: **exploratory**. The index membership is official, but the prices are Yahoo's, and 13% of SET50 member-sessions (mostly delisted or merged names) have no prices.
-Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `results/pit_walk_forward_sticky_20261109/` (sticky slots), `results/pit_walk_forward_shared_20261110/` (shared-weight actor), `results/pit_walk_forward_combined_20261109/` (first two runs together) `results/pit_walk_forward_combined_20261110/` (all three), `results/pit_seed_ensemble_20261110/` (seed ensemble and no-trade band, no training) and `results/pit_seed_ensemble_combined_20261110/` (with the shared-weight run) · Config: `config/pit_walk_forward_experiment.yaml` · Figures: [first run](figures/pit_walk_forward_chained_equity_20261107.png), [first two runs](figures/pit_walk_forward_sticky_chained_equity_20261109.png), [all three runs](figures/pit_walk_forward_shared_chained_equity_20261110.png), [seed ensemble with no-trade band](figures/pit_seed_ensemble_chained_equity_20261110.png)
+Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `results/pit_walk_forward_sticky_20261109/` (sticky slots), `results/pit_walk_forward_shared_20261110/` (shared-weight actor), `results/pit_walk_forward_combined_20261109/` (first two runs together) `results/pit_walk_forward_combined_20261110/` (all three), `results/pit_seed_ensemble_20261110/` (seed ensemble and no-trade band, no training) `results/pit_seed_ensemble_combined_20261110/` (with the shared-weight run) and `results/pit_heuristic_baselines_20261110/` (momentum, inverse volatility and minimum variance) · Config: `config/pit_walk_forward_experiment.yaml` · Figures: [first run](figures/pit_walk_forward_chained_equity_20261107.png), [first two runs](figures/pit_walk_forward_sticky_chained_equity_20261109.png), [all three runs](figures/pit_walk_forward_shared_chained_equity_20261110.png), [seed ensemble with no-trade band](figures/pit_seed_ensemble_chained_equity_20261110.png)
 
 **Summary.**
 - **Result:** on the actual SET50 membership of each session, the DRL design that roughly matched the market on five hand-picked stocks lost money: −1.1% a year, against 7.1% for the SET50 ETF and 5.6% for equal weight. Unlike the five-stock comparisons, the Sharpe differences are statistically significant.
@@ -11,6 +11,7 @@ Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `res
 - **Fix (run 2026-11-09):** a sticky slot order, which keeps each member in its slot, cut turnover to a third and raised the agent's return to 3.7% a year. It beat the first run in all seven years, and the improvement is significant. The agent still trailed equal weight and the ETF, again mostly through trading costs. Both shortfalls are statistically significant, but only just.
 - **Shared-weight actor (run 2026-11-10):** a policy head that scores every stock with the same weights no longer depends on the slot order at all. It halved turnover again and raised the return to 4.6% a year, with a portfolio close to equal weight. It still trailed equal weight (5.6%) and the ETF (7.1%), but neither shortfall is statistically significant.
 - **Seed ensemble and no-trade band (2026-11-10, no new training):** averaging the three seeds' portfolios and skipping trades smaller than 0.5 percentage points brought the shared-weight agent to 5.5% a year, level with equal weight (5.6%), while trading less than equal weight. Its Sharpe ratio was slightly above equal weight's and below the ETF's; neither difference is significant. Part of the gain came from cash it happened to hold through the 2020 crash.
+- **Heuristic benchmarks (2026-11-10):** momentum (5.3% a year), inverse-volatility weighting (5.0%) and long-only minimum variance (4.0%) did no better than equal weight or the ETF on the point-in-time SET50. No difference between the active strategies is significant.
 
 ## Question
 
@@ -297,6 +298,32 @@ The reward, encoder, folds, seeds and budget are unchanged: 21 models (7 folds �
 - **Still no evidence that it adds value.** What it learned is close to equal weight, and part of the remaining gain came from cash the band left in place during the 2020 crash.
 - **Next:** training with the band (variant `pit_plan_weekly_lstm_shared_band`, 21 models) started on 2026-11-10 and will be reported here.
 
+## Follow-up: heuristic benchmarks (2026-11-10)
+
+**What it adds:** three standard benchmarks that the plan lists but that had not been run (M6). `scripts/pit_heuristic_baselines.py` runs them on the same sessions, members, costs and accounting. Like equal weight, they rebalance every 21 sessions, and they use closing prices up to the session before each decision. The parameters are textbook choices fixed before any result was seen:
+- **Momentum:** equal weight in the ten members with the highest return from 12 months to 1 month before the decision.
+- **Inverse volatility:** every member, weighted by the inverse of the volatility of its last 60 daily returns.
+- **Minimum variance:** the long-only minimum-variance portfolio from 252 days of returns. The covariance is shrunk halfway toward its diagonal, and each weight is capped at 10%.
+
+| Strategy | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | **Mean** | Years beating ETF | Mean max DD | Turnover a year | Sharpe |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| SET50 ETF buy-and-hold (TDEX) | 24.5% | 18.2% | −6.5% | 5.7% | −11.8% | 12.1% | 7.8% | **7.1%** | — | −11.2% | 1.0× | 0.50 |
+| Point-in-time SET50 equal weight | 22.2% | 16.5% | −10.0% | 6.5% | −8.5% | 11.9% | 0.7% | **5.6%** | 2/7 | −12.7% | 1.9× | 0.38 |
+| DRL, seed ensemble + no-trade band | 21.2% | 15.3% | −9.7% | 5.6% | −3.8% | 10.0% | 0.2% | **5.5%** | 1/7 | −11.3% | 1.6× | 0.42 |
+| Momentum, top ten | 11.0% | 10.0% | −26.5% | 27.9% | −4.6% | 18.5% | 0.7% | **5.3%** | 3/7 | −17.3% | 6.4× | 0.30 |
+| Inverse volatility | 19.5% | 17.0% | −8.3% | 5.0% | −10.6% | 11.1% | 1.5% | **5.0%** | 1/7 | −12.2% | 2.6× | 0.36 |
+| Minimum variance | 19.0% | 9.9% | −3.3% | 7.7% | −22.4% | 14.4% | 2.5% | **4.0%** | 3/7 | −10.9% | 3.3× | 0.30 |
+
+The ETF's turnover is its initial purchase. Sharpe ratios are on the 1,699 chained daily returns.
+
+- **None of the heuristics beat equal weight or the ETF on average.**
+  - **Momentum** came closest (5.3%), with the deepest drawdowns (−26.5% in 2018) and the most trading (6.4 times capital a year).
+  - **Minimum variance** had the shallowest mean drawdown (−10.9%) but the lowest return, and the largest 2020 loss of any strategy here (−22.4%).
+- **Significance:** against equal weight, the Sharpe differences are −0.08 for momentum (95% CI −0.52 to +0.34), −0.02 for inverse volatility (−0.09 to +0.06) and −0.08 for minimum variance (−0.36 to +0.27). Against the ETF they are −0.20, −0.14 and −0.20; every interval includes zero.
+- **Where the agent stands:** the seed ensemble with the band has the highest Sharpe ratio of the active strategies (0.42), ahead of the three heuristics (0.30–0.36) and equal weight (0.38), and below the ETF (0.50). None of these differences is significant. Seven validation years separate only large differences, except between strategies as closely correlated as the agent and equal weight.
+
+**What it means:** the agent's failure to beat the references is not unusual. On the point-in-time SET50 over 2016–2022, none of the standard heuristic strategies beat equal weight or the ETF either. The ETF remains the strongest reference: it holds the whole index, including the members without Yahoo prices, by market value.
+
 ## Run it
 
 Local: on the 8-core development Mac (4 performance and 4 efficiency cores), seven workers took about 65 minutes per 100k-timestep run.
@@ -362,6 +389,16 @@ for v in ensemble ensemble_band evalband; do
   python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_seed_ensemble \
     --variant pit_plan_weekly_lstm_shared_$v --prefix diagnostics_$v
 done
+```
+
+The heuristic benchmarks need no training and take under a minute:
+
+```bash
+python -m scripts.pit_heuristic_baselines --config config/pit_walk_forward_experiment.yaml \
+  --run-dir results/pit_heuristic_baselines --years 2016 2017 2018 2019 2020 2021 2022
+python -m scripts.aggregate_walk_forward_reward --run-dir results/pit_heuristic_baselines \
+  --extra-run-dirs results/pit_seed_ensemble results/pit_walk_forward_shared --n-trials 13 \
+  --output-dir results/pit_heuristic_baselines/combined --references pit_plan_weekly_lstm_shared_ensemble_band
 ```
 
 To check that trained models ignore the slot order, roll them out under both orders, one validation year at a time:

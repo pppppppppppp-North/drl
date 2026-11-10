@@ -162,6 +162,7 @@ These extensions live in new modules, so no file in the manifest-locked V2 relea
 - `src/data/point_in_time_panel.py` and `src/envs/point_in_time_env.py`: the 2012–2024 point-in-time SET50 session mask and feature panel, and `PointInTimeSlotEnv`, which trades the index membership of each session through 50 masked slots (`universe.slot_order: traded_value | sticky`).
 - `scripts/run_pit_walk_forward.py`, `scripts/pit_universe_baselines.py` and `scripts/walk_forward_agent_diagnostics.py`: the point-in-time walk-forward, its survivorship baselines, and cost, turnover and concentration diagnostics for any walk-forward agent.
 - `scripts/check_slot_order_invariance.py`: rolls a trained point-in-time model out under sticky and traded-value slot orders and reports how far apart the two equity curves end.
+- `scripts/pit_heuristic_baselines.py`: momentum, inverse-volatility and minimum-variance benchmarks on the point-in-time SET50, on the same sessions, costs and accounting as the walk-forward.
 - `scripts/evaluate_pit_seed_ensemble.py`: evaluates trained point-in-time models as a seed ensemble (the mean of the seeds' target weights) and with a no-trade band (`environment.no_trade_band`), without training. It first replays every model against its saved validation curve.
 
 Config options read by `src.train_long_term` and the experiment scripts:
@@ -229,6 +230,8 @@ python -m scripts.check_slot_order_invariance --config config/pit_walk_forward_e
 # Seed ensemble and a 0.5-point no-trade band on the trained shared-weight models (no training), aggregated with that run
 python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_experiment.yaml --source-run results/<pit-shared-run> --variant pit_plan_weekly_lstm_shared --output-dir results/<pit-ensemble> --band 0.005
 python -m scripts.aggregate_walk_forward_reward --run-dir results/<pit-ensemble> --extra-run-dirs results/<pit-shared-run> --n-trials 13 --references pit_plan_weekly_lstm_shared --output-dir results/<pit-ensemble-combined>
+# Heuristic benchmarks (momentum, inverse volatility, minimum variance) on the point-in-time SET50
+python -m scripts.pit_heuristic_baselines --config config/pit_walk_forward_experiment.yaml --run-dir results/<pit-heuristics> --years 2016 2017 2018 2019 2020 2021 2022
 # Shared-weight actor trained with the no-trade band
 RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm_shared_band SEEDS="42 43 44" \
   scripts/run_walk_forward_reward.sh results/<pit-band-run> 3 100000
