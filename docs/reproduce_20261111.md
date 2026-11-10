@@ -102,7 +102,7 @@ Aggregate with the report's command, keeping the variants that ran (`--variants 
 
 **Training:** one launcher call per variant, three workers.
 - **Variants:** `pit_plan_weekly_lstm` (first run), `pit_plan_weekly_lstm_sticky`, `pit_plan_weekly_lstm_shared` and `pit_plan_weekly_lstm_shared_band`.
-- **The BOT policy-rate arm** uses its own config, `config/pit_walk_forward_policy_rate.yaml`, with `VARIANTS=pit_plan_weekly_lstm_shared_policy`.
+- **Source arms:** the BOT policy-rate arm uses its own config, `config/pit_walk_forward_policy_rate.yaml`, with `VARIANTS=pit_plan_weekly_lstm_shared_policy`. The macro-proxy arm uses `config/pit_walk_forward_macro.yaml` with `VARIANTS=pit_plan_weekly_lstm_shared_macro`.
 - **Time:** each variant is 21 models of about 30–60 minutes of one core.
 
 ```bash

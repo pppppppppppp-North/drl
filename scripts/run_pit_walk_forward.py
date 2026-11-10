@@ -10,7 +10,9 @@ archive, restricted to members with Yahoo prices. Baselines on the same sessions
   that Yahoo has no prices for.
 
 With ``data.policy_rate`` set, the official BOT policy-rate features are added as market-level
-inputs (see ``add_policy_rate``); a variant uses them by listing them in its market columns.
+inputs (see ``add_policy_rate``); a variant uses them by listing them in its market columns. With
+``data.macro`` set, the daily macro proxies (USD/THB, oil, gold, the US 10-year yield) are added the
+same way (see ``add_macro_proxies``).
 
 Validation never reads past ``splits.validation_end`` (2022-12-30), so the 2023-2024 test years
 and the sealed 2025+ holdouts are never loaded. The output layout matches
@@ -60,6 +62,10 @@ def load_inputs(spec: dict, root: Path) -> tuple[pd.DataFrame, pd.DataFrame, dic
         history = pd.read_csv(root / data["policy_rate"])
         panel = add_policy_rate(panel, history, spec["splits"]["validation_end"])
         receipt = {**receipt, "policy_rate": str(data["policy_rate"])}
+    if data.get("macro"):
+        macro = pd.read_csv(root / data["macro"], parse_dates=["date"])
+        panel = add_macro_proxies(panel, macro, data.get("macro_names", {}), spec["splits"]["validation_end"])
+        receipt = {**receipt, "macro": str(data["macro"])}
     return mask.reset_index(drop=True), panel, receipt
 
 
@@ -74,6 +80,22 @@ def add_policy_rate(panel: pd.DataFrame, history: pd.DataFrame, validation_end: 
 
     history = history[pd.to_datetime(history["announcement_date"]) <= pd.Timestamp(validation_end)]
     return merge_policy_rate_context(panel, history).drop(columns=["bot_source_announcement"])
+
+
+def add_macro_proxies(panel: pd.DataFrame, macro: pd.DataFrame, names: dict, validation_end: str) -> pd.DataFrame:
+    """Add the daily macro-proxy features (``src.features.macro_context``) to every row.
+
+    They are market-level: one value per session, the same for every stock. Each proxy's latest close
+    on or before a Thai session is carried onto it, and a decision reads only the sessions before it
+    (the environment's information lag), so a close from the US evening is used from the next Thai
+    session on. Prices after ``validation_end`` are dropped first, so nothing from the test years or
+    the holdout enters. ``names`` maps Yahoo tickers to feature prefixes, for example ``{"BZ=F": "brent"}``.
+    """
+    from src.features.macro_context import merge_macro_context
+
+    macro = macro[pd.to_datetime(macro["date"]) <= pd.Timestamp(validation_end)]
+    macro = macro.assign(macro_name=macro["ticker"].map(lambda t: names.get(t, str(t).lower())))
+    return merge_macro_context(panel, macro[["date", "macro_name", "close"]])
 
 
 def window(panel: pd.DataFrame, start: str | None, end: str, lookback: int) -> pd.DataFrame:
