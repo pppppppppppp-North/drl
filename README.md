@@ -165,6 +165,7 @@ These extensions live in new modules, so no file in the manifest-locked V2 relea
 - `scripts/pit_heuristic_baselines.py`: momentum, inverse-volatility and minimum-variance benchmarks on the point-in-time SET50, on the same sessions, costs and accounting as the walk-forward.
 - `scripts/evaluate_pit_seed_ensemble.py`: evaluates trained point-in-time models as a seed ensemble (the mean of the seeds' target weights) and with a no-trade band (`environment.no_trade_band`), without training. It first replays every model against its saved validation curve.
 - `scripts/pit_lstm_forecast_baseline.py`: the LSTM forecast-then-allocate benchmark on the point-in-time SET50. A Bi-LSTM fitted per fold on the training years buys its ten best positive 21-session forecasts every month; it also records the forecasts' information coefficient.
+- `scripts/build_member_price_map.py`: maps every point-in-time list member to the price series to use (own symbol, current symbol after a rename, or none), from the downloads' coverage files; `--check` verifies the existing map.
 - `scripts/pit_feature_group_attribution.py`: re-runs each trained point-in-time model with one input group (technical, market, policy rate, macro) shuffled across sessions or held at its training mean, and reports how far its portfolio, return and cash move.
 - `scripts/build_slim_results_archive.py`: a verified tar.gz of code, configs, documents, input receipts and run outputs, without trained models, worker logs or price files ([runbook](docs/reproduce_20261111.md)).
 

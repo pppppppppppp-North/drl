@@ -50,19 +50,20 @@ Git tracks the membership lists and the BOT policy-rate history. The price files
 | `data/raw/extended/prices_set100_union_2012_2024.csv.gz` | `scripts.download_extended_history`, 2026-11-06 | `a2445d075025` |
 | `data/raw/extended/set100_2012_2024_additions/prices_set100_2012_2024_additions.csv.gz` | the same, 2026-11-07, for the members without a price file | `ec66238af043` |
 | `data/raw/extended/set100_2012_2024_additions/index_set50_etf_2012_2024.csv` | the same (TDEX, the SET50 ETF) | `dd1ddbff433e` |
-| `data/raw/extended/set100_2012_2024_additions/member_price_map_2012_2024.csv` | one-off mapping step of 2026-11-07; its rule is in its receipt | `0f19820c1192` |
+| `data/raw/extended/set100_2012_2024_additions/member_price_map_2012_2024.csv` | `python -m scripts.build_member_price_map` (rebuilds the map of 2026-11-07 byte for byte) | `0f19820c1192` |
 | `data/raw/extended/macro_proxies_2012_2024.csv` | `scripts.download_extended_history`, 2026-11-06 | `bbac4b3e356f` |
 | `data/external/bot_policy_rate_history.csv` | `python -m src.data.ingest_bot_policy_rate` (official BOT table) | in git |
 
 **Yahoo revises and drops series**, so a new download may not match these checksums. To reproduce the reported numbers exactly, use the original files, which the receipts identify.
 
-**The price map is not rebuilt by a script.** It was made in a one-off step on 2026-11-07. It records, for each list and member, which price series to use: the member's own symbol, its current symbol after a rename, or none.
+**The price map** records, for each list and member, which price series to use: the member's own symbol, its current symbol after a rename, or none. It was first made in a one-off step on 2026-11-07. `scripts/build_member_price_map.py` applies the rule in that map's receipt to the two downloads' coverage files and reproduces the map byte for byte. `--check` compares without writing.
 
 ```bash
 python -m src.data.ingest_set_constituent_history_extended
 python -m scripts.download_extended_history --tickers-csv data/reference/set50_or_set100_universe.csv \
   --dev-output data/raw/extended/prices.csv.gz --index-dev-output data/raw/extended/index.csv \
   --holdout-dir data/holdout_sealed/<name>
+python -m scripts.build_member_price_map --check   # or without --check, to rebuild it
 python -m src.data.ingest_bot_policy_rate --input data/external/original/bot_policy_rate_mpc_table_asof_20261028.xlsx \
   --output data/external/bot_policy_rate_history.csv --source-url <url> --retrieved-at <utc>
 ```

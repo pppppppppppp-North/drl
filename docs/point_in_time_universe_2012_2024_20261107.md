@@ -125,7 +125,7 @@ Over 2012–2020, coverage rose from 70% to 87% of SET100 member-lists and from 
   - STECON.BK starts on 2024-10-30.
 - **A reused symbol.** KK.BK on Yahoo begins in 2020 and is a different company from the KK (Kiatnakin Bank) of 2012–2013. It is never used.
 
-`data/raw/extended/set100_2012_2024_additions/member_price_map_2012_2024.csv` records, for every list and member, which series to use: the own symbol, the current symbol, or none. It is the input for the 2012–2024 session mask.
+`data/raw/extended/set100_2012_2024_additions/member_price_map_2012_2024.csv` records, for every list and member, which series to use: the own symbol, the current symbol, or none. It is the input for the 2012–2024 session mask. `python -m scripts.build_member_price_map` rebuilds it from the two downloads' coverage files and `symbol_map.csv` (added 2026-11-11; it reproduces this file byte for byte).
 
 ## Limitations
 
