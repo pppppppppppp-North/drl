@@ -164,6 +164,8 @@ def main() -> None:
     parser.add_argument("--title", default=None, help="figure title")
     parser.add_argument("--references", nargs="*", default=[],
                         help="more variants to test the others against, for example an earlier DRL run")
+    parser.add_argument("--drop", nargs="*", default=[],
+                        help="variants to leave out, for example baselines that another run folder brings in")
     args = parser.parse_args()
 
     run_dirs = [Path(args.run_dir)] + [Path(d) for d in args.extra_run_dirs]
@@ -186,6 +188,7 @@ def main() -> None:
             keep |= seeded
         if args.seeds is not None:
             keep &= ~seeded | seed.isin(args.seeds)
+        keep &= ~variant.isin(args.drop)
         fold_curves[year] = curves[keep].reset_index(drop=True)
     metrics = pd.concat([fold_metrics(curves, year) for year, curves in fold_curves.items()], ignore_index=True)
     metrics.to_csv(run_dir / "walk_forward_metrics.csv", index=False)
