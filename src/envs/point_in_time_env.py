@@ -19,6 +19,11 @@ slots are masked out of the allocation. ``slot_order`` sets how the tradable mem
   is sold at the close of ``t``, with costs, on any session, not only on rebalancing sessions.
 - **Accounting and reward:** the same self-financing accounting and reward options as
   ``LongTermTradingEnv`` (the reward function is inherited). Weights drift between decisions.
+- **No-trade band** (``no_trade_band``, default 0 = off): on a rebalancing session, a holding in a
+  slot is traded to its target only when the target differs from its current weight by more than
+  the band; otherwise it is left as it is, and cash takes up the difference. Purchases are scaled
+  down when they would need more cash than the portfolio holds after its sales. Holdings outside
+  the slots and forced exits are always sold.
 
 Observation (compatible with ``AssetTemporalExtractor`` with ``num_assets=K``): a
 ``lookback x K x F`` window, where F is the stock features, then the market features, then a
@@ -61,6 +66,7 @@ class PointInTimeSlotEnv(LongTermTradingEnv):
         random_start: bool = False,
         episode_length: int | None = None,
         slot_order: str = "traded_value",
+        no_trade_band: float = 0.0,
     ) -> None:
         gym.Env.__init__(self)
         if slot_order not in SLOT_ORDERS:
@@ -89,6 +95,9 @@ class PointInTimeSlotEnv(LongTermTradingEnv):
             raise ValueError("num_slots, lookback and rebalance_every must be positive")
         if self.transaction_cost < 0 or self.slippage < 0:
             raise ValueError("transaction_cost and slippage must be non-negative")
+        self.no_trade_band = float(no_trade_band)
+        if not 0.0 <= self.no_trade_band < 1.0:
+            raise ValueError(f"no_trade_band must be in [0, 1), got {no_trade_band!r}")
 
         frame = panel.copy()
         frame["date"] = pd.to_datetime(frame["date"])
@@ -227,6 +236,20 @@ class PointInTimeSlotEnv(LongTermTradingEnv):
             return weights / total if total > 1.0 else weights
         raise ValueError(f"action must have {self.num_slots + 1} logits or {self.num_slots} weights")
 
+    def _apply_no_trade_band(self, previous: np.ndarray, target: np.ndarray, seated: np.ndarray) -> np.ndarray:
+        """Trade a seated holding only when its target is more than the band away; keep the budget."""
+        in_slots = np.zeros(self.num_series, dtype=bool)
+        in_slots[seated] = True
+        executed = np.where(np.abs(target - previous) > self.no_trade_band, target, previous)
+        executed[~in_slots] = 0.0  # holdings the agent cannot see, including forced exits, are sold
+        buys = np.clip(executed - previous, 0.0, None)
+        sells = np.clip(previous - executed, 0.0, None)
+        available = max(0.0, 1.0 - float(previous.sum())) + float(sells.sum())
+        wanted = float(buys.sum())
+        if wanted > available:  # buy only with the cash left after the sales
+            executed = previous - sells + buys * (available / wanted)
+        return np.clip(executed, 0.0, None)
+
     def step(self, action: np.ndarray):
         step = self.current_step
         tradable = self.tradable[step]
@@ -238,6 +261,8 @@ class PointInTimeSlotEnv(LongTermTradingEnv):
             slot_weights = self._slot_weights(action, slots)
             target = np.zeros(self.num_series, dtype=np.float64)
             target[slots[slots >= 0]] = slot_weights[slots >= 0]
+            if self.no_trade_band > 0.0:
+                target = self._apply_no_trade_band(previous, target, slots[slots >= 0])
             self.decision_count += 1
         else:
             target = previous.copy()

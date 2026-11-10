@@ -88,3 +88,19 @@ variants:
       normalize_observations: false
       policy:
         actor: shared_asset
+  # After the shared-weight run: the policy still turned over 3.4x a year after its initial purchase,
+  # against 0.9x for equal weight, and extra costs were half of its 1.0-point gap to equal weight. Here a
+  # holding is traded only when the policy's target differs from its current weight by more than 0.5
+  # percentage points, about a fifth of an equal-weight position (a 25% relative band at 44 holdings
+  # would be 0.57 points); smaller changes are not traded, and cash takes up the difference. The band
+  # applies in training and validation, and its width was fixed before the run, not tuned.
+  - name: pit_plan_weekly_lstm_shared_band
+    description: "As pit_plan_weekly_lstm_shared, with a 0.5-point no-trade band on every holding"
+    environment:
+      no_trade_band: 0.005
+    universe:
+      slot_order: sticky
+    training:
+      normalize_observations: false
+      policy:
+        actor: shared_asset

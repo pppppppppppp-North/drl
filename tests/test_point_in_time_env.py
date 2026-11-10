@@ -229,3 +229,56 @@ def test_accounting_reconciles_with_sticky_slots_and_gaps() -> None:
         assert sum(info["holdings"].values()) + info["cash_weight"] == pytest.approx(1.0)
         assert info["portfolio_value"] == pytest.approx(value)
         assert set(info["holdings"]) <= {env.tickers[u] for u in slots if u >= 0}
+
+
+def test_no_trade_band_of_zero_changes_nothing() -> None:
+    panel = _panel()
+    members = _membership(panel, {"A.BK": (0, 70), "B.BK": (0, 80), "C.BK": (30, 80)})
+    curves = []
+    for kwargs in ({}, {"no_trade_band": 0.0}):
+        env = _env(panel, members, rebalance_every=3, **kwargs)
+        env.reset(seed=0)
+        rng = np.random.default_rng(3)
+        done, values = False, []
+        while not done:
+            _, _, done, _, info = env.step(rng.normal(size=4))
+            values.append(info["portfolio_value"])
+        curves.append(values)
+    assert curves[0] == curves[1]
+
+
+def test_no_trade_band_keeps_small_changes_and_trades_large_ones() -> None:
+    panel = _panel()
+    env = _env(panel, _membership(panel, {t: (0, 80) for t in ("A.BK", "B.BK", "C.BK")}), no_trade_band=0.05)
+    env.reset(seed=0)
+    previous = np.array([0.30, 0.30, 0.30])
+    target = np.array([0.33, 0.50, 0.10])  # A moves 3 points (kept), B and C move 20 points (traded)
+    executed = env._apply_no_trade_band(previous, target, np.arange(3))
+    np.testing.assert_allclose(executed, [0.30, 0.50, 0.10])
+    # Purchases that need more cash than the sales and the cash leg provide are scaled down.
+    previous = np.array([0.48, 0.47, 0.0])
+    target = np.array([0.45, 0.45, 0.10])  # A and B stay within the band; C needs 10 points, 5 available
+    executed = env._apply_no_trade_band(previous, target, np.arange(3))
+    np.testing.assert_allclose(executed, [0.48, 0.47, 0.05])
+    assert executed.sum() == pytest.approx(1.0)
+    # A holding outside the slots is sold even when it is smaller than the band.
+    executed = env._apply_no_trade_band(np.array([0.3, 0.3, 0.04]), np.array([0.3, 0.3, 0.0]), np.arange(2))
+    np.testing.assert_allclose(executed, [0.3, 0.3, 0.0])
+
+
+def test_accounting_reconciles_with_a_no_trade_band() -> None:
+    panel = _panel(tickers=("A.BK", "B.BK", "C.BK", "D.BK"))
+    members = _listed(panel, {"A.BK": [(0, 80)], "B.BK": [(0, 35)], "C.BK": [(0, 80)], "D.BK": [(45, 80)]})
+    env = _env(panel, members, num_slots=4, slot_order="sticky", rebalance_every=2, no_trade_band=0.05)
+    env.reset(seed=0)
+    rng = np.random.default_rng(4)
+    value, done = env.initial_cash, False
+    while not done:
+        slots = env.slots[env.current_step]
+        _, _, done, _, info = env.step(rng.normal(scale=0.3, size=5))
+        value *= 1 + info["net_return"]
+        assert sum(info["holdings"].values()) + info["cash_weight"] == pytest.approx(1.0)
+        assert info["portfolio_value"] == pytest.approx(value)
+        assert set(info["holdings"]) <= {env.tickers[u] for u in slots if u >= 0}
+    with pytest.raises(ValueError):
+        _env(panel, members, no_trade_band=-0.01)

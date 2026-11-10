@@ -179,7 +179,8 @@ def diagnose(run_dir: Path, variant: str, reference: str, rebalance_every: int,
     for fold_dir in sorted(p for p in run_dir.glob("fold_*") if p.is_dir()):
         year = int(fold_dir.name.split("_")[1])
         curves = load_fold(fold_dir)
-        policies = sorted(p for p in curves["policy"].unique() if p.startswith(f"{variant}_seed"))
+        # Every seed of the variant, or the variant itself when it is one unseeded policy (a seed ensemble).
+        policies = sorted(p for p in curves["policy"].unique() if p.startswith(f"{variant}_seed") or p == variant)
         if not policies:
             continue
         ref_curve = curves[curves["policy"] == reference].reset_index(drop=True)
@@ -199,7 +200,7 @@ def diagnose(run_dir: Path, variant: str, reference: str, rebalance_every: int,
                     row.update(slot_change_diagnostics(holdings, curve, slots[year], rebalance_every))
             rows.append(row)
     if not rows:
-        raise FileNotFoundError(f"no {variant}_seed* curves under {run_dir}/fold_*")
+        raise FileNotFoundError(f"no {variant}_seed* or {variant} curves under {run_dir}/fold_*")
     frame = pd.DataFrame(rows)
     ref = frame[frame["family"] == reference].set_index("fold")
     for column in ("net_return", "gross_return", "cost_drag"):

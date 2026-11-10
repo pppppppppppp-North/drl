@@ -128,12 +128,17 @@ def plot(chained: pd.DataFrame, output: Path, labels: dict[str, str] | None = No
         "starter5_equal_weight_monthly": ("Five starter stocks, equal weight", "#b07aa1", "-."),
     }
     fig, ax = plt.subplots(figsize=(10, 5.5), dpi=150)
-    learned = [v for v in chained["variant"].unique() if v not in baselines and chained.loc[chained["variant"] == v, "policy"].str.contains("_seed").any()]
+    # Seeded variants are drawn as a seed mean with a min-max band; an unseeded learned policy (for
+    # example a seed ensemble) is drawn as one line when it is given a label.
+    learned = [v for v in chained["variant"].unique() if v not in baselines and (
+        chained.loc[chained["variant"] == v, "policy"].str.contains("_seed").any() or v in (labels or {}))]
     for color, variant in zip(palette, learned):
         wide = chained[chained["variant"] == variant].pivot_table(index="date", columns="policy", values="value")
-        ax.fill_between(wide.index, wide.min(axis=1), wide.max(axis=1), color=color, alpha=0.15, linewidth=0)
         name = (labels or {}).get(variant, variant)
-        ax.plot(wide.index, wide.mean(axis=1), color=color, linewidth=1.6, label=f"{name} (mean of {wide.shape[1]} seeds)")
+        if wide.shape[1] > 1:
+            ax.fill_between(wide.index, wide.min(axis=1), wide.max(axis=1), color=color, alpha=0.15, linewidth=0)
+            name = f"{name} (mean of {wide.shape[1]} seeds)"
+        ax.plot(wide.index, wide.mean(axis=1), color=color, linewidth=1.6, label=name)
     for policy, (label, color, style) in baselines.items():
         part = chained[chained["policy"] == policy]
         if not part.empty:
