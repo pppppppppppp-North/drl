@@ -146,7 +146,7 @@ Goal: a network that can actually use multi-source input across many assets.
   - a per-asset temporal encoder with weights shared across assets (LSTM or Bi-LSTM over the past lookback window, as the proposal promised, or a 1D-CNN/Transformer)
   - separate encoders for market-wide sources (index, macro, investor flow, sentiment aggregates)
   - a fusion layer feeding the policy and value heads
-- `[ ]` The flattened MLP input is `30 × N × F`. That is about 9k dimensions for 5 tickers with fundamentals and grows linearly with N, so it will not scale to SET50/SET100.
+- `[x]` The flattened MLP input is `30 × N × F`. That is about 9k dimensions for 5 tickers with fundamentals and grows linearly with N, so it will not scale to SET50/SET100. *Resolved by the per-asset encoder and the shared-weight actor below: the point-in-time runs feed 50 slots × 17 features through networks shared across stocks, so the actor's size does not grow with the number of stocks.*
 - `[x]` Normalize features with train-only statistics (reuse `src/v3/fold_preprocessing.py`, or `VecNormalize` with frozen evaluation statistics). *`training.normalize_observations: true`; statistics are saved as `<algo>_vecnormalize.pkl`.*
 - `[x]` Output portfolio weights through N+1 logits → softmax (cash included) instead of clipping Box(0,1) values.
 - `[x]` **Score each stock with shared weights in the policy head** (a permutation-equivariant actor), so allocations do not depend on slot order. *Implemented 2026-11-09; walk-forward run 2026-11-10: 4.6% a year, against 3.7% for the sticky dense head and 5.6% for equal weight.*
