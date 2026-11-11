@@ -249,6 +249,9 @@ RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_policy_rate.y
   scripts/run_walk_forward_reward.sh results/<pit-policy-run> 3 100000
 python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_policy_rate.yaml --source-run results/<pit-policy-run> --variant pit_plan_weekly_lstm_shared_policy --output-dir results/<pit-policy-ensemble> --band 0.005 --modes ensemble_band
 python -m scripts.pit_feature_group_attribution --config config/pit_walk_forward_policy_rate.yaml --run-dir results/<pit-policy-run> --variant pit_plan_weekly_lstm_shared_policy
+# The same for the daily macro proxies (config/pit_walk_forward_macro.yaml, variant pit_plan_weekly_lstm_shared_macro)
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_macro.yaml VARIANTS=pit_plan_weekly_lstm_shared_macro SEEDS="42 43 44" \
+  scripts/run_walk_forward_reward.sh results/<pit-macro-run> 3 100000
 # Official BOT policy-rate history
 python -m src.data.ingest_bot_policy_rate --input data/external/original/bot_policy_rate_mpc_table_asof_20261028.xlsx --output data/external/bot_policy_rate_history.csv --source-url <url> --retrieved-at <utc>
 ```

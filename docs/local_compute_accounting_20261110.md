@@ -1,9 +1,9 @@
 # Local Compute Accounting (RQ6, local part)
 
-Date: 2026-11-10; run trained with the no-trade band added 2026-11-11
+Date: 2026-11-10; the run trained with the no-trade band and the two source arms added 2026-11-11
 Scope: every walk-forward run since 2026-11-06 ran on the development Mac (8 cores: 4 performance and 4 efficiency; 8 GB of memory). No HPC job has been submitted. RQ6 asks for HPC usage in service hours (SHr), throughput and the speed-up from parallel arrays. This note answers the local part from the runs' own timing files. The BistKA part still needs a submitted job.
 
-Made with `scripts/local_compute_accounting.py`. Output (ignored by git): `results/local_compute_accounting_20261111.csv` (`..._20261110.csv` before the band run).
+Made with `scripts/local_compute_accounting.py`. Output (ignored by git): `results/local_compute_accounting_20261111.csv`, regenerated after the macro-proxy arm (`..._20261110.csv` before the band run).
 
 ## How it is measured
 
@@ -23,7 +23,9 @@ Made with `scripts/local_compute_accounting.py`. Output (ignored by git): `resul
 | Point-in-time SET50, sticky slots (3–4 workers) | 21 | 31.1 | 70.5 (28.5–225.2) | 24 | 8.7 | 3.6 |
 | Point-in-time SET50, shared-weight actor (3 workers) | 21 | 29.0 | 62.0 (38.6–214.8) | 27 | 9.9 | 2.9 |
 | Point-in-time SET50, trained with the band (3 workers, overnight on AC power) | 21 | 10.5 | 28.9 (27.9–34.4) | 58 | 3.5 | 3.0 |
-| **Total** | **217** | **146.1** | | | | |
+| Point-in-time SET50, + BOT policy rate (3 workers, overnight) | 21 | 10.8 | 29.5 (29.0–36.9) | 57 | 3.6 | 3.0 |
+| Point-in-time SET50, + macro proxies (3 workers, early morning) | 21 | 12.7 | 31.5 (29.8–57.4) | 53 | 4.3 | 3.0 |
+| **Total** | **259** | **169.5** | | | | |
 
 ## What it shows
 
@@ -31,10 +33,10 @@ Made with `scripts/local_compute_accounting.py`. Output (ignored by git): `resul
   - **Five stocks:** the LSTM agent trained at about 520 timesteps a second.
   - **Point-in-time SET50:** about 25 a second during the day and 58 overnight on an idle machine, because the encoder runs over 50 slots.
   - **Per model:** a 100k-timestep point-in-time model takes about an hour of one core during the day, beside other work.
-  - **Idle machine:** overnight on AC power, with nothing else running, the same shared-weight model (the run trained with the band) took 29 minutes, at 58 timesteps a second. During the day, contention and Low Power Mode, not the model, set the rate.
+  - **Idle machine:** overnight on AC power, with nothing else running, the same shared-weight model (the run trained with the band) took 29 minutes, at 58 timesteps a second. The two source arms that followed took 30 and 32 minutes per model, so the extra inputs barely change the cost. During the day, contention and Low Power Mode, not the model, set the rate.
 - **Memory, not cores, limits local parallelism.**
   - **Per worker:** a point-in-time worker needs up to about 750 MB, so only three fit beside the usual desktop apps on the 8 GB Mac.
-  - **Wall time:** a 21-task run takes 9–10 hours during the day and 3.5 hours overnight, with an average of about three tasks at once.
+  - **Wall time:** a 21-task run takes 9–10 hours during the day and 3.5–4.3 hours overnight or early in the morning, with an average of about three tasks at once.
   - **With seven workers:** the first point-in-time run ran 6.7 tasks at once but swapped heavily.
 - **The long tails are sleep, battery and contention, not training.** The slowest tasks (3.5 hours) overlapped periods with the Mac asleep, on battery in Low Power Mode, or sharing the CPU with other heavy work.
 - **On BistKA:** a SLURM array gives each task its own CPU and about 1 GB (`slurm/walk_forward_reward_array.sbatch`).

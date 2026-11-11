@@ -123,6 +123,9 @@ python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_ex
 python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_policy_rate.yaml \
   --source-run results/pit_walk_forward_policy_20261111 --variant pit_plan_weekly_lstm_shared_policy \
   --output-dir results/pit_policy_ensemble_20261111 --band 0.005 --modes ensemble_band
+python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_macro.yaml \
+  --source-run results/pit_walk_forward_macro_20261111 --variant pit_plan_weekly_lstm_shared_macro \
+  --output-dir results/pit_macro_ensemble_20261111 --band 0.005 --modes ensemble_band
 ```
 
 ## 6. Point-in-time SET50: benchmarks (M3, M6)
@@ -169,6 +172,11 @@ python -m scripts.pit_feature_group_attribution --config config/pit_walk_forward
 python -m scripts.pit_feature_group_attribution --config config/pit_walk_forward_experiment.yaml \
   --run-dir results/pit_walk_forward_shared_20261110 --variant pit_plan_weekly_lstm_shared \
   --output-dir results/pit_attribution_shared_20261111
+python -m scripts.pit_feature_group_attribution --config config/pit_walk_forward_macro.yaml \
+  --run-dir results/pit_walk_forward_macro_20261111 --variant pit_plan_weekly_lstm_shared_macro
+python -m scripts.pit_feature_group_attribution --config config/pit_walk_forward_experiment.yaml \
+  --run-dir results/pit_walk_forward_band_20261110 --variant pit_plan_weekly_lstm_shared_band \
+  --output-dir results/pit_attribution_band_20261111
 ```
 
 The formulas are in [`evaluation_metric_formulas_20261110.md`](evaluation_metric_formulas_20261110.md).
@@ -179,7 +187,7 @@ The formulas are in [`evaluation_metric_formulas_20261110.md`](evaluation_metric
 python -m scripts.local_compute_accounting --output results/local_compute_accounting_20261111.csv --run-dirs \
   results/walk_forward_reward_20261106 results/source_ablation_20261106 results/algorithm_comparison_20261106 \
   results/pit_walk_forward_20261107 results/pit_walk_forward_sticky_20261109 results/pit_walk_forward_shared_20261110 \
-  results/pit_walk_forward_band_20261110
+  results/pit_walk_forward_band_20261110 results/pit_walk_forward_policy_20261111 results/pit_walk_forward_macro_20261111
 ```
 
 ## 9. Report chapter

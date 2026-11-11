@@ -1,8 +1,8 @@
 # Point-in-Time SET50 Walk-Forward (Milestone M3)
 
-Date: 2026-11-07; sticky-slot follow-up 2026-11-09; shared-weight actor, seed ensemble and no-trade band 2026-11-10; training with the band, LSTM forecast benchmark and BOT policy rate 2026-11-11
+Date: 2026-11-07; sticky-slot follow-up 2026-11-09; shared-weight actor, seed ensemble and no-trade band 2026-11-10; training with the band, LSTM forecast benchmark, BOT policy rate and macro proxies 2026-11-11
 Evidence tier: **exploratory**. The index membership is official, but the prices are Yahoo's, and 13% of SET50 member-sessions (mostly delisted or merged names) have no prices.
-Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `results/pit_walk_forward_sticky_20261109/` (sticky slots), `results/pit_walk_forward_shared_20261110/` (shared-weight actor), `results/pit_walk_forward_combined_20261109/` (first two runs together), `results/pit_walk_forward_combined_20261110/` (all three), `results/pit_seed_ensemble_20261110/` (seed ensemble and no-trade band, no training), `results/pit_seed_ensemble_combined_20261110/` (with the shared-weight run), `results/pit_heuristic_baselines_20261110/` (momentum, inverse volatility and minimum variance), `results/pit_band_sensitivity_20261110/` (band widths), `results/pit_walk_forward_band_20261110/` (trained with the band), `results/pit_band_ensemble_20261111/` (its seed ensemble), `results/pit_walk_forward_combined_band_20261111/` (both, with the shared-weight and ensemble runs), `results/pit_lstm_forecast_20261111/` (LSTM forecast benchmark), `results/pit_lstm_forecast_combined_20261111/` (with the other benchmarks), `results/pit_walk_forward_policy_20261111/` (BOT policy rate as an input, with the input attribution), `results/pit_policy_ensemble_20261111/` (its seed ensemble with the band), `results/pit_walk_forward_combined_policy_20261111/` (both, with the shared-weight run and its ensemble) and `results/pit_attribution_shared_20261111/` and `results/pit_attribution_band_20261111/` (input attribution of the shared-weight and band-trained models) · Configs: `config/pit_walk_forward_experiment.yaml`, `config/pit_walk_forward_policy_rate.yaml` · Figures: [first run](figures/pit_walk_forward_chained_equity_20261107.png), [first two runs](figures/pit_walk_forward_sticky_chained_equity_20261109.png), [all three runs](figures/pit_walk_forward_shared_chained_equity_20261110.png), [seed ensemble with no-trade band](figures/pit_seed_ensemble_chained_equity_20261110.png), [training with the band](figures/pit_band_training_chained_equity_20261111.png), [LSTM forecast benchmark](figures/pit_lstm_forecast_chained_equity_20261111.png), [BOT policy rate](figures/pit_policy_rate_chained_equity_20261111.png)
+Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `results/pit_walk_forward_sticky_20261109/` (sticky slots), `results/pit_walk_forward_shared_20261110/` (shared-weight actor), `results/pit_walk_forward_combined_20261109/` (first two runs together), `results/pit_walk_forward_combined_20261110/` (all three), `results/pit_seed_ensemble_20261110/` (seed ensemble and no-trade band, no training), `results/pit_seed_ensemble_combined_20261110/` (with the shared-weight run), `results/pit_heuristic_baselines_20261110/` (momentum, inverse volatility and minimum variance), `results/pit_band_sensitivity_20261110/` (band widths), `results/pit_walk_forward_band_20261110/` (trained with the band), `results/pit_band_ensemble_20261111/` (its seed ensemble), `results/pit_walk_forward_combined_band_20261111/` (both, with the shared-weight and ensemble runs), `results/pit_lstm_forecast_20261111/` (LSTM forecast benchmark), `results/pit_lstm_forecast_combined_20261111/` (with the other benchmarks), `results/pit_walk_forward_policy_20261111/` (BOT policy rate as an input, with the input attribution), `results/pit_policy_ensemble_20261111/` (its seed ensemble with the band), `results/pit_walk_forward_combined_policy_20261111/` (both, with the shared-weight run and its ensemble) and `results/pit_attribution_shared_20261111/` and `results/pit_attribution_band_20261111/` (input attribution of the shared-weight and band-trained models), `results/pit_walk_forward_macro_20261111/` (daily macro proxies as an input, with the input attribution), `results/pit_macro_ensemble_20261111/` (its seed ensemble with the band), `results/pit_walk_forward_combined_macro_20261111/` (both, with the shared-weight run and its ensemble) and `results/pit_source_arms_combined_20261111/` (the three input sets' ensembles) · Configs: `config/pit_walk_forward_experiment.yaml`, `config/pit_walk_forward_policy_rate.yaml`, `config/pit_walk_forward_macro.yaml` · Figures: [first run](figures/pit_walk_forward_chained_equity_20261107.png), [first two runs](figures/pit_walk_forward_sticky_chained_equity_20261109.png), [all three runs](figures/pit_walk_forward_shared_chained_equity_20261110.png), [seed ensemble with no-trade band](figures/pit_seed_ensemble_chained_equity_20261110.png), [training with the band](figures/pit_band_training_chained_equity_20261111.png), [LSTM forecast benchmark](figures/pit_lstm_forecast_chained_equity_20261111.png), [BOT policy rate](figures/pit_policy_rate_chained_equity_20261111.png), [macro proxies](figures/pit_macro_proxies_chained_equity_20261111.png), [all three input sets](figures/pit_source_arms_chained_equity_20261111.png)
 
 **Summary.**
 - **Result:** on the actual SET50 membership of each session, the DRL design that roughly matched the market on five hand-picked stocks lost money: −1.1% a year, against 7.1% for the SET50 ETF and 5.6% for equal weight. Unlike the five-stock comparisons, the Sharpe differences are statistically significant.
@@ -15,6 +15,7 @@ Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `res
 - **Training with the band (run 2026-11-11):** trained with the same 0.5-point band, the agent made 5.1% a year (its seed ensemble 5.2%), against 4.6% without the band. It halved its trading but doubled its average cash, to 19%: five of its 21 models held more than a third of the portfolio in cash over their year. It did no better than adding the band after training (5.5%) or equal weight (5.6%), and no difference is significant.
 - **LSTM forecast benchmark (2026-11-11):** the five-stock study's supervised LSTM forecaster, scaled to the index and buying its ten best forecasts monthly, made 8.1% a year, the highest mean return here. Almost all of its lead came from the rally of late 2020; its seeds disagree (−14.9% to +31.2% in 2020), and it trades 16 times its capital a year. Its Sharpe ratio (0.46) is below the ETF's (0.50), and no difference is significant.
 - **BOT policy rate (run 2026-11-11):** five official policy-rate inputs lowered the agent's return, to 4.1% a year from 4.6%. Its seed ensemble with the band fell to 4.5% from 5.5%, a significant Sharpe shortfall (−0.06). The trained models barely read the new inputs: the shortfall came from cash that depended on the seed, as in the earlier arms.
+- **Daily macro proxies (run 2026-11-11):** eight USD/THB, oil, gold and US-yield inputs lowered the return too, to 3.9% a year (seed ensemble with the band 4.3%); neither shortfall is significant. Unlike the policy rate, the agent read them heavily, and removing their information raised the return of 15 of its 21 models. On the point-in-time index, the technical and market inputs alone remain the best.
 
 ## Question
 
@@ -581,7 +582,91 @@ The portfolio shift is the half-L1 distance between the stock weights with and w
 - **The policy rate did not help the agent.** With it, the agent made 4.1% a year against 4.6%, and its best form, the seed ensemble with the band, 4.5% against 5.5%. The ensemble's shortfall is statistically significant.
 - **The inputs themselves explain little of the shortfall.** The trained models barely use the policy rate. Holding it at its training mean changes their returns by 0.4 points on average and leaves the cash-heavy models' cash nearly unchanged. The shortfall comes from what training produced with the extra inputs, chiefly cash that depends on the seed. That weakness appears in every arm, so the significant gap describes these 21 models rather than showing that the policy rate harms.
 - **Out-of-range inputs remain a risk for any slow macro series.** The rate's few changes leave most of its states unseen in training, and an agent trained on 4–10 years cannot learn how markets respond to them.
-- **For RQ2 and RQ3:** the first official macro source tested on the point-in-time index is a negative result, under this design and training budget. The macro-proxy arm (designs 16 and 17) is running with the same design.
+- **For RQ2 and RQ3:** the first official macro source tested on the point-in-time index is a negative result, under this design and training budget. The macro-proxy arm (designs 16 and 17) follows in the next section.
+
+## Follow-up: daily macro proxies as an input (2026-11-11)
+
+**What it tests:** whether the daily macro proxies of the five-stock ablation help on the point-in-time index (RQ2, RQ3). It is the second source arm, run like the policy-rate arm.
+- **Variant:** `pit_plan_weekly_lstm_shared_macro` is the shared-weight agent with eight more market-level inputs from Yahoo market prices: the 5- and 20-session returns of USD/THB, Brent crude and gold, and the one-session change and 20-session return of the US 10-year Treasury yield.
+- **Timing:** each value is the last close on or before the session, carried forward over holidays. Prices after the validation end are dropped before the merge (`add_macro_proxies` in `scripts/run_pit_walk_forward.py`; `tests/test_pit_macro_proxies.py`).
+- **Unchanged:** everything else. `config/pit_walk_forward_macro.yaml` is generated from the main config: 7 folds × 3 seeds × 100k timesteps (`results/pit_walk_forward_macro_20261111/`), with the seed ensemble and band evaluated afterwards (`results/pit_macro_ensemble_20261111/`).
+- **Designs 16 and 17** of the deflated Sharpe count, configured before any result of the policy-rate arm was seen.
+- **Check:** every trained model replayed its saved validation curve exactly (largest relative gap 2×10⁻¹⁶).
+
+| Strategy | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | **Mean** | Years beating ETF | Mean max DD |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| SET50 ETF buy-and-hold (TDEX) | 24.5% | 18.2% | −6.5% | 5.7% | −11.8% | 12.1% | 7.8% | **7.1%** | — | −11.2% |
+| Point-in-time SET50 equal weight | 22.2% | 16.5% | −10.0% | 6.5% | −8.5% | 11.9% | 0.7% | **5.6%** | 2/7 | −12.7% |
+| Seed ensemble + band, without the macro proxies | 21.2% | 15.3% | −9.7% | 5.6% | −3.8% | 10.0% | 0.2% | **5.5%** | 1/7 | −11.3% |
+| **Seed ensemble + band, with the macro proxies** | 18.4% | 13.4% | −7.2% | 6.3% | −8.1% | 7.3% | 0.3% | **4.3%** | 2/7 | −11.5% |
+| DRL with the macro proxies (± s.d. over 3 seeds) | 18.6% ± 0.6 | 13.5% ± 3.8 | −7.6% ± 2.2 | 4.6% ± 1.6 | −8.0% ± 0.4 | 7.0% ± 4.0 | −0.7% ± 0.9 | **3.9%** | 1/7 | −11.6% |
+| DRL, shared-weight actor, without them (± s.d. over 3 seeds) | 20.5% ± 0.7 | 14.5% ± 1.8 | −10.2% ± 0.6 | 4.7% ± 3.0 | −6.8% ± 2.0 | 9.8% ± 1.9 | −0.4% ± 0.4 | **4.6%** | 1/7 | −11.7% |
+
+**Lower again:**
+- **Return:** with the macro proxies, the agent made 3.9% a year, 0.7 points less than without them. Its seed ensemble with the band made 4.3%, against 5.5%.
+- **Chained** over the seven years, 1 baht became 1.31 for the ensemble with the macro proxies. It became 1.41 without them and for equal weight, and 1.55 for the ETF ([figure](figures/pit_macro_proxies_chained_equity_20261111.png)). With the policy rate it became 1.32 ([all three input sets](figures/pit_source_arms_chained_equity_20261111.png)).
+- **By year:** it lost less in 2018 (−7.6% against −10.2%) but trailed in the rising years 2016 and 2021 by 1.9 and 2.8 points.
+- **Cash and trading both rose:**
+  - **Cash:** average cash was 15.2%, against 10.7%. Four of the 21 models held more than a third of the portfolio in cash over their year: 44% (2017, seed 43), 52% (2018, seed 43), 36% (2019, seed 42) and 72% (2021, seed 44).
+  - **Trading:** turnover rose from 4.3 to 5.4 times capital a year. One model (2021, seed 43) turned over 14.6 times and paid 3.2 points in costs.
+  - **Seed spread:** the seed standard deviation of annual returns rose from 1.5 to 1.9 points.
+
+**Significance.** Sharpe ratios on the same 1,699 chained daily returns, with the same stationary bootstrap:
+
+| Comparison | Sharpe difference | 95% interval |
+| --- | ---: | ---: |
+| With the macro proxies − shared actor | −0.05 | −0.18 to +0.09 |
+| Seed ensemble + band: with − without the macro proxies | −0.08 | −0.20 to +0.06 |
+| Seed ensemble + band: macro proxies − policy rate | −0.02 | −0.13 to +0.11 |
+| Seed ensemble + band with the macro proxies − point-in-time equal weight | −0.05 | −0.13 to +0.04 |
+| Seed ensemble + band with the macro proxies − ETF | −0.17 | −0.43 to +0.07 |
+
+- **Sharpe ratios:** 0.30 for the mean of the seeds with the macro proxies and 0.33 for its ensemble with the band. For comparison: 0.35 for the shared actor, 0.42 for its ensemble with the band, 0.35 for the ensemble with the policy rate, 0.38 for equal weight and 0.50 for the ETF.
+- **No difference is significant.** The macro ensemble's shortfall is larger than the policy-rate ensemble's (−0.08 against −0.06), but its returns track the ensemble without extra inputs less closely, so its interval is wider. The tracking error is 2.8% a year, against 1.2% for the policy-rate ensemble.
+- **Deflated Sharpe,** counting 17 designs: 0.17 for the ensemble with the macro proxies and 0.15 for the mean of its seeds. The best design, the ensemble with the band and only technical and market inputs, falls to 0.23 (0.27 at 13 designs, 0.25 at 15); the policy-rate ensemble falls to 0.19.
+
+**Where the return went.** The same diagnostics as above, as means over the seven years:
+
+| Strategy | Return before costs | Cost drag | Return after costs | Turnover a year | after the initial purchase | Average cash |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Seed ensemble + band, without the macro proxies | 5.9% | 0.3% | 5.5% | 1.6× | 0.7× | 10.5% |
+| **Seed ensemble + band, with the macro proxies** | 4.8% | 0.4% | 4.3% | 2.1× | 1.2× | 14.7% |
+| DRL with the macro proxies | 5.0% | 1.1% | 3.9% | 5.4× | 4.5× | 15.2% |
+| DRL, shared-weight actor | 5.5% | 0.9% | 4.6% | 4.3× | 3.4× | 10.7% |
+| Equal weight, point-in-time SET50 | 6.0% | 0.4% | 5.6% | 1.9× | 0.9× | 0.7% |
+
+- **Mostly before costs:** the agent with the macro proxies earned 0.5 points a year less before costs and paid 0.2 points more in costs. Its ensemble earned 1.1 points less before costs.
+- **Still close to equal weight,** a little less so: the ensemble's daily correlation with equal weight was 0.996 (0.998 without the macro proxies), with 43.6 effective holdings out of 44.5 tradable members.
+
+**The agent uses the macro proxies, and they cost it return.** The same input attribution as for the policy rate (`attribution_*` files in the run folder; all 21 models replayed exactly):
+
+| Input group | Inputs | Portfolio shift, shuffled | Portfolio shift, at the training mean | Change in annual return, at the training mean (mean) | Change in cash, at the training mean |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Technical | 11 | 4.5% | 3.9% | +0.2 points | −0.4 points |
+| SET50 market context | 5 | 2.1% | 2.2% | 0.0 points | +1.4 points |
+| **Macro proxies** | 8 | 3.8% | 3.9% | +0.5 points | −3.5 points |
+
+- **Read heavily:** shuffling the macro proxies moved the portfolio by 3.8%, almost as much as the technical inputs (4.5%). The policy rate moved it by 0.7%.
+- **Their information hurt:** shuffled or held at their training mean, the macro proxies left the agent better off on average, by 0.5 points a year. The return rose in 15 of the 21 models either way.
+- **They drove some of the cash.** Holding the macro proxies at their training mean cut the cash of three of the four cash-heavy models:
+  - 2017, seed 43: from 43% to 14%, and its return rose from 9.1% to 13.5% (equal weight made 16.5%);
+  - 2018, seed 43: by 17 points;
+  - 2019, seed 42: by 13 points.
+
+  The fourth (72% cash in 2021) did not respond to any input group.
+- **Against the five-stock study:** there, shuffling the macro proxies moved the weights by 2.9% and changed the return by 0.25 points or less. On the point-in-time index the agent leans on them more, and to its cost.
+
+**Cash across the four designs.** Fifteen models in the four shared-weight designs held 36–94% cash on average over their year: two without extra inputs, four with the policy rate, five trained with the band and four with the macro proxies.
+- **Mostly fixed:** shuffling an input group across sessions moved the cash by 5 points or less in 12 of them.
+- **The exceptions:** the 2020 shared-weight model (technical inputs, 10 points) and two macro-proxy models (macro inputs, 25 and 6 points).
+- **Reading:** the cash is mostly a fixed bias that each seed learned. Where it did follow the inputs, it followed the macro proxies, and that cost return.
+
+**What it means:**
+- **Neither macro source helped the agent.** With the macro proxies it made 3.9% a year against 4.6%, and its seed ensemble with the band 4.3% against 5.5%. With the policy rate: 4.1% and 4.5%.
+- **Two different failures:**
+  - **Policy rate:** the models barely used it. The shortfall came from how training turned out with the extra inputs.
+  - **Macro proxies:** the models used them heavily, and removing their information made most models better. They added noise that the agent learned to treat as signal, which moved it into cash and raised its trading.
+- **For RQ2 and RQ3:** on the point-in-time index, the best inputs are the technical and SET50 market inputs alone. Neither macro source adds value under this design and training budget; the five-stock ablation reached the same conclusion for the macro proxies. The other planned sources (news sentiment, investor flow, point-in-time fundamentals) still have no historical data.
 
 ## Run it
 
@@ -738,6 +823,47 @@ python -m scripts.pit_feature_group_attribution --config config/pit_walk_forward
   --run-dir results/pit_walk_forward_policy --variant pit_plan_weekly_lstm_shared_policy
 python -m scripts.pit_feature_group_attribution --config config/pit_walk_forward_experiment.yaml \
   --run-dir results/pit_walk_forward_shared --variant pit_plan_weekly_lstm_shared --output-dir results/pit_attribution_shared
+```
+
+The macro-proxy arm runs the same way from its own config (three workers, 06:16 to 10:31 in the morning: 4 h 15 min for the 21 models). The last aggregation puts the three input sets' seed ensembles with the band side by side; `--variants` with no names leaves out the single-seed models:
+
+```bash
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_macro.yaml VARIANTS=pit_plan_weekly_lstm_shared_macro SEEDS="42 43 44" \
+  PYTHON=python scripts/run_walk_forward_reward.sh results/pit_walk_forward_macro 3 100000
+python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_macro.yaml \
+  --source-run results/pit_walk_forward_macro --variant pit_plan_weekly_lstm_shared_macro \
+  --output-dir results/pit_macro_ensemble --band 0.005 --modes ensemble_band
+python -m scripts.aggregate_walk_forward_reward --run-dir results/pit_walk_forward_macro \
+  --extra-run-dirs results/pit_macro_ensemble results/pit_seed_ensemble results/pit_walk_forward_shared --n-trials 17 \
+  --variants pit_plan_weekly_lstm_shared pit_plan_weekly_lstm_shared_macro --drop pit_plan_weekly_lstm_shared_ensemble \
+  --output-dir results/pit_walk_forward_combined_macro \
+  --references pit_plan_weekly_lstm_shared pit_plan_weekly_lstm_shared_ensemble_band pit_plan_weekly_lstm_shared_macro \
+  pit_plan_weekly_lstm_shared_macro_ensemble_band \
+  --labels pit_plan_weekly_lstm_shared="DRL, shared-weight actor" pit_plan_weekly_lstm_shared_ensemble_band="Seed ensemble + band" \
+  pit_plan_weekly_lstm_shared_macro="DRL + macro proxies" \
+  pit_plan_weekly_lstm_shared_macro_ensemble_band="DRL + macro proxies: seed ensemble + band"
+python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_walk_forward_macro --variant pit_plan_weekly_lstm_shared_macro \
+  --pit-config config/pit_walk_forward_macro.yaml
+python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_macro_ensemble \
+  --variant pit_plan_weekly_lstm_shared_macro_ensemble_band --prefix diagnostics_ensemble_band
+python -m scripts.pit_feature_group_attribution --config config/pit_walk_forward_macro.yaml \
+  --run-dir results/pit_walk_forward_macro --variant pit_plan_weekly_lstm_shared_macro
+python -m scripts.aggregate_walk_forward_reward --run-dir results/pit_walk_forward_macro \
+  --extra-run-dirs results/pit_macro_ensemble results/pit_walk_forward_policy results/pit_policy_ensemble \
+  results/pit_seed_ensemble results/pit_walk_forward_shared \
+  --n-trials 17 --variants --drop pit_plan_weekly_lstm_shared_ensemble --output-dir results/pit_source_arms_combined \
+  --references pit_plan_weekly_lstm_shared_ensemble_band pit_plan_weekly_lstm_shared_policy_ensemble_band \
+  pit_plan_weekly_lstm_shared_macro_ensemble_band \
+  --labels pit_plan_weekly_lstm_shared_ensemble_band="Seed ensemble + band: technical + market inputs" \
+  pit_plan_weekly_lstm_shared_policy_ensemble_band="Seed ensemble + band: + BOT policy rate" \
+  pit_plan_weekly_lstm_shared_macro_ensemble_band="Seed ensemble + band: + macro proxies"
+```
+
+The band-trained models' attribution writes into its own folder:
+
+```bash
+python -m scripts.pit_feature_group_attribution --config config/pit_walk_forward_experiment.yaml \
+  --run-dir results/pit_walk_forward_band --variant pit_plan_weekly_lstm_shared_band --output-dir results/pit_attribution_band
 ```
 
 To check that trained models ignore the slot order, roll them out under both orders, one validation year at a time:

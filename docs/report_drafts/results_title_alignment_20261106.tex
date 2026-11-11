@@ -204,8 +204,8 @@ same sessions, costs, and accounting; only the stock universe differs.
 
 \begin{table}[H]
 \centering
-\small
-\caption{Point-in-time SET50 walk-forward, validation 2016--2022: mean over seven annual folds (DRL: three seeds per fold). Equal-weight portfolios rebalance monthly, and all strategies pay the same costs. The point-in-time DRL rows differ only in the slot order, the policy head, whether a no-trade band applies in training, whether the BOT policy rate is an input and, for the seed ensembles, how the trained models are combined and traded (see text). Rows without a universe in parentheses are on the point-in-time SET50.}
+\footnotesize
+\caption{Point-in-time SET50 walk-forward, validation 2016--2022: mean over seven annual folds (DRL: three seeds per fold). Equal-weight portfolios rebalance monthly, and all strategies pay the same costs. The point-in-time DRL rows differ only in the slot order, the policy head, whether a no-trade band applies in training, whether the BOT policy rate or the daily macro proxies are inputs and, for the seed ensembles, how the trained models are combined and traded (see text). Rows without a universe in parentheses are on the point-in-time SET50.}
 \label{tab:pit}
 \begin{tabularx}{\textwidth}{@{}Yrrrr@{}}
 \toprule
@@ -226,6 +226,8 @@ DRL, shared-weight actor trained with the band & 5.1\% & $-2.0\%$ & 1/7 & $-10.8
 DRL, plan reward + LSTM, shared-weight actor & 4.6\% & $-2.5\%$ & 1/7 & $-11.7\%$ \\
 DRL, shared-weight actor + BOT policy rate, seed ensemble + no-trade band & 4.5\% & $-2.6\%$ & 1/7 & $-11.3\%$ \\
 DRL, shared-weight actor + BOT policy rate & 4.1\% & $-3.1\%$ & 1/7 & $-11.4\%$ \\
+DRL, shared-weight actor + macro proxies, seed ensemble + no-trade band & 4.3\% & $-2.8\%$ & 2/7 & $-11.5\%$ \\
+DRL, shared-weight actor + macro proxies & 3.9\% & $-3.2\%$ & 1/7 & $-11.6\%$ \\
 DRL, plan reward + LSTM, sticky slots & 3.7\% & $-3.5\%$ & 1/7 & $-14.2\%$ \\
 DRL, plan reward + LSTM, traded-value slots & $-1.1\%$ & $-8.3\%$ & 0/7 & $-14.8\%$ \\
 \midrule
@@ -275,6 +277,8 @@ DRL, trained with the band & 5.6\% & 0.4\% & 5.1\% & 2.0 & 19.2\% \\
 DRL, trained with the band, seed ensemble & 5.6\% & 0.3\% & 5.2\% & 1.5 & 18.0\% \\
 DRL + BOT policy rate & 4.9\% & 0.8\% & 4.1\% & 3.8 & 12.2\% \\
 DRL + BOT policy rate, seed ensemble + no-trade band & 4.8\% & 0.3\% & 4.5\% & 1.4 & 12.3\% \\
+DRL + macro proxies & 5.0\% & 1.1\% & 3.9\% & 5.4 & 15.2\% \\
+DRL + macro proxies, seed ensemble + no-trade band & 4.8\% & 0.4\% & 4.3\% & 2.1 & 14.7\% \\
 Equal weight (point-in-time SET50) & 6.0\% & 0.4\% & 5.6\% & 1.9 & 0.7\% \\
 LSTM forecast, top ten & 11.5\% & 3.5\% & 8.1\% & 15.8 & 1.4\% \\
 DRL (five starter stocks) & 8.5\% & 0.8\% & 7.7\% & 3.9 & 20.3\% \\
@@ -370,11 +374,34 @@ therefore reflects what training produced with the extra inputs, chiefly cash th
 seed, rather than information in the policy rate. Counting fifteen designs, the deflated Sharpe ratio
 of the best design, the ensemble with the band and without the policy rate, was 0.25.
 
+The daily macro proxies of the five-stock ablation did no better on the point-in-time index. With the
+5- and 20-session returns of USD/THB, Brent crude and gold and two measures of the US 10-year yield as
+eight more inputs, the agent made 3.9\% a year and its seed ensemble with the band 4.3\%. The
+ensemble's Sharpe ratio, 0.33, was 0.08 below that of the ensemble without them ($-0.20$ to $0.06$),
+and 0.02 below that of the ensemble with the policy rate ($-0.13$ to $0.11$); neither difference is
+significant. Unlike the policy rate, these inputs were used. Shuffling them moved the portfolio by
+3.8\%, almost as much as the technical inputs (4.5\%), and turnover rose to 5.4 times capital a year.
+Their information hurt: shuffled or held at their training mean, they left 15 of the 21 models with a
+higher return, by 0.5 points a year on average. In one model, holding them at the mean cut the cash
+from 43\% to 14\% and raised the year's return by 4.4 points. Across the four shared-weight designs,
+fifteen models held more than a third of the portfolio in cash over their year. Shuffling an input
+group moved that cash by 5 points or less in twelve of them, so the cash was mostly a fixed bias of
+each trained model; where it did follow the inputs, it mostly followed the macro proxies. Counting
+seventeen designs, the deflated Sharpe ratio of the best design, the ensemble with the band and only
+technical and market inputs, was 0.23. Figure~\ref{fig:pit-sources} compares the three input sets.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{docs/figures/pit_walk_forward_shared_chained_equity_20261110.png}
 \caption{Point-in-time SET50: chained out-of-sample value over the seven validation years for the DRL agent with traded-value slots, with sticky slots, and with the shared-weight actor, and for the baselines. Each year uses models trained only on earlier years; bands show the range across three seeds.}
 \label{fig:pit}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{docs/figures/pit_source_arms_chained_equity_20261111.png}
+\caption{Point-in-time SET50: chained out-of-sample value of the seed ensemble with the no-trade band for three input sets: technical and SET50 market inputs, the same plus the BOT policy rate, and the same plus the daily macro proxies, with the ETF and equal weight. Everything except the inputs is identical.}
+\label{fig:pit-sources}
 \end{figure}
 
 \section{Interpretation}
@@ -397,7 +424,8 @@ however, was close to equal weight, and it remained below both references, thoug
 significantly. Averaging the three seeds and adding a no-trade band then brought it level with equal
 weight, with less trading, but not significantly ahead of it. Training with the band instead of adding
 it afterwards also cut trading, but the agent learned to hold more cash and did no better. Adding the
-official policy rate as an input lowered the return, and the trained models barely used it.
+official policy rate or the daily macro proxies as inputs lowered the return: the trained models
+barely used the policy rate, and they used the macro proxies to their cost.
 The evidence therefore does not support a claim that this DRL design improves long-term profit in the
 Thai stock market. Such a claim would need a policy that adds value over equal weight after costs,
 survivorship-free licensed data, and the remaining data sources (fundamentals, news sentiment,
@@ -409,7 +437,7 @@ investor flow, and further point-in-time official macro data), evaluated once on
   \item \textbf{Exploratory data tier.} Prices, the ETF series, and the macro proxies come from Yahoo Finance, not from the licensed SETSMART package requested for the project. Yahoo prices are adjusted for splits and dividends but carry no trading-status, suspension, or corporate-action records, so a suspended stock and a missing price look the same.
   \item \textbf{Survivorship.} The point-in-time membership is official, but 38 of its 227 tickers, mostly delisted or merged companies, have no prices. They account for 13\% of SET50 member-sessions. The missing names bias the results in both directions: failed companies that Yahoo dropped would have lowered an equal-weight return, and companies taken over at a premium would have raised it. Only the ETF benchmark is free of this gap. Results on fixed stock lists are biased in a known direction: choosing today's SET50 members with hindsight added 6.6 percentage points a year to equal weight (Section~\ref{sec:pit}).
   \item \textbf{Cost model.} Every trade pays 0.15\% commission plus 0.05\% slippage per side, which covers the published explicit cost of about 0.176\%. Market impact, the wider bid--ask spreads of smaller members, board lots, daily price limits, and the minimum tick are not modelled. The costs of high-turnover policies are therefore, if anything, understated.
-  \item \textbf{Macro and alternative data.} The daily macro proxies are market prices and therefore point-in-time. The Bank of Thailand macro history, however, is a current revised vintage, so it was kept out of the models. The official policy-rate decision history is point-in-time; added to the point-in-time agent, it lowered the return, and the trained models barely used it (Section~\ref{sec:pit}). Fundamentals cover only recent years for the five starter stocks, and news sentiment and investor flow are implemented without historical data. The \emph{multi-source} claim therefore rests on price, technical, market, macro-proxy, and policy-rate inputs only. Of these, only market context helped, borderline and only on the five starter stocks.
+  \item \textbf{Macro and alternative data.} The daily macro proxies are market prices and therefore point-in-time; on the point-in-time agent they lowered the return (Section~\ref{sec:pit}). The Bank of Thailand macro history, however, is a current revised vintage, so it was kept out of the models. The official policy-rate decision history is point-in-time; added to the point-in-time agent, it lowered the return, and the trained models barely used it (Section~\ref{sec:pit}). Fundamentals cover only recent years for the five starter stocks, and news sentiment and investor flow are implemented without historical data. The \emph{multi-source} claim therefore rests on price, technical, market, macro-proxy, and policy-rate inputs only. Of these, only market context helped, borderline and only on the five starter stocks.
   \item \textbf{Validation years only.} Designs were compared and chosen on the validation years, so the chosen design's validation performance is optimistic. The sticky slot order, the shared-weight actor, the seed ensemble and the no-trade band, for example, were chosen after seeing earlier point-in-time runs. The deflated Sharpe ratio corrects for this only in part. The 2023--2024 test years and the sealed post-2024 holdout have not been read.
   \item \textbf{Training budget and seeds.} Each model trained for 100{,}000 timesteps with three to five seeds on the 8~GB development machine. Longer training, more seeds, and the off-policy algorithms require the HPC cluster.
   \item \textbf{Slot order and turnover.} With the dense policy head, the agent scores slot positions rather than stocks, so any change in the slot order changes portfolio weights. The sticky slot order removes almost all of these changes, and the shared-weight actor removes the dependence entirely, as checked on all 21 of its trained models. Neither limits the policy's own week-to-week reweighting: after the initial purchase, the shared-weight agent still turned over 3.4 times its capital a year, against 0.9 for equal weight. A 0.5-point no-trade band cut this to 0.7 times a year in the seed ensemble. Its width was not tuned, and part of its gain, in 2020, came from cash it happened to leave in place. Training with the band cut turnover as well, but doubled the average cash holding, to 19\%.
