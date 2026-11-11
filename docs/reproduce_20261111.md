@@ -205,10 +205,20 @@ It carries a SHA-256 manifest and is verified after it is written:
 
 ```bash
 python -m scripts.build_slim_results_archive --output results/slim_archive_20261111.tar.gz \
-  $(for d in results/walk_forward_reward_20261106 results/source_ablation_20261106 results/source_ablation_combined_20261106 \
-      results/algorithm_comparison_20261106 results/algorithm_comparison_combined_20261107 results/pit_walk_forward_20261107 \
-      results/pit_walk_forward_sticky_20261109 results/pit_walk_forward_shared_20261110 results/pit_seed_ensemble_20261110 \
-      results/pit_band_sensitivity_20261110 results/pit_heuristic_baselines_20261110 results/pit_walk_forward_band_20261110 \
-      results/pit_band_ensemble_20261111 results/pit_walk_forward_combined_band_20261111 results/pit_lstm_forecast_20261111; \
-    do echo --run-dir $d; done)
+  $(for d in walk_forward_reward_20261106 source_ablation_20261106 source_ablation_combined_20261106 \
+      algorithm_comparison_20261106 algorithm_comparison_combined_20261107 \
+      pit_walk_forward_20261107 pit_walk_forward_sticky_20261109 pit_walk_forward_shared_20261110 \
+      pit_walk_forward_combined_20261109 pit_walk_forward_combined_20261110 \
+      pit_seed_ensemble_20261110 pit_seed_ensemble_combined_20261110 pit_band_sensitivity_20261110 \
+      pit_heuristic_baselines_20261110 pit_walk_forward_band_20261110 pit_band_ensemble_20261111 \
+      pit_walk_forward_combined_band_20261111 pit_lstm_forecast_20261111 pit_lstm_forecast_combined_20261111 \
+      pit_walk_forward_policy_20261111 pit_policy_ensemble_20261111 pit_walk_forward_combined_policy_20261111 \
+      pit_attribution_shared_20261111 pit_attribution_band_20261111 pit_walk_forward_macro_20261111 \
+      pit_macro_ensemble_20261111 pit_walk_forward_combined_macro_20261111 pit_source_arms_combined_20261111; \
+    do echo --run-dir results/$d; done)
 ```
+
+**Built 2026-11-11** from these 28 run folders, at code commit `d23572a`:
+- **Archive:** `results/slim_archive_20261111.tar.gz`, 53.8 MB (271 MB unpacked, 3,035 files), SHA-256 `60e9687a8398…`. The full digest is in `slim_archive_20261111.tar.gz.receipt.json`, next to it.
+- **Verified:** the build reopened the archive and checked every file against the manifest.
+- **Left out:** the first long-term-reward experiment (`results/long_term_reward_experiment_20261106/`, superseded by the walk-forward). Two of its files exist only in iCloud, and macOS refused to download them (`Errno 81`).
