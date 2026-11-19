@@ -111,7 +111,8 @@ variants:
   # funds, which commit to holding at least 80% of their net assets in shares on average over the accounting
   # year; a cap at every decision is stricter than that yearly average. The cap applies in training and
   # validation, and it was fixed before the run, not tuned. It changes only the cash rule of
-  # pit_plan_weekly_lstm_shared (no band), and it is design 18 in the deflated Sharpe ratio.
+  # pit_plan_weekly_lstm_shared (no band). With its seed ensemble and band, it is designs 18 and 19 in the
+  # deflated Sharpe ratio.
   - name: pit_plan_weekly_lstm_shared_cashcap
     description: "As pit_plan_weekly_lstm_shared, with the cash target capped at 20% of the portfolio"
     environment:
