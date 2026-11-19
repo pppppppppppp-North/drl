@@ -134,6 +134,7 @@ def make_env(config: dict, panel: pd.DataFrame, mask: pd.DataFrame, *, training:
         episode_length=int(episode) if episode is not None else None,
         slot_order=str(config["universe"].get("slot_order", "traded_value")),
         no_trade_band=float(env_cfg.get("no_trade_band", 0.0)),
+        max_cash_weight=float(env_cfg.get("max_cash_weight", 1.0)),
     )
 
 

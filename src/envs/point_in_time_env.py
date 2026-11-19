@@ -24,6 +24,11 @@ slots are masked out of the allocation. ``slot_order`` sets how the tradable mem
   the band; otherwise it is left as it is, and cash takes up the difference. Purchases are scaled
   down when they would need more cash than the portfolio holds after its sales. Holdings outside
   the slots and forced exits are always sold.
+- **Cash cap** (``max_cash_weight``, default 1 = off): on a rebalancing session with at least one
+  tradable slot, a target with more cash than the cap has its stock weights scaled up in proportion
+  until cash equals the cap. For the logits this is the same as lowering the cash logit; a weight
+  vector with nothing invested is spread evenly over the tradable slots. The cap applies to the
+  target: the no-trade band and price drift between decisions can leave the cash held above it.
 
 Observation (compatible with ``AssetTemporalExtractor`` with ``num_assets=K``): a
 ``lookback x K x F`` window, where F is the stock features, then the market features, then a
@@ -67,6 +72,7 @@ class PointInTimeSlotEnv(LongTermTradingEnv):
         episode_length: int | None = None,
         slot_order: str = "traded_value",
         no_trade_band: float = 0.0,
+        max_cash_weight: float = 1.0,
     ) -> None:
         gym.Env.__init__(self)
         if slot_order not in SLOT_ORDERS:
@@ -98,6 +104,9 @@ class PointInTimeSlotEnv(LongTermTradingEnv):
         self.no_trade_band = float(no_trade_band)
         if not 0.0 <= self.no_trade_band < 1.0:
             raise ValueError(f"no_trade_band must be in [0, 1), got {no_trade_band!r}")
+        self.max_cash_weight = float(max_cash_weight)
+        if not 0.0 <= self.max_cash_weight <= 1.0:
+            raise ValueError(f"max_cash_weight must be in [0, 1], got {max_cash_weight!r}")
 
         frame = panel.copy()
         frame["date"] = pd.to_datetime(frame["date"])
@@ -229,12 +238,24 @@ class PointInTimeSlotEnv(LongTermTradingEnv):
             logits = np.where(np.r_[valid, True], logits, -np.inf)
             logits = logits - logits.max()
             exp = np.exp(logits)
-            return (exp / exp.sum())[: self.num_slots]
+            return self._cap_cash((exp / exp.sum())[: self.num_slots], valid)
         if values.shape[0] == self.num_slots:
             weights = np.clip(np.nan_to_num(values, nan=0.0), 0.0, None) * valid
             total = weights.sum()
-            return weights / total if total > 1.0 else weights
+            return self._cap_cash(weights / total if total > 1.0 else weights, valid)
         raise ValueError(f"action must have {self.num_slots + 1} logits or {self.num_slots} weights")
+
+    def _cap_cash(self, weights: np.ndarray, valid: np.ndarray) -> np.ndarray:
+        """Scale the stock weights up in proportion so that the cash target is at most ``max_cash_weight``."""
+        if self.max_cash_weight >= 1.0 or not valid.any():
+            return weights
+        floor = 1.0 - self.max_cash_weight
+        invested = float(weights.sum())
+        if invested >= floor:
+            return weights
+        if invested <= 0.0:
+            return np.where(valid, floor / float(valid.sum()), 0.0)
+        return weights * (floor / invested)
 
     def _apply_no_trade_band(self, previous: np.ndarray, target: np.ndarray, seated: np.ndarray) -> np.ndarray:
         """Trade a seated holding only when its target is more than the band away; keep the budget."""

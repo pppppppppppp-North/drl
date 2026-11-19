@@ -104,3 +104,21 @@ variants:
       normalize_observations: false
       policy:
         actor: shared_asset
+  # After the band and source-arm runs (2026-11-11): cash was the agents' main weakness. Some seeds held
+  # 36-94% cash through whole validation years, and the attribution showed it was a near-constant learned
+  # output, not a response to the inputs. Here the target never holds more than 20% cash: when the policy's
+  # cash weight is above it, its stock weights are scaled up in proportion. The 20% mirrors Thai equity
+  # funds, which commit to holding at least 80% of their net assets in shares on average over the accounting
+  # year; a cap at every decision is stricter than that yearly average. The cap applies in training and
+  # validation, and it was fixed before the run, not tuned. It changes only the cash rule of
+  # pit_plan_weekly_lstm_shared (no band), and it is design 18 in the deflated Sharpe ratio.
+  - name: pit_plan_weekly_lstm_shared_cashcap
+    description: "As pit_plan_weekly_lstm_shared, with the cash target capped at 20% of the portfolio"
+    environment:
+      max_cash_weight: 0.2
+    universe:
+      slot_order: sticky
+    training:
+      normalize_observations: false
+      policy:
+        actor: shared_asset

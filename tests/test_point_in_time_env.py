@@ -282,3 +282,77 @@ def test_accounting_reconciles_with_a_no_trade_band() -> None:
         assert set(info["holdings"]) <= {env.tickers[u] for u in slots if u >= 0}
     with pytest.raises(ValueError):
         _env(panel, members, no_trade_band=-0.01)
+
+
+def test_cash_cap_of_one_changes_nothing() -> None:
+    panel = _panel()
+    members = _membership(panel, {"A.BK": (0, 70), "B.BK": (0, 80), "C.BK": (30, 80)})
+    curves = []
+    for kwargs in ({}, {"max_cash_weight": 1.0}):
+        env = _env(panel, members, rebalance_every=3, **kwargs)
+        env.reset(seed=0)
+        rng = np.random.default_rng(3)
+        done, values = False, []
+        while not done:
+            _, _, done, _, info = env.step(rng.normal(size=4))
+            values.append(info["portfolio_value"])
+        curves.append(values)
+    assert curves[0] == curves[1]
+
+
+def test_cash_cap_scales_the_stock_weights_up_in_proportion() -> None:
+    panel = _panel(tickers=("A.BK", "B.BK"))
+    members = _membership(panel, {"A.BK": (0, 80), "B.BK": (0, 80)})  # the third slot stays empty
+    free, capped = _env(panel, members), _env(panel, members, max_cash_weight=0.2)
+    slots = free.slots[free.current_step]
+    assert list(slots >= 0) == [True, True, False]
+    action = np.array([0.0, 1.0, 4.0, 3.0])  # most of the budget in cash; the empty slot is ignored
+    before, after = free._slot_weights(action, slots), capped._slot_weights(action, slots)
+    assert 1.0 - before.sum() > 0.2
+    assert after.sum() == pytest.approx(0.8) and after[2] == 0.0
+    np.testing.assert_allclose(after / after.sum(), before / before.sum())
+    # The same as lowering the cash logit until cash is 20% of the portfolio.
+    lowered = action.copy()
+    lowered[3] = np.log(0.2 / 0.8 * np.exp(action[:2]).sum())
+    np.testing.assert_allclose(free._slot_weights(lowered, slots), after)
+    # A target with less cash than the cap is left as it is.
+    invested = np.array([2.0, 2.0, 0.0, 0.0])
+    np.testing.assert_allclose(capped._slot_weights(invested, slots), free._slot_weights(invested, slots))
+    # Weight vectors: too little invested is scaled up; nothing invested is spread over the tradable slots.
+    np.testing.assert_allclose(capped._slot_weights(np.array([0.3, 0.1, 0.0]), slots), [0.6, 0.2, 0.0])
+    np.testing.assert_allclose(capped._slot_weights(np.zeros(3), slots), [0.4, 0.4, 0.0])
+    # With no tradable slot, the portfolio stays in cash.
+    assert capped._slot_weights(action, np.array([-1, -1, -1])).sum() == 0.0
+    with pytest.raises(ValueError):
+        _env(panel, members, max_cash_weight=1.5)
+    with pytest.raises(ValueError):
+        _env(panel, members, max_cash_weight=-0.1)
+
+
+def test_accounting_reconciles_with_a_cash_cap() -> None:
+    panel = _panel(tickers=("A.BK", "B.BK", "C.BK", "D.BK"))
+    members = _listed(panel, {"A.BK": [(0, 80)], "B.BK": [(0, 35)], "C.BK": [(0, 80)], "D.BK": [(45, 80)]})
+    env = _env(panel, members, num_slots=4, slot_order="sticky", rebalance_every=2, max_cash_weight=0.2)
+    env.reset(seed=0)
+    all_cash = np.array([-5.0, -5.0, -5.0, -5.0, 5.0])
+    value, done = env.initial_cash, False
+    while not done:
+        _, _, done, _, info = env.step(all_cash)
+        value *= 1 + info["net_return"]
+        assert sum(info["holdings"].values()) + info["cash_weight"] == pytest.approx(1.0)
+        assert info["portfolio_value"] == pytest.approx(value)
+        if info["rebalanced"]:  # 20% cash at the decision, then one session of price drift
+            assert info["cash_weight"] == pytest.approx(0.2, abs=0.01)
+
+
+def test_the_walk_forward_config_passes_the_cash_cap_to_the_environment() -> None:
+    from scripts.run_pit_walk_forward import make_env
+
+    panel = _panel()
+    members = _membership(panel, {t: (0, 80) for t in ("A.BK", "B.BK", "C.BK")})
+    config = {"environment": {"initial_cash": 1.0, "transaction_cost": 0.001, "rebalance_every": 5},
+              "features": {"stock_columns": STOCK, "market_columns": MARKET, "lookback": 5},
+              "universe": {"num_slots": 3, "min_history_sessions": 1}}
+    assert make_env(config, panel, members, training=False).max_cash_weight == 1.0
+    config["environment"]["max_cash_weight"] = 0.2
+    assert make_env(config, panel, members, training=False).max_cash_weight == 0.2
