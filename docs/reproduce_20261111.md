@@ -208,7 +208,7 @@ The archive holds the code, configs, documents and reference inputs, and each ru
 It carries a SHA-256 manifest and is verified after it is written:
 
 ```bash
-python -m scripts.build_slim_results_archive --output results/slim_archive_20261111.tar.gz \
+python -m scripts.build_slim_results_archive --output results/slim_archive_20261120.tar.gz \
   $(for d in walk_forward_reward_20261106 source_ablation_20261106 source_ablation_combined_20261106 \
       algorithm_comparison_20261106 algorithm_comparison_combined_20261107 \
       pit_walk_forward_20261107 pit_walk_forward_sticky_20261109 pit_walk_forward_shared_20261110 \
@@ -218,11 +218,13 @@ python -m scripts.build_slim_results_archive --output results/slim_archive_20261
       pit_walk_forward_combined_band_20261111 pit_lstm_forecast_20261111 pit_lstm_forecast_combined_20261111 \
       pit_walk_forward_policy_20261111 pit_policy_ensemble_20261111 pit_walk_forward_combined_policy_20261111 \
       pit_attribution_shared_20261111 pit_attribution_band_20261111 pit_walk_forward_macro_20261111 \
-      pit_macro_ensemble_20261111 pit_walk_forward_combined_macro_20261111 pit_source_arms_combined_20261111; \
+      pit_macro_ensemble_20261111 pit_walk_forward_combined_macro_20261111 pit_source_arms_combined_20261111 \
+      pit_walk_forward_cash_cap_20261119 pit_cash_cap_ensemble_20261119 pit_walk_forward_combined_cash_cap_20261119; \
     do echo --run-dir results/$d; done)
 ```
 
-**Built 2026-11-11** from these 28 run folders, at code commit `d23572a`:
-- **Archive:** `results/slim_archive_20261111.tar.gz`, 53.8 MB (271 MB unpacked, 3,035 files), SHA-256 `60e9687a8398…`. The full digest is in `slim_archive_20261111.tar.gz.receipt.json`, next to it.
+**Rebuilt 2026-11-20** from these 31 run folders, after the cash-capped run, at code commit `9920591`:
+- **Archive:** `results/slim_archive_20261120.tar.gz`, 59.1 MB (301 MB unpacked, 3,260 files), SHA-256 `5d9373933a7e…`. The full digest is in `slim_archive_20261120.tar.gz.receipt.json`, next to it.
+- **Earlier build:** `results/slim_archive_20261111.tar.gz` (28 run folders, before the cash-capped run, commit `d23572a`) is kept with its receipt.
 - **Verified:** the build reopened the archive and checked every file against the manifest.
 - **Left out:** the first long-term-reward experiment (`results/long_term_reward_experiment_20261106/`, superseded by the walk-forward). Two of its files exist only in iCloud, and macOS refused to download them (`Errno 81`).
