@@ -1,6 +1,6 @@
 # Project Progress Checklist
 
-Last updated: 2026-11-09
+Last updated: 2026-11-20
 
 Use this file as the single running checklist for what has been completed and what remains. Update it whenever code, data, HPC jobs, results, or report artifacts change.
 
@@ -11,7 +11,7 @@ Use this file as the single running checklist for what has been completed and wh
 - `[ ]` Not started
 - `[!]` Blocked or needs attention
 
-## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07, sticky slots 2026-11-09, shared-weight actor, seed ensemble and no-trade band 2026-11-10, training with the band 2026-11-11
+## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07, sticky slots 2026-11-09, shared-weight actor, seed ensemble and no-trade band 2026-11-10, training with the band 2026-11-11, cash cap 2026-11-19
 
 Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md). Outputs (git-ignored): `results/pit_walk_forward_20261107/`, `results/pit_walk_forward_sticky_20261109/`, `results/pit_walk_forward_shared_20261110/`, `results/pit_walk_forward_combined_20261109/`, `results/pit_walk_forward_combined_20261110/`, `results/pit_seed_ensemble_20261110/`, `results/pit_seed_ensemble_combined_20261110/` and `results/pit_heuristic_baselines_20261110/`. All 63 runs were local; no HPC job was submitted.
 
@@ -71,6 +71,13 @@ Report: [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md)
 - `[x]` **Heuristic benchmarks (2026-11-10).** `scripts/pit_heuristic_baselines.py` adds momentum (top ten by 12-1 month return), inverse volatility (60 days) and long-only minimum variance (252 days, covariance shrunk halfway to its diagonal, 10% cap), rebalanced every 21 sessions with parameters fixed in advance. `tests/test_pit_heuristic_baselines.py` (3) pass.
   - **Result:** 5.3%, 5.0% and 4.0% a year, against 5.6% for equal weight and 7.1% for the ETF. Momentum had the deepest drawdowns (−26.5% in 2018) and 6.4× turnover a year; minimum variance lost 22.4% in 2020.
   - **Significance:** no Sharpe difference against equal weight or the ETF is significant. The DRL ensemble with the band has the highest Sharpe ratio of the active strategies (0.42 against 0.30–0.38), also not significantly.
+- `[x]` **Cash capped at 20% (2026-11-19 20:05 to 2026-11-20 00:21, M5).** `PointInTimeSlotEnv` has a new `max_cash_weight` (default 1 = off): a target with more cash than the cap has its stock weights scaled up in proportion. With the cap off, nine saved models from three earlier runs replay exactly; `tests/test_point_in_time_env.py` (20 tests) pass. The variant `pit_plan_weekly_lstm_shared_cashcap` in `config/pit_walk_forward_experiment.yaml` sets the cap to 0.2, fixed before the run (Thai equity funds hold at least 80% in shares on average over the year). Same 7 folds × 3 seeds × 100k timesteps, 3 local workers on AC power, 21 of 21 tasks done (`results/pit_walk_forward_cash_cap_20261119/`). Designs 18 and 19 of the deflated Sharpe count. No HPC job.
+  - **Result:** **4.4% a year**, against 4.6% without the cap. Its seed ensemble with the band made 5.0%, against 5.5% (`results/pit_cash_cap_ensemble_20261119/`; every model replayed its saved curve).
+  - **Cash:** average 7.2% (10.7% without the cap), and no model above 20.2% over its year. The seed spread of annual returns fell from 1.5 to 1.0 points.
+  - **The gap is 2020:** without the cap, the ensemble held 21% cash through the crash and lost 3.8%; capped, it held 9% and lost 7.9%. In the other six years the two ensembles differ by 0.02 points a year.
+  - **Significance (19 designs):** capped − uncapped −0.02 (95% CI −0.09 to +0.03) for the single models and −0.05 (−0.11 to +0.02) for the ensembles; neither is significant. The capped single models trail equal weight significantly (−0.05, −0.10 to −0.02). Deflated Sharpe 0.18 for the capped ensemble; the best design (the uncapped ensemble with the band) falls to 0.22.
+  - **Cap check:** `scripts/pit_cash_cap_binding.py` (`tests/test_pit_cash_cap_binding.py`, 3 tests). The policy's own cash weight exceeded 20% on 11% of the 1,023 decisions, in 4 of the 21 models; their own cash averaged 14–29% and never exceeded 38%.
+  - **Attribution:** as without the cap (portfolio shift when shuffled: technical 4.1%, market 1.5%). Holding the technical inputs at their training mean, which makes the actor weight all members equally, raised the return of 17 of the 21 models, by 0.5 points a year ([report](docs/pit_walk_forward_20261107.md#follow-up-cash-capped-at-20-2026-11-19)).
 - `[x]` **Macro-proxy source arm (2026-11-11).** `config/pit_walk_forward_macro.yaml`, variant `pit_plan_weekly_lstm_shared_macro`: the shared-weight agent plus the eight daily macro-proxy inputs of the five-stock ablation (USD/THB, Brent and gold 5- and 20-session returns; US 10-year yield change and 20-session return), merged by `add_macro_proxies` in `scripts/run_pit_walk_forward.py` (prices after 2022 dropped first; `tests/test_pit_macro_proxies.py`). Same 7 folds × 3 seeds × 100k timesteps, compared with the shared-weight run. It ran from 06:16 to 10:31 on 2026-11-11, with 3 local workers, after the policy-rate run finished cleanly (`results/pit_walk_forward_macro_20261111/`). No HPC job.
   - **Result:** **3.9% a year**, against 4.6% for the shared-weight run. Its seed ensemble with the band made 4.3%, against 5.5% (`results/pit_macro_ensemble_20261111/`; every model replayed its saved curve).
   - **Significance (17 designs):** ensemble with − without the macro proxies −0.08 (95% CI −0.20 to +0.06); single models −0.05 (−0.18 to +0.09); neither significant. Deflated Sharpe 0.17 for its ensemble; the best design (technical and market inputs only) falls to 0.23.

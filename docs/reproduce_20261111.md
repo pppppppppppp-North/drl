@@ -103,6 +103,7 @@ Aggregate with the report's command, keeping the variants that ran (`--variants 
 
 **Training:** one launcher call per variant, three workers.
 - **Variants:** `pit_plan_weekly_lstm` (first run), `pit_plan_weekly_lstm_sticky`, `pit_plan_weekly_lstm_shared` and `pit_plan_weekly_lstm_shared_band`.
+- **Cash cap:** `pit_plan_weekly_lstm_shared_cashcap`, from the main config, caps the cash target at 20%.
 - **Source arms:** the BOT policy-rate arm uses its own config, `config/pit_walk_forward_policy_rate.yaml`, with `VARIANTS=pit_plan_weekly_lstm_shared_policy`. The macro-proxy arm uses `config/pit_walk_forward_macro.yaml` with `VARIANTS=pit_plan_weekly_lstm_shared_macro`.
 - **Time:** each variant is 21 models of about 30–60 minutes of one core.
 
@@ -126,6 +127,9 @@ python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_po
 python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_macro.yaml \
   --source-run results/pit_walk_forward_macro_20261111 --variant pit_plan_weekly_lstm_shared_macro \
   --output-dir results/pit_macro_ensemble_20261111 --band 0.005 --modes ensemble_band
+python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_experiment.yaml \
+  --source-run results/pit_walk_forward_cash_cap_20261119 --variant pit_plan_weekly_lstm_shared_cashcap \
+  --output-dir results/pit_cash_cap_ensemble_20261119 --band 0.005 --modes ensemble_band
 ```
 
 ## 6. Point-in-time SET50: benchmarks (M3, M6)
@@ -152,7 +156,7 @@ python -m scripts.pit_lstm_forecast_baseline --config config/pit_walk_forward_ex
 - the chained equity figure;
 - the bootstrap Sharpe tests against the ETF, equal weight and every `--references` variant.
 
-`--n-trials` is the number of designs counted by the deflated Sharpe ratio on the point-in-time results: 13 up to the band training, 15 with the policy-rate arm, and 17 with the macro-proxy arm. The exact combinations behind each table are in each report's "Run it" section. For example, the band-training tables:
+`--n-trials` is the number of designs counted by the deflated Sharpe ratio on the point-in-time results: 13 up to the band training, 15 with the policy-rate arm, 17 with the macro-proxy arm and 19 with the cash-capped arm. The exact combinations behind each table are in each report's "Run it" section. For example, the band-training tables:
 
 ```bash
 python -m scripts.aggregate_walk_forward_reward --run-dir results/pit_walk_forward_band_20261110 \

@@ -16,7 +16,7 @@ Title: **Deep Reinforcement Learning for Long-Term Profit Optimization in Thai S
 
 A narrower claim than the title's:
 - **Point-in-time result:** on the point-in-time SET50 over 2016–2022, a DRL agent with a long-term (log-wealth) reward reached equal-weight performance while trading less. With a seed ensemble and a no-trade band it made 5.5% a year, against 5.6%, with a Sharpe ratio of 0.42 against 0.38.
-- **No edge:** it did not beat equal weight or the SET50 ETF (7.1%). Neither did the agent trained with the band (5.1% a year, 5.2% as a seed ensemble) or three standard heuristic strategies. A supervised LSTM forecaster made 8.1% a year, but only through the late-2020 rally, and not significantly more than equal weight or the ETF.
+- **No edge:** it did not beat equal weight or the SET50 ETF (7.1%). Neither did the agent trained with the band (5.1% a year, 5.2% as a seed ensemble), the agent with its cash capped at 20% (4.4% a year, 5.0% as a seed ensemble with the band) or three standard heuristic strategies. A supervised LSTM forecaster made 8.1% a year, but only through the late-2020 rally, and not significantly more than equal weight or the ETF.
 - **Five stocks:** the earlier advantage on five hand-picked stocks came from choosing those stocks with hindsight.
 - **Multi-source:** on the point-in-time SET50, adding official policy-rate inputs or daily macro proxies lowered the agent's return. Only SET50 market context ever helped, borderline and on five stocks.
 

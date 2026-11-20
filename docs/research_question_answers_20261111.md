@@ -1,6 +1,6 @@
 # Answers to the Research Questions (draft)
 
-Date: 2026-11-11
+Date: 2026-11-11; cash-cap arm added 2026-11-20
 Status: **draft** for the M8 item "answer each research question explicitly, including negative results". It answers the six questions of the implementation plan (`implementation_plan.md`, section 2.2) from the evidence in the repository today. Each answer links the report it comes from.
 
 **Limits that apply to every answer:**
@@ -30,8 +30,9 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
   - **First design:** −1.1% a year, significantly worse than the ETF (Sharpe −0.51, 95% CI −0.87 to −0.26) and equal weight (−0.40, −0.58 to −0.28). It overtraded because it scored slot positions rather than stocks.
   - **Best design:** after four follow-ups (sticky slots, a shared-weight actor, a seed ensemble and a no-trade band), it made 5.5% a year, against 5.6% for equal weight and 7.1% for the ETF. Chained over 2016–2022, 1 baht became 1.41, as for equal weight; the ETF reached 1.55.
   - **Sharpe ratios:** 0.42 for the best design, 0.38 for equal weight and 0.50 for the ETF. Neither difference is significant: +0.04 (−0.05 to +0.11) and −0.08 (−0.36 to +0.15).
-  - **Deflated Sharpe:** 0.23, counting the 17 designs tried (0.27 at 13).
+  - **Deflated Sharpe:** 0.22, counting the 19 designs tried (0.27 at 13, 0.23 at 17).
   - **Training with the band:** 5.1% a year, and 5.2% as a seed ensemble.
+  - **Cash capped at 20%:** 4.4% a year, and 5.0% as a seed ensemble with the band ([report](pit_walk_forward_20261107.md#follow-up-cash-capped-at-20-2026-11-19)). It removed the cash-heavy models but not the gap to equal weight, which lies in trading costs and stock tilts that do not pay.
 - **What it learned:** close to equal weight. Its daily correlation with equal weight is 0.998, with 43.9 effective holdings out of 44.5 tradable members.
 - **Other benchmarks on the same universe:** none is significantly better or worse than the agent.
   - **Heuristics:** momentum 5.3%, inverse volatility 5.0% and minimum variance 4.0%.
@@ -113,6 +114,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
     - **2018:** the agent trained with the band lost 7.2% against 10.0%, because one of its three models held 93% cash all year.
   - **Seeds:** in neither case was the cash holding consistent across seeds.
   - **Not market timing:** fifteen models across four designs held 36–94% cash on average over their year. Re-running them with an input group shuffled across sessions moved their cash by 5 points or less in twelve of them. The cash is mostly a fixed bias each seed learned, not a response to the market. Where it did follow the inputs, it mostly followed the macro proxies, and that cost return ([attribution](pit_walk_forward_20261107.md#follow-up-daily-macro-proxies-as-an-input-2026-11-11)).
+  - **Without the cash:** with its cash capped at 20%, the seed ensemble with the band lost 7.9% in 2020, against 3.8% without the cap and 8.5% for equal weight. Outside 2020 the two ensembles are level, so the uncapped agent's 2020 cushion was cash it happened to hold ([report](pit_walk_forward_20261107.md#follow-up-cash-capped-at-20-2026-11-19)).
   - **2022:** every equal-weight-like strategy trailed the ETF (agent 0.2%, equal weight 0.7%, ETF 7.8%), as the largest members led.
 
 ## RQ6. Can BistKA HPC be used efficiently for reproducible training, hyperparameter tuning and sentiment feature extraction?

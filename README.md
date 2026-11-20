@@ -159,7 +159,7 @@ These extensions live in new modules, so no file in the manifest-locked V2 relea
 - `src/data/ingest_bot_policy_rate.py` and `src/features/policy_rate_context.py`: the official BOT policy-rate decision history as a point-in-time macro source.
 - `src/evaluation/attribution.py`: permutation attribution of data-source groups for trained agents.
 - `src/envs/thai_costs.py`: the published Thai cost schedule (about 0.176% per side including VAT).
-- `src/data/point_in_time_panel.py` and `src/envs/point_in_time_env.py`: the 2012–2024 point-in-time SET50 session mask and feature panel, and `PointInTimeSlotEnv`, which trades the index membership of each session through 50 masked slots (`universe.slot_order: traded_value | sticky`).
+- `src/data/point_in_time_panel.py` and `src/envs/point_in_time_env.py`: the 2012–2024 point-in-time SET50 session mask and feature panel, and `PointInTimeSlotEnv`, which trades the index membership of each session through 50 masked slots (`universe.slot_order: traded_value | sticky`). `environment.max_cash_weight` caps the cash target (default 1 = off).
 - `scripts/run_pit_walk_forward.py`, `scripts/pit_universe_baselines.py` and `scripts/walk_forward_agent_diagnostics.py`: the point-in-time walk-forward, its survivorship baselines, and cost, turnover and concentration diagnostics for any walk-forward agent.
 - `scripts/check_slot_order_invariance.py`: rolls a trained point-in-time model out under sticky and traded-value slot orders and reports how far apart the two equity curves end.
 - `scripts/pit_heuristic_baselines.py`: momentum, inverse-volatility and minimum-variance benchmarks on the point-in-time SET50, on the same sessions, costs and accounting as the walk-forward.
@@ -167,6 +167,7 @@ These extensions live in new modules, so no file in the manifest-locked V2 relea
 - `scripts/pit_lstm_forecast_baseline.py`: the LSTM forecast-then-allocate benchmark on the point-in-time SET50. A Bi-LSTM fitted per fold on the training years buys its ten best positive 21-session forecasts every month; it also records the forecasts' information coefficient.
 - `scripts/build_member_price_map.py`: maps every point-in-time list member to the price series to use (own symbol, current symbol after a rename, or none), from the downloads' coverage files; `--check` verifies the existing map.
 - `scripts/pit_feature_group_attribution.py`: re-runs each trained point-in-time model with one input group (technical, market, policy rate, macro) shuffled across sessions or held at its training mean, and reports how far its portfolio, return and cash move.
+- `scripts/pit_cash_cap_binding.py`: for a cash-capped point-in-time variant, replays each trained model and reports how often the policy's own cash weight was above the cap.
 - `scripts/build_slim_results_archive.py`: a verified tar.gz of code, configs, documents, input receipts and run outputs, without trained models, worker logs or price files ([runbook](docs/reproduce_20261111.md)).
 
 Config options read by `src.train_long_term` and the experiment scripts:
@@ -252,6 +253,10 @@ python -m scripts.pit_feature_group_attribution --config config/pit_walk_forward
 # The same for the daily macro proxies (config/pit_walk_forward_macro.yaml, variant pit_plan_weekly_lstm_shared_macro)
 RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_macro.yaml VARIANTS=pit_plan_weekly_lstm_shared_macro SEEDS="42 43 44" \
   scripts/run_walk_forward_reward.sh results/<pit-macro-run> 3 100000
+# Shared-weight agent with its cash target capped at 20% (variant pit_plan_weekly_lstm_shared_cashcap), and how often the cap bound
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm_shared_cashcap SEEDS="42 43 44" \
+  scripts/run_walk_forward_reward.sh results/<pit-cash-cap-run> 3 100000
+python -m scripts.pit_cash_cap_binding --config config/pit_walk_forward_experiment.yaml --run-dir results/<pit-cash-cap-run> --variant pit_plan_weekly_lstm_shared_cashcap
 # Official BOT policy-rate history
 python -m src.data.ingest_bot_policy_rate --input data/external/original/bot_policy_rate_mpc_table_asof_20261028.xlsx --output data/external/bot_policy_rate_history.csv --source-url <url> --retrieved-at <utc>
 ```

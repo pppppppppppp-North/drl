@@ -1,8 +1,8 @@
 # Point-in-Time SET50 Walk-Forward (Milestone M3)
 
-Date: 2026-11-07; sticky-slot follow-up 2026-11-09; shared-weight actor, seed ensemble and no-trade band 2026-11-10; training with the band, LSTM forecast benchmark, BOT policy rate and macro proxies 2026-11-11
+Date: 2026-11-07; sticky-slot follow-up 2026-11-09; shared-weight actor, seed ensemble and no-trade band 2026-11-10; training with the band, LSTM forecast benchmark, BOT policy rate and macro proxies 2026-11-11; cash cap 2026-11-19
 Evidence tier: **exploratory**. The index membership is official, but the prices are Yahoo's, and 13% of SET50 member-sessions (mostly delisted or merged names) have no prices.
-Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `results/pit_walk_forward_sticky_20261109/` (sticky slots), `results/pit_walk_forward_shared_20261110/` (shared-weight actor), `results/pit_walk_forward_combined_20261109/` (first two runs together), `results/pit_walk_forward_combined_20261110/` (all three), `results/pit_seed_ensemble_20261110/` (seed ensemble and no-trade band, no training), `results/pit_seed_ensemble_combined_20261110/` (with the shared-weight run), `results/pit_heuristic_baselines_20261110/` (momentum, inverse volatility and minimum variance), `results/pit_band_sensitivity_20261110/` (band widths), `results/pit_walk_forward_band_20261110/` (trained with the band), `results/pit_band_ensemble_20261111/` (its seed ensemble), `results/pit_walk_forward_combined_band_20261111/` (both, with the shared-weight and ensemble runs), `results/pit_lstm_forecast_20261111/` (LSTM forecast benchmark), `results/pit_lstm_forecast_combined_20261111/` (with the other benchmarks), `results/pit_walk_forward_policy_20261111/` (BOT policy rate as an input, with the input attribution), `results/pit_policy_ensemble_20261111/` (its seed ensemble with the band), `results/pit_walk_forward_combined_policy_20261111/` (both, with the shared-weight run and its ensemble) and `results/pit_attribution_shared_20261111/` and `results/pit_attribution_band_20261111/` (input attribution of the shared-weight and band-trained models), `results/pit_walk_forward_macro_20261111/` (daily macro proxies as an input, with the input attribution), `results/pit_macro_ensemble_20261111/` (its seed ensemble with the band), `results/pit_walk_forward_combined_macro_20261111/` (both, with the shared-weight run and its ensemble) and `results/pit_source_arms_combined_20261111/` (the three input sets' ensembles) · Configs: `config/pit_walk_forward_experiment.yaml`, `config/pit_walk_forward_policy_rate.yaml`, `config/pit_walk_forward_macro.yaml` · Figures: [first run](figures/pit_walk_forward_chained_equity_20261107.png), [first two runs](figures/pit_walk_forward_sticky_chained_equity_20261109.png), [all three runs](figures/pit_walk_forward_shared_chained_equity_20261110.png), [seed ensemble with no-trade band](figures/pit_seed_ensemble_chained_equity_20261110.png), [training with the band](figures/pit_band_training_chained_equity_20261111.png), [LSTM forecast benchmark](figures/pit_lstm_forecast_chained_equity_20261111.png), [BOT policy rate](figures/pit_policy_rate_chained_equity_20261111.png), [macro proxies](figures/pit_macro_proxies_chained_equity_20261111.png), [all three input sets](figures/pit_source_arms_chained_equity_20261111.png)
+Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `results/pit_walk_forward_sticky_20261109/` (sticky slots), `results/pit_walk_forward_shared_20261110/` (shared-weight actor), `results/pit_walk_forward_combined_20261109/` (first two runs together), `results/pit_walk_forward_combined_20261110/` (all three), `results/pit_seed_ensemble_20261110/` (seed ensemble and no-trade band, no training), `results/pit_seed_ensemble_combined_20261110/` (with the shared-weight run), `results/pit_heuristic_baselines_20261110/` (momentum, inverse volatility and minimum variance), `results/pit_band_sensitivity_20261110/` (band widths), `results/pit_walk_forward_band_20261110/` (trained with the band), `results/pit_band_ensemble_20261111/` (its seed ensemble), `results/pit_walk_forward_combined_band_20261111/` (both, with the shared-weight and ensemble runs), `results/pit_lstm_forecast_20261111/` (LSTM forecast benchmark), `results/pit_lstm_forecast_combined_20261111/` (with the other benchmarks), `results/pit_walk_forward_policy_20261111/` (BOT policy rate as an input, with the input attribution), `results/pit_policy_ensemble_20261111/` (its seed ensemble with the band), `results/pit_walk_forward_combined_policy_20261111/` (both, with the shared-weight run and its ensemble) and `results/pit_attribution_shared_20261111/` and `results/pit_attribution_band_20261111/` (input attribution of the shared-weight and band-trained models), `results/pit_walk_forward_macro_20261111/` (daily macro proxies as an input, with the input attribution), `results/pit_macro_ensemble_20261111/` (its seed ensemble with the band), `results/pit_walk_forward_combined_macro_20261111/` (both, with the shared-weight run and its ensemble), `results/pit_source_arms_combined_20261111/` (the three input sets' ensembles), `results/pit_walk_forward_cash_cap_20261119/` (cash capped at 20%, with the input attribution and the cap check), `results/pit_cash_cap_ensemble_20261119/` (its seed ensemble with the band) and `results/pit_walk_forward_combined_cash_cap_20261119/` (both, with the shared-weight run and its ensemble) · Configs: `config/pit_walk_forward_experiment.yaml`, `config/pit_walk_forward_policy_rate.yaml`, `config/pit_walk_forward_macro.yaml` · Figures: [first run](figures/pit_walk_forward_chained_equity_20261107.png), [first two runs](figures/pit_walk_forward_sticky_chained_equity_20261109.png), [all three runs](figures/pit_walk_forward_shared_chained_equity_20261110.png), [seed ensemble with no-trade band](figures/pit_seed_ensemble_chained_equity_20261110.png), [training with the band](figures/pit_band_training_chained_equity_20261111.png), [LSTM forecast benchmark](figures/pit_lstm_forecast_chained_equity_20261111.png), [BOT policy rate](figures/pit_policy_rate_chained_equity_20261111.png), [macro proxies](figures/pit_macro_proxies_chained_equity_20261111.png), [all three input sets](figures/pit_source_arms_chained_equity_20261111.png), [cash capped at 20%](figures/pit_cash_cap_chained_equity_20261119.png)
 
 **Summary.**
 - **Result:** on the actual SET50 membership of each session, the DRL design that roughly matched the market on five hand-picked stocks lost money: −1.1% a year, against 7.1% for the SET50 ETF and 5.6% for equal weight. Unlike the five-stock comparisons, the Sharpe differences are statistically significant.
@@ -16,6 +16,7 @@ Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `res
 - **LSTM forecast benchmark (2026-11-11):** the five-stock study's supervised LSTM forecaster, scaled to the index and buying its ten best forecasts monthly, made 8.1% a year, the highest mean return here. Almost all of its lead came from the rally of late 2020; its seeds disagree (−14.9% to +31.2% in 2020), and it trades 16 times its capital a year. Its Sharpe ratio (0.46) is below the ETF's (0.50), and no difference is significant.
 - **BOT policy rate (run 2026-11-11):** five official policy-rate inputs lowered the agent's return, to 4.1% a year from 4.6%. Its seed ensemble with the band fell to 4.5% from 5.5%, a significant Sharpe shortfall (−0.06). The trained models barely read the new inputs: the shortfall came from cash that depended on the seed, as in the earlier arms.
 - **Daily macro proxies (run 2026-11-11):** eight USD/THB, oil, gold and US-yield inputs lowered the return too, to 3.9% a year (seed ensemble with the band 4.3%); neither shortfall is significant. Unlike the policy rate, the agent read them heavily, and removing their information raised the return of 15 of its 21 models. On the point-in-time index, the technical and market inputs alone remain the best.
+- **Cash capped at 20% (run 2026-11-19):** capping the cash target at 20%, in training and validation, removed the cash-heavy models and made the seeds more alike, but did not raise the return: 4.4% a year (seed ensemble with the band 5.0%), against 4.6% (5.5%) without the cap. Without the cap, the ensemble's cash had cushioned the 2020 crash; outside 2020 the two ensembles are level. Neither difference is significant, and the best design is still the uncapped ensemble with the band.
 
 ## Question
 
@@ -424,7 +425,7 @@ The ETF's turnover is its initial purchase. Sharpe ratios are on the 1,699 chain
   - **Result:** its return (5.1–5.2%) is below that of the band added after training (5.5%) and of equal weight (5.6%). None of these differences is significant.
 - **Cash is now the agent's main weakness.** In both band designs, the gain over the shared actor came largely from cash held through one falling year: 2020 for the band at evaluation, 2018 here. In neither case was the cash consistent across seeds.
 - **Best design so far:** the seed ensemble with the band at evaluation remains the best point-in-time DRL design on the validation years. It was fixed before this run, and the deflated Sharpe ratio counts all 13 designs.
-- **Next:** penalizing or capping cash in training would target the remaining weakness. It would add a design to the deflated Sharpe count and has not been started.
+- **Next:** penalizing or capping cash in training would target the remaining weakness. A 20% cap ran on 2026-11-19 ([below](#follow-up-cash-capped-at-20-2026-11-19)): it removed the cash-heavy models but did not raise the return.
 
 ## Follow-up: LSTM forecast benchmark (2026-11-11)
 
@@ -623,7 +624,7 @@ The portfolio shift is the half-L1 distance between the stock weights with and w
 
 - **Sharpe ratios:** 0.30 for the mean of the seeds with the macro proxies and 0.33 for its ensemble with the band. For comparison: 0.35 for the shared actor, 0.42 for its ensemble with the band, 0.35 for the ensemble with the policy rate, 0.38 for equal weight and 0.50 for the ETF.
 - **No difference is significant.** The macro ensemble's shortfall is larger than the policy-rate ensemble's (−0.08 against −0.06), but its returns track the ensemble without extra inputs less closely, so its interval is wider. The tracking error is 2.8% a year, against 1.2% for the policy-rate ensemble.
-- **Deflated Sharpe,** counting 17 designs: 0.17 for the ensemble with the macro proxies and 0.15 for the mean of its seeds. The best design, the ensemble with the band and only technical and market inputs, falls to 0.23 (0.27 at 13 designs, 0.25 at 15); the policy-rate ensemble falls to 0.19.
+- **Deflated Sharpe,** counting 17 designs: 0.17 for the ensemble with the macro proxies and 0.15 for the mean of its seeds. The best design, the ensemble with the band and only technical and market inputs, falls to 0.23 (0.27 at 13 designs, 0.25 at 15; 0.22 at 19, after the cash-cap arm); the policy-rate ensemble falls to 0.19.
 
 **Where the return went.** The same diagnostics as above, as means over the seven years:
 
@@ -667,6 +668,96 @@ The portfolio shift is the half-L1 distance between the stock weights with and w
   - **Policy rate:** the models barely used it. The shortfall came from how training turned out with the extra inputs.
   - **Macro proxies:** the models used them heavily, and removing their information made most models better. They added noise that the agent learned to treat as signal, which moved it into cash and raised its trading.
 - **For RQ2 and RQ3:** on the point-in-time index, the best inputs are the technical and SET50 market inputs alone. Neither macro source adds value under this design and training budget; the five-stock ablation reached the same conclusion for the macro proxies. The other planned sources (news sentiment, investor flow, point-in-time fundamentals) still have no historical data.
+
+## Follow-up: cash capped at 20% (2026-11-19)
+
+**What it tests:** whether the agent does better without its main weakness, cash that depends on the seed. Fifteen models in the four earlier shared-weight designs held 36–94% cash on average over their year, and the attribution showed that this cash was mostly a fixed output of each trained model.
+- **Variant:** `pit_plan_weekly_lstm_shared_cashcap` is the shared-weight agent with its cash target capped at 20% (`environment.max_cash_weight: 0.2`), in training and in validation.
+  - **Rule:** when the policy's target holds more than 20% cash, its stock weights are scaled up in proportion until cash is 20%. This is the same as lowering the cash logit. Price moves between weekly decisions can leave the cash held slightly above the cap.
+  - **Why 20%:** Thai equity funds commit to holding at least 80% of their net assets in shares on average over the accounting year, and a cap at every decision is stricter than that. It lies above the shared-weight designs' average cash (10.5–10.7%) and below the 36–94% of the cash-heavy models. The level was fixed before the run, not tuned.
+  - **Unchanged:** everything else: 7 folds × 3 seeds × 100k timesteps (`results/pit_walk_forward_cash_cap_20261119/`), with the seed ensemble and band evaluated afterwards (`results/pit_cash_cap_ensemble_20261119/`).
+- **Designs 18 and 19** of the deflated Sharpe count.
+- **Checks:**
+  - **Earlier results unchanged:** with the cap off (the default), nine saved models from the shared, band and macro runs replayed their saved curves exactly. `tests/test_point_in_time_env.py` (20 tests) pass.
+  - **This run:** every capped model replayed its saved validation curve exactly (largest relative gap 2×10⁻¹⁶).
+
+| Strategy | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | **Mean** | Years beating ETF | Mean max DD |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| SET50 ETF buy-and-hold (TDEX) | 24.5% | 18.2% | −6.5% | 5.7% | −11.8% | 12.1% | 7.8% | **7.1%** | — | −11.2% |
+| Point-in-time SET50 equal weight | 22.2% | 16.5% | −10.0% | 6.5% | −8.5% | 11.9% | 0.7% | **5.6%** | 2/7 | −12.7% |
+| Seed ensemble + band, without the cap | 21.2% | 15.3% | −9.7% | 5.6% | −3.8% | 10.0% | 0.2% | **5.5%** | 1/7 | −11.3% |
+| **Seed ensemble + band, cash capped at 20%** | 20.3% | 15.3% | −10.0% | 6.9% | −7.9% | 9.3% | 0.9% | **5.0%** | 2/7 | −12.0% |
+| DRL, cash capped at 20% (± s.d. over 3 seeds) | 19.4% ± 1.6 | 14.2% ± 1.7 | −10.3% ± 0.6 | 5.5% ± 0.5 | −7.2% ± 1.9 | 9.1% ± 0.8 | 0.0% ± 0.2 | **4.4%** | 1/7 | −12.2% |
+| DRL, shared-weight actor, without the cap (± s.d. over 3 seeds) | 20.5% ± 0.7 | 14.5% ± 1.8 | −10.2% ± 0.6 | 4.7% ± 3.0 | −6.8% ± 2.0 | 9.8% ± 1.9 | −0.4% ± 0.4 | **4.6%** | 1/7 | −11.7% |
+
+**Less cash and steadier seeds, but no higher return:**
+- **Return:** with the cap, the agent made 4.4% a year, against 4.6% without it. Its seed ensemble with the band made 5.0%, against 5.5%.
+- **Chained** over the seven years, 1 baht became 1.36 for the capped ensemble. It became 1.41 for the ensemble without the cap and for equal weight, and 1.55 for the ETF ([figure](figures/pit_cash_cap_chained_equity_20261119.png)).
+- **2020 accounts for the whole gap between the ensembles.**
+  - **2020:** without the cap, the ensemble held 21% cash on average through the crash year and lost 3.8%. With the cap it held 9% and lost 7.9%.
+  - **Other years:** the two ensembles differ by 0.02 points a year. The cap helped in 2019, the other year in which the uncapped ensemble held much cash (28%, against 14% with the cap): +1.3 points.
+  - **Single models:** their 0.2-point shortfall is spread over the years.
+- **Cash:** average cash fell from 10.7% to 7.2% (the ensembles: from 10.5% to 7.6%). No model averaged more than 20.2% over its year. Without the cap, two models held 79% and 49%.
+- **Seed spread:** the seed standard deviation of annual returns fell from 1.5 to 1.0 points.
+- **Trading:** about the same, at 4.1 times capital a year (4.3 without the cap), with a cost drag of 0.9 points.
+
+**The cap seldom bound.** `scripts/pit_cash_cap_binding.py` replayed each model and compared, at every decision, the policy's own cash weight (the same action with the cap switched off) with the capped target (`cash_cap_binding_*` files in the run folder).
+- **Where it bound:** the policy's own cash weight was above 20% on 11% of the 1,023 decisions, all in four models:
+  - 2017, seed 43: 88% of its decisions;
+  - 2019, seed 43: 84%;
+  - 2020, seed 43: 53%;
+  - 2019, seed 44: 8%.
+- **How much cash they wanted:** these four models' own cash weights averaged 14–29% and never exceeded 38%. The other 17 models stayed below 20% throughout.
+- **Reading:** trained under the cap, no model learned the 36–94% cash of the earlier runs, so the cap mostly worked through training rather than by clipping at validation. Three seeds cannot show whether the cap caused this or the seeds simply turned out differently.
+
+**Significance.** Sharpe ratios on the same 1,699 chained daily returns, with the same stationary bootstrap:
+
+| Comparison | Sharpe difference | 95% interval |
+| --- | ---: | ---: |
+| Cash capped − shared actor | −0.02 | −0.09 to +0.03 |
+| Seed ensemble + band: capped − not capped | −0.05 | −0.11 to +0.02 |
+| Capped seed ensemble + band − its seeds | +0.04 | +0.01 to +0.08 |
+| Capped seed ensemble + band − point-in-time equal weight | −0.02 | −0.05 to +0.02 |
+| Capped seed ensemble + band − ETF | −0.14 | −0.39 to +0.10 |
+| Cash capped − point-in-time equal weight | −0.05 | −0.10 to −0.02 |
+
+- **Sharpe ratios:** 0.33 for the mean of the capped seeds and 0.36 for its ensemble with the band. For comparison: 0.35 for the shared actor, 0.42 for its ensemble with the band, 0.38 for equal weight and 0.50 for the ETF.
+- **The cap's effect is not significant,** for the single models or for the ensembles.
+- **The capped models trail equal weight significantly.** Without the cap, their gap to equal weight (−0.03, −0.11 to +0.04) was not significant.
+  - **Why:** holding less cash, the capped models follow equal weight more closely (tracking error 1.5% a year, against 2.2%), so even a small, steady gap is measured precisely.
+  - **The capped ensemble's** gap to equal weight is not significant.
+- **Deflated Sharpe,** counting 19 designs: 0.18 for the capped ensemble and 0.15 for the mean of its seeds. The best design, the ensemble with the band and without the cap, falls to 0.22 (0.23 at 17 designs).
+
+**Where the return went.** The same diagnostics as above, as means over the seven years:
+
+| Strategy | Return before costs | Cost drag | Return after costs | Turnover a year | after the initial purchase | Average cash |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Seed ensemble + band, without the cap | 5.9% | 0.3% | 5.5% | 1.6× | 0.7× | 10.5% |
+| **Seed ensemble + band, cash capped at 20%** | 5.3% | 0.3% | 5.0% | 1.6× | 0.7× | 7.6% |
+| DRL, cash capped at 20% | 5.2% | 0.9% | 4.4% | 4.1× | 3.2× | 7.2% |
+| DRL, shared-weight actor | 5.5% | 0.9% | 4.6% | 4.3× | 3.4× | 10.7% |
+| Equal weight, point-in-time SET50 | 6.0% | 0.4% | 5.6% | 1.9× | 0.9× | 0.7% |
+
+- **Less cash, but less return before costs:** the capped agent held 3.5 points less cash and earned 0.3 points a year less before costs (the ensembles: 0.6 points less, all of it in 2020).
+- **Closer to equal weight:** the capped ensemble's daily correlation with equal weight was 0.998, with 44.0 effective holdings out of 44.5 tradable members. Its tracking error was 1.3% a year, against 2.0% without the cap.
+
+**Inputs.** The same input attribution as for the source arms (`attribution_*` files in the run folder; all 21 models replayed exactly):
+
+| Input group | Inputs | Portfolio shift, shuffled | Portfolio shift, at the training mean | Change in annual return, at the training mean (mean) | Change in cash, at the training mean |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Technical | 11 | 4.1% | 3.7% | +0.5 points | −1.5 points |
+| SET50 market context | 5 | 1.5% | 1.6% | +0.1 points | −0.1 points |
+
+- **Read as before:** shuffling moved the portfolio by 4.1% (technical) and 1.5% (market context), against 4.9% and 1.6% without the cap. It moved no model's cash by more than 2 points.
+- **The stock tilts still cost return.** With the technical inputs held at their training mean, every stock looks the same to the shared-weight actor, so it weights all members equally and only its cash remains. That raised the return of 17 of the 21 capped models, by 0.5 points a year on average. Without the cap: 13 of 21 and 0.4 points.
+
+**What it means:**
+- **Capping cash removed the cash-heavy models but did not raise the return.** With the cap, the agent made 4.4% a year against 4.6%, and its seed ensemble with the band 5.0% against 5.5%. Neither difference is significant.
+- **The uncapped cash was not all harm.** It cost return in rising years, most visibly in 2019, but in the ensemble it cushioned the 2020 crash, and that year weighed more. The earlier sections traced that cushion to cash the models happened to hold, not to market timing.
+- **Cash is not why the agent trails equal weight.** Of the capped agent's 1.2-point gap, about 0.5 points are trading costs (0.9 against 0.4).
+  - **Its remaining cash:** at 7.2%, against 0.7% for equal weight, it would cost about 0.4 points a year if stocks earned equal weight's 6.0% before costs.
+  - **Its stock tilts:** that leaves roughly 0.4 points for the tilts, in line with the attribution, where removing them added 0.5 points.
+- **Best design so far:** the seed ensemble with the band at evaluation, without the cap, remains the best point-in-time DRL design on the validation years (5.5% a year; deflated Sharpe 0.22 at 19 designs). The cap stays off by default.
 
 ## Run it
 
@@ -864,6 +955,34 @@ The band-trained models' attribution writes into its own folder:
 ```bash
 python -m scripts.pit_feature_group_attribution --config config/pit_walk_forward_experiment.yaml \
   --run-dir results/pit_walk_forward_band --variant pit_plan_weekly_lstm_shared_band --output-dir results/pit_attribution_band
+```
+
+The cash-capped arm trains from the main config (three workers on AC power, 20:05 to 00:21: 4 h 16 min for the 21 models). Its seed ensemble is evaluated in the capped environment, as the band-trained ensemble is in its own. The last command reports how often the cap bound:
+
+```bash
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm_shared_cashcap SEEDS="42 43 44" \
+  PYTHON=python scripts/run_walk_forward_reward.sh results/pit_walk_forward_cash_cap 3 100000
+python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_experiment.yaml \
+  --source-run results/pit_walk_forward_cash_cap --variant pit_plan_weekly_lstm_shared_cashcap \
+  --output-dir results/pit_cash_cap_ensemble --band 0.005 --modes ensemble_band
+python -m scripts.aggregate_walk_forward_reward --run-dir results/pit_walk_forward_cash_cap \
+  --extra-run-dirs results/pit_cash_cap_ensemble results/pit_seed_ensemble results/pit_walk_forward_shared --n-trials 19 \
+  --variants pit_plan_weekly_lstm_shared pit_plan_weekly_lstm_shared_cashcap --drop pit_plan_weekly_lstm_shared_ensemble \
+  --output-dir results/pit_walk_forward_combined_cash_cap \
+  --references pit_plan_weekly_lstm_shared pit_plan_weekly_lstm_shared_ensemble_band pit_plan_weekly_lstm_shared_cashcap \
+  pit_plan_weekly_lstm_shared_cashcap_ensemble_band \
+  --labels pit_plan_weekly_lstm_shared="DRL, shared-weight actor" pit_plan_weekly_lstm_shared_ensemble_band="Seed ensemble + band" \
+  pit_plan_weekly_lstm_shared_cashcap="DRL, cash capped at 20%" \
+  pit_plan_weekly_lstm_shared_cashcap_ensemble_band="Cash capped at 20%: seed ensemble + band" \
+  --title "Point-in-time SET50: cash capped at 20% vs the shared-weight design, chained validation years"
+python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_walk_forward_cash_cap \
+  --variant pit_plan_weekly_lstm_shared_cashcap --pit-config config/pit_walk_forward_experiment.yaml
+python -m scripts.walk_forward_agent_diagnostics --run-dir results/pit_cash_cap_ensemble \
+  --variant pit_plan_weekly_lstm_shared_cashcap_ensemble_band --prefix diagnostics_ensemble_band
+python -m scripts.pit_feature_group_attribution --config config/pit_walk_forward_experiment.yaml \
+  --run-dir results/pit_walk_forward_cash_cap --variant pit_plan_weekly_lstm_shared_cashcap
+python -m scripts.pit_cash_cap_binding --config config/pit_walk_forward_experiment.yaml \
+  --run-dir results/pit_walk_forward_cash_cap --variant pit_plan_weekly_lstm_shared_cashcap
 ```
 
 To check that trained models ignore the slot order, roll them out under both orders, one validation year at a time:
