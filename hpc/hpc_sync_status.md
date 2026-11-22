@@ -19,7 +19,7 @@ Latest connection and code copy: 2026-11-22
   - **Cost:** 0.14 SHr in all (project balance 9,978.58 SHr).
 - **scipy installed (operator-approved):** `scipy==1.17.1`, the Mac's version, added to `/lustrefs/project/25sfcs03/envs/drl_env` with pip on the login node. A dry run showed it changed no other package; `pip check` finds no broken requirement. The package lists before and after are in `logs/drl_env_freeze_{before,after}_scipy_20261122.txt` in the new folder. It imports, and pandas' Spearman correlation gives the same value as on the Mac. `pdfplumber` is still missing; only the constituent-list ingestion needs it.
 - **Job `4408`** (operator-approved, 38 s): the two test files that needed scipy, `tests/test_pit_heuristic_baselines.py` and `tests/test_pit_lstm_forecast_baseline.py`, selected with the script's new `TESTS` variable. 8 of 8 passed, as on the Mac. Project balance 9,978.57 SHr.
-- **Before training there:** pass `PROJECT_DIR` for the new folder to the array scripts, whose default is the July folder.
+- **Job `4409`, training pool (operator-approved, submitted 21:00):** one job instead of about 210 array elements, as the operator asked. `slurm/walk_forward_pool.sbatch` with `POOL=slurm/pools/bistka_20261122.tasks` on `compute-long`, 32 CPUs. 210 tasks at 300k timesteps, seeds 42–46: SAC, TD3, DDPG, A2C and PPO on the five starter stocks, and the shared-weight point-in-time design. The smoke stage passed for all six setups by 21:03 and the pool started at 21:02:52. Estimate 12–13 hours, about 420 SHr.
 
 ## 2026-07-31 Connection And Sync Boundary
 
