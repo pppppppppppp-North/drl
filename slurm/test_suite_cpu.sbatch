@@ -16,6 +16,8 @@
 # The logs/ folder must exist before submission:
 #   cd /lustrefs/project/25sfcs03/drl_thai_stock_20261122 && mkdir -p logs
 #   sbatch --export=ALL,PROJECT_DIR=$PWD slurm/test_suite_cpu.sbatch
+# TESTS selects test files instead of the whole suite, for example:
+#   export TESTS="tests/test_pit_heuristic_baselines.py tests/test_pit_lstm_forecast_baseline.py"
 # The pytest report is written to logs/tests_<job id>.txt; the job ends with "pytest exit <code>".
 
 set -eo pipefail
@@ -23,6 +25,7 @@ set -eo pipefail
 PROJECT_DIR="${PROJECT_DIR:-/lustrefs/project/25sfcs03/drl_thai_stock}"
 ENV_DIR="${ENV_DIR:-/lustrefs/project/25sfcs03/envs/drl_env}"
 PYTHON="${PYTHON:-$ENV_DIR/bin/python}"
+TESTS="${TESTS:-tests/}"
 
 cd "$PROJECT_DIR"
 test -x "$PYTHON"
@@ -37,6 +40,6 @@ echo "host $(hostname) start $(date -Is) project $PROJECT_DIR"
 status=0
 # A test module that imports a package missing from the cluster environment (scipy, pdfplumber) is
 # reported as a collection error instead of stopping the whole run.
-"$PYTHON" -m pytest -p no:cacheprovider -q -rf --continue-on-collection-errors tests/ > "$REPORT" 2>&1 || status=$?
+"$PYTHON" -m pytest -p no:cacheprovider -q -rf --continue-on-collection-errors $TESTS > "$REPORT" 2>&1 || status=$?
 tail -n 3 "$REPORT"
 echo "end $(date -Is) pytest exit $status"
