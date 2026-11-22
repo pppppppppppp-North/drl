@@ -1,6 +1,6 @@
 # Project Progress Checklist
 
-Last updated: 2026-11-20
+Last updated: 2026-11-22
 
 Use this file as the single running checklist for what has been completed and what remains. Update it whenever code, data, HPC jobs, results, or report artifacts change.
 
@@ -10,6 +10,19 @@ Use this file as the single running checklist for what has been completed and wh
 - `[~]` Started or partially complete
 - `[ ]` Not started
 - `[!]` Blocked or needs attention
+
+## BistKA Reconnection, Code Copy And Test Jobs — 2026-11-22
+
+Details: [`hpc/hpc_sync_status.md`](hpc/hpc_sync_status.md). Both jobs were submitted with the operator's explicit approval ("Yes, run tests").
+
+- `[x]` **Connection.** The user signed in with the password once; later commands reused that SSH session. Read-only state: idle cluster; project `25sfcs03` 9,978.72 of 10,000 SHr left (expires 2027-02-28); quota home 23.66 of 50 GB, project 36.64 of 300 GB.
+- `[x]` **Code copy.** Commit `5c4ac24` without `data/holdout_sealed/`, plus the untracked inputs under `data/raw/extended/`, in `/lustrefs/project/25sfcs03/drl_thai_stock_20261122` (788 files, 25 MB; every SHA-256 matched; `COPY_MANIFEST.sha256`, `COPY_RECEIPT.json`). The July deployment is unchanged.
+- `[x]` **Job `4406`** (`slurm/test_suite_cpu.sbatch`, `compute-devel`, 2 CPUs, 58 s, COMPLETED): pytest stopped at collection, because `scipy` and `pdfplumber` are not in the cluster environment. No test ran.
+- `[x]` **Job `4407`** (same script with `--continue-on-collection-errors`, 2 min 46 s, COMPLETED): 573 passed, 60 failed, 1 skipped, 2 collection errors, in Python 3.12 with pandas 3.0.3 and SB3 2.8.0. The two jobs used 0.14 SHr.
+  - **Same as the Mac:** 54 of the failures are the V3-campaign tests that also fail locally.
+  - **BistKA only:** five V2 deployment and fetch-tool tests refuse to run outside the July project root, as designed; one LSTM-forecast benchmark test needs `scipy` for pandas' Spearman correlation. The two collection errors are `scipy` (heuristic benchmarks) and `pdfplumber` (constituent-list PDFs).
+  - **Training code:** every test of the environments, the point-in-time walk-forward, the shared-weight actor, the seed ensemble, the cash cap and the attribution passed.
+- `[ ]` **Before training on BistKA:** install `scipy` (and `pdfplumber` if the list ingestion is to run there) into `/lustrefs/project/25sfcs03/envs/drl_env`, with approval; pass `PROJECT_DIR=/lustrefs/project/25sfcs03/drl_thai_stock_20261122` to `slurm/walk_forward_reward_array.sbatch`, whose default is still the July folder.
 
 ## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07, sticky slots 2026-11-09, shared-weight actor, seed ensemble and no-trade band 2026-11-10, training with the band 2026-11-11, cash cap 2026-11-19
 

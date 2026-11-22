@@ -13,7 +13,11 @@ Latest connection and code copy: 2026-11-22
 - **Code copy:** commit `5c4ac24` (branch `point-in-time-universe`) was copied to the new folder `/lustrefs/project/25sfcs03/drl_thai_stock_20261122`: a `git archive` without `data/holdout_sealed/`, plus the untracked inputs under `data/raw/extended/` (the SET100 price files, the price map, the SET50 ETF, the macro proxies and the five-stock prices). 788 files, 25 MB.
   - **Verified:** every file's SHA-256 on BistKA matched the local file. `COPY_MANIFEST.sha256` and `COPY_RECEIPT.json` sit in the folder; `sha256sum -c COPY_MANIFEST.sha256` re-checks it.
   - **Left alone:** the July deployment in `/lustrefs/project/25sfcs03/drl_thai_stock` was not changed.
-- **Jobs:** none submitted. Next, with the operator's approval: the test suite in a short `compute-devel` job, then the training arrays.
+- **Test jobs (operator-approved):** `slurm/test_suite_cpu.sbatch` on `compute-devel`, run from the new folder. It was copied there after the checksum check, so it is not in `COPY_MANIFEST.sha256`.
+  - **Job `4406`** (58 s): pytest stopped at collection, because `scipy` and `pdfplumber` are missing from the environment. No test ran.
+  - **Job `4407`** (2 min 46 s, with `--continue-on-collection-errors`): 573 passed, 60 failed, 1 skipped, 2 collection errors. 54 failures are the V3-campaign tests that also fail on the Mac. Five V2 deployment and fetch-tool tests refuse the non-July project root by design, and one LSTM-forecast test needs `scipy`. Every test of the training code passed. Report: `logs/tests_4407.txt` in the folder.
+  - **Cost:** 0.14 SHr in all (project balance 9,978.58 SHr).
+- **Before training there:** install `scipy` into the environment (approval needed) and pass `PROJECT_DIR` for the new folder to the array scripts, whose default is the July folder.
 
 ## 2026-07-31 Connection And Sync Boundary
 
