@@ -22,7 +22,8 @@ Details: [`hpc/hpc_sync_status.md`](hpc/hpc_sync_status.md). Both jobs were subm
   - **Same as the Mac:** 54 of the failures are the V3-campaign tests that also fail locally.
   - **BistKA only:** five V2 deployment and fetch-tool tests refuse to run outside the July project root, as designed; one LSTM-forecast benchmark test needs `scipy` for pandas' Spearman correlation. The two collection errors are `scipy` (heuristic benchmarks) and `pdfplumber` (constituent-list PDFs).
   - **Training code:** every test of the environments, the point-in-time walk-forward, the shared-weight actor, the seed ensemble, the cash cap and the attribution passed.
-- `[ ]` **Before training on BistKA:** install `scipy` (and `pdfplumber` if the list ingestion is to run there) into `/lustrefs/project/25sfcs03/envs/drl_env`, with approval; pass `PROJECT_DIR=/lustrefs/project/25sfcs03/drl_thai_stock_20261122` to `slurm/walk_forward_reward_array.sbatch`, whose default is still the July folder.
+- `[x]` **scipy installed** into `/lustrefs/project/25sfcs03/envs/drl_env` with approval: `scipy==1.17.1`, the Mac's version, and no other package changed (`pip check` clean; package lists before and after kept in `logs/` of the new folder). The tests that needed it have not been re-run in a job. `pdfplumber` is still missing (constituent-list ingestion only).
+- `[ ]` **Before training on BistKA:** pass `PROJECT_DIR=/lustrefs/project/25sfcs03/drl_thai_stock_20261122` to `slurm/walk_forward_reward_array.sbatch`, whose default is still the July folder.
 
 ## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07, sticky slots 2026-11-09, shared-weight actor, seed ensemble and no-trade band 2026-11-10, training with the band 2026-11-11, cash cap 2026-11-19
 

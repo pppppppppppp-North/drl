@@ -17,7 +17,8 @@ Latest connection and code copy: 2026-11-22
   - **Job `4406`** (58 s): pytest stopped at collection, because `scipy` and `pdfplumber` are missing from the environment. No test ran.
   - **Job `4407`** (2 min 46 s, with `--continue-on-collection-errors`): 573 passed, 60 failed, 1 skipped, 2 collection errors. 54 failures are the V3-campaign tests that also fail on the Mac. Five V2 deployment and fetch-tool tests refuse the non-July project root by design, and one LSTM-forecast test needs `scipy`. Every test of the training code passed. Report: `logs/tests_4407.txt` in the folder.
   - **Cost:** 0.14 SHr in all (project balance 9,978.58 SHr).
-- **Before training there:** install `scipy` into the environment (approval needed) and pass `PROJECT_DIR` for the new folder to the array scripts, whose default is the July folder.
+- **scipy installed (operator-approved):** `scipy==1.17.1`, the Mac's version, added to `/lustrefs/project/25sfcs03/envs/drl_env` with pip on the login node. A dry run showed it changed no other package; `pip check` finds no broken requirement. The package lists before and after are in `logs/drl_env_freeze_{before,after}_scipy_20261122.txt` in the new folder. It imports, and pandas' Spearman correlation gives the same value as on the Mac. The tests that needed it have not been re-run in a job. `pdfplumber` is still missing; only the constituent-list ingestion needs it.
+- **Before training there:** pass `PROJECT_DIR` for the new folder to the array scripts, whose default is the July folder.
 
 ## 2026-07-31 Connection And Sync Boundary
 
