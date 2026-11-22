@@ -3,6 +3,17 @@
 Last full remote evidence: 2026-07-26
 
 Latest connection probe: 2026-07-31
+Latest connection and code copy: 2026-11-22
+
+## 2026-11-22 Connection And Code Copy
+
+- **Connection:** the user signed in once with the password (`s00658@hpc.jsite.me`, reachable over the VPN and as `10.205.100.101`), opening an SSH control-master session that later commands reused. No key is installed on BistKA.
+- **State, read-only:** no jobs queued; every partition idle. Service hours: project `25sfcs03` 9,978.72 of 10,000 SHr left (expires 2027-02-28), personal `s00658` 496.25 of 500. Quota: home 23.66 of 50 GB, project 36.64 of 300 GB. Last job: 3624 on 2026-07-22.
+- **Environment:** `/lustrefs/project/25sfcs03/envs/drl_env` has Python 3.12.13, torch 2.10.0, Stable-Baselines3 2.8.0, gymnasium 1.2.3, numpy 2.4.6 and pandas 3.0.3. The development Mac has Python 3.11.13, torch 2.15.0, SB3 2.9.2, gymnasium 1.4.0, numpy 2.2.6 and pandas 2.3.3. pandas 3.0 changes copy and string semantics, so the test suite must pass on BistKA before any training run.
+- **Code copy:** commit `5c4ac24` (branch `point-in-time-universe`) was copied to the new folder `/lustrefs/project/25sfcs03/drl_thai_stock_20261122`: a `git archive` without `data/holdout_sealed/`, plus the untracked inputs under `data/raw/extended/` (the SET100 price files, the price map, the SET50 ETF, the macro proxies and the five-stock prices). 788 files, 25 MB.
+  - **Verified:** every file's SHA-256 on BistKA matched the local file. `COPY_MANIFEST.sha256` and `COPY_RECEIPT.json` sit in the folder; `sha256sum -c COPY_MANIFEST.sha256` re-checks it.
+  - **Left alone:** the July deployment in `/lustrefs/project/25sfcs03/drl_thai_stock` was not changed.
+- **Jobs:** none submitted. Next, with the operator's approval: the test suite in a short `compute-devel` job, then the training arrays.
 
 ## 2026-07-31 Connection And Sync Boundary
 
