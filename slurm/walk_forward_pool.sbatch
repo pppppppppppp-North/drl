@@ -20,6 +20,13 @@
 # Before the pool, a smoke stage trains one task of every (runner, config, variant) in the pool for
 # SMOKE_TIMESTEPS steps (default 3000; 0 skips it) into results/<pool>_smoke_<job id>/ and stops the job
 # if any fails. Finished tasks are skipped, so resubmitting the same POOL resumes it.
+#
+# A helper job can share a running pool: give it the same tasks in reverse order with KEEP_LOCKS=1 (the
+# running job's locks are live, not stale) and SMOKE_TIMESTEPS=0. Each task's atomic lock keeps the two
+# jobs from training the same task; each job skips the tasks the other has finished or holds. It only
+# helps if the project's QOS has CPUs to spare: QOS 25sfcs03 allows 32 CPUs at once across all its jobs,
+# so a helper beside a 32-CPU pool waits (QOSGrpCpuLimit) until the pool ends (job 4411, 2026-11-23).
+#   sbatch --mem=96G --export=ALL,PROJECT_DIR=$PWD,POOL=slurm/pools/bistka_20261122_reverse.tasks,KEEP_LOCKS=1,SMOKE_TIMESTEPS=0 slurm/walk_forward_pool.sbatch
 
 set -eo pipefail
 
@@ -29,6 +36,7 @@ PYTHON="${PYTHON:-$ENV_DIR/bin/python}"
 POOL="${POOL:?set POOL to a task file}"
 WORKERS="${WORKERS:-${SLURM_CPUS_PER_TASK:-4}}"
 SMOKE_TIMESTEPS="${SMOKE_TIMESTEPS:-3000}"
+KEEP_LOCKS="${KEEP_LOCKS:-0}"
 
 cd "$PROJECT_DIR"
 test -x "$PYTHON"
@@ -41,8 +49,10 @@ lines() { grep -vE '^[[:space:]]*(#|$)' "$1"; }
 
 echo "host $(hostname) start $(date -Is) pool $POOL: $(lines "$POOL" | wc -l) tasks, $WORKERS workers"
 "$PYTHON" --version
-# Only one pool job runs at a time, so locks left by a killed job are stale.
-for d in $(lines "$POOL" | awk '{print $1}' | sort -u); do rm -rf "$d/locks"; done
+# With one pool job at a time, locks left by a killed job are stale. A helper job (KEEP_LOCKS=1) keeps them.
+if [[ "$KEEP_LOCKS" != "1" ]]; then
+  for d in $(lines "$POOL" | awk '{print $1}' | sort -u); do rm -rf "$d/locks"; done
+fi
 
 if [[ "$SMOKE_TIMESTEPS" != "0" ]]; then
   smoke="results/${name}_smoke_${SLURM_JOB_ID:-local}"

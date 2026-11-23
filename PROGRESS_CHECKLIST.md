@@ -1,6 +1,6 @@
 # Project Progress Checklist
 
-Last updated: 2026-11-22
+Last updated: 2026-11-23
 
 Use this file as the single running checklist for what has been completed and what remains. Update it whenever code, data, HPC jobs, results, or report artifacts change.
 
@@ -26,6 +26,8 @@ Details: [`hpc/hpc_sync_status.md`](hpc/hpc_sync_status.md). Both jobs were subm
 - `[x]` **Job `4408`** (operator-approved; `slurm/test_suite_cpu.sbatch` with `TESTS` set to the two files that needed scipy, `compute-devel`, 38 s, COMPLETED): `tests/test_pit_heuristic_baselines.py` and `tests/test_pit_lstm_forecast_baseline.py`, 8 of 8 passed, as on the Mac. Project balance 9,978.57 SHr.
 - `[x]` **One-job pool for BistKA:** `scripts/run_task_pool.sh` and `slurm/walk_forward_pool.sbatch` run a mixed task list in one job, one worker per CPU, after a smoke stage; a task counts as done only when its trained policy's validation curve exists. Tested locally, including the failure path.
 - `[~]` **Job `4409`, training pool (submitted 2026-11-22 21:00 with the operator's explicit approval, "Submit it"; running).** One job instead of about 210 array elements, as the operator asked: `slurm/walk_forward_pool.sbatch` with `POOL=slurm/pools/bistka_20261122.tasks`, `compute-long`, 32 CPUs on `bistka-compute-01`, 128 GB, 3-day limit. 210 tasks, each 300k timesteps, seeds 42–46, folds 2016–2022: SAC, TD3, DDPG and A2C (`config/algorithm_comparison_experiment.yaml`) and PPO `plan_main_weekly_lstm` (`config/long_term_reward_experiment.yaml`) on the five starter stocks (RQ4), and the shared-weight point-in-time design `pit_plan_weekly_lstm_shared` (`config/pit_walk_forward_experiment.yaml`). Estimate: 12–13 hours and about 420 SHr. The smoke stage (one 3,000-step task per setup) passed for all six setups by 21:03; the pool started at 21:02:52. Outputs: `results/algorithm_comparison_bistka_20261122/`, `results/walk_forward_reward_bistka_20261122/` and `results/pit_walk_forward_bistka_20261122/` in the BistKA folder.
+  - **Revised 2026-11-23:** no task had finished after 13 hours. Measured with `hpc/buffer_rate.py`, each SAC worker runs at about 5.1 steps per second (two workers share each physical core), so a SAC task takes about 17 hours. The first 32 SAC tasks finish at about 14:00 on 2026-11-23. The pool is projected to end 67–86 hours after it started, against the 72-hour limit, for about 3,000–3,200 SHr in all (billing 44 SHr per hour because of the 128 GB request). If it hits the limit, a follow-up job finishes the remaining point-in-time tasks. About 9,350 SHr were left at 12:00.
+- `[x]` **Job `4411`, helper pool (operator-approved, "Submit helper job"; cancelled before it started).** Meant to work the task list backwards beside job 4409 (`slurm/pools/bistka_20261122_reverse.tasks`, new `KEEP_LOCKS=1` option of `slurm/walk_forward_pool.sbatch`, 32 CPUs, 96 GB). It stayed pending with `QOSGrpCpuLimit`: the project QOS allows 32 CPUs at once and job 4409 holds them all. Cancelled after one minute; it never ran and cost nothing. A helper job can only help when the project has CPUs to spare.
 
 ## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07, sticky slots 2026-11-09, shared-weight actor, seed ensemble and no-trade band 2026-11-10, training with the band 2026-11-11, cash cap 2026-11-19
 

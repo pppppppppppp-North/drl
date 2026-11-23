@@ -5,6 +5,8 @@ Last full remote evidence: 2026-07-26
 Latest connection probe: 2026-07-31
 Latest connection and code copy: 2026-11-22
 
+Latest job check: 2026-11-23
+
 ## 2026-11-22 Connection And Code Copy
 
 - **Connection:** the user signed in once with the password (`s00658@hpc.jsite.me`, reachable over the VPN and as `10.205.100.101`), opening an SSH control-master session that later commands reused. No key is installed on BistKA.
@@ -20,6 +22,12 @@ Latest connection and code copy: 2026-11-22
 - **scipy installed (operator-approved):** `scipy==1.17.1`, the Mac's version, added to `/lustrefs/project/25sfcs03/envs/drl_env` with pip on the login node. A dry run showed it changed no other package; `pip check` finds no broken requirement. The package lists before and after are in `logs/drl_env_freeze_{before,after}_scipy_20261122.txt` in the new folder. It imports, and pandas' Spearman correlation gives the same value as on the Mac. `pdfplumber` is still missing; only the constituent-list ingestion needs it.
 - **Job `4408`** (operator-approved, 38 s): the two test files that needed scipy, `tests/test_pit_heuristic_baselines.py` and `tests/test_pit_lstm_forecast_baseline.py`, selected with the script's new `TESTS` variable. 8 of 8 passed, as on the Mac. Project balance 9,978.57 SHr.
 - **Job `4409`, training pool (operator-approved, submitted 21:00):** one job instead of about 210 array elements, as the operator asked. `slurm/walk_forward_pool.sbatch` with `POOL=slurm/pools/bistka_20261122.tasks` on `compute-long`, 32 CPUs. 210 tasks at 300k timesteps, seeds 42–46: SAC, TD3, DDPG, A2C and PPO on the five starter stocks, and the shared-weight point-in-time design. The smoke stage passed for all six setups by 21:03 and the pool started at 21:02:52. Estimate 12–13 hours, about 420 SHr.
+- **Job `4409` progress, 2026-11-23:** still running with no failures, but no task had finished after 13 hours, so the estimate above was far too low.
+  - **Measured speed:** each SAC worker writes about 5.1 steps per second to its replay buffer (5.07–5.44 over 10 minutes, measured with `hpc/buffer_rate.py`, which reads the processes' page tables and changes nothing in the job). At 10:10 every SAC run was about 228,000 of 300,000 steps in, so one SAC task takes about 17 hours here, against about 3 hours on the Mac.
+  - **Why:** the job's 32 CPUs are 16 physical cores of an AMD EPYC 7542 (up to 2.9 GHz) with two hardware threads each, so two workers share each core. Asking for whole cores would double the billed CPUs for less than double the speed.
+  - **Cost:** the job bills 44 SHr per hour, not 32, because `compute-long` charges 0.1 SHr per GB of requested memory per hour and the job asked for 128 GB (it uses about 49 GB). By 12:00 the project had used about 650 SHr in all (`sshare` raw usage); about 9,350 were left.
+  - **Projection:** the first 32 SAC tasks finish at about 14:00 on 2026-11-23. With TD3 and DDPG near SAC's time and the point-in-time task at 8.5–18 hours (the Mac's 1.5–3 hours scaled by the same factor), the pool ends 67–86 hours after it started, against its 72-hour limit, using about 3,000–3,200 SHr in all. If it reaches the limit, the point-in-time tasks still running are lost and a follow-up job must finish them (about 200–600 SHr more).
+- **Job `4411`, helper pool (operator-approved, "Submit helper job"; cancelled before it started):** submitted at 11:57 on 2026-11-23 to work the same task list backwards beside job 4409 (`slurm/pools/bistka_20261122_reverse.tasks`, `KEEP_LOCKS=1`, `SMOKE_TIMESTEPS=0`, 32 CPUs, 96 GB). It stayed pending with reason `QOSGrpCpuLimit`: the project's QOS `25sfcs03` allows 32 CPUs at once across all its jobs, and job 4409 holds all 32. Cancelled at 11:58; it never ran and cost nothing. The personal account `s00658` has its own 32-CPU QOS, but only about 496 SHr, less than the helper's projected 1,350.
 
 ## 2026-07-31 Connection And Sync Boundary
 
