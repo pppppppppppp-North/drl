@@ -5,7 +5,7 @@ Last full remote evidence: 2026-07-26
 Latest connection probe: 2026-07-31
 Latest connection and code copy: 2026-11-22
 
-Latest job check: 2026-11-23
+Latest job check: 2026-11-24
 
 ## 2026-11-22 Connection And Code Copy
 
@@ -28,6 +28,9 @@ Latest job check: 2026-11-23
   - **Cost:** the job bills 44 SHr per hour, not 32, because `compute-long` charges 0.1 SHr per GB of requested memory per hour and the job asked for 128 GB (it uses about 49 GB). By 12:00 the project had used about 650 SHr in all (`sshare` raw usage); about 9,350 were left.
   - **Projection:** the first 32 SAC tasks finish at about 14:00 on 2026-11-23. With TD3 and DDPG near SAC's time and the point-in-time task at 8.5–18 hours (the Mac's 1.5–3 hours scaled by the same factor), the pool ends 67–86 hours after it started, against its 72-hour limit, using about 3,000–3,200 SHr in all. If it reaches the limit, the point-in-time tasks still running are lost and a follow-up job must finish them (about 200–600 SHr more).
   - **First tasks finished, 2026-11-23:** the first 32 SAC tasks ended between 14:03 and 14:33, each after 61,236–62,140 s of training (`timing.csv`), with no failures; each wrote its validation curves, metrics and significance tests. At 16:20 the last 3 SAC tasks ran at about 5.5 steps per second and the 29 TD3 tasks at about 8.4, so a TD3 task takes about 10 hours. With DDPG assumed close to TD3, the pool now ends 54–73 hours after its start for about 2,400–3,200 SHr; it stays inside the 72-hour limit unless a point-in-time task takes more than about 17 hours.
+  - **Progress 2026-11-24 18:40:** 93 of 210 tasks done (35 SAC, 35 TD3, 23 DDPG), no failures. A DDPG task takes about 13.4 hours (12.9–13.7 h over 23 tasks), slower than TD3. The 20 point-in-time tasks started 14:18–14:57 beside the last 12 DDPG tasks (running until about 03:30 on 2026-11-25).
+  - **Point-in-time speed:** PPO keeps no replay buffer, so `hpc/buffer_rate.py` cannot see its progress. The new `hpc/rollout_period.py` reads `/proc/<pid>/maps` five times a second: each of the 20 minibatch updates in a PPO iteration (n_steps 128, batch 64, 10 epochs) maps and frees about 230 MB, and a gap of about 1.2 s with no such mapping marks the collection of the next 128 steps. Over 150 s, every one of the 20 tasks ran one iteration per 11.0–13.3 s (mean 12.6 s), so 2,344 iterations (300k steps) take 7.2–8.7 hours, at the low end of the 8.5–18 hours assumed. The first point-in-time tasks finish about 22:30–23:00.
+  - **Re-projection:** the pool ends about 07:00–10:00 on 2026-11-25, 11–14 hours before its limit at 21:03, for about 2,550–2,700 SHr in all. PPO (`plan_main_weekly_lstm`) and A2C are still estimates (1.7–2.7 h and 1.05–1.9 h a task). No follow-up job is needed.
 - **Job `4411`, helper pool (operator-approved, "Submit helper job"; cancelled before it started):** submitted at 11:57 on 2026-11-23 to work the same task list backwards beside job 4409 (`slurm/pools/bistka_20261122_reverse.tasks`, `KEEP_LOCKS=1`, `SMOKE_TIMESTEPS=0`, 32 CPUs, 96 GB). It stayed pending with reason `QOSGrpCpuLimit`: the project's QOS `25sfcs03` allows 32 CPUs at once across all its jobs, and job 4409 holds all 32. Cancelled at 11:58; it never ran and cost nothing. The personal account `s00658` has its own 32-CPU QOS, but only about 496 SHr, less than the helper's projected 1,350.
 
 ## 2026-07-31 Connection And Sync Boundary
