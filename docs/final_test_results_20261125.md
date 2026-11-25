@@ -117,3 +117,5 @@ While checking the results, I found that the point-in-time test had only 200 ses
 - **Five-stock:** `results/final_test_five_stock/`, with the same layout and no ensemble. The summary also includes buy and hold of each stock and the ridge-forecast baseline.
 - **Ledger:** `results/FINAL_TEST_LEDGER.jsonl`.
 - **Logs:** `~/drl_runs/final_test_logs_20261125/` (local).
+- **Figures:** redrawn with readable legend labels in `~/drl_runs/final_test_figures_20261125/` from the stage outputs (no new evaluation; the chained curves are identical to the stage summaries), and copied to `docs/figures/`.
+- **Report chapter:** section "Single Evaluation on the Test Years" (`tab:test`, `fig:test`) in `docs/report_drafts/results_title_alignment_20261106.tex`.
