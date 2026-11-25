@@ -196,7 +196,7 @@ python -m scripts.local_compute_accounting --output results/local_compute_accoun
 
 ## 9. Report chapter
 
-`docs/report_drafts/results_title_alignment_20261106.tex` is a drop-in chapter for `kvis_final_research_report.tex`. It builds with XeLaTeX (`latexmk -xelatex`). The figures it includes are in `docs/figures/`.
+`docs/report_drafts/results_title_alignment_20261106.tex` is a drop-in chapter for `kvis_final_research_report.tex`. It builds with XeLaTeX (`latexmk -xelatex`). The figures it includes are in `docs/figures/`. The full report's own figures are in `reports/figures/` of the project folder, which git does not track; when building from a clone, put the project folder on TeX's search path (`TEXINPUTS=".:<project folder>:" latexmk -xelatex ...`).
 
 ## 10. Slim archive
 
