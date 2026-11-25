@@ -5,7 +5,7 @@ Last full remote evidence: 2026-07-26
 Latest connection probe: 2026-07-31
 Latest connection and code copy: 2026-11-22
 
-Latest job check: 2026-11-24
+Latest job check: 2026-11-25
 
 ## 2026-11-22 Connection And Code Copy
 
@@ -31,6 +31,10 @@ Latest job check: 2026-11-24
   - **Progress 2026-11-24 18:40:** 93 of 210 tasks done (35 SAC, 35 TD3, 23 DDPG), no failures. A DDPG task takes about 13.4 hours (12.9–13.7 h over 23 tasks), slower than TD3. The 20 point-in-time tasks started 14:18–14:57 beside the last 12 DDPG tasks (running until about 03:30 on 2026-11-25).
   - **Point-in-time speed:** PPO keeps no replay buffer, so `hpc/buffer_rate.py` cannot see its progress. The new `hpc/rollout_period.py` reads `/proc/<pid>/maps` five times a second: each of the 20 minibatch updates in a PPO iteration (n_steps 128, batch 64, 10 epochs) maps and frees about 230 MB, and a gap of about 1.2 s with no such mapping marks the collection of the next 128 steps. Over 150 s, every one of the 20 tasks ran one iteration per 11.0–13.3 s (mean 12.6 s), so 2,344 iterations (300k steps) take 7.2–8.7 hours, at the low end of the 8.5–18 hours assumed. The first point-in-time tasks finish about 22:30–23:00.
   - **Re-projection:** the pool ends about 07:00–10:00 on 2026-11-25, 11–14 hours before its limit at 21:03, for about 2,550–2,700 SHr in all. PPO (`plan_main_weekly_lstm`) and A2C are still estimates (1.7–2.7 h and 1.05–1.9 h a task). No follow-up job is needed.
+- **Job `4409` completed, 2026-11-25 05:02:28:** 56.0 hours (2-08:01:44), 16 hours inside its 72-hour limit. 210 of 210 tasks done, none failed; the error log is empty; peak memory 49 GB (`sacct` MaxRSS) of 128 GB requested.
+  - **Measured task times** (mean training seconds in `timing.csv`): SAC 17.2 h, DDPG 13.9 h, TD3 10.7 h, point-in-time shared design 7.5 h, PPO `plan_main_weekly_lstm` 1.1 h, A2C 0.4 h. 1,776 task-hours in all.
+  - **Cost:** about 2,465 SHr (56.0 h at 44 SHr an hour). `scontrol show assoc_mgr flags=qos qos=25sfcs03` shows 149,202 of the QOS's 600,000 billing minutes used (2,487 of 10,000 SHr), so about 7,513 SHr are left.
+  - **Copied to the Mac** with `rsync`, without model zips and pickles (they stay in the BistKA folder): `results/algorithm_comparison_bistka_20261122/` (140 tasks, 1,400 files), `results/walk_forward_reward_bistka_20261122/` (35 tasks, 350 files) and `results/pit_walk_forward_bistka_20261122/` (35 tasks, 315 files), into `~/drl_runs/`. A `rsync --checksum` dry run afterwards found no difference. Every task has `timing.csv` at 300,000 steps and its validation metrics, curves and significance tests.
 - **Job `4411`, helper pool (operator-approved, "Submit helper job"; cancelled before it started):** submitted at 11:57 on 2026-11-23 to work the same task list backwards beside job 4409 (`slurm/pools/bistka_20261122_reverse.tasks`, `KEEP_LOCKS=1`, `SMOKE_TIMESTEPS=0`, 32 CPUs, 96 GB). It stayed pending with reason `QOSGrpCpuLimit`: the project's QOS `25sfcs03` allows 32 CPUs at once across all its jobs, and job 4409 holds all 32. Cancelled at 11:58; it never ran and cost nothing. The personal account `s00658` has its own 32-CPU QOS, but only about 496 SHr, less than the helper's projected 1,350.
 
 ## 2026-07-31 Connection And Sync Boundary
