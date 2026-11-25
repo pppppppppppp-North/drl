@@ -10,7 +10,7 @@ Evidence tier: exploratory (Yahoo prices, validation years 2016–2022).
 - [`scripts/run_final_test_evaluation.py`](../scripts/run_final_test_evaluation.py) is the run-once gate for the test years.
 - [`config/final_test_protocol_pit.yaml`](../config/final_test_protocol_pit.yaml) and [`config/final_test_protocol_five_stock.yaml`](../config/final_test_protocol_five_stock.yaml) are the two locks. Both are drafts, and the gate refuses them as they stand.
 
-> **Pending (2026-11-25, local run):** the 100k designs that this choice depends on had only 3 seeds, against 5 at 300k. Seeds 45 and 46 of the point-in-time shared-weight design and of five-stock A2C are training on validation years only (`slurm/pools/local_20261125.tasks`, about 7 hours with three workers). A rerun of one 2026-11-10 model checks that retraining reproduces it. The ranking below uses 3 seeds for those two designs and will be updated, along with a 5-seed version of the 100k ensemble with the band.
+> **Five seeds at 100k (2026-11-25, evening):** the two 100k designs this choice depends on had only 3 seeds, against 5 at 300k. Seeds 45 and 46 of the point-in-time shared-weight design and of five-stock A2C were trained locally on validation years only (`slurm/pools/local_20261125.tasks`, 28 new models in 2 hours 40 minutes). A rerun of a 2026-11-10 model matched it exactly on every session. The 5-seed 100k ensemble with the band is a new design in the ranking below. **The ranking's choices did not change.** The 5-seed 100k ensemble scored −0.78, just above its 3-seed version (−0.83). Five-stock A2C at 100k rose from −2.55 to −1.30.
 
 ## What the authors have to decide
 
@@ -44,12 +44,13 @@ Validation years 2016–2022, scores in percentage points a year (`python -m scr
 | **3** | **Shared actor, cash capped at 20%, seed ensemble + band (3 seeds)** | **DRL** | **−0.01** | −0.56 | −2.43 | 3/7 | −2.67 | 5.0% | 1.7× |
 | 4 | Shared actor + macro proxies, ensemble + band | DRL | −0.43 | −1.06 | −4.37 | 2/7 | −4.37 | 4.3% | 2.2× |
 | 5 | Inverse volatility, monthly | baseline | −0.76 | −0.56 | −2.42 | 3/7 | −1.09 | 5.0% | 2.7× |
-| 6 | Shared actor, 100k, seed ensemble + band (3 seeds) | DRL | −0.83 | **+0.07** | −1.81 | 2/7 | −2.66 | **5.5%** | 1.7× |
-| 7 | Shared actor, cash capped at 20% | DRL | −0.98 | −1.13 | −2.64 | 1/7 | −3.66 | 4.4% | 4.3× |
-| 8 | Shared actor trained with the band, ensemble | DRL | −1.11 | −0.22 | −1.64 | 2/7 | −1.68 | 5.2% | 1.5× |
-| 9–15 | Band at evaluation only, ensemble without the band, policy rate (ensemble and single), single 100k models, trained with the band, sticky slots | DRL | −1.20 to −1.73 | | | | | | |
-| 16 | Shared actor, 300k, ensemble + band (5 seeds) | DRL | −1.78 | −1.28 | −6.39 | 2/7 | −5.41 | 3.9% | 0.9× |
-| 17–20 | Macro proxies (single), LSTM forecaster (baseline: mean +2.10, median −2.47), 300k single models, slots by traded value | | −1.88 to −6.01 | | | | | | |
+| 6 | Shared actor, 100k, seed ensemble + band (5 seeds) | DRL | −0.78 | −0.34 | −1.78 | 2/7 | −2.29 | 5.2% | 1.6× |
+| 7 | Shared actor, 100k, seed ensemble + band (3 seeds) | DRL | −0.83 | **+0.07** | −1.81 | 2/7 | −2.66 | **5.5%** | 1.7× |
+| 8 | Shared actor, cash capped at 20% | DRL | −0.98 | −1.13 | −2.64 | 1/7 | −3.66 | 4.4% | 4.3× |
+| 9 | Shared actor trained with the band, ensemble | DRL | −1.11 | −0.22 | −1.64 | 2/7 | −1.68 | 5.2% | 1.5× |
+| 10–16 | Band at evaluation only, ensemble without the band, policy rate (ensemble and single), trained with the band, single 100k models (5 seeds, −1.45), sticky slots | DRL | −1.20 to −1.73 | | | | | | |
+| 17 | Shared actor, 300k, ensemble + band (5 seeds) | DRL | −1.78 | −1.28 | −6.39 | 2/7 | −5.41 | 3.9% | 0.9× |
+| 18–21 | Macro proxies (single), LSTM forecaster (baseline: mean +2.10, median −2.47), 300k single models, slots by traded value | | −1.88 to −6.01 | | | | | | |
 
 **Five starter stocks** (reference: five-stock monthly equal weight, 10.1% a year; ETF 7.1%)
 
@@ -59,20 +60,20 @@ Validation years 2016–2022, scores in percentage points a year (`python -m scr
 | 2 | Ridge forecast, top two monthly | baseline | +2.74 | +2.61 | −3.96 | 5/7 | +4.06 | 12.8% | 14.1× |
 | **3** | **A2C, 300k** | **DRL** | **−0.16** | −1.41 | −12.17 | 3/7 | −1.60 | 8.7% | 4.4× |
 | 4 | PPO, 100k | DRL | −0.72 | −1.93 | −7.63 | 3/7 | −0.65 | 7.6% | 4.0× |
-| 5 | PPO, technical inputs only | DRL | −1.52 | −2.65 | −8.33 | 2/7 | −0.21 | 6.8% | 4.3× |
-| 6 | A2C, 100k (3 seeds) | DRL | −2.55 | −2.28 | −6.76 | 2/7 | −0.74 | 7.3% | 3.5× |
+| 5 | A2C, 100k (5 seeds) | DRL | −1.30 | −2.19 | −6.49 | 2/7 | −0.45 | 7.5% | 3.4× |
+| 6 | PPO, technical inputs only | DRL | −1.52 | −2.65 | −8.33 | 2/7 | −0.21 | 6.8% | 4.3× |
 | … | PPO + macro, PPO 300k, PPO log reward, DDPG, TD3, SAC | DRL | −3.15 to −12.73 | | | | | | |
 
 **What the rule gives:**
 - **No DRL design scores above zero** in either universe, so the rule as written selects **active equal weight** in both. That is consistent with every report so far: no DRL design beat equal weight on validation.
 - **The top DRL designs sit within a fraction of a point of zero.** They are the cash-capped point-in-time ensemble with the band (−0.01) and five-stock A2C at 300k (−0.16).
-- **The order among the leaders is not meaningful.** Their fold values spread by several points from year to year, and none of the Sharpe differences in the reports is significant. The rule still gives a fixed choice made before the test, which is its purpose.
-- **Some baselines score above zero, and they are not DRL.** Minimum variance on the point-in-time index, and both forecasters on the five stocks, are scored here only for comparison and are never selected.
+- **The order among the leaders is not meaningful.** Their fold values spread by several points from year to year, and neither leader's Sharpe ratio differs significantly from equal weight's or the ETF's. The rule still gives a fixed choice made before the test, which is its purpose.
+- **Some baselines score above zero, and they are not DRL.** Minimum variance and momentum on the point-in-time index, and both forecasters on the five stocks, are scored here only for comparison and are never selected.
 
 ## Recommendation
 
 1. **Follow the rule, and state its fallback openly.** The deployable choice from validation is active equal weight. The test then asks the question the title raises: does the best DRL design, picked by a fixed rule, beat equal weight and the ETF on years it never saw?
-2. **Headline test:** the point-in-time rule's top DRL design. That is currently the cash-capped shared-weight actor (100k timesteps, seeds 42–44, seed ensemble with the 0.5-point band), pending the 5-seed update. Lock: `config/final_test_protocol_pit.yaml`.
+2. **Headline test:** the point-in-time rule's top DRL design. That is the cash-capped shared-weight actor (100k timesteps, seeds 42–44, seed ensemble with the 0.5-point band). The 5-seed update did not change it. Lock: `config/final_test_protocol_pit.yaml`.
 3. **Secondary test, locked at the same time:** the five-stock rule's top DRL design, A2C at 300k with seeds 42–46, reported with the survivorship caveat. Lock: `config/final_test_protocol_five_stock.yaml`.
 4. **Do not change a design after seeing either result.** Both locks are approved together, before either runs.
 

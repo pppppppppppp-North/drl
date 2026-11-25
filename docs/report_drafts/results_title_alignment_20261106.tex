@@ -95,7 +95,7 @@ Strategy & Annual return & vs ETF & Years ahead & Max DD \\
 LSTM forecast, top two & 13.8\% & $+6.7\%$ & 5/7 & $-17.0\%$ \\
 Ridge forecast, top two & 12.8\% & $+5.6\%$ & 5/7 & $-16.8\%$ \\
 Equal weight, monthly & 10.1\% & $+3.0\%$ & 4/7 & $-13.9\%$ \\
-DRL, plan reward + LSTM model & 7.7\% & $+0.5\%$ & 3/7 & $-11.1\%$ \\
+DRL, plan reward + LSTM model & 7.6\% & $+0.5\%$ & 3/7 & $-11.1\%$ \\
 SET50 ETF buy-and-hold & 7.1\% & -- & -- & $-11.3\%$ \\
 DRL, log reward + MLP & 5.0\% & $-2.2\%$ & 2/7 & $-14.2\%$ \\
 \bottomrule
@@ -207,9 +207,9 @@ than PPO; SAC was significantly worse than equal weight ($-0.46$, $-0.90$ to $-0
 and cheapest algorithm, at 8.7\% a year with 0.4 hours of training per model, but its Sharpe ratio, 0.53,
 was not significantly different from that of the ETF (0.50; difference $+0.03$, $-0.36$ to $0.37$), of
 equal weight (0.58; $-0.05$, $-0.29$ to $0.20$) or of PPO (0.39; $+0.14$, $-0.04$ to $0.34$). Its seeds
-also spread widely (5.9 points), and much of its lead came from 2017. Counting the fourteen designs
+also spread widely (5.8 points), and much of its lead came from 2017. Counting the fourteen designs
 tried on the five starter stocks, its deflated Sharpe ratio was 0.35, and PPO's 0.23. On the same five
-seeds, PPO fell from 7.7\% a year at 100{,}000 timesteps to 4.4\% at 300{,}000; Section~\ref{sec:budget}
+seeds, PPO fell from 7.6\% a year at 100{,}000 timesteps to 4.4\% at 300{,}000; Section~\ref{sec:budget}
 traces this to cash.
 
 \section{Point-in-Time SET50 Evaluation}
@@ -265,7 +265,7 @@ DRL, shared-weight actor, 300k timesteps & 3.2\% & $-3.9\%$ & 2/7 & $-7.2\%$ \\
 DRL, plan reward + LSTM, sticky slots & 3.7\% & $-3.5\%$ & 1/7 & $-14.2\%$ \\
 DRL, plan reward + LSTM, traded-value slots & $-1.1\%$ & $-8.3\%$ & 0/7 & $-14.8\%$ \\
 \midrule
-DRL, plan reward + LSTM (five starter stocks) & 7.7\% & $+0.5\%$ & 3/7 & $-11.1\%$ \\
+DRL, plan reward + LSTM (five starter stocks) & 7.6\% & $+0.5\%$ & 3/7 & $-11.1\%$ \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -317,7 +317,7 @@ DRL, 300k timesteps & 3.9\% & 0.7\% & 3.2\% & 3.3 & 40.9\% \\
 DRL, 300k timesteps, seed ensemble + no-trade band & 4.1\% & 0.2\% & 3.9\% & 0.9 & 40.8\% \\
 Equal weight (point-in-time SET50) & 6.0\% & 0.4\% & 5.6\% & 1.9 & 0.7\% \\
 LSTM forecast, top ten & 11.5\% & 3.5\% & 8.1\% & 15.8 & 1.4\% \\
-DRL (five starter stocks) & 8.5\% & 0.8\% & 7.7\% & 3.9 & 20.3\% \\
+DRL (five starter stocks) & 8.5\% & 0.8\% & 7.6\% & 3.9 & 20.3\% \\
 Equal weight (five starter stocks) & 10.4\% & 0.3\% & 10.1\% & 1.4 & 0.0\% \\
 \bottomrule
 \end{tabularx}
@@ -471,27 +471,27 @@ sessions.
 \begin{table}[H]
 \centering
 \footnotesize
-\caption{Training for 100{,}000 against 300{,}000 timesteps, validation 2016--2022: means over seven annual folds. Cash is the average cash weight; Sharpe ratios are on chained daily returns of the seed-mean curve, and the last column is the paired difference between the two budgets with its 95\% interval.}
+\caption{Training for 100{,}000 against 300{,}000 timesteps, validation 2016--2022: means over seven annual folds. Cash is the average cash weight; Sharpe ratios are on chained daily returns of the seed-mean curve, and the last column is the paired difference between the two budgets with its 95\% interval. Both budgets have five seeds: seeds 45 and 46 of the 100{,}000-timestep A2C and point-in-time designs were trained afterwards, and a rerun reproduced an earlier model exactly.}
 \label{tab:budget}
 \begin{tabularx}{\textwidth}{@{}Yrrrrrl@{}}
 \toprule
 Timesteps & Seeds & Annual return & Cash & Max DD & Sharpe & 300k $-$ 100k \\
 \midrule
 \multicolumn{7}{@{}l}{\emph{PPO, five starter stocks}} \\
-100{,}000 & 5 & 7.7\% & 20\% & $-11.1\%$ & 0.55 & \\
+100{,}000 & 5 & 7.6\% & 20\% & $-11.1\%$ & 0.55 & \\
 300{,}000 & 5 & 4.4\% & 39\% & $-9.8\%$ & 0.39 & $-0.16$ ($-0.33$, $-0.01$) \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{A2C, five starter stocks}} \\
-100{,}000 & 3 & 7.3\% & 16\% & $-13.2\%$ & 0.48 & \\
-300{,}000 & 5 & 8.7\% & 15\% & $-13.1\%$ & 0.53 & $+0.05$ ($-0.19$, $0.28$) \\
+100{,}000 & 5 & 7.5\% & 18\% & $-12.9\%$ & 0.48 & \\
+300{,}000 & 5 & 8.7\% & 15\% & $-13.1\%$ & 0.53 & $+0.04$ ($-0.16$, $0.24$) \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Point-in-time SET50, single models}} \\
-100{,}000 & 3 & 4.6\% & 11\% & $-11.7\%$ & 0.35 & \\
-300{,}000 & 5 & 3.2\% & 41\% & $-7.2\%$ & 0.39 & $+0.04$ ($-0.13$, $0.20$) \\
+100{,}000 & 5 & 4.5\% & 7\% & $-12.2\%$ & 0.34 & \\
+300{,}000 & 5 & 3.2\% & 41\% & $-7.2\%$ & 0.39 & $+0.06$ ($-0.13$, $0.22$) \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Point-in-time SET50, seed ensemble + no-trade band}} \\
-100{,}000 & 3 & 5.5\% & 10\% & $-11.3\%$ & 0.42 & \\
-300{,}000 & 5 & 3.9\% & 41\% & $-7.0\%$ & 0.48 & $+0.06$ ($-0.11$, $0.21$) \\
+100{,}000 & 5 & 5.2\% & 7\% & $-12.0\%$ & 0.38 & \\
+300{,}000 & 5 & 3.9\% & 41\% & $-7.0\%$ & 0.47 & $+0.10$ ($-0.09$, $0.25$) \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -500,23 +500,23 @@ Longer training made PPO hold cash. On the five starter stocks, with the same fi
 cash doubled from 20\% to 39\%, its return fell in six of the seven years, and its Sharpe ratio fell
 significantly; this is the only significant effect of the training budget. The point-in-time agent,
 also trained with PPO, did the same. At 300{,}000 timesteps, 17 of its 35 models held 45--98\% cash on
-average over their validation year and 15 held less than 5\%; at 100{,}000 timesteps, two of 21 had held
+average over their validation year and 15 held less than 5\%; at 100{,}000 timesteps, two of 35 had held
 that much. A cash-heavy model's cash barely moved within its year (median standard deviation 1.4
 percentage points), so, as for the cash-heavy models of Section~\ref{sec:pit}, it was a level each model
 learned, not a response to the market. The stock part of the portfolio stayed close to equal weight: the
 ensemble's daily returns correlated 0.998 with equal weight, with 43.7 effective holdings.
 
 The cash lowered the return but also the risk. The point-in-time seed ensemble with the band made 3.9\%
-a year, against 5.5\% at 100{,}000 timesteps, but its mean maximum drawdown was $-7.0\%$ rather than
-$-11.3\%$. It lost less than equal weight in the two falling years, 2018 ($-4.9\%$ against $-10.0\%$) and
-2020 ($-3.6\%$ against $-8.5\%$), and trailed it in the other five. Its Sharpe ratio, 0.48, was level with
+a year, against 5.2\% at 100{,}000 timesteps, but its mean maximum drawdown was $-7.0\%$ rather than
+$-12.0\%$. It lost less than equal weight in the two falling years, 2018 ($-4.9\%$ against $-10.0\%$) and
+2020 ($-3.6\%$ against $-8.5\%$), and trailed it in the other five. Its Sharpe ratio, 0.47, was level with
 the ETF's 0.50 (difference $-0.02$, interval $-0.35$ to $0.23$), above equal weight's 0.38 ($+0.09$, $-0.12$
-to $0.27$) and above that of the 100{,}000-timestep ensemble; none of these differences is significant. The
+to $0.27$) and above the 100{,}000-timestep ensemble's 0.38; none of these differences is significant. The
 ensemble beat the mean of its own seeds significantly ($+0.08$, $0.05$ to $0.12$), as at 100{,}000
-timesteps. Counting 21 point-in-time designs, its deflated Sharpe ratio was 0.25, against 0.20 for the
-100{,}000-timestep ensemble and 0.27 for the ETF. Chained over the seven years, one baht became 1.29,
-against 1.41 for the 100{,}000-timestep ensemble and for equal weight and 1.55 for the ETF
-(Figure~\ref{fig:pit-300k}). A2C did not drift to cash: it made 1.4 points a year more at 300{,}000
+timesteps. Counting 22 point-in-time designs, its deflated Sharpe ratio was 0.24, against 0.17 for the
+100{,}000-timestep ensemble and 0.26 for the ETF. Chained over the seven years, one baht became 1.29,
+against 1.38 for the 100{,}000-timestep ensemble, 1.41 for equal weight and 1.55 for the ETF
+(Figure~\ref{fig:pit-300k}). A2C did not drift to cash: it made 1.2 points a year more at 300{,}000
 timesteps, with wider seed spread, and the gain is not significant.
 
 Why the cash grows with training was not tested. One reading is that the plan reward subtracts half of
@@ -526,8 +526,8 @@ choosing it on the validation years adds to the designs that the deflated Sharpe
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{docs/figures/pit_300k_chained_equity_20261125.png}
-\caption{Point-in-time SET50: chained out-of-sample value of the shared-weight design trained for 100{,}000 timesteps (three seeds) and 300{,}000 timesteps (five seeds), as single models and as a seed ensemble with the no-trade band, with the ETF and equal weight. Bands show the range across seeds.}
+\includegraphics[width=\textwidth]{docs/figures/pit_budget_5seeds_chained_equity_20261125.png}
+\caption{Point-in-time SET50: chained out-of-sample value of the shared-weight design trained for 100{,}000 and 300{,}000 timesteps (five seeds each), as single models and as a seed ensemble with the no-trade band, with the ETF and equal weight. Bands show the range across seeds.}
 \label{fig:pit-300k}
 \end{figure}
 

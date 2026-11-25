@@ -4,7 +4,7 @@ Date: 2026-11-07
 Evidence tier: **exploratory**. Yahoo data, the five starter stocks, validation years only.
 Outputs: `results/algorithm_comparison_20261106/` and `results/algorithm_comparison_combined_20261107/` (ignored by git)
 
-> **Update 2026-11-25:** all five algorithms then ran on BistKA at 300k timesteps × 5 seeds ([report](bistka_300k_results_20261125.md)). A2C made 8.7% a year, PPO 4.4%, SAC 0.3%, TD3 −0.9% and DDPG −1.4%. The off-policy algorithms traded about 30 times their capital a year and are significantly worse than the benchmarks. PPO fell from 7.7% at 100k timesteps as it learned to hold cash. The 100k results below stand as the first, local comparison.
+> **Update 2026-11-25:** all five algorithms then ran on BistKA at 300k timesteps × 5 seeds ([report](bistka_300k_results_20261125.md)). A2C made 8.7% a year, PPO 4.4%, SAC 0.3%, TD3 −0.9% and DDPG −1.4%. The off-policy algorithms traded about 30 times their capital a year and are significantly worse than the benchmarks. PPO fell from 7.6% at 100k timesteps as it learned to hold cash. The 100k results below stand as the first, local comparison.
 
 ## Question
 

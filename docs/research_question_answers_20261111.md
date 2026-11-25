@@ -22,7 +22,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 **Answer:** in absolute terms, yes; against simple benchmarks, no. No DRL design beat equal weight or the SET50 ETF, and what the best design learned is close to equal weight.
 
 - **Five hand-picked stocks** ([walk-forward](walk_forward_reward_20261106.md); 7 folds × 5 seeds):
-  - **DRL:** the long-term agent (plan reward, per-asset LSTM, weekly decisions) made 7.7% a year.
+  - **DRL:** the long-term agent (plan reward, per-asset LSTM, weekly decisions) made 7.6% a year.
   - **Benchmarks:** the SET50 ETF made 7.1%, equal weight 10.1%, and the LSTM forecaster 13.8%.
   - **Significance:** no difference is significant.
   - **Survivorship:** these five stocks were chosen with hindsight, which flatters every strategy confined to them.
@@ -33,7 +33,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
   - **Deflated Sharpe:** 0.22, counting the 19 designs tried (0.27 at 13, 0.23 at 17).
   - **Training with the band:** 5.1% a year, and 5.2% as a seed ensemble.
   - **Cash capped at 20%:** 4.4% a year, and 5.0% as a seed ensemble with the band ([report](pit_walk_forward_20261107.md#follow-up-cash-capped-at-20-2026-11-19)). It removed the cash-heavy models but not the gap to equal weight, which lies in trading costs and stock tilts that do not pay.
-  - **Three times the training, five seeds (BistKA, 2026-11-25):** 3.2% a year, and 3.9% as a seed ensemble with the band ([report](bistka_300k_results_20261125.md)). 17 of the 35 models held 45–98% cash all year, so the return fell while the drawdown shrank (−7.0% against −11.3% a year on average). The ensemble's Sharpe ratio, 0.48, is level with the ETF's 0.50; its deflated Sharpe is 0.25 at 21 designs. On five stocks, PPO trained three times longer also turned to cash and made 4.4% a year against 7.7%, significantly worse. More training did not lift any agent above the benchmarks.
+  - **Three times the training, five seeds (BistKA, 2026-11-25):** 3.2% a year, and 3.9% as a seed ensemble with the band ([report](bistka_300k_results_20261125.md)). 17 of the 35 models held 45–98% cash all year, so the return fell while the drawdown shrank (−7.0% against −11.3% a year on average; −12.0% for the 100k ensemble with five seeds, which made 5.2% a year). The ensemble's Sharpe ratio, 0.47, is level with the ETF's 0.50; its deflated Sharpe is 0.25 at 21 designs. On five stocks, PPO trained three times longer also turned to cash and made 4.4% a year against 7.6%, significantly worse. More training did not lift any agent above the benchmarks.
 - **What it learned:** close to equal weight. Its daily correlation with equal weight is 0.998, with 43.9 effective holdings out of 44.5 tradable members.
 - **Other benchmarks on the same universe:** none is significantly better or worse than the agent.
   - **Heuristics:** momentum 5.3%, inverse volatility 5.0% and minimum variance 4.0%.
@@ -100,7 +100,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
   - **Benchmarks:** the SET50 ETF made 7.1% (Sharpe 0.50) and monthly equal weight 10.1% (0.58).
   - **Significant:** TD3 and DDPG are worse than the ETF, equal weight and PPO; SAC is worse than equal weight (Sharpe −0.46, −0.90 to −0.05).
   - **Not significant:** A2C against the ETF (+0.03, −0.36 to +0.37), equal weight (−0.05) and PPO (+0.14, −0.04 to +0.34).
-  - **Training budget:** PPO fell from 7.7% a year at 100k timesteps to 4.4% at 300k (same five seeds; Sharpe −0.16, −0.33 to −0.01), as its average cash rose from 20% to 39%. A2C's change, 7.3% to 8.7%, is not significant.
+  - **Training budget:** PPO fell from 7.6% a year at 100k timesteps to 4.4% at 300k (same five seeds; Sharpe −0.16, −0.33 to −0.01), as its average cash rose from 20% to 39%. A2C's change, 7.5% to 8.7% with five seeds on both sides (7.3% with three at 100k), is not significant.
   - **Stability:** no algorithm is stable across seeds at 300k. The off-policy seeds spread the most; one SAC seed lost 61% over the seven years.
 - **PPO against A2C at 100k timesteps** ([algorithm comparison](algorithm_comparison_20261107.md); five stocks, 7 folds × 3 seeds, the same reward, model and inputs):
 

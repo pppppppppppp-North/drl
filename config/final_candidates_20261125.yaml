@@ -48,6 +48,8 @@ candidates:
      policy: pit_plan_weekly_lstm_shared_evalband, seeds: [42, 43, 44], runs: [pit_seed_ensemble_20261110]}
   - {id: pit_shared_100k_ensemble_band, universe: point_in_time, label: "Shared, 100k, seed ensemble + band (3 seeds)", timesteps: 100000,
      policy: pit_plan_weekly_lstm_shared_ensemble_band, runs: [pit_seed_ensemble_20261110]}
+  - {id: pit_shared_100k_ensemble_band_5seeds, universe: point_in_time, label: "Shared, 100k, seed ensemble + band (5 seeds)", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_ensemble_band, runs: [pit_seed_ensemble_100k_5seeds_20261125]}
   - {id: pit_band_trained_100k, universe: point_in_time, label: "Shared, trained with the band, 100k", timesteps: 100000,
      policy: pit_plan_weekly_lstm_shared_band, seeds: [42, 43, 44], runs: [pit_walk_forward_band_20261110]}
   - {id: pit_band_trained_100k_ensemble, universe: point_in_time, label: "Shared, trained with the band, seed ensemble", timesteps: 100000,

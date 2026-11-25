@@ -17,7 +17,7 @@ Outputs (ignored by git): `results/pit_walk_forward_20261107/` (first run), `res
 - **BOT policy rate (run 2026-11-11):** five official policy-rate inputs lowered the agent's return, to 4.1% a year from 4.6%. Its seed ensemble with the band fell to 4.5% from 5.5%, a significant Sharpe shortfall (−0.06). The trained models barely read the new inputs: the shortfall came from cash that depended on the seed, as in the earlier arms.
 - **Daily macro proxies (run 2026-11-11):** eight USD/THB, oil, gold and US-yield inputs lowered the return too, to 3.9% a year (seed ensemble with the band 4.3%); neither shortfall is significant. Unlike the policy rate, the agent read them heavily, and removing their information raised the return of 15 of its 21 models. On the point-in-time index, the technical and market inputs alone remain the best.
 - **Cash capped at 20% (run 2026-11-19):** capping the cash target at 20%, in training and validation, removed the cash-heavy models and made the seeds more alike, but did not raise the return: 4.4% a year (seed ensemble with the band 5.0%), against 4.6% (5.5%) without the cap. Without the cap, the ensemble's cash had cushioned the 2020 crash; outside 2020 the two ensembles are level. Neither difference is significant, and the best design is still the uncapped ensemble with the band.
-- **Three times the training, five seeds (BistKA, 2026-11-25):** the shared-weight design trained for 300k timesteps instead of 100k made 3.2% a year, and 3.9% as a seed ensemble with the band. 17 of its 35 models held 45–98% cash all year, against 2 of 21 at 100k. The return fell, but so did the drawdown, and the ensemble's Sharpe ratio (0.48) rose slightly against 100k (0.42; not significant), level with the ETF's 0.50. By return, the 100k ensemble with the band is still the best design. Report: [`bistka_300k_results_20261125.md`](bistka_300k_results_20261125.md).
+- **Three times the training, five seeds (BistKA, 2026-11-25):** the shared-weight design trained for 300k timesteps instead of 100k made 3.2% a year, and 3.9% as a seed ensemble with the band. 17 of its 35 models held 45–98% cash all year, against 2 of 21 at 100k. The return fell, but so did the drawdown, and the ensemble's Sharpe ratio (0.47) rose slightly against 100k (0.42 with three seeds, 0.38 with five; not significant), level with the ETF's 0.50. By return, the 100k ensemble with the band is still the best design. Report: [`bistka_300k_results_20261125.md`](bistka_300k_results_20261125.md).
 
 ## Question
 
@@ -72,13 +72,13 @@ All baselines use the same sessions, costs and accounting as the agent. Only the
 | SET50 ETF buy-and-hold (TDEX) | 24.5% | 18.2% | −6.5% | 5.7% | −11.8% | 12.1% | 7.8% | **7.1%** | — | −11.2% |
 | Point-in-time SET50 equal weight | 22.2% | 16.5% | −10.0% | 6.5% | −8.5% | 11.9% | 0.7% | **5.6%** | 2/7 | −12.7% |
 | **DRL, point-in-time SET50** (± s.d. over 3 seeds) | 15.7% ± 5.4 | 5.8% ± 3.4 | −15.0% ± 3.6 | 1.9% ± 5.2 | −15.1% ± 0.3 | 3.4% ± 5.2 | −4.5% ± 1.0 | **−1.1%** | 0/7 | −14.8% |
-| DRL, five starter stocks (same design, 5 seeds) | 25.1% | 29.0% | −7.2% | 5.0% | −9.8% | 6.4% | 4.9% | **7.7%** | 3/7 | −11.1% |
+| DRL, five starter stocks (same design, 5 seeds) | 25.1% | 29.0% | −7.2% | 5.0% | −9.8% | 6.4% | 4.9% | **7.6%** | 3/7 | −11.1% |
 
 **The agent trailed both the ETF and equal weight in every year.**
 - **Return:** it made −1.1% a year, against 5.6% for equal weight over the same members and 7.1% for the ETF. Chained over the seven years, 1 baht became 0.89 (0.80–0.96 across seeds), against 1.41 in equal weight and 1.55 in the ETF ([figure](figures/pit_walk_forward_chained_equity_20261107.png)).
 - **Drawdown:** its mean maximum drawdown (−14.8%) was deeper than the ETF's (−11.2%) and equal weight's (−12.7%).
 - **2020 crash:** it lost 15.1%, against 11.8% for the ETF. The five-stock agent held 20% cash on average, but this agent stayed almost fully invested (3.7% cash on average).
-- **Contrast:** with the same reward, model and folds, the five-stock agent made 7.7% a year with the lowest drawdown of any strategy.
+- **Contrast:** with the same reward, model and folds, the five-stock agent made 7.6% a year with the lowest drawdown of any strategy.
 
 **This time the difference is significant.** Sharpe ratios were measured on the 1,699 chained daily returns with a stationary bootstrap.
 
@@ -103,7 +103,7 @@ All baselines use the same sessions, costs and accounting as the agent. Only the
 | --- | ---: | ---: | ---: | ---: | ---: |
 | **DRL, point-in-time SET50** | 4.6% | 5.8% | −1.1% | 28.2× | 3.7% |
 | Equal weight, point-in-time SET50 | 6.0% | 0.4% | 5.6% | 1.9× | 0.7% |
-| DRL, five starter stocks | 8.5% | 0.8% | 7.7% | 3.9× | 20.3% |
+| DRL, five starter stocks | 8.5% | 0.8% | 7.6% | 3.9× | 20.3% |
 | Equal weight, five starter stocks | 10.4% | 0.3% | 10.1% | 1.4× | 0.0% |
 
 Turnover is the sum of absolute weight changes over the year, including the first purchase.
