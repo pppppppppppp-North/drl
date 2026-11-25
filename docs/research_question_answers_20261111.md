@@ -1,7 +1,12 @@
 # Answers to the Research Questions (draft)
 
-Date: 2026-11-11; cash-cap arm added 2026-11-20; BistKA 300k-timestep runs (RQ1, RQ4, RQ6) added 2026-11-25
+Date: 2026-11-11; cash-cap arm added 2026-11-20; BistKA 300k-timestep runs (RQ1, RQ4, RQ6) added 2026-11-25; the single test-year evaluation added 2026-11-25 (evening)
 Status: **draft** for the M8 item "answer each research question explicitly, including negative results". It answers the six questions of the implementation plan (`implementation_plan.md`, section 2.2) from the evidence in the repository today. Each answer links the report it comes from.
+
+> **Test years, 2026-11-25:** the two locked designs were evaluated once on 2023–2024 ([results](final_test_results_20261125.md)).
+> - **Point-in-time design:** it beat point-in-time equal weight in both years (two years chained 0.827 against 0.799), not significantly. It lost to the SET50 ETF (0.984).
+> - **Five-stock A2C at 300k:** it trailed equal weight of its five stocks (1.026 against 1.061), not significantly.
+> - **2024 data:** Yahoo's 2024 prices contain stale rows on real trading days, disclosed in the report. Statements below that the test years are unread predate this run.
 
 **Limits that apply to every answer:**
 - **Data tier:** exploratory. Prices are Yahoo's, and 13% of point-in-time SET50 member-sessions have none.
