@@ -13,7 +13,7 @@ Use this file as the single running checklist for what has been completed and wh
 
 ## Final-Design Decision And Test-Year Gate (M6–M8) — 2026-11-25
 
-Packet: [`docs/final_design_decision_20261125.md`](docs/final_design_decision_20261125.md). Nothing is approved; the 2023–2024 test years and the sealed holdout are unread.
+Packet: [`docs/final_design_decision_20261125.md`](docs/final_design_decision_20261125.md). Both locks approved on 2026-11-25 (below); the sealed holdout is unread.
 
 - `[x]` **Ranking by the decision-7 default rule** (`scripts/rank_final_candidates.py`, `config/final_candidates_20261125.yaml`, 7 tests): every walk-forward design and baseline, scored by the median over validation years of the annualized excess log return over active equal weight. No DRL design scores above zero in either universe, so the rule as written selects equal weight. The best DRL designs are the cash-capped point-in-time ensemble with the band (−0.01 points a year) and five-stock A2C at 300k (−0.16).
 - `[x]` **Run-once gate for the test years** (`scripts/run_final_test_evaluation.py`, 17 tests). It refuses a draft or uncommitted lock, a changed config, uncommitted code, a test end in 2025, or a second run of a stage. It writes receipts and `results/FINAL_TEST_LEDGER.jsonl`. Two draft locks: `config/final_test_protocol_pit.yaml` (headline) and `config/final_test_protocol_five_stock.yaml` (secondary).
@@ -24,7 +24,8 @@ Packet: [`docs/final_design_decision_20261125.md`](docs/final_design_decision_20
   Outputs: `~/drl_runs/pit_walk_forward_shared_100k_s4546_20261125/`, `pit_replication_100k_20261125/`, `algorithm_comparison_a2c_100k_s4546_20261125/`. The `*_100k_5seeds_20261125/` folders link all five seeds.
   - **Analysis:** the 5-seed 100k ensemble with the band (`pit_seed_ensemble_100k_5seeds_20261125/`; replays matched to 2 × 10⁻¹⁶) made 5.2% a year, Sharpe 0.38, level with equal weight. The 100k single models made 4.5% a year, narrowly but significantly worse than equal weight (Sharpe −0.04, −0.10 to −0.0005). A2C at 100k made 7.5%. The 300k-vs-100k differences stay non-significant: +0.06 for the single models, +0.10 for the ensemble, +0.04 for A2C. The decision-7 ranking's choices did not change (`~/drl_runs/final_candidate_ranking_20261125/`).
   - **Corrections in the reports:** five-stock PPO at 100k made 7.6% a year, not 7.7% (18 places since 2026-11-06). The 300k report also had A2C's seed spread 5.8 (not 5.9), PPO's 4.1 (not 4.2), A2C's chained value 1.64 (not 1.65), and the 300k ensemble's Sharpe ratio 0.47 (not 0.48).
-- `[ ]` **Authors:** choose and approve the designs (both locks together), then run the test years once. The holdout stage follows.
+- `[x]` **Designs approved (2026-11-25):** both locks were approved as recommended, together and before either ran, by Nathawat Youngyim in chat ("Approve both locks"). Only that name is recorded; the co-author and the advisor have not signed the locks.
+- `[~]` **Test years, run once:** the point-in-time stage, then the five-stock stage, through `scripts/run_final_test_evaluation.py` with 3 local workers. The holdout stage follows.
 - `[~]` **Holdout stage:** the seal-checking loader is built (`src/data/sealed_holdout.py`, 9 tests; the real holdout was not opened); wiring it into a holdout run is still to do. For the point-in-time design it also needs the 2025–2026 SET50 lists (a download that needs approval), or the December 2024 membership held fixed.
 
 ## BistKA Reconnection, Code Copy And Test Jobs — 2026-11-22

@@ -4,9 +4,11 @@
 # The design is the decision-7 rule's top point-in-time DRL design on the validation years
 # (scripts/rank_final_candidates.py, config/final_candidates_20261125.yaml). Change it only before approval.
 stage: test_2023_2024_point_in_time
-status: DRAFT            # the authors set APPROVED
-approved_by: []          # names of both authors and the advisor
-approved_on: null        # YYYY-MM-DD
+status: APPROVED
+# Approved in chat by Nathawat Youngyim on 2026-11-25, who chose to record only that name.
+# The co-author (Kunach Kijsanayothin) and the advisor (Prompong Pakawanwong) have not signed.
+approved_by: [Nathawat Youngyim]
+approved_on: "2026-11-25"
 design:
   candidate: pit_cash_cap_100k_ensemble_band
   runner: scripts.run_pit_walk_forward

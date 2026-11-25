@@ -1,7 +1,7 @@
 # Choosing the Final Design for the Single Test Evaluation (M6–M8)
 
 Date: 2026-11-25
-Status: **draft for the authors' decision.** Nothing here is approved, and the 2023–2024 test years and the sealed 2025+ holdout are still unread.
+Status: **approved on 2026-11-25** as recommended, both locks together, by Nathawat Youngyim in chat. Only that name is recorded in the locks; the co-author and the advisor have not signed them. The 2023–2024 test years are then run once through the gate; the sealed 2025+ holdout is still unread.
 Evidence tier: exploratory (Yahoo prices, validation years 2016–2022).
 
 **Tools added for this step:**
