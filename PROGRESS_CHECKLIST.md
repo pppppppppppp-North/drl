@@ -11,6 +11,20 @@ Use this file as the single running checklist for what has been completed and wh
 - `[ ]` Not started
 - `[!]` Blocked or needs attention
 
+## Final-Design Decision And Test-Year Gate (M6–M8) — 2026-11-25
+
+Packet: [`docs/final_design_decision_20261125.md`](docs/final_design_decision_20261125.md). Nothing is approved; the 2023–2024 test years and the sealed holdout are unread.
+
+- `[x]` **Ranking by the decision-7 default rule** (`scripts/rank_final_candidates.py`, `config/final_candidates_20261125.yaml`, 7 tests): every walk-forward design and baseline, scored by the median over validation years of the annualized excess log return over active equal weight. No DRL design scores above zero in either universe, so the rule as written selects equal weight. The best DRL designs are the cash-capped point-in-time ensemble with the band (−0.01 points a year) and five-stock A2C at 300k (−0.16).
+- `[x]` **Run-once gate for the test years** (`scripts/run_final_test_evaluation.py`, 17 tests). It refuses a draft or uncommitted lock, a changed config, uncommitted code, a test end in 2025, or a second run of a stage. It writes receipts and `results/FINAL_TEST_LEDGER.jsonl`. Two draft locks: `config/final_test_protocol_pit.yaml` (headline) and `config/final_test_protocol_five_stock.yaml` (secondary).
+- `[~]` **Five seeds for the 100k designs** (local, three workers, started 2026-11-25 15:33; validation years only). The pool `slurm/pools/local_20261125.tasks` has 29 tasks:
+  - seeds 45 and 46 of `pit_plan_weekly_lstm_shared` and of five-stock `algo_a2c` at 100k;
+  - a rerun of fold 2016 seed 42 at 100k, to check that retraining reproduces the 2026-11-10 model.
+
+  Outputs: `~/drl_runs/pit_walk_forward_shared_100k_s4546_20261125/`, `pit_replication_100k_20261125/`, `algorithm_comparison_a2c_100k_s4546_20261125/`. The ranking and the packet are updated when it ends.
+- `[ ]` **Authors:** choose and approve the designs (both locks together), then run the test years once. The holdout stage follows.
+- `[~]` **Holdout stage:** the seal-checking loader is built (`src/data/sealed_holdout.py`, 9 tests; the real holdout was not opened); wiring it into a holdout run is still to do. For the point-in-time design it also needs the 2025–2026 SET50 lists (a download that needs approval), or the December 2024 membership held fixed.
+
 ## BistKA Reconnection, Code Copy And Test Jobs — 2026-11-22
 
 Details: [`hpc/hpc_sync_status.md`](hpc/hpc_sync_status.md). Both jobs were submitted with the operator's explicit approval ("Yes, run tests").
@@ -37,7 +51,7 @@ Details: [`hpc/hpc_sync_status.md`](hpc/hpc_sync_status.md). Both jobs were subm
     - **Point-in-time:** 3.2% a year (single models) and 3.9% (seed ensemble with the band), against 4.6% and 5.5% at 100k. 17 of the 35 models held 45–98% cash all year. The ensemble's drawdown fell (−7.0% against −11.3%) and its Sharpe ratio rose slightly (0.48 against 0.42; not significant), level with the ETF (0.50). Deflated Sharpe at 21 designs: 0.25.
     - **Code:** `scripts/aggregate_walk_forward_reward.py` gained `--rename <run dir>:<old>=<new>`, so two runs of one variant can be compared (`tests/test_aggregate_walk_forward_reward.py`, 4 tests).
     - **Docs updated:** `docs/research_question_answers_20261111.md` (RQ1, RQ4, RQ5, RQ6), `docs/algorithm_comparison_20261107.md`, `docs/pit_walk_forward_20261107.md`, `IMPROVEMENT_MILESTONES.md` (M6 training budget, RQ1/RQ4 and RQ6 done).
-  - `[ ]` **Open:** choose the final design and training budget (100k or 300k), then the single evaluation on the test years and the sealed holdout; the authors decide.
+  - `[~]` **Open:** choose the final design and training budget (100k or 300k), then the single evaluation on the test years and the sealed holdout; the authors decide. *Prepared 2026-11-25: ranking rule, run-once gate and two draft locks (section above).*
 - `[x]` **Job `4411`, helper pool (operator-approved, "Submit helper job"; cancelled before it started).** Meant to work the task list backwards beside job 4409 (`slurm/pools/bistka_20261122_reverse.tasks`, new `KEEP_LOCKS=1` option of `slurm/walk_forward_pool.sbatch`, 32 CPUs, 96 GB). It stayed pending with `QOSGrpCpuLimit`: the project QOS allows 32 CPUs at once and job 4409 holds them all. Cancelled after one minute; it never ran and cost nothing. A helper job can only help when the project has CPUs to spare.
 
 ## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07, sticky slots 2026-11-09, shared-weight actor, seed ensemble and no-trade band 2026-11-10, training with the band 2026-11-11, cash cap 2026-11-19

@@ -108,8 +108,9 @@ No HPC job is needed.
 
 - **Data:** `data/holdout_sealed/` holds Yahoo prices from 2025-01-02 to 2026-11-05, sealed on 2026-11-06 with SHA-256 manifests. The rule: evaluate exactly once, after the protocol is locked.
 - **Plan:** retrain the locked design on everything through 2024, then evaluate once on the whole holdout.
+- **Built:** `src/data/sealed_holdout.py` (9 tests). `verify_seal` checks the manifest against its recorded hash and every file against the manifest, hashing bytes without parsing them. `open_sealed` reads the files only after that, and only for an `APPROVED` holdout lock with names and a date.
 - **Not built yet:**
-  - **A loader** that verifies each sealed file against its manifest before reading it.
+  - **Wiring:** a holdout run that feeds the opened files to the runners as two walk-forward folds: 2025 trained through 2024, and 2026 to 5 November, trained through 2025.
   - **2025–2026 SET50 membership for the point-in-time design.** The official archive ends in 2024. The options are the published SET50 lists for 2025 and 2026 (a download, which needs approval), or the December 2024 membership held fixed: no hindsight, but it ignores index revisions.
 
 ## How to approve and run
