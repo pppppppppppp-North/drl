@@ -1,0 +1,23 @@
+# The lock for the single evaluation of the final point-in-time design on the 2023-2024 test years
+# (milestone M6; docs/final_design_decision_20261125.md). scripts/run_final_test_evaluation.py refuses
+# it until the authors set status to APPROVED with their names and the date, and commit it.
+# The design is the decision-7 rule's top point-in-time DRL design on the validation years
+# (scripts/rank_final_candidates.py, config/final_candidates_20261125.yaml). Change it only before approval.
+stage: test_2023_2024_point_in_time
+status: DRAFT            # the authors set APPROVED
+approved_by: []          # names of both authors and the advisor
+approved_on: null        # YYYY-MM-DD
+design:
+  candidate: pit_cash_cap_100k_ensemble_band
+  runner: scripts.run_pit_walk_forward
+  config: config/pit_walk_forward_experiment.yaml
+  config_sha256: 478bbdf6e37d632de7f8001fe5cadfd08dafca2bc2aa45e09ae626798223644a
+  variant: pit_plan_weekly_lstm_shared_cashcap
+  timesteps: 100000
+  seeds: [42, 43, 44]
+  ensemble: {band: 0.005, modes: [ensemble_band]}
+test_years: [2023, 2024]
+test_end: "2024-12-31"
+references: [pit_equal_weight_monthly]   # the SET50 ETF is always the benchmark
+n_trials: 22                             # designs tried on the point-in-time SET50 (deflated Sharpe)
+output_dir: results/final_test_point_in_time

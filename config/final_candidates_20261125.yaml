@@ -1,0 +1,78 @@
+# Every walk-forward design with complete validation curves (2016-2022), for the decision-7 ranking
+# before the one test evaluation (scripts/rank_final_candidates.py; milestones M6-M8).
+# Run folders are relative to --base (~/drl_runs locally; results/ in the project).
+# Five-stock designs are ranked against five-stock monthly equal weight, point-in-time designs against
+# point-in-time monthly equal weight; both also against the SET50 ETF (TDEX) buy and hold.
+universes:
+  five_stock: {reference: equal_weight_monthly, benchmark: set50_etf_buy_hold}
+  point_in_time: {reference: pit_equal_weight_monthly, benchmark: set50_etf_buy_hold}
+
+candidates:
+  # --- Five starter stocks (survivorship-biased universe) -------------------------------------
+  - {id: five_ppo_100k, universe: five_stock, label: "PPO, plan reward (technical + market), 100k", timesteps: 100000,
+     policy: plan_main_weekly_lstm, seeds: [42, 43, 44, 45, 46], runs: [walk_forward_reward_20261106]}
+  - {id: five_ppo_log_100k, universe: five_stock, label: "PPO, log-return reward, MLP, 100k", timesteps: 100000,
+     policy: log_weekly, seeds: [42, 43, 44, 45, 46], runs: [walk_forward_reward_20261106]}
+  - {id: five_ppo_technical_100k, universe: five_stock, label: "PPO, technical inputs only, 100k", timesteps: 100000,
+     policy: src_technical, seeds: [42, 43, 44], runs: [source_ablation_20261106]}
+  - {id: five_ppo_macro_100k, universe: five_stock, label: "PPO, technical + market + macro, 100k", timesteps: 100000,
+     policy: src_technical_market_macro, seeds: [42, 43, 44], runs: [source_ablation_20261106]}
+  - {id: five_a2c_100k, universe: five_stock, label: "A2C, 100k", timesteps: 100000,
+     policy: algo_a2c, seeds: [42, 43, 44, 45, 46], runs: [algorithm_comparison_20261106, algorithm_comparison_a2c_100k_s4546_20261125]}
+  - {id: five_ppo_300k, universe: five_stock, label: "PPO, 300k", timesteps: 300000,
+     policy: plan_main_weekly_lstm, seeds: [42, 43, 44, 45, 46], runs: [walk_forward_reward_bistka_20261122]}
+  - {id: five_a2c_300k, universe: five_stock, label: "A2C, 300k", timesteps: 300000,
+     policy: algo_a2c, seeds: [42, 43, 44, 45, 46], runs: [algorithm_comparison_bistka_20261122]}
+  - {id: five_sac_300k, universe: five_stock, label: "SAC, 300k", timesteps: 300000,
+     policy: algo_sac, seeds: [42, 43, 44, 45, 46], runs: [algorithm_comparison_bistka_20261122]}
+  - {id: five_td3_300k, universe: five_stock, label: "TD3, 300k", timesteps: 300000,
+     policy: algo_td3, seeds: [42, 43, 44, 45, 46], runs: [algorithm_comparison_bistka_20261122]}
+  - {id: five_ddpg_300k, universe: five_stock, label: "DDPG, 300k", timesteps: 300000,
+     policy: algo_ddpg, seeds: [42, 43, 44, 45, 46], runs: [algorithm_comparison_bistka_20261122]}
+  - {id: five_ridge_forecast, universe: five_stock, kind: baseline, label: "Ridge forecast, top two monthly", timesteps: 0,
+     policy: ridge_forecast_top2_monthly, runs: [walk_forward_reward_20261106]}
+  - {id: five_lstm_forecast, universe: five_stock, kind: baseline, label: "LSTM forecast, top two monthly", timesteps: 0,
+     policy: lstm_forecast_top2_monthly, seeds: [42, 43, 44], runs: [walk_forward_reward_20261106]}
+
+  # --- Point-in-time SET50 ---------------------------------------------------------------------
+  - {id: pit_slots_100k, universe: point_in_time, label: "Slots by traded value, 100k", timesteps: 100000,
+     policy: pit_plan_weekly_lstm, seeds: [42, 43, 44], runs: [pit_walk_forward_20261107]}
+  - {id: pit_sticky_100k, universe: point_in_time, label: "Sticky slots, 100k", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_sticky, seeds: [42, 43, 44], runs: [pit_walk_forward_sticky_20261109]}
+  - {id: pit_shared_100k, universe: point_in_time, label: "Shared-weight actor, 100k", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared, seeds: [42, 43, 44, 45, 46],
+     runs: [pit_walk_forward_shared_20261110, pit_walk_forward_shared_100k_s4546_20261125]}
+  - {id: pit_shared_100k_ensemble, universe: point_in_time, label: "Shared, 100k, seed ensemble (3 seeds)", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_ensemble, runs: [pit_seed_ensemble_20261110]}
+  - {id: pit_shared_100k_evalband, universe: point_in_time, label: "Shared, 100k, band at evaluation", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_evalband, seeds: [42, 43, 44], runs: [pit_seed_ensemble_20261110]}
+  - {id: pit_shared_100k_ensemble_band, universe: point_in_time, label: "Shared, 100k, seed ensemble + band (3 seeds)", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_ensemble_band, runs: [pit_seed_ensemble_20261110]}
+  - {id: pit_band_trained_100k, universe: point_in_time, label: "Shared, trained with the band, 100k", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_band, seeds: [42, 43, 44], runs: [pit_walk_forward_band_20261110]}
+  - {id: pit_band_trained_100k_ensemble, universe: point_in_time, label: "Shared, trained with the band, seed ensemble", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_band_ensemble, runs: [pit_band_ensemble_20261111]}
+  - {id: pit_policy_rate_100k, universe: point_in_time, label: "Shared + BOT policy rate, 100k", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_policy, seeds: [42, 43, 44], runs: [pit_walk_forward_policy_20261111]}
+  - {id: pit_policy_rate_100k_ensemble_band, universe: point_in_time, label: "Shared + policy rate, ensemble + band", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_policy_ensemble_band, runs: [pit_policy_ensemble_20261111]}
+  - {id: pit_macro_100k, universe: point_in_time, label: "Shared + macro proxies, 100k", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_macro, seeds: [42, 43, 44], runs: [pit_walk_forward_macro_20261111]}
+  - {id: pit_macro_100k_ensemble_band, universe: point_in_time, label: "Shared + macro proxies, ensemble + band", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_macro_ensemble_band, runs: [pit_macro_ensemble_20261111]}
+  - {id: pit_cash_cap_100k, universe: point_in_time, label: "Shared, cash capped at 20%, 100k", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_cashcap, seeds: [42, 43, 44], runs: [pit_walk_forward_cash_cap_20261119]}
+  - {id: pit_cash_cap_100k_ensemble_band, universe: point_in_time, label: "Shared, cash capped, ensemble + band", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_cashcap_ensemble_band, runs: [pit_cash_cap_ensemble_20261119]}
+  - {id: pit_shared_300k, universe: point_in_time, label: "Shared-weight actor, 300k", timesteps: 300000,
+     policy: pit_plan_weekly_lstm_shared, seeds: [42, 43, 44, 45, 46], runs: [pit_walk_forward_bistka_20261122]}
+  - {id: pit_shared_300k_ensemble_band, universe: point_in_time, label: "Shared, 300k, seed ensemble + band (5 seeds)", timesteps: 300000,
+     policy: pit_plan_weekly_lstm_shared_ensemble_band, runs: [pit_seed_ensemble_bistka_20261125]}
+  - {id: pit_momentum, universe: point_in_time, kind: baseline, label: "Momentum, top ten monthly", timesteps: 0,
+     policy: pit_momentum_top10_monthly, runs: [pit_heuristic_baselines_20261110]}
+  - {id: pit_inverse_volatility, universe: point_in_time, kind: baseline, label: "Inverse volatility, monthly", timesteps: 0,
+     policy: pit_inverse_volatility_monthly, runs: [pit_heuristic_baselines_20261110]}
+  - {id: pit_min_variance, universe: point_in_time, kind: baseline, label: "Minimum variance, monthly", timesteps: 0,
+     policy: pit_min_variance_monthly, runs: [pit_heuristic_baselines_20261110]}
+  - {id: pit_lstm_forecast, universe: point_in_time, kind: baseline, label: "LSTM forecast, top ten monthly", timesteps: 0,
+     policy: pit_lstm_forecast_top10_monthly, seeds: [42, 43, 44], runs: [pit_lstm_forecast_20261111]}

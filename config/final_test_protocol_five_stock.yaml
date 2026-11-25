@@ -1,0 +1,21 @@
+# The lock for the secondary test-year evaluation on the five starter stocks (milestone M6;
+# docs/final_design_decision_20261125.md). The five stocks were chosen with hindsight, so this result
+# carries the survivorship caveat. Locked and approved together with the point-in-time lock, before
+# either runs. scripts/run_final_test_evaluation.py refuses it until status is APPROVED and committed.
+stage: test_2023_2024_five_stock
+status: DRAFT            # the authors set APPROVED
+approved_by: []          # names of both authors and the advisor
+approved_on: null        # YYYY-MM-DD
+design:
+  candidate: five_a2c_300k
+  runner: scripts.run_reward_variant_experiment
+  config: config/algorithm_comparison_experiment.yaml
+  config_sha256: cc10f9c846e5c68097913b82361297e6b8d6ff71f276a2fd70d428dab4158635
+  variant: algo_a2c
+  timesteps: 300000
+  seeds: [42, 43, 44, 45, 46]
+test_years: [2023, 2024]
+test_end: "2024-12-31"
+references: [equal_weight_monthly]       # the SET50 ETF is always the benchmark
+n_trials: 14                             # designs tried on the five starter stocks (deflated Sharpe)
+output_dir: results/final_test_five_stock
