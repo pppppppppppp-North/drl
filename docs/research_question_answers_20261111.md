@@ -1,6 +1,6 @@
 # Answers to the Research Questions (draft)
 
-Date: 2026-11-11; cash-cap arm added 2026-11-20
+Date: 2026-11-11; cash-cap arm added 2026-11-20; BistKA 300k-timestep runs (RQ1, RQ4, RQ6) added 2026-11-25
 Status: **draft** for the M8 item "answer each research question explicitly, including negative results". It answers the six questions of the implementation plan (`implementation_plan.md`, section 2.2) from the evidence in the repository today. Each answer links the report it comes from.
 
 **Limits that apply to every answer:**
@@ -13,9 +13,9 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 | 1 | Can a continuous-action DRL agent learn profitable long-term allocation for Thai equities? | **Profitable, but no better than simple benchmarks.** | Strong for the negative part |
 | 2 | Does multi-source data beat price-only and technical-only agents? | **Only market-index context helped, and only borderline.** On the point-in-time index, both the official policy rate and the daily macro proxies lowered the return. | Weak, with the data available |
 | 3 | Which data sources contribute most? | **Market-index context, among the sources tested.** The agent leans on the macro proxies, to its cost; most planned sources have no historical data. | Weak, incomplete |
-| 4 | Which DRL algorithm is most stable? | **PPO over A2C, not significantly;** the off-policy algorithms are not run. | Partial |
+| 4 | Which DRL algorithm is most stable? | **On-policy (A2C, PPO) over off-policy (SAC, TD3, DDPG),** which overtrade and are significantly worse than the benchmarks; A2C is best, but not significantly better than PPO or the benchmarks. | Moderate (five stocks only) |
 | 5 | Does the policy generalize across regimes, including COVID-19? | **Its behaviour is stable across regimes, but it shows no regime skill;** its crash-year gains came from cash that depended on the seed. | Moderate |
-| 6 | Can BistKA HPC be used efficiently and reproducibly? | **Reproducibility and the parallel layout were established on BistKA;** efficiency at scale is not yet measured. | Partial |
+| 6 | Can BistKA HPC be used efficiently and reproducibly? | **Yes for training:** one 32-CPU job trained 210 models (1,776 task-hours) in 56 hours for about 2,465 SHr, and its models replay exactly on the Mac. Tuning and sentiment extraction have not run there. | Moderate |
 
 ## RQ1. Can a continuous-action DRL agent learn profitable long-term portfolio allocation policies for Thai equities?
 
@@ -33,6 +33,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
   - **Deflated Sharpe:** 0.22, counting the 19 designs tried (0.27 at 13, 0.23 at 17).
   - **Training with the band:** 5.1% a year, and 5.2% as a seed ensemble.
   - **Cash capped at 20%:** 4.4% a year, and 5.0% as a seed ensemble with the band ([report](pit_walk_forward_20261107.md#follow-up-cash-capped-at-20-2026-11-19)). It removed the cash-heavy models but not the gap to equal weight, which lies in trading costs and stock tilts that do not pay.
+  - **Three times the training, five seeds (BistKA, 2026-11-25):** 3.2% a year, and 3.9% as a seed ensemble with the band ([report](bistka_300k_results_20261125.md)). 17 of the 35 models held 45–98% cash all year, so the return fell while the drawdown shrank (−7.0% against −11.3% a year on average). The ensemble's Sharpe ratio, 0.48, is level with the ETF's 0.50; its deflated Sharpe is 0.25 at 21 designs. On five stocks, PPO trained three times longer also turned to cash and made 4.4% a year against 7.7%, significantly worse. More training did not lift any agent above the benchmarks.
 - **What it learned:** close to equal weight. Its daily correlation with equal weight is 0.998, with 43.9 effective holdings out of 44.5 tradable members.
 - **Other benchmarks on the same universe:** none is significantly better or worse than the agent.
   - **Heuristics:** momentum 5.3%, inverse volatility 5.0% and minimum variance 4.0%.
@@ -82,9 +83,26 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 
 ## RQ4. Which DRL algorithm is most stable under high noise and limited compute: PPO, A2C, DDPG, TD3 or SAC?
 
-**Answer:** PPO is the better on-policy choice, but not significantly. The off-policy algorithms have not been run.
+**Answer:** the on-policy algorithms. With the same reward, model and inputs on the five starter stocks, SAC, TD3 and DDPG trade about 30 times their capital a year, lose about 6 points a year to costs, and are significantly worse than the benchmarks. A2C is the best and cheapest algorithm at 300k timesteps, but not significantly better than PPO, the ETF or equal weight. The point-in-time index was run with PPO only.
 
-- **PPO against A2C** ([algorithm comparison](algorithm_comparison_20261107.md); five stocks, 7 folds × 3 seeds, the same reward, model and inputs):
+- **All five algorithms at 300k timesteps × 5 seeds** ([report](bistka_300k_results_20261125.md); BistKA job 4409, 7 folds each):
+
+  | | A2C | PPO | SAC | TD3 | DDPG |
+  | --- | ---: | ---: | ---: | ---: | ---: |
+  | Mean annual return | **8.7%** | 4.4% | 0.3% | −0.9% | −1.4% |
+  | Years beating the ETF | 3/7 | 2/7 | 0/7 | 1/7 | 0/7 |
+  | Mean maximum drawdown | −13.1% | −9.8% | −15.8% | −17.5% | −16.5% |
+  | Costs a year | 0.9 points | 1.3 | 6.1 | 6.6 | 6.3 |
+  | Seed standard deviation | 5.9 points | 4.2 | 11.0 | 8.5 | 9.8 |
+  | Sharpe (deflated, 14 designs) | 0.53 (0.35) | 0.39 (0.23) | 0.12 (0.08) | −0.03 (0.03) | −0.09 (0.03) |
+  | Training per model on BistKA | 0.4 h | 1.1 h | 17.2 h | 10.7 h | 13.9 h |
+
+  - **Benchmarks:** the SET50 ETF made 7.1% (Sharpe 0.50) and monthly equal weight 10.1% (0.58).
+  - **Significant:** TD3 and DDPG are worse than the ETF, equal weight and PPO; SAC is worse than equal weight (Sharpe −0.46, −0.90 to −0.05).
+  - **Not significant:** A2C against the ETF (+0.03, −0.36 to +0.37), equal weight (−0.05) and PPO (+0.14, −0.04 to +0.34).
+  - **Training budget:** PPO fell from 7.7% a year at 100k timesteps to 4.4% at 300k (same five seeds; Sharpe −0.16, −0.33 to −0.01), as its average cash rose from 20% to 39%. A2C's change, 7.3% to 8.7%, is not significant.
+  - **Stability:** no algorithm is stable across seeds at 300k. The off-policy seeds spread the most; one SAC seed lost 61% over the seven years.
+- **PPO against A2C at 100k timesteps** ([algorithm comparison](algorithm_comparison_20261107.md); five stocks, 7 folds × 3 seeds, the same reward, model and inputs):
 
   | | PPO | A2C |
   | --- | ---: | ---: |
@@ -96,7 +114,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 
   - **Significance:** the Sharpe difference (A2C − PPO) is −0.11, with a 95% interval of −0.26 to +0.04.
   - **Compute:** A2C trains about four times faster, at similar seed stability.
-- **SAC, TD3 and DDPG:** not run. Each needs about 1 GB of replay memory and an hour per model, which exceeded the 8 GB development Mac. They are set up for a BistKA array (`slurm/walk_forward_reward_array.sbatch`).
+- **SAC, TD3 and DDPG** needed about 1 GB of replay memory and hours per model, more than the 8 GB development Mac could run, so they ran only on BistKA (above).
 
 ## RQ5. Does the learned policy generalize across market regimes, including COVID-19 and large Thai market drawdowns?
 
@@ -116,20 +134,28 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
   - **Not market timing:** fifteen models across four designs held 36–94% cash on average over their year. Re-running them with an input group shuffled across sessions moved their cash by 5 points or less in twelve of them. The cash is mostly a fixed bias each seed learned, not a response to the market. Where it did follow the inputs, it mostly followed the macro proxies, and that cost return ([attribution](pit_walk_forward_20261107.md#follow-up-daily-macro-proxies-as-an-input-2026-11-11)).
   - **Without the cash:** with its cash capped at 20%, the seed ensemble with the band lost 7.9% in 2020, against 3.8% without the cap and 8.5% for equal weight. Outside 2020 the two ensembles are level, so the uncapped agent's 2020 cushion was cash it happened to hold ([report](pit_walk_forward_20261107.md#follow-up-cash-capped-at-20-2026-11-19)).
   - **2022:** every equal-weight-like strategy trailed the ETF (agent 0.2%, equal weight 0.7%, ETF 7.8%), as the largest members led.
+  - **Longer training (300k timesteps, 5 seeds):** the ensemble with the band lost less than equal weight in 2018 (−4.9% against −10.0%) and 2020 (−3.6% against −8.5%) and trailed it in every other year. The reason is the same: 17 of 35 models held a nearly fixed 45–98% cash all year, whatever the market did ([report](bistka_300k_results_20261125.md)).
 
 ## RQ6. Can BistKA HPC be used efficiently for reproducible training, hyperparameter tuning and sentiment feature extraction?
 
-**Answer:** partly. BistKA runs established reproducibility and the right way to parallelize. The efficiency of the actual experiments at scale has not been measured, because no HPC job has been submitted since July. Hyperparameter tuning and sentiment extraction have not run there.
+**Answer:** for training, yes. In November one 32-CPU job trained the 210 models of the algorithm comparison and the point-in-time design at 300k timesteps, and the trained models replay exactly on the development Mac. Hyperparameter tuning and sentiment extraction have not run there.
+
+- **Job 4409, November 2026** ([report](bistka_300k_results_20261125.md#compute-rq6); [HPC record](../hpc/hpc_sync_status.md)):
+  - **Layout:** one job with a pool of 210 tasks, one worker per CPU (`slurm/walk_forward_pool.sbatch`), instead of a 210-element array. The project's QOS allows 32 CPUs at once across all its jobs.
+  - **Time:** 1,776 task-hours of training in 56.0 hours of wall time, about 32 times faster than one worker. No task failed.
+  - **Cost:** about 2,465 SHr (44 SHr an hour, of which 12.8 came from a 128 GB memory request; the job used at most 49 GB). About 7,500 of the project's 10,000 SHr remain.
+  - **Per model:** each CPU is one hyperthread, so two workers share a physical core. A point-in-time model trained at about 11 timesteps a second, against about 25 on one core of the Mac; SAC took 17 hours per model.
+  - **Estimate versus measurement:** the job was estimated at 12–13 hours from Mac timings and took 56. Its progress was measured while it ran, without touching it (`hpc/buffer_rate.py`, `hpc/rollout_period.py`).
+  - **Reproducibility across machines:** the 35 point-in-time models, trained with torch 2.10 and pandas 3.0 on BistKA, replayed on the Mac (torch 2.15, pandas 2.3) to within 6 × 10⁻⁹ of their saved validation curves.
 
 - **Calibration on BistKA, July 2026** (`reports/bistka_calibration_execution_20260715.md` in the project folder; `reports/` is not tracked by git):
   - **Job 3530:** 7 min 46 s on 18 CPUs.
   - **Reproducibility:** two independent 549-step training trajectories matched exactly.
   - **Throughput:** vectorized environments lowered it, from 347.9 samples a second with one environment to 83.6 with sixteen, while memory rose 14.6 times.
   - **Consequence:** one environment per process. Parallelism comes from arrays of independent runs (folds, seeds, algorithms).
-- **Since November:** every walk-forward ran locally ([compute note](local_compute_accounting_20261110.md)).
+- **Before job 4409:** every November walk-forward ran locally ([compute note](local_compute_accounting_20261110.md)).
   - **Total:** 259 models, 169.5 task-hours on the 8 GB Mac.
   - **Memory:** it limits the Mac to three point-in-time workers, so a 21-model run takes 3.5–4.3 hours overnight and 9–10 hours during the day.
-  - **On BistKA:** a SLURM array for these runs is ready. The projection is 30–60 minutes per 21-model run, but it is not measured: submitting needs the operator's approval.
 - **Not done on BistKA:**
   - **Hyperparameter tuning:** no tuning has run; all reported designs use fixed settings.
   - **Sentiment:** sentiment extraction (WangchanBERTa on `gpu4500-normal`) has no historical news to score.
@@ -138,5 +164,5 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 
 - **RQ1, RQ5:** the single evaluation of the final configuration on the 2023–2024 test years and the sealed 2025+ holdout, after the design is locked. Licensed SETSMART data would remove the survivorship gap.
 - **RQ2, RQ3:** historical news, investor flow and point-in-time fundamentals, which first need data.
-- **RQ4:** the SAC, TD3 and DDPG array on BistKA.
-- **RQ6:** that array, with its service hours, queue time and measured speed-up.
+- **RQ4:** the algorithms on the point-in-time index, and off-policy settings that limit trading (a turnover penalty or a no-trade band), which this comparison did not try.
+- **RQ6:** hyperparameter tuning or sentiment extraction run on BistKA.

@@ -15,6 +15,10 @@ where each ``<part>`` holds baselines or one DRL variant for that validation yea
   ETF, the equal-weight references present, and any variant named with ``--references``.
 
     python -m scripts.aggregate_walk_forward_reward --run-dir results/walk_forward_reward_20261106
+
+Two runs of the same variant (for example 100k and 300k timesteps) would collide on their policy names,
+and only the first run's curves would be kept. ``--rename <run dir>:<old>=<new>`` renames a variant in
+one run folder only (its seed tags are kept), so both runs can be compared and tested against each other.
 """
 from __future__ import annotations
 
@@ -35,6 +39,33 @@ def load_fold(fold_dir: Path) -> pd.DataFrame:
     if not frames:
         raise FileNotFoundError(f"no validation_equity_curves.csv under {fold_dir}")
     return pd.concat(frames, ignore_index=True).drop_duplicates(["date", "policy"], keep="first")
+
+
+def parse_renames(items: list[str]) -> dict[Path, dict[str, str]]:
+    """``<run dir>:<old variant>=<new variant>`` items, as {resolved run dir: {old: new}}."""
+
+    renames: dict[Path, dict[str, str]] = {}
+    for item in items:
+        folder, sep, mapping = item.rpartition(":")
+        old, eq, new = mapping.partition("=")
+        if not (sep and folder and eq and old and new):
+            raise SystemExit(f"--rename expects <run dir>:<old>=<new>, got {item!r}")
+        renames.setdefault(Path(folder).resolve(), {})[old] = new
+    return renames
+
+
+def rename_variants(curves: pd.DataFrame, mapping: dict[str, str]) -> pd.DataFrame:
+    """Rename variants (seeded or not), keeping each policy's ``_seed<N>`` tag."""
+
+    if not mapping:
+        return curves
+    variant = curves["policy"].str.replace(r"_seed\d+$", "", regex=True)
+    tag = curves["policy"].str.extract(r"(_seed\d+)$")[0].fillna("")
+    new = variant.map(mapping)
+    hit = new.notna()
+    curves = curves.copy()
+    curves.loc[hit, "policy"] = new[hit] + tag[hit]
+    return curves
 
 
 def fold_metrics(curves: pd.DataFrame, year: int) -> pd.DataFrame:
@@ -166,9 +197,15 @@ def main() -> None:
                         help="more variants to test the others against, for example an earlier DRL run")
     parser.add_argument("--drop", nargs="*", default=[],
                         help="variants to leave out, for example baselines that another run folder brings in")
+    parser.add_argument("--rename", nargs="*", default=[],
+                        help="<run dir>:<old>=<new>: rename a variant in that run folder only, before merging")
     args = parser.parse_args()
 
     run_dirs = [Path(args.run_dir)] + [Path(d) for d in args.extra_run_dirs]
+    renames = parse_renames(args.rename)
+    unknown = set(renames) - {d.resolve() for d in run_dirs}
+    if unknown:
+        raise SystemExit(f"--rename names run folders that are not aggregated: {sorted(map(str, unknown))}")
     run_dir = Path(args.output_dir or args.run_dir)
     run_dir.mkdir(parents=True, exist_ok=True)
     years = sorted({int(p.name.split("_")[1]) for d in run_dirs for p in d.glob("fold_*") if p.is_dir()})
@@ -176,7 +213,8 @@ def main() -> None:
         raise SystemExit(f"no fold_<year> directories under {[str(d) for d in run_dirs]}")
     fold_curves = {}
     for year in years:
-        parts = [load_fold(d / f"fold_{year}") for d in run_dirs if (d / f"fold_{year}").is_dir()]
+        parts = [rename_variants(load_fold(d / f"fold_{year}"), renames.get(d.resolve(), {}))
+                 for d in run_dirs if (d / f"fold_{year}").is_dir()]
         curves = pd.concat(parts, ignore_index=True).drop_duplicates(["date", "policy"], keep="first")
         seeded = curves["policy"].str.contains(r"_seed\d+$", regex=True)
         variant = curves["policy"].str.replace(r"_seed\d+$", "", regex=True)

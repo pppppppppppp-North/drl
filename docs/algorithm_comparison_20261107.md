@@ -4,6 +4,8 @@ Date: 2026-11-07
 Evidence tier: **exploratory**. Yahoo data, the five starter stocks, validation years only.
 Outputs: `results/algorithm_comparison_20261106/` and `results/algorithm_comparison_combined_20261107/` (ignored by git)
 
+> **Update 2026-11-25:** all five algorithms then ran on BistKA at 300k timesteps × 5 seeds ([report](bistka_300k_results_20261125.md)). A2C made 8.7% a year, PPO 4.4%, SAC 0.3%, TD3 −0.9% and DDPG −1.4%. The off-policy algorithms traded about 30 times their capital a year and are significantly worse than the benchmarks. PPO fell from 7.7% at 100k timesteps as it learned to hold cash. The 100k results below stand as the first, local comparison.
+
 ## Question
 
 Which DRL algorithm works best, and most stably, under noisy Thai market data and limited compute (implementation plan RQ4)? Everything except the algorithm is fixed at the best design so far:
@@ -21,7 +23,7 @@ PPO is `plan_main_weekly_lstm` from the [seven-year walk-forward](walk_forward_r
 | --- | --- | ---: | --- |
 | PPO | on-policy | 21 | complete (reused) |
 | A2C | on-policy | 21 | complete |
-| SAC, TD3, DDPG | off-policy | 0 / 63 | **stopped; needs BistKA** (see "Compute note") |
+| SAC, TD3, DDPG | off-policy | 0 / 63 | stopped locally (see "Compute note"); **run on BistKA at 300k × 5 seeds, 2026-11-25** ([report](bistka_300k_results_20261125.md)) |
 
 ## Results: PPO vs A2C (7 validation years × 3 seeds each)
 
