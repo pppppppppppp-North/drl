@@ -4,9 +4,11 @@
 # and the date, and commit it. The design is the one the test stage evaluated (config/final_test_protocol_pit.yaml);
 # change anything only before approval.
 stage: holdout_2025_2026_point_in_time
-status: DRAFT
-approved_by: []
-approved_on: null
+status: APPROVED
+# Approved in chat by Nathawat Youngyim on 2026-11-26 ("Approve as drafted"), who chose to record only that name,
+# as for the test locks. The co-author (Kunach Kijsanayothin) and the advisor (Prompong Pakawanwong) have not signed.
+approved_by: [Nathawat Youngyim]
+approved_on: "2026-11-26"
 after_stage: test_2023_2024_point_in_time   # the test stage must be in the ledger first
 design:
   candidate: pit_cash_cap_100k_ensemble_band

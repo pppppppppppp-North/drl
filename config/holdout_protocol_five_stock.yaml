@@ -4,9 +4,11 @@
 # refuses it until status is APPROVED and committed. The design is the one the test stage evaluated
 # (config/final_test_protocol_five_stock.yaml); change anything only before approval.
 stage: holdout_2025_2026_five_stock
-status: DRAFT
-approved_by: []
-approved_on: null
+status: APPROVED
+# Approved in chat by Nathawat Youngyim on 2026-11-26 ("Approve as drafted"), who chose to record only that name,
+# as for the test locks. The co-author (Kunach Kijsanayothin) and the advisor (Prompong Pakawanwong) have not signed.
+approved_by: [Nathawat Youngyim]
+approved_on: "2026-11-26"
 after_stage: test_2023_2024_five_stock
 design:
   candidate: five_a2c_300k
