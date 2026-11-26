@@ -148,7 +148,7 @@ def plot(chained: pd.DataFrame, output: Path, labels: dict[str, str] | None = No
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    palette = ["#d1495b", "#00798c", "#edae49", "#30638e", "#66a182"]
+    palette = ["#d1495b", "#00798c", "#edae49", "#30638e", "#66a182", "#8e6c8a", "#b5651d", "#2e4057"]
     baselines = {
         BENCHMARK: ("SET50 ETF buy & hold (TDEX)", "#111111", "-"),
         "ridge_forecast_top2_monthly": ("Ridge forecast top-2, monthly", "#7a7a7a", "--"),
@@ -163,6 +163,8 @@ def plot(chained: pd.DataFrame, output: Path, labels: dict[str, str] | None = No
     # example a seed ensemble) is drawn as one line when it is given a label.
     learned = [v for v in chained["variant"].unique() if v not in baselines and (
         chained.loc[chained["variant"] == v, "policy"].str.contains("_seed").any() or v in (labels or {}))]
+    if len(learned) > len(palette):
+        raise ValueError(f"{len(learned)} learned variants to draw but only {len(palette)} colours: {learned}")
     for color, variant in zip(palette, learned):
         wide = chained[chained["variant"] == variant].pivot_table(index="date", columns="policy", values="value")
         name = (labels or {}).get(variant, variant)

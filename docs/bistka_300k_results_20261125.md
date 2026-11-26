@@ -102,6 +102,8 @@ With three seeds at 100k (the first version of this table), A2C made 7.3% (Sharp
 - **Deflated Sharpe (21 designs):** 0.25 for the 300k ensemble with the band, 0.19 for its seeds, 0.20 for the 100k ensemble with the band (0.22 at 19 designs), 0.18 for equal weight and 0.27 for the ETF. With the 5-seed 100k ensemble counted as a 22nd design: 0.24 for the 300k ensemble, 0.17 for the 100k ensemble (five seeds), 0.17 for equal weight and 0.26 for the ETF.
 - **The ensemble still helps:** it beats the mean of its own seeds significantly, as at 100k.
 
+> **Follow-up 2026-11-26: the locked design with the 20% cash cap at 300k** ([report](cash_cap_5seeds_300k_20261126.md)). The cap held average cash at 8.7%, against 41% here, but 10 of 35 models sat near the cap, and the capped ensemble made 4.9% a year at 300k against 5.0% at 100k (Sharpe difference −0.004, not significant). Longer training still did not help.
+
 **Why the cash grows with training is not tested here.** One reading: the plan reward subtracts half of each new drawdown, so cash lowers the penalty, and a longer-trained policy settles further into that. If so, a training budget picked on validation years is itself a design choice, and counts in the deflated Sharpe.
 
 ## What it means

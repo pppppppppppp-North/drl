@@ -1,4 +1,4 @@
-# The 100k point-in-time designs with five seeds, scored by the decision-7 rule on the validation years only
+# The point-in-time designs with five seeds at 100k and 300k, scored by the decision-7 rule on the validation years only
 # (scripts/rank_final_candidates.py; docs/cash_cap_5seeds_300k_20261126.md). A check of the lock made after the test,
 # not a new selection: the locked design and the test results stay as recorded (config/final_test_protocol_pit.yaml).
 # Run folders are relative to --base (~/drl_runs locally; results/ in the project).
@@ -18,3 +18,11 @@ candidates:
      policy: pit_plan_weekly_lstm_shared_cashcap_ensemble_band, runs: [pit_cash_cap_ensemble_20261119]}
   - {id: pit_cash_cap_100k_ensemble_band_5seeds, universe: point_in_time, label: "Cash capped, ensemble + band (5 seeds)", timesteps: 100000,
      policy: pit_plan_weekly_lstm_shared_cashcap_ensemble_band, runs: [pit_cash_cap_ensemble_100k_5seeds_20261125]}
+  - {id: pit_shared_300k, universe: point_in_time, label: "Shared, 300k (5 seeds)", timesteps: 300000,
+     policy: pit_plan_weekly_lstm_shared, seeds: [42, 43, 44, 45, 46], runs: [pit_walk_forward_bistka_20261122]}
+  - {id: pit_shared_300k_ensemble_band, universe: point_in_time, label: "Shared, 300k, ensemble + band (5 seeds)", timesteps: 300000,
+     policy: pit_plan_weekly_lstm_shared_ensemble_band, runs: [pit_seed_ensemble_bistka_20261125]}
+  - {id: pit_cash_cap_300k, universe: point_in_time, label: "Cash capped, 300k (5 seeds)", timesteps: 300000,
+     policy: pit_plan_weekly_lstm_shared_cashcap, seeds: [42, 43, 44, 45, 46], runs: [pit_walk_forward_cash_cap_bistka_20261125]}
+  - {id: pit_cash_cap_300k_ensemble_band, universe: point_in_time, label: "Cash capped, 300k, ensemble + band (5 seeds)", timesteps: 300000,
+     policy: pit_plan_weekly_lstm_shared_cashcap_ensemble_band, runs: [pit_cash_cap_ensemble_bistka_20261126]}

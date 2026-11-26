@@ -67,3 +67,25 @@ def test_main_rejects_a_rename_of_a_folder_not_aggregated(tmp_path, monkeypatch)
     monkeypatch.setattr(sys, "argv", ["agg", "--run-dir", str(run), "--rename", f"{tmp_path / 'other'}:v=w"])
     with pytest.raises(SystemExit):
         agg.main()
+
+
+def _chained(n_variants: int) -> pd.DataFrame:
+    dates = pd.bdate_range("2016-01-04", periods=3)
+    rows = [{"date": d, "policy": f"v{i}_seed42", "value": 1.0 + 0.01 * j, "variant": f"v{i}"}
+            for i in range(n_variants) for j, d in enumerate(dates)]
+    return pd.DataFrame(rows)
+
+
+def test_plot_draws_every_learned_variant(tmp_path):
+    pytest.importorskip("matplotlib")
+    import matplotlib.pyplot as plt
+
+    agg.plot(_chained(8), tmp_path / "chained.png")
+    assert (tmp_path / "chained.png").is_file()
+    plt.close("all")
+
+
+def test_plot_refuses_to_drop_variants_silently(tmp_path):
+    pytest.importorskip("matplotlib")
+    with pytest.raises(ValueError, match="9 learned variants"):
+        agg.plot(_chained(9), tmp_path / "chained.png")
