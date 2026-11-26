@@ -1,17 +1,22 @@
 # Reproducing the Results (M8)
 
-Date: 2026-11-11
+Date: 2026-11-11; updated 2026-11-26 with the HPC runs, the design choice, the test years and the sealed holdout (sections 9–12)
 Scope: every result reported since 2026-11-06 in:
 - the five-stock walk-forward;
 - the source ablation;
 - the algorithm comparison;
-- the point-in-time SET50 study ([report](pit_walk_forward_20261107.md)) and its benchmarks.
+- the point-in-time SET50 study ([report](pit_walk_forward_20261107.md)) and its benchmarks;
+- the longer training on BistKA and the five-seed runs ([300k](bistka_300k_results_20261125.md), [cash cap](cash_cap_5seeds_300k_20261126.md));
+- the choice of the final designs ([decision](final_design_decision_20261125.md));
+- the single evaluations on the test years ([results](final_test_results_20261125.md)) and on the sealed holdout ([results](holdout_results_20261126.md)).
 
 It gives one command block per stage, in order, from the repository root. Each report's own "Run it" or "Reproduce" section has the same commands with more options. Run folders under `results/` are ignored by git; the reports cite them by their dated names, for example `results/pit_walk_forward_shared_20261110/`.
 
 **Data limits that apply to every stage:**
-- **Never read:** the 2023–2024 test years and the sealed 2025+ holdout. Every runner stops at `splits.validation_end` (2022-12-30).
-- **Holdout files:** files under `data/holdout_sealed/` are written by the download step and never opened afterwards.
+- **Validation runs** (sections 2–9) never read past `splits.validation_end` (2022-12-30).
+- **The test years** (2023–2024) were read once per universe, on 2026-11-25, only through the run-once gate of section 11.
+- **The sealed holdout** (2025 to 4 November 2026): files under `data/holdout_sealed/` are written by the download step and opened only by the holdout stage of section 12, under an approved lock. It ran once per universe on 2026-11-26.
+- **The ledger** `results/FINAL_TEST_LEDGER.jsonl` records every start of those stages. A project that already has a stage in it refuses to run that stage again; a fresh clone without `results/` can repeat it as a reproduction.
 
 ## 0. Environment
 
@@ -156,7 +161,7 @@ python -m scripts.pit_lstm_forecast_baseline --config config/pit_walk_forward_ex
 - the chained equity figure;
 - the bootstrap Sharpe tests against the ETF, equal weight and every `--references` variant.
 
-`--n-trials` is the number of designs counted by the deflated Sharpe ratio on the point-in-time results: 13 up to the band training, 15 with the policy-rate arm, 17 with the macro-proxy arm and 19 with the cash-capped arm. The exact combinations behind each table are in each report's "Run it" section. For example, the band-training tables:
+`--n-trials` is the number of designs counted by the deflated Sharpe ratio on the point-in-time results: 13 up to the band training, 15 with the policy-rate arm, 17 with the macro-proxy arm, 19 with the cash-capped arm, 21 with the 300k runs, 22 with the five-seed 100k ensemble (the count in the test and holdout locks) and 24 with the cash-capped design at 300k. On the five starter stocks it is 14. The exact combinations behind each table are in each report's "Run it" section. For example, the band-training tables:
 
 ```bash
 python -m scripts.aggregate_walk_forward_reward --run-dir results/pit_walk_forward_band_20261110 \
@@ -194,11 +199,67 @@ python -m scripts.local_compute_accounting --output results/local_compute_accoun
   results/pit_walk_forward_band_20261110 results/pit_walk_forward_policy_20261111 results/pit_walk_forward_macro_20261111
 ```
 
-## 9. Report chapter
+## 9. Longer training on BistKA, and five seeds (M6, RQ4/RQ6)
+
+Two pool jobs on BistKA, each one 32-CPU job working through a task list (`slurm/walk_forward_pool.sbatch`), in the cluster copy of the code (`/lustrefs/project/25sfcs03/drl_thai_stock_20261122`; [HPC record](../hpc/hpc_sync_status.md)):
+
+```bash
+# Job 4409: the five algorithms and the point-in-time design at 300k, five seeds (210 models, 56 hours)
+sbatch --export=ALL,PROJECT_DIR=$PWD,POOL=slurm/pools/bistka_20261122.tasks slurm/walk_forward_pool.sbatch
+# Job 4518: the cash-capped point-in-time design at 300k, five seeds (35 models, 11.2 hours)
+sbatch --mem=80G --time=2-00:00:00 --job-name=drl_pool_cap \
+  --export=ALL,PROJECT_DIR=$PWD,POOL=slurm/pools/bistka_20261125.tasks slurm/walk_forward_pool.sbatch
+```
+
+Copy the run folders back with `rsync`, leaving out `*.zip` and `*.pkl`, except for point-in-time designs evaluated as seed ensembles: the ensemble needs their 35 `ppo_model.zip` files. Seeds 45 and 46 of the 100k designs were trained locally:
+
+```bash
+PYTHON=python bash scripts/run_task_pool.sh slurm/pools/local_20261125.tasks 3    # A2C and the shared design
+PYTHON=python bash scripts/run_task_pool.sh slurm/pools/local_20261125b.tasks 3   # the cash-capped design
+```
+
+The ensembles, aggregation, diagnostics and the five-seed link folders are in the "Run it" sections of the [300k report](bistka_300k_results_20261125.md#run-it) and the [cash-cap report](cash_cap_5seeds_300k_20261126.md#run-it).
+
+## 10. Choosing the final designs (decision 7)
+
+Every design with complete validation curves is ranked by the median over the seven validation years of its annualised log return above equal weight of the same universe. Validation curves only; the script refuses any year after 2022.
+
+```bash
+python -m scripts.rank_final_candidates --candidates config/final_candidates_20261125.yaml --base results \
+  --output-dir results/final_candidate_ranking_20261125
+```
+
+`--base` is the folder that holds the run folders (`results` in the project, `~/drl_runs` in the working clone). `config/cash_cap_5seeds_candidates_20261126.yaml` scores the locked design's later five-seed and 300k checks the same way.
+
+## 11. The test years, once
+
+The locks `config/final_test_protocol_pit.yaml` and `config/final_test_protocol_five_stock.yaml` name each design, its config hash, seeds, ensemble, references and trial count. The gate checks them, then trains one fold per test year and seed and writes receipts and a ledger line:
+
+```bash
+python -m scripts.run_final_test_evaluation --lock config/final_test_protocol_pit.yaml --dry-run
+python -m scripts.run_final_test_evaluation --lock config/final_test_protocol_pit.yaml --workers 3
+python -m scripts.run_final_test_evaluation --lock config/final_test_protocol_five_stock.yaml --workers 3
+```
+
+About an hour and 20 minutes on the Mac with three workers. The report's figures were redrawn from the stage outputs with legend labels (`scripts.aggregate_walk_forward_reward --labels ...`). The curves are identical to the stage summaries.
+
+## 12. The sealed holdout, once
+
+The locks `config/holdout_protocol_pit.yaml` and `config/holdout_protocol_five_stock.yaml` carry the same designs, the holdout end (4 November 2026), the folds (2025 and 2026), which sealed part continues each development file, the membership rule after 2024 and an optional stale-price stop. The gate ([stage note](holdout_stage_20261126.md)) checks the seals without parsing them and needs the matching test stage in the ledger. It opens the sealed files, continues the development files inside the output folder, and counts stale prices before any training. It then runs like the test stage:
+
+```bash
+python -m scripts.run_holdout_evaluation --lock config/holdout_protocol_pit.yaml --dry-run
+python -m scripts.run_holdout_evaluation --lock config/holdout_protocol_five_stock.yaml --workers 3
+python -m scripts.run_holdout_evaluation --lock config/holdout_protocol_pit.yaml --workers 3
+```
+
+About 20 minutes (five stocks) and 70 minutes (point-in-time). If an attempt stops before any model is evaluated, `--record-failed-attempt "<reason>"` renames its folder and records the failure in the ledger. A new attempt needs `retry_of` in an approved lock. The point-in-time stage of 2026-11-26 needed this once ([results](holdout_results_20261126.md#the-first-attempt-failed-before-training)). In a fresh clone the lock runs as it stands, because `retry_of` is checked only when the ledger already has the stage.
+
+## 13. Report chapter
 
 `docs/report_drafts/results_title_alignment_20261106.tex` is a drop-in chapter for `kvis_final_research_report.tex`. It builds with XeLaTeX (`latexmk -xelatex`). The figures it includes are in `docs/figures/`. The full report's own figures are in `reports/figures/` of the project folder, which git does not track; when building from a clone, put the project folder on TeX's search path (`TEXINPUTS=".:<project folder>:" latexmk -xelatex ...`).
 
-## 10. Slim archive
+## 14. Slim archive
 
 The archive holds the code, configs, documents and reference inputs, and each run folder's metrics, curves, receipts, timings and figures. It leaves out:
 - **Models:** trained models (`*.zip`) and `VecNormalize` statistics (`*.pkl`), which retraining rebuilds from the configs and seeds;
@@ -228,3 +289,11 @@ python -m scripts.build_slim_results_archive --output results/slim_archive_20261
 - **Earlier build:** `results/slim_archive_20261111.tar.gz` (28 run folders, before the cash-capped run, commit `d23572a`) is kept with its receipt.
 - **Verified:** the build reopened the archive and checked every file against the manifest.
 - **Left out:** the first long-term-reward experiment (`results/long_term_reward_experiment_20261106/`, superseded by the walk-forward). Two of its files exist only in iCloud, and macOS refused to download them (`Errno 81`).
+
+**Next rebuild (after 2026-11-26).** The run folders since 2026-11-20, in the project's `results/`, are:
+- **BistKA and five seeds:** `algorithm_comparison_bistka_20261122`, `walk_forward_reward_bistka_20261122`, `pit_walk_forward_bistka_20261122`, `pit_walk_forward_cash_cap_bistka_20261125` and their combined and ensemble folders;
+- **Design choice:** `final_candidate_ranking_20261125`;
+- **Test years:** `final_test_point_in_time`, `final_test_five_stock`;
+- **Holdout:** `holdout_point_in_time`, `holdout_point_in_time_attempt1_failed`, `holdout_five_stock`.
+
+The archive now also takes the ledger (`results/FINAL_TEST_LEDGER.jsonl`) and leaves out the holdout stages' price copies (`holdout_data/`), like every other price file.

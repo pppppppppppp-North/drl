@@ -13,7 +13,8 @@ What goes in:
   ``.txt``, ``.png``, ``.yaml``, ``.log``), under ``results/<folder name>/``.
 
 What stays out: trained models (``*.zip``), ``VecNormalize`` statistics (``*.pkl``), TensorBoard
-events, per-task worker logs (``logs/``), lock folders, and anything under ``data/holdout_sealed``.
+events, per-task worker logs (``logs/``), lock folders, the holdout stages' price copies
+(``holdout_data/``), and anything under ``data/holdout_sealed``.
 The models can be retrained from the configs and seeds.
 
 The archive carries a SHA-256 manifest (``REPRODUCIBILITY_MANIFEST.json``) and is reopened and
@@ -35,11 +36,15 @@ from pathlib import Path
 from scripts.build_reproducibility_archive import EXCLUDED_PARTS, ROOT_FILES, SOURCE_ROOTS, _sha256, verify_archive
 
 RUN_SUFFIXES = {".csv", ".json", ".md", ".txt", ".png", ".yaml", ".yml", ".log"}
-RUN_EXCLUDED_DIRS = {"locks", "logs", "tensorboard", "checkpoints", "__pycache__"}
+# holdout_data/ holds the holdout stages' copies of the Yahoo price files (scripts/run_holdout_evaluation.py),
+# which stay out like every other price file; their hashes are in holdout_data_receipt.json.
+RUN_EXCLUDED_DIRS = {"locks", "logs", "tensorboard", "checkpoints", "__pycache__", "holdout_data"}
 REFERENCE_INPUTS = (
     "data/reference/set50_set100_membership_2012_2024.csv",
     "data/external/bot_policy_rate_history.csv",
 )
+# One line per run-once stage (test years and sealed holdout), the audit record of each opening.
+LEDGER = "results/FINAL_TEST_LEDGER.jsonl"
 RECEIPT_ROOT = "data/raw/extended"
 SEALED = "holdout_sealed"
 
@@ -60,7 +65,7 @@ def collect(project_root: Path, run_dirs: list[Path]) -> dict[str, Path]:
             for path in root.rglob("*"):
                 if path.is_file():
                     add_project_file(path)
-    for name in (*ROOT_FILES, *REFERENCE_INPUTS):
+    for name in (*ROOT_FILES, *REFERENCE_INPUTS, LEDGER):
         if (project_root / name).is_file():
             add_project_file(project_root / name)
     receipts = project_root / RECEIPT_ROOT

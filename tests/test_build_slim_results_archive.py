@@ -24,6 +24,7 @@ def _project(tmp_path: Path) -> tuple[Path, Path]:
     _touch(project / "data" / "reference" / "set50_set100_membership_2012_2024.csv", "date,ticker\n")
     _touch(project / "data" / "raw" / "extended" / "prices.csv.gz.receipt.json", "{}")
     _touch(project / "data" / "raw" / "extended" / "prices.csv.gz", "binary prices")
+    _touch(project / "results" / "FINAL_TEST_LEDGER.jsonl", '{"stage": "test_2023_2024"}\n')
     run = tmp_path / "outside" / "pit_run_20261111"
     task = run / "fold_2016" / "variant_seed42"
     _touch(task / "validation_equity_curves.csv", "date,policy,portfolio_value\n")
@@ -34,6 +35,8 @@ def _project(tmp_path: Path) -> tuple[Path, Path]:
     _touch(run / "locks" / "task.lock" / "pid", "1")
     _touch(run / "launcher.log", "all tasks finished\n")
     _touch(run / "walk_forward_chained_equity.png", "png")
+    _touch(run / "holdout_data" / "data" / "raw" / "extended" / "prices_starter5.csv", "date,ticker,close\n")
+    _touch(run / "holdout_data_receipt.json", "{}")
     return project, run
 
 
@@ -49,6 +52,9 @@ def test_collect_keeps_outputs_and_drops_models_logs_locks_and_prices(tmp_path: 
             "results/pit_run_20261111/walk_forward_chained_equity.png"} <= names
     assert not [n for n in names if n.endswith((".zip", ".pkl", ".pyc", ".csv.gz"))]
     assert not [n for n in names if "/logs/" in n or "/locks/" in n]
+    assert not [n for n in names if "/holdout_data/" in n]
+    assert "results/pit_run_20261111/holdout_data_receipt.json" in names
+    assert "results/FINAL_TEST_LEDGER.jsonl" in names
 
 
 def test_archive_has_a_verified_manifest(tmp_path: Path) -> None:
