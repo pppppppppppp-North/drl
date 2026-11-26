@@ -1,7 +1,12 @@
 # Answers to the Research Questions (draft)
 
-Date: 2026-11-11; cash-cap arm added 2026-11-20; BistKA 300k-timestep runs (RQ1, RQ4, RQ6) added 2026-11-25; the single test-year evaluation added 2026-11-25 (evening); the cash-capped design at five seeds and 300k (RQ1, RQ6) added 2026-11-26
+Date: 2026-11-11; cash-cap arm added 2026-11-20; BistKA 300k-timestep runs (RQ1, RQ4, RQ6) added 2026-11-25; the single test-year evaluation added 2026-11-25 (evening); the cash-capped design at five seeds and 300k (RQ1, RQ6) and the sealed holdout added 2026-11-26
 Status: **draft** for the M8 item "answer each research question explicitly, including negative results". It answers the six questions of the implementation plan (`implementation_plan.md`, section 2.2) from the evidence in the repository today. Each answer links the report it comes from.
+
+> **Sealed holdout, 2026-11-26:** the same two designs were evaluated once on 2025 to 4 November 2026 ([results](holdout_results_20261126.md)).
+> - **Point-in-time design:** it matched equal weight in 2025 (−8.8% each) and trailed it in 2026 (+23.7% against +29.7%), holding up to its 20% cash cap. Chained 1.128 against 1.183 for equal weight and 1.214 for the ETF. Its Sharpe shortfall against equal weight, −0.12 (−0.23 to −0.01), is significant. The first attempt failed at loading before any training and was rerun once with approval.
+> - **Five-stock A2C at 300k:** it trailed equal weight of its five stocks (1.153 against 1.281) and the ETF, not significantly.
+> - **Data:** stale prices are rare from 2025 on (0.2–1.8% of rows). The point-in-time membership is the 2024 H2 list held fixed.
 
 > **Test years, 2026-11-25:** the two locked designs were evaluated once on 2023–2024 ([results](final_test_results_20261125.md)).
 > - **Point-in-time design:** it beat point-in-time equal weight in both years (two years chained 0.827 against 0.799), not significantly. It lost to the SET50 ETF (0.984).

@@ -3,12 +3,14 @@
 % \chapter{DISCUSSION}. It uses the report's own packages and column types (L, Y, booktabs, float).
 % New references are in docs/report_drafts/references_additions_20261106.tex.
 % Evidence tier: exploratory (Yahoo data; the five starter stocks and the point-in-time SET50;
-% validation years, plus one locked evaluation on the 2023-2024 test years). Numbers come from docs/long_term_reward_experiment_20261106.md,
+% validation years, plus one locked evaluation on the 2023-2024 test years and one on the sealed
+% 2025-2026 holdout). Numbers come from docs/long_term_reward_experiment_20261106.md,
 % docs/walk_forward_reward_20261106.md, docs/source_ablation_20261106.md,
 % docs/algorithm_comparison_20261107.md, docs/pit_walk_forward_20261107.md and, for the 300k-timestep
 % runs on BistKA (2026-11-25), docs/bistka_300k_results_20261125.md and, for the cash-capped design at five
 % seeds and 300k (2026-11-26), docs/cash_cap_5seeds_300k_20261126.md; the selection rule and the test
-% evaluation are in docs/final_design_decision_20261125.md and docs/final_test_results_20261125.md.
+% evaluation are in docs/final_design_decision_20261125.md and docs/final_test_results_20261125.md, and the
+% sealed holdout in docs/holdout_stage_20261126.md and docs/holdout_results_20261126.md.
 
 \chapter{LONG-TERM, MULTI-SOURCE EXTENSION}
 
@@ -18,8 +20,8 @@ All results are exploratory. They use Yahoo Finance prices for the five starter 
 CPALL, KBANK, PTT) and the SET50 exchange-traded fund TDEX as the market series, because Yahoo now
 returns only one row for the SET indices. Section~\ref{sec:pit} repeats the evaluation on the
 point-in-time SET50 membership. Designs were compared and chosen on the validation years only.
-Section~\ref{sec:test} then evaluates the chosen designs once on the 2023--2024 test years. The sealed
-post-2024 holdout remains untouched.
+Section~\ref{sec:test} then evaluates the chosen designs once on the 2023--2024 test years, and
+Section~\ref{sec:holdout} once more on a sealed holdout, 2025 to 4 November 2026.
 
 \section{Changes to the Environment and Objective}
 
@@ -638,11 +640,67 @@ and their trades on stale days are affected in an unknown direction, and so are 
 The locked results are reported as they stand. A check with corrected 2024 prices would need a new data
 source, and it would be a second look at the test years.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{docs/figures/final_test_pit_chained_equity_20261125.png}
 \caption{Point-in-time SET50, test years 2023--2024: chained value of the locked DRL design (the seed ensemble with the no-trade band) and of its single models (mean of three seeds; the band shows their range), with the ETF and equal weight. Each year uses models trained only on earlier years; net of costs.}
 \label{fig:test}
+\end{figure}
+
+\section{Single Evaluation on the Sealed Holdout}
+\label{sec:holdout}
+
+The last evaluation used prices from 2025 to 4 November 2026, sealed with checksums in November 2026 and
+read by nothing before. The same two locked designs were evaluated once more, under two new lock files
+approved before either stage ran, as two walk-forward folds: 2025, with models trained on everything
+through 2024, and 2026 to 4 November, with models trained on everything through 2025. The official SET50
+lists end with the second half of 2024, so the point-in-time stage held that list fixed: this uses no
+hindsight, but it ignores the index revisions of 2025 and 2026. Before any model was trained, the stage
+counted Yahoo's stale prices: they affected 0.2--1.8\% of the rows, against 17.5\% in 2024. The first
+point-in-time attempt stopped while loading the data, because two 2024 members whose price history starts
+only in 2025 appeared in both sealed price files. No model had been trained and no result computed. A fix
+that keeps only series priced before 2025, which leaves the tradable stocks unchanged, was then approved,
+and the stage ran once more.
+
+On the point-in-time SET50, the locked design matched equal weight in 2025, when both lost 8.8\%, and
+trailed it in 2026 to 4 November, $+23.7\%$ against $+29.7\%$ (Table~\ref{tab:holdout},
+Figure~\ref{fig:holdout}). In 2026 it held 17\% cash on average, with two of its three seeds at the 20\%
+cap, through a rally. Over the holdout its Sharpe shortfall against equal weight, $-0.12$ ($-0.23$ to
+$-0.01$), is significant, and its selection score was $-3.0$ points a year, against $+1.89$ on the test
+years. It also trailed the ETF, ending at 1.128 against 1.214, though not significantly ($-0.27$, $-1.04$
+to $0.55$). On the five starter stocks, A2C again trailed both equal weight of the same stocks, ending at
+1.153 against 1.281, and the ETF; neither difference is significant ($-0.35$, $-0.80$ to $0.12$, and
+$-0.16$, $-1.06$ to $0.76$).
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{The single evaluation on the sealed holdout, 2025 to 4 November 2026: returns in each fold, the value of one baht chained over both, the Sharpe ratio on the chained daily returns, and the worse of the two maximum drawdowns. DRL rows without ``ensemble'' are the mean over seeds. The ETF row applies to both universes. All strategies pay the same costs.}
+\label{tab:holdout}
+\begin{tabularx}{\textwidth}{@{}Yrrrrr@{}}
+\toprule
+Strategy & 2025 & 2026 to 4 Nov & Chained & Sharpe & Max DD \\
+\midrule
+SET50 ETF buy-and-hold & $-2.8\%$ & $+24.9\%$ & 1.214 & 0.75 & $-22.6\%$ \\
+\addlinespace
+\multicolumn{6}{@{}l}{\emph{Point-in-time SET50 (2024 H2 list held fixed)}} \\
+DRL, cash-capped, ensemble + band (3 seeds) & $-8.8\%$ & $+23.7\%$ & 1.128 & 0.48 & $-22.6\%$ \\
+DRL, cash-capped, single models (3 seeds) & $-8.8\%$ & $+22.9\%$ & 1.121 & 0.46 & $-23.0\%$ \\
+Equal weight, monthly & $-8.8\%$ & $+29.7\%$ & 1.183 & 0.60 & $-23.3\%$ \\
+\addlinespace
+\multicolumn{6}{@{}l}{\emph{Five starter stocks}} \\
+DRL, A2C, 300{,}000 timesteps (5 seeds) & $+0.7\%$ & $+14.3\%$ & 1.153 & 0.59 & $-24.8\%$ \\
+Equal weight, monthly & $+6.0\%$ & $+20.8\%$ & 1.281 & 0.94 & $-18.3\%$ \\
+Ridge forecast, top two (baseline) & $+1.9\%$ & $+21.7\%$ & 1.240 & 0.59 & $-32.5\%$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{docs/figures/holdout_pit_chained_equity_20261126.png}
+\caption{Point-in-time SET50, sealed holdout 2025 to 4 November 2026: chained value of the locked DRL design (the seed ensemble with the no-trade band) and of its single models (mean of three seeds; the band shows their range), with the ETF and equal weight. Each fold uses models trained only on earlier years; net of costs.}
+\label{fig:holdout}
 \end{figure}
 
 \section{Interpretation}
@@ -676,12 +734,14 @@ point-in-time agent learned to hold much more cash, which cut their returns and 
 the point-in-time ensemble's Sharpe ratio level with the market's.
 The single evaluation on the test years points the same way. The design chosen by the fixed rule was
 ahead of equal weight in both years, but not significantly. It lost money over 2023--2024 and trailed
-the market ETF. On the five starter stocks, A2C trailed equal weight.
+the market ETF. On the five starter stocks, A2C trailed equal weight. On the sealed holdout the design
+matched equal weight in a falling year and trailed it in a rising one, in which it held cash up to its
+cap, and over the two folds its Sharpe shortfall against equal weight was significant.
 The evidence therefore does not support a claim that this DRL design improves long-term profit in the
 Thai stock market. Such a claim would need a policy that adds value over equal weight after costs,
 survivorship-free licensed data, and the remaining data sources (fundamentals, news sentiment,
-investor flow, and further point-in-time official macro data), evaluated once on the sealed post-2024
-holdout.
+investor flow, and further point-in-time official macro data), evaluated once on years that this work
+has not yet used.
 
 \section{Limitations of the Extension}
 
@@ -690,7 +750,7 @@ holdout.
   \item \textbf{Survivorship.} The point-in-time membership is official, but 38 of its 227 tickers, mostly delisted or merged companies, have no prices. They account for 13\% of SET50 member-sessions. The missing names bias the results in both directions: failed companies that Yahoo dropped would have lowered an equal-weight return, and companies taken over at a premium would have raised it. Only the ETF benchmark is free of this gap. Results on fixed stock lists are biased in a known direction: choosing today's SET50 members with hindsight added 6.6 percentage points a year to equal weight (Section~\ref{sec:pit}).
   \item \textbf{Cost model.} Every trade pays 0.15\% commission plus 0.05\% slippage per side, which covers the published explicit cost of about 0.176\%. Market impact, the wider bid--ask spreads of smaller members, board lots, daily price limits, and the minimum tick are not modelled. The costs of high-turnover policies are therefore, if anything, understated.
   \item \textbf{Macro and alternative data.} The daily macro proxies are market prices and therefore point-in-time; on the point-in-time agent they lowered the return (Section~\ref{sec:pit}). The Bank of Thailand macro history, however, is a current revised vintage, so it was kept out of the models. The official policy-rate decision history is point-in-time; added to the point-in-time agent, it lowered the return, and the trained models barely used it (Section~\ref{sec:pit}). Fundamentals cover only recent years for the five starter stocks, and news sentiment and investor flow are implemented without historical data. The \emph{multi-source} claim therefore rests on price, technical, market, macro-proxy, and policy-rate inputs only. Of these, only market context helped, borderline and only on the five starter stocks.
-  \item \textbf{Selection on validation years.} Designs were compared and chosen on the validation years, so the chosen design's validation performance is optimistic. The sticky slot order, the shared-weight actor, the seed ensemble, the no-trade band, the cash cap and the training budget, for example, were chosen after seeing earlier point-in-time runs. The deflated Sharpe ratio corrects for this only in part. The test years were read once, after the designs were locked, but two years are too few to separate the leading strategies. The sealed post-2024 holdout has not been read.
+  \item \textbf{Selection on validation years.} Designs were compared and chosen on the validation years, so the chosen design's validation performance is optimistic. The sticky slot order, the shared-weight actor, the seed ensemble, the no-trade band, the cash cap and the training budget, for example, were chosen after seeing earlier point-in-time runs. The deflated Sharpe ratio corrects for this only in part. The test years were read once, after the designs were locked, but two years are too few to separate the leading strategies. The sealed holdout (2025 to 4 November 2026) was then read once for each design; the point-in-time stage needed a second attempt after its first stopped while loading the data, before any model was trained. For the holdout, the point-in-time membership is the 2024 H2 list held fixed, so the index revisions of 2025 and 2026 are ignored.
   \item \textbf{Training budget, seeds and settings.} Most models trained for 100{,}000 timesteps with three seeds on the 8~GB development machine. Only the five algorithms on the five starter stocks and the shared-weight point-in-time design were trained for 300{,}000 timesteps with five seeds, on the HPC cluster, and longer training mainly raised the cash holding (Section~\ref{sec:budget}). The budget was not tuned, and neither were the algorithms' settings: the off-policy algorithms ran with fixed replay and batch settings and no limit on weekly weight changes, and were compared on the five starter stocks only.
   \item \textbf{Slot order and turnover.} With the dense policy head, the agent scores slot positions rather than stocks, so any change in the slot order changes portfolio weights. The sticky slot order removes almost all of these changes, and the shared-weight actor removes the dependence entirely, as checked on all 21 of its trained models. Neither limits the policy's own week-to-week reweighting: after the initial purchase, the shared-weight agent still turned over 3.4 times its capital a year, against 0.9 for equal weight. A 0.5-point no-trade band cut this to 0.7 times a year in the seed ensemble. Its width was not tuned, and part of its gain, in 2020, came from cash it happened to leave in place. Training with the band cut turnover as well, but doubled the average cash holding, to 19\%.
 \end{enumerate}
