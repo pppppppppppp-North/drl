@@ -1,6 +1,6 @@
 # Answers to the Research Questions (draft)
 
-Date: 2026-11-11; cash-cap arm added 2026-11-20; BistKA 300k-timestep runs (RQ1, RQ4, RQ6) added 2026-11-25; the single test-year evaluation added 2026-11-25 (evening)
+Date: 2026-11-11; cash-cap arm added 2026-11-20; BistKA 300k-timestep runs (RQ1, RQ4, RQ6) added 2026-11-25; the single test-year evaluation added 2026-11-25 (evening); the cash-capped design at five seeds and 300k (RQ1, RQ6) added 2026-11-26
 Status: **draft** for the M8 item "answer each research question explicitly, including negative results". It answers the six questions of the implementation plan (`implementation_plan.md`, section 2.2) from the evidence in the repository today. Each answer links the report it comes from.
 
 > **Test years, 2026-11-25:** the two locked designs were evaluated once on 2023–2024 ([results](final_test_results_20261125.md)).
@@ -39,6 +39,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
   - **Training with the band:** 5.1% a year, and 5.2% as a seed ensemble.
   - **Cash capped at 20%:** 4.4% a year, and 5.0% as a seed ensemble with the band ([report](pit_walk_forward_20261107.md#follow-up-cash-capped-at-20-2026-11-19)). It removed the cash-heavy models but not the gap to equal weight, which lies in trading costs and stock tilts that do not pay.
   - **Three times the training, five seeds (BistKA, 2026-11-25):** 3.2% a year, and 3.9% as a seed ensemble with the band ([report](bistka_300k_results_20261125.md)). 17 of the 35 models held 45–98% cash all year, so the return fell while the drawdown shrank (−7.0% against −11.3% a year on average; −12.0% for the 100k ensemble with five seeds, which made 5.2% a year). The ensemble's Sharpe ratio, 0.47, is level with the ETF's 0.50; its deflated Sharpe is 0.25 at 21 designs. On five stocks, PPO trained three times longer also turned to cash and made 4.4% a year against 7.6%, significantly worse. More training did not lift any agent above the benchmarks.
+  - **The locked cash-capped design, five seeds and 300k (2026-11-26, validation years only):** with five seeds at 100k its ensemble with the band made 5.0% a year, as with three, and it stayed the best-scoring DRL design under the selection rule (−0.16, still below zero). At 300k the cap held average cash at 8.7% (41% without it), but 10 of 35 models averaged 19% cash or more, near the cap, and the ensemble made 4.9% a year (Sharpe 0.35 against 0.36 at 100k, not significant). 100k is enough for this design ([report](cash_cap_5seeds_300k_20261126.md)).
 - **What it learned:** close to equal weight. Its daily correlation with equal weight is 0.998, with 43.9 effective holdings out of 44.5 tradable members.
 - **Other benchmarks on the same universe:** none is significantly better or worse than the agent.
   - **Heuristics:** momentum 5.3%, inverse volatility 5.0% and minimum variance 4.0%.
@@ -143,7 +144,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 
 ## RQ6. Can BistKA HPC be used efficiently for reproducible training, hyperparameter tuning and sentiment feature extraction?
 
-**Answer:** for training, yes. In November one 32-CPU job trained the 210 models of the algorithm comparison and the point-in-time design at 300k timesteps, and the trained models replay exactly on the development Mac. Hyperparameter tuning and sentiment extraction have not run there.
+**Answer:** for training, yes. In November one 32-CPU job trained the 210 models of the algorithm comparison and the point-in-time design at 300k timesteps, a second trained the 35 models of the locked cash-capped design, and the trained models replay on the development Mac to within 10⁻⁸ of their curves. Hyperparameter tuning and sentiment extraction have not run there.
 
 - **Job 4409, November 2026** ([report](bistka_300k_results_20261125.md#compute-rq6); [HPC record](../hpc/hpc_sync_status.md)):
   - **Layout:** one job with a pool of 210 tasks, one worker per CPU (`slurm/walk_forward_pool.sbatch`), instead of a 210-element array. The project's QOS allows 32 CPUs at once across all its jobs.
@@ -152,6 +153,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
   - **Per model:** each CPU is one hyperthread, so two workers share a physical core. A point-in-time model trained at about 11 timesteps a second, against about 25 on one core of the Mac; SAC took 17 hours per model.
   - **Estimate versus measurement:** the job was estimated at 12–13 hours from Mac timings and took 56. Its progress was measured while it ran, without touching it (`hpc/buffer_rate.py`, `hpc/rollout_period.py`).
   - **Reproducibility across machines:** the 35 point-in-time models, trained with torch 2.10 and pandas 3.0 on BistKA, replayed on the Mac (torch 2.15, pandas 2.3) to within 6 × 10⁻⁹ of their saved validation curves.
+- **Job 4518, November 2026** ([report](cash_cap_5seeds_300k_20261126.md); [HPC record](../hpc/hpc_sync_status.md)): the 35 cash-capped models at 300k in 11.2 hours for 450 SHr (32 CPUs, 80 GB; about 7,064 SHr remain). With 32 models at once each took 8.9 hours; the last three, with the other CPUs idle, took 2.3 hours. The models replayed on the Mac to within 1.0 × 10⁻⁸.
 
 - **Calibration on BistKA, July 2026** (`reports/bistka_calibration_execution_20260715.md` in the project folder; `reports/` is not tracked by git):
   - **Job 3530:** 7 min 46 s on 18 CPUs.

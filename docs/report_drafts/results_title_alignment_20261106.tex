@@ -6,7 +6,8 @@
 % validation years, plus one locked evaluation on the 2023-2024 test years). Numbers come from docs/long_term_reward_experiment_20261106.md,
 % docs/walk_forward_reward_20261106.md, docs/source_ablation_20261106.md,
 % docs/algorithm_comparison_20261107.md, docs/pit_walk_forward_20261107.md and, for the 300k-timestep
-% runs on BistKA (2026-11-25), docs/bistka_300k_results_20261125.md; the selection rule and the test
+% runs on BistKA (2026-11-25), docs/bistka_300k_results_20261125.md and, for the cash-capped design at five
+% seeds and 300k (2026-11-26), docs/cash_cap_5seeds_300k_20261126.md; the selection rule and the test
 % evaluation are in docs/final_design_decision_20261125.md and docs/final_test_results_20261125.md.
 
 \chapter{LONG-TERM, MULTI-SOURCE EXTENSION}
@@ -466,13 +467,13 @@ best design, still the uncapped ensemble with the band, was 0.22, and that of th
 All the designs above trained for 100{,}000 timesteps. To test whether longer training helps, one job on
 the BistKA cluster trained the five algorithms of Table~\ref{tab:algorithms} and the shared-weight
 point-in-time design for 300{,}000 timesteps each, with five seeds per fold: 210 models. Nothing else
-changed. Table~\ref{tab:budget} sets each design against its 100{,}000-timestep run on the same
+changed. A second job later trained the cash-capped design the same way. Table~\ref{tab:budget} sets each design against its 100{,}000-timestep run on the same
 sessions.
 
 \begin{table}[H]
 \centering
 \footnotesize
-\caption{Training for 100{,}000 against 300{,}000 timesteps, validation 2016--2022: means over seven annual folds. Cash is the average cash weight; Sharpe ratios are on chained daily returns of the seed-mean curve, and the last column is the paired difference between the two budgets with its 95\% interval. Both budgets have five seeds: seeds 45 and 46 of the 100{,}000-timestep A2C and point-in-time designs were trained afterwards, and a rerun reproduced an earlier model exactly.}
+\caption{Training for 100{,}000 against 300{,}000 timesteps, validation 2016--2022: means over seven annual folds. Cash is the average cash weight; Sharpe ratios are on chained daily returns of the seed-mean curve, and the last column is the paired difference between the two budgets with its 95\% interval. Both budgets have five seeds: seeds 45 and 46 of the 100{,}000-timestep A2C and point-in-time designs were trained afterwards, and a rerun reproduced an earlier model exactly. The cash-capped rows come from the second job, run after the test evaluation on the validation years only.}
 \label{tab:budget}
 \begin{tabularx}{\textwidth}{@{}Yrrrrrl@{}}
 \toprule
@@ -493,6 +494,10 @@ Timesteps & Seeds & Annual return & Cash & Max DD & Sharpe & 300k $-$ 100k \\
 \multicolumn{7}{@{}l}{\emph{Point-in-time SET50, seed ensemble + no-trade band}} \\
 100{,}000 & 5 & 5.2\% & 7\% & $-12.0\%$ & 0.38 & \\
 300{,}000 & 5 & 3.9\% & 41\% & $-7.0\%$ & 0.47 & $+0.10$ ($-0.09$, $0.25$) \\
+\addlinespace
+\multicolumn{7}{@{}l}{\emph{Point-in-time SET50, cash capped at 20\%, seed ensemble + no-trade band}} \\
+100{,}000 & 5 & 5.0\% & 5\% & $-12.2\%$ & 0.36 & \\
+300{,}000 & 5 & 4.9\% & 9\% & $-12.0\%$ & 0.35 & $-0.004$ ($-0.04$, $0.04$) \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -532,6 +537,18 @@ choosing it on the validation years adds to the designs that the deflated Sharpe
 \label{fig:pit-300k}
 \end{figure}
 
+The cap bounded this drift but did not make longer training pay. After the test evaluation of
+Section~\ref{sec:test}, the locked cash-capped design was trained again on the validation years only:
+seeds 45 and 46 at 100{,}000 timesteps, and five seeds at 300{,}000 timesteps on the cluster. With five
+seeds at 100{,}000 timesteps its seed ensemble with the band made 5.0\% a year, as with the three locked
+seeds, and it was still the best-scoring DRL design under the selection rule (score $-0.16$, against
+$-0.78$ without the cap), still below zero. At 300{,}000 timesteps the cap held the single models' average
+cash to 8.7\%, against 41\% without it, but ten of the 35 models averaged 19\% cash or more, close to the
+cap, against three at 100{,}000 timesteps: longer training still pushed some seeds towards cash, and the
+cap only bounded it. The ensemble made 4.9\% a year, against 5.0\% at 100{,}000 timesteps; its Sharpe
+ratio was 0.35 against 0.36, and its score fell to $-0.64$. For the locked design, 100{,}000 timesteps is
+enough. These checks leave the locked design and its test result unchanged.
+
 The job also measured the cluster. The 210 models took 1{,}776 hours of training in 56.0 hours of wall
 time on 32 CPUs, about 32 times faster than one worker, and cost about 2{,}465 service hours. The project's
 quota allows 32 CPUs at once across all its jobs, so the job ran one worker per CPU from a single task
@@ -541,7 +558,10 @@ core of the development machine, and a SAC model took 17 hours. The cluster also
 memory, and the job used at most 49~GB of the 128~GB it requested; a 64~GB request would have saved
 about 13\% of the service hours. The 35 point-in-time
 models, trained with different library versions on the cluster, replayed on the development machine to
-within $6\times10^{-9}$ of their saved validation curves.
+within $6\times10^{-9}$ of their saved validation curves. The second job, 35 cash-capped models,
+took 11.2 hours and 450 service hours. With 32 models at once each took 8.9 hours; the last three, with
+the other CPUs idle, took 2.3 hours, so sharing a core costs each model about a factor of four in speed
+but still finishes more models per hour.
 
 \section{Single Evaluation on the Test Years}
 \label{sec:test}

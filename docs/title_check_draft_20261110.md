@@ -1,6 +1,6 @@
 # Title Check (draft)
 
-Date: 2026-11-10; band-training, policy-rate and macro-proxy results added 2026-11-11; the five algorithms, the longer training on BistKA and the final-design ranking added 2026-11-25; the single test-year evaluation added 2026-11-25 (evening)
+Date: 2026-11-10; band-training, policy-rate and macro-proxy results added 2026-11-11; the five algorithms, the longer training on BistKA and the final-design ranking added 2026-11-25; the single test-year evaluation added 2026-11-25 (evening); the cash-capped design at 300k added 2026-11-26
 Status: **draft** for the M8 item "every phrase in the title is supported by a result table". It maps each phrase to the evidence in the repository now and to what is still missing. It does not choose the final wording; that is the authors' decision.
 
 > **Test years, 2026-11-25:** the two locked designs were evaluated once on 2023–2024 ([results](final_test_results_20261125.md)).
@@ -21,7 +21,7 @@ Title: **Deep Reinforcement Learning for Long-Term Profit Optimization in Thai S
 
 A narrower claim than the title's:
 - **Point-in-time result:** on the point-in-time SET50 over 2016–2022, a DRL agent with a long-term (log-wealth) reward reached equal-weight performance while trading less. With a seed ensemble and a no-trade band it made 5.5% a year, against 5.6%, with a Sharpe ratio of 0.42 against 0.38.
-- **No edge:** it did not beat equal weight or the SET50 ETF (7.1%). Training three times longer on BistKA (300k timesteps, 5 seeds) did not help: the agent held 41% cash on average and made 3.9% a year, with a smaller drawdown and a Sharpe ratio level with the ETF's (0.47 against 0.50). Neither did the agent trained with the band (5.1% a year, 5.2% as a seed ensemble), the agent with its cash capped at 20% (4.4% a year, 5.0% as a seed ensemble with the band) or three standard heuristic strategies. A supervised LSTM forecaster made 8.1% a year, but only through the late-2020 rally, and not significantly more than equal weight or the ETF.
+- **No edge:** it did not beat equal weight or the SET50 ETF (7.1%). Training three times longer on BistKA (300k timesteps, 5 seeds) did not help: the agent held 41% cash on average and made 3.9% a year, with a smaller drawdown and a Sharpe ratio level with the ETF's (0.47 against 0.50). Neither did the agent trained with the band (5.1% a year, 5.2% as a seed ensemble), the agent with its cash capped at 20% (4.4% a year, 5.0% as a seed ensemble with the band; 4.9% at 300k, where the cap held cash at 8.7%) or three standard heuristic strategies. A supervised LSTM forecaster made 8.1% a year, but only through the late-2020 rally, and not significantly more than equal weight or the ETF.
 - **Five stocks:** the earlier advantage on five hand-picked stocks came from choosing those stocks with hindsight. There, A2C made 8.7% a year at 300k timesteps against 7.1% for the ETF and 10.1% for equal weight, none of it significant, and the off-policy algorithms lost money net of costs.
 - **Multi-source:** on the point-in-time SET50, adding official policy-rate inputs or daily macro proxies lowered the agent's return. Only SET50 market context ever helped, borderline and on five stocks.
 
