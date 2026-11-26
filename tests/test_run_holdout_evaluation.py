@@ -199,3 +199,52 @@ def test_main_refuses_a_draft_and_dry_run_writes_nothing(tmp_path, monkeypatch, 
         gate.main()
     assert not (root / "results" / "holdout").exists()
     assert (root / "results" / gate.LEDGER).read_text().count("\n") == 1
+
+
+def test_only_series_in_the_development_file_are_continued(tmp_path):
+    root, lock = _setup(tmp_path)
+    folder = root / "data" / "sealed2"
+    hold_dates = pd.bdate_range("2025-01-02", "2025-01-10")
+    _write_holdout({"stocks": _prices(hold_dates, ["AAA.BK", "BBB.BK", "NEW.BK"], 25.0),
+                    "index": _prices(hold_dates, ["TDEX.BK"], 15.0).assign(index_name="set50_etf")},
+                   folder, {"source": "synthetic"})
+    lock["holdout"]["extend"] = [{"dev": "data/prices.csv", "sealed": "data/sealed2", "part": "stocks"},
+                                 {"dev": "data/index.csv", "sealed": "data/sealed2", "part": "index"}]
+    receipt = gate.open_and_merge(lock, root)
+    merged = pd.read_csv(root / gate.merged_path("results/holdout", "data/prices.csv"))
+    assert set(merged["ticker"]) == {"AAA.BK", "BBB.BK"}
+    assert receipt["files"]["data/prices.csv"]["series_not_in_development_file"] == ["NEW.BK"]
+    assert receipt["files"]["data/index.csv"]["series_not_in_development_file"] == []
+
+
+def _failed_attempt(root, lock):
+    out = root / lock["output_dir"]
+    (out / "runs" / "logs").mkdir(parents=True)
+    with open(root / "results" / gate.LEDGER, "a") as ledger:
+        ledger.write(json.dumps({"stage": lock["stage"], "output_dir": lock["output_dir"]}) + "\n")
+    return out
+
+
+def test_a_failed_attempt_is_recorded_and_may_be_retried_once_approved(tmp_path):
+    root, lock = _setup(tmp_path)
+    _failed_attempt(root, lock)
+    assert any("already has a 'holdout_2025_2026' run" in p for p in gate.check_lock(lock, root, CLEAN))
+    attempt = gate.record_failed_attempt(lock, root, "loader refused duplicate series")
+    assert attempt == "results/holdout_attempt1_failed" and not (root / "results" / "holdout").exists()
+    entries = [json.loads(line) for line in (root / "results" / gate.LEDGER).read_text().splitlines()]
+    assert entries[-1]["event"] == "failed_before_training" and entries[-1]["attempt_dir"] == attempt
+    assert any("already has" in p for p in gate.check_lock(lock, root, CLEAN))  # no retry_of: still refused
+    assert gate.check_lock({**lock, "retry_of": attempt}, root, CLEAN) == []
+    assert any("not a recorded failed attempt" in p
+               for p in gate.check_lock({**lock, "retry_of": "results/elsewhere"}, root, CLEAN))
+
+
+def test_an_attempt_that_evaluated_anything_can_never_be_retried(tmp_path):
+    root, lock = _setup(tmp_path)
+    out = _failed_attempt(root, lock)
+    curve = out / "runs" / "fold_2025" / "pit_x_seed42" / "validation_equity_curves.csv"
+    curve.parent.mkdir(parents=True)
+    curve.write_text("date,policy,portfolio_value\n")
+    with pytest.raises(SystemExit, match="evaluated something"):
+        gate.record_failed_attempt(lock, root, "x")
+    assert out.exists()

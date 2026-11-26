@@ -15,8 +15,11 @@ only intended way to read it, and it runs once per universe, after that universe
    this stage is not; the output folder does not exist.
 3. **Opening:** the ledger records the stage first, so an opened holdout counts as used even if a later
    step fails. Each sealed part is appended to the development file it continues (refusing any overlap)
-   and written inside the output folder; the development files are not changed. For the point-in-time
-   design, ``hold_last_list`` carries the last published SET50/SET100 list (2024 H2) to the holdout end.
+   and written inside the output folder; the development files are not changed. Only series already in
+   the development file are continued: a series that first trades in 2025 (a new listing after a merger,
+   for example) is not in the development price map, and two downloads can both carry it. Dropped series
+   are listed in the receipt. For the point-in-time design, ``hold_last_list`` carries the last published
+   SET50/SET100 list (2024 H2) to the holdout end.
 4. **Stale prices** (``src/data/stale_rows.py``) are counted in the opened rows and written to
    ``stale_rows.json`` before any training. With ``stop_if_stale_share_above`` set, a larger share
    stops the stage there.
@@ -29,6 +32,12 @@ only intended way to read it, and it runs once per universe, after that universe
    stage in ``FINAL_TEST_LEDGER.jsonl`` beside it (the test stages' ledger).
 
 ``--dry-run`` prints the checks and the plan; it verifies the seals but reads no market data.
+
+**A failed attempt.** If an attempt stops before any model has been evaluated (no validation curve and
+no end receipt), ``--record-failed-attempt REASON`` renames its folder to ``<output_dir>_attemptN_failed``
+and adds a ``failed_before_training`` line to the ledger. A new attempt then needs ``retry_of`` in the
+lock, naming that folder, and the authors' approval like any lock change. An attempt that evaluated
+anything can never be retried.
 
     python -m scripts.run_holdout_evaluation --lock config/holdout_protocol_pit.yaml --dry-run
     python -m scripts.run_holdout_evaluation --lock config/holdout_protocol_pit.yaml --workers 3
@@ -72,10 +81,46 @@ def config_data_files(spec: dict) -> list[str]:
     return [*files, *([data["index"]] if data.get("index") else [])]
 
 
-def _ledger_stages(ledger: Path) -> set[str]:
+def _ledger(ledger: Path) -> list[dict]:
     if not ledger.is_file():
-        return set()
-    return {json.loads(line).get("stage") for line in ledger.read_text().splitlines() if line.strip()}
+        return []
+    return [json.loads(line) for line in ledger.read_text().splitlines() if line.strip()]
+
+
+def _ledger_stages(ledger: Path) -> set[str]:
+    """Stages that have started (failure records are not starts)."""
+
+    return {entry.get("stage") for entry in _ledger(ledger) if not entry.get("event")}
+
+
+def evaluated_anything(folder: Path) -> bool:
+    """An attempt evaluated something if any validation curve or an end receipt exists in it."""
+
+    return (folder / "receipt_end.json").exists() or any(folder.rglob("validation_equity_curves.csv"))
+
+
+def retry_problems(lock: dict, root: Path, entries: list[dict]) -> list[str]:
+    """Reasons a stage already in the ledger may not run again; empty for an allowed retry."""
+
+    stage = lock.get("stage")
+    starts = [e for e in entries if e.get("stage") == stage and not e.get("event")]
+    failures = [e for e in entries if e.get("stage") == stage and e.get("event") == "failed_before_training"]
+    if not starts:
+        return []
+    retry = lock.get("retry_of")
+    if not retry:
+        return [f"the ledger already has a {stage!r} run"]
+    problems = []
+    if len(failures) != len(starts):
+        problems.append(f"an earlier {stage!r} attempt is not recorded as failed before training")
+    if retry not in {e.get("attempt_dir") for e in failures}:
+        problems.append(f"retry_of {retry} is not a recorded failed attempt")
+    folder = root / retry
+    if not folder.is_dir():
+        problems.append(f"the failed attempt's folder {retry} is missing")
+    elif evaluated_anything(folder):
+        problems.append(f"the attempt in {retry} evaluated something, so it may not be retried")
+    return problems
 
 
 def check_lock(lock: dict, root: Path, git: dict) -> list[str]:
@@ -145,9 +190,9 @@ def check_lock(lock: dict, root: Path, git: dict) -> list[str]:
     elif out.exists():
         problems.append(f"output folder {lock['output_dir']} already exists: the holdout evaluation runs once")
     if lock.get("output_dir"):
+        entries = _ledger(out.parent / LEDGER)
         stages = _ledger_stages(out.parent / LEDGER)
-        if lock.get("stage") in stages:
-            problems.append(f"the ledger already has a {lock.get('stage')!r} run")
+        problems.extend(retry_problems(lock, root, entries))
         if not lock.get("after_stage"):
             problems.append("after_stage (the test stage that must come first) is missing")
         elif lock["after_stage"] not in stages:
@@ -222,6 +267,36 @@ def append_holdout(dev: pd.DataFrame, sealed: pd.DataFrame, end: pd.Timestamp) -
     return pd.concat([dev, sealed], ignore_index=True)
 
 
+def known_series(dev: pd.DataFrame, sealed: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
+    """The sealed rows of series the development file has, and the names of the others."""
+
+    if "ticker" not in dev.columns or "ticker" not in sealed.columns:
+        return sealed, []
+    known = set(dev["ticker"])
+    dropped = sorted(str(t) for t in set(sealed["ticker"]) - known)
+    return sealed[sealed["ticker"].isin(known)], dropped
+
+
+def record_failed_attempt(lock: dict, root: Path, reason: str) -> str:
+    """Rename a failed attempt's folder and record it in the ledger; refuse if it evaluated anything."""
+
+    out = root / lock["output_dir"]
+    if not out.is_dir():
+        raise SystemExit(f"no attempt folder {lock['output_dir']}")
+    if evaluated_anything(out):
+        raise SystemExit(f"the attempt in {lock['output_dir']} evaluated something; it stays a used run")
+    ledger = out.parent / LEDGER
+    starts = [e for e in _ledger(ledger) if e.get("stage") == lock["stage"] and not e.get("event")]
+    if not starts:
+        raise SystemExit(f"the ledger has no {lock['stage']!r} attempt")
+    attempt = f"{lock['output_dir']}_attempt{len(starts)}_failed"
+    out.rename(root / attempt)
+    with open(ledger, "a") as handle:
+        handle.write(json.dumps({"stage": lock["stage"], "event": "failed_before_training", "attempt_dir": attempt,
+                                 "reason": reason, "recorded_at": dt.datetime.now().isoformat(timespec="seconds")}) + "\n")
+    return attempt
+
+
 def join_returns(dev: pd.DataFrame, sealed: pd.DataFrame) -> pd.Series:
     """Per series, the first sealed close over the last development close, minus one.
 
@@ -253,6 +328,7 @@ def open_and_merge(lock: dict, root: Path) -> dict:
             opened[item["sealed"]] = open_sealed(root / item["sealed"], lock)
         sealed = opened[item["sealed"]][item["part"]]
         dev = pd.read_csv(root / item["dev"], parse_dates=["date"])
+        sealed, dropped = known_series(dev, sealed)
         merged = append_holdout(dev, sealed, end)
         path = root / merged_path(out, item["dev"])
         _write(merged, path)
@@ -260,7 +336,8 @@ def open_and_merge(lock: dict, root: Path) -> dict:
         files[item["dev"]] = {"sealed": item["sealed"], "part": item["part"], "development_rows": int(len(dev)),
                               "holdout_rows": int(len(merged) - len(dev)), "sha256": sha256(path),
                               "largest_step_at_join": float(joins.abs().max()) if len(joins) else None,
-                              "series_with_step_above_20pct": sorted(str(k) for k in joins[joins.abs() > 0.2].index)}
+                              "series_with_step_above_20pct": sorted(str(k) for k in joins[joins.abs() > 0.2].index),
+                              "series_not_in_development_file": dropped}
         stale[item["dev"]] = stale_summary(merged, since=HOLDOUT_START)
     spec = yaml.safe_load((root / lock["design"]["config"]).read_text())
     data = spec["data"]
@@ -309,11 +386,16 @@ def main() -> None:
     parser.add_argument("--workers", type=int, default=3)
     parser.add_argument("--python", default=sys.executable)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--record-failed-attempt", metavar="REASON",
+                        help="rename an attempt that failed before evaluating anything, and record it in the ledger")
     args = parser.parse_args()
 
     root = Path(args.root).resolve()
     lock_path = Path(args.lock)
     lock = yaml.safe_load(lock_path.read_text())
+    if args.record_failed_attempt:
+        print(f"recorded the failed attempt as {record_failed_attempt(lock, root, args.record_failed_attempt)}")
+        return
     git = git_state(root, lock_path)
     problems = check_lock(lock, root, git)
     ready = lock.get("design", {}).get("variant") and lock.get("output_dir") and (lock.get("holdout") or {}).get("folds")
@@ -334,7 +416,8 @@ def main() -> None:
     start = {"stage": lock["stage"], "lock": str(lock_path), "lock_sha256": sha256(lock_path),
              "config_sha256": lock["design"]["config_sha256"], "git_head": git["head"],
              "approved_by": lock["approved_by"], "approved_on": str(lock["approved_on"]),
-             "started_at": dt.datetime.now().isoformat(timespec="seconds")}
+             "started_at": dt.datetime.now().isoformat(timespec="seconds"),
+             **({"retry_of": lock["retry_of"]} if lock.get("retry_of") else {})}
     (out / "receipt_start.json").write_text(json.dumps(start, indent=2) + "\n")
     with open(out.parent / LEDGER, "a") as ledger:
         ledger.write(json.dumps({**start, "output_dir": lock["output_dir"]}) + "\n")
