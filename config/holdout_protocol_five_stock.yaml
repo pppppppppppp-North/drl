@@ -1,0 +1,30 @@
+# The lock for the secondary holdout evaluation on the five starter stocks (milestone M6;
+# docs/final_design_decision_20261125.md, stage 2; docs/holdout_stage_20261126.md). The five stocks were
+# chosen with hindsight, so this result carries the survivorship caveat. scripts/run_holdout_evaluation.py
+# refuses it until status is APPROVED and committed. The design is the one the test stage evaluated
+# (config/final_test_protocol_five_stock.yaml); change anything only before approval.
+stage: holdout_2025_2026_five_stock
+status: DRAFT
+approved_by: []
+approved_on: null
+after_stage: test_2023_2024_five_stock
+design:
+  candidate: five_a2c_300k
+  runner: scripts.run_reward_variant_experiment
+  config: config/algorithm_comparison_experiment.yaml
+  config_sha256: cc10f9c846e5c68097913b82361297e6b8d6ff71f276a2fd70d428dab4158635
+  variant: algo_a2c
+  timesteps: 300000
+  seeds: [42, 43, 44, 45, 46]
+holdout:
+  end: "2026-11-04"
+  folds: [2025, 2026]
+  extend:
+    - {dev: data/raw/extended/prices_starter5_2012_2024.csv, sealed: data/holdout_sealed/2025_onward, part: stocks}
+    - {dev: data/raw/extended/index_set50_etf_2012_2024.csv, sealed: data/holdout_sealed/2025_onward, part: index}
+  # The config drops dates on which all five stocks have zero volume (drop_all_zero_volume_dates), as in the
+  # test years. See the point-in-time lock for this setting.
+  stop_if_stale_share_above: null
+references: [equal_weight_monthly]       # the SET50 ETF is always the benchmark
+n_trials: 14
+output_dir: results/holdout_five_stock

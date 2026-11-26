@@ -1,0 +1,42 @@
+# The lock for the single evaluation of the final point-in-time design on the sealed 2025+ holdout
+# (milestone M6; docs/final_design_decision_20261125.md, stage 2; docs/holdout_stage_20261126.md).
+# scripts/run_holdout_evaluation.py refuses it until the authors set status to APPROVED with their names
+# and the date, and commit it. The design is the one the test stage evaluated (config/final_test_protocol_pit.yaml);
+# change anything only before approval.
+stage: holdout_2025_2026_point_in_time
+status: DRAFT
+approved_by: []
+approved_on: null
+after_stage: test_2023_2024_point_in_time   # the test stage must be in the ledger first
+design:
+  candidate: pit_cash_cap_100k_ensemble_band
+  runner: scripts.run_pit_walk_forward
+  config: config/pit_walk_forward_experiment.yaml
+  config_sha256: 478bbdf6e37d632de7f8001fe5cadfd08dafca2bc2aa45e09ae626798223644a
+  variant: pit_plan_weekly_lstm_shared_cashcap
+  timesteps: 100000
+  seeds: [42, 43, 44]
+  ensemble: {band: 0.005, modes: [ensemble_band]}
+holdout:
+  end: "2026-11-04"           # the last date every sealed part covers (the ETF ends on 2026-11-04)
+  folds: [2025, 2026]         # 2025 trained on everything through 2024; 2026 (to the end) through 2025
+  extend:                     # each file the design's config reads, and the sealed part that continues it
+    - {dev: data/raw/extended/prices_set100_union_2012_2024.csv.gz,
+       sealed: data/holdout_sealed/2025_onward_set100_union, part: stocks}
+    - {dev: data/raw/extended/set100_2012_2024_additions/prices_set100_2012_2024_additions.csv.gz,
+       sealed: data/holdout_sealed/2025_onward_set100_2012_2024_additions, part: stocks}
+    # The development ETF file came from the five-stock download, so its own sealed rows continue it.
+    - {dev: data/raw/extended/index_set50_etf_2012_2024.csv, sealed: data/holdout_sealed/2025_onward, part: index}
+  # The official SET50/SET100 archive ends with the 2024 H2 list. hold_last_list keeps that list for the
+  # whole holdout: no hindsight, but it ignores the 2025 and 2026 revisions. The alternative is to download
+  # the published 2025-2026 lists (needs approval), add them to the membership file and price map, and set
+  # as_recorded.
+  membership: hold_last_list
+  # Yahoo's 2024 prices had stale rows (zero volume, open = high = low = close = previous close) on 17.5%
+  # of stock rows. Their share from 2025 on is written to stale_rows.json before training. A share here stops
+  # the stage before training if any file's share is higher; empty means report and continue, with the
+  # same session calendar as the test years.
+  stop_if_stale_share_above: null
+references: [pit_equal_weight_monthly]   # the SET50 ETF is always the benchmark
+n_trials: 22                             # as in the test lock: designs tried before the choice
+output_dir: results/holdout_point_in_time

@@ -55,6 +55,9 @@ def load_inputs(spec: dict, root: Path) -> tuple[pd.DataFrame, pd.DataFrame, dic
         price_paths=list(data["prices"]),
         index_path=data["index"],
         index_name=data.get("index_name", "set50_etf"),
+        # Prices after 2024 exist only in the sealed holdout; only the holdout stage's config sets data.end
+        # (scripts/run_holdout_evaluation.py). Every other run keeps the 2024-12-31 default.
+        end=str(data.get("end", "2024-12-31")),
     )
     if data.get("universe", "set50") == "set50":
         mask = mask[mask["in_set50"]]
