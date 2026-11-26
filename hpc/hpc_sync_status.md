@@ -3,9 +3,9 @@
 Last full remote evidence: 2026-07-26
 
 Latest connection probe: 2026-07-31
-Latest connection and code copy: 2026-11-22
+Latest connection and code copy: 2026-11-26 (three files; see job 4528)
 
-Latest job check: 2026-11-25
+Latest job check: 2026-11-26
 
 ## 2026-11-22 Connection And Code Copy
 
@@ -40,6 +40,9 @@ Latest job check: 2026-11-25
   - **Finished** at 09:23 on 2026-11-26 (`COMPLETED`, 11 h 14 min, peak memory about 32 GiB of the 80 GB requested), with no errors and all 35 tasks at 300,000 steps. With 32 tasks at once each took 8.9 hours; the last three, with the other CPUs idle, took 2.3 hours.
   - **Cost:** 450 SHr (11.24 h at 40 SHr an hour). `scontrol show assoc_mgr flags=qos qos=25sfcs03` shows 176,178 of 600,000 billing minutes used, so about 7,064 SHr are left.
   - **Copied to the Mac** with `rsync`, model files included (31 MB, 350 files; the ensemble needs the 35 `ppo_model.zip`), into `~/drl_runs/pit_walk_forward_cash_cap_bistka_20261125/`, with `logs/pool_4518.out` as `pool_4518.out`. A `rsync --checksum` dry run afterwards found no difference. Analysis: [report](../docs/cash_cap_5seeds_300k_20261126.md).
+- **Job `4528`, source ablation on the locked point-in-time design (operator-requested, submitted 23:11 on 2026-11-26; "continue the main progress, submit one job overnight"):** `sbatch --mem=80G --time=2-00:00:00 --job-name=drl_pool_src --export=ALL,PROJECT_DIR=$PWD,POOL=slurm/pools/bistka_20261126.tasks slurm/walk_forward_pool.sbatch` in `/lustrefs/project/25sfcs03/drl_thai_stock_20261122`, on `bistka-compute-01` with 32 CPUs. The user signed in again in the Terminal panel (new control-master session). Cluster idle before submission; 176,178 of 600,000 billing minutes used (about 7,064 SHr left).
+  - **Files copied first** with `rsync` over the control-master session: `config/pit_source_ablation_cashcap.yaml`, `slurm/pools/bistka_20261126.tasks` and `scripts/run_pit_walk_forward.py` (the holdout stage's optional `data.end`, default unchanged; the replaced file is in `logs/replaced_20261126/scripts/`). Afterwards the SHA-256 of 21 files (the two configs, the pool file, the runner, the pool scripts, the environments, the panel, the models, the macro and policy-rate features, and every input file the arms read) matched the clone at `f1f440a`.
+  - **Tasks:** 147 at 100k timesteps, folds 2016–2022: four source arms (technical only, + policy rate, + macro proxies, + both) × seeds 42–46, and the locked design with seed 42 as a cross-platform check against the Mac.
 
 ## 2026-07-31 Connection And Sync Boundary
 
