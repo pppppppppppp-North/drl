@@ -1,0 +1,16 @@
+# The architecture ablation of the locked point-in-time design (MLP temporal encoder against the locked LSTM, both at
+# 100k with five seeds), scored by the decision-7 rule on the validation years only (scripts/rank_final_candidates.py;
+# docs/architecture_ablation_20261127.md). A check made after the test and holdout stages, not a new selection: the
+# locked design and its results stay as recorded. Run folders are relative to --base (~/drl_runs locally).
+universes:
+  point_in_time: {reference: pit_equal_weight_monthly, benchmark: set50_etf_buy_hold}
+
+candidates:
+  - {id: pit_cash_cap_100k_5seeds, universe: point_in_time, label: "LSTM encoder (locked), 100k (5 seeds)", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_cashcap, seeds: [42, 43, 44, 45, 46], runs: [pit_walk_forward_cash_cap_100k_5seeds_20261125]}
+  - {id: pit_cash_cap_100k_ensemble_band_5seeds, universe: point_in_time, label: "LSTM encoder (locked), ensemble + band (5 seeds)", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_cashcap_ensemble_band, runs: [pit_cash_cap_ensemble_100k_5seeds_20261125]}
+  - {id: pit_arch_mlp_100k_5seeds, universe: point_in_time, label: "MLP encoder, 100k (5 seeds)", timesteps: 100000,
+     policy: pit_cashcap_arch_mlp, seeds: [42, 43, 44, 45, 46], runs: [pit_walk_forward_arch_mlp_cashcap_20261126]}
+  - {id: pit_arch_mlp_100k_ensemble_band_5seeds, universe: point_in_time, label: "MLP encoder, ensemble + band (5 seeds)", timesteps: 100000,
+     policy: pit_cashcap_arch_mlp_ensemble_band, runs: [pit_arch_mlp_ensemble_20261126]}
