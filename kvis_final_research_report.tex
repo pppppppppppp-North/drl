@@ -126,11 +126,13 @@ This study examines a completed deep reinforcement learning (DRL) pilot for Thai
 
 PTT buy-and-hold achieved the highest reported annualized return-to-volatility ratio (0.405480); A2C and PPO produced negative cumulative returns and ratios of -0.434028 and -0.439532. One vector environment reached 353.0773 samples per second with 600.711 MiB maximum peak resident memory, whereas 16 environments reached 82.9607 samples per second and 8,737.996 MiB. Two independent subprocesses reproduced the same 549-step trajectory hash. The five-algorithm smoke completed in 33 minutes 20 seconds using two CPUs and produced five complete manifests, final models, and retention receipts with no checkpoint paths. Returned output fell from 275,209,516 to 137,777,145 bytes, a 49.94\% reduction.
 
-The historical pilot did not show DRL outperforming its strongest simple baseline. The HPC results demonstrate that measured resource calibration, deterministic environment checks, and storage-safe retention can strengthen reproducibility while reducing storage. Financial findings remain descriptive because they come from one validation split; smoke results establish executability, not algorithm quality.
+An extension then aligned the study with its title. It replaced the one-day reward with a long-term objective, extended the data to 2012--2024, and evaluated the five stocks and the point-in-time SET50 membership over seven walk-forward validation years (2016--2022). It also compared five DRL algorithms trained on BistKA and added market, policy-rate and macro-proxy inputs. A rule fixed in advance chose one design per universe. Each chosen design was evaluated once on the 2023--2024 test years and once on a sealed holdout from 2025 to 4 November 2026. No DRL design beat equal weight of its own universe on the validation years. On the point-in-time SET50, the chosen design was ahead of equal weight in the test years, though not significantly, and significantly behind it on the holdout (Sharpe difference $-0.12$, 95\% interval $-0.23$ to $-0.01$). Neither chosen design beat the SET50 exchange-traded fund on years it had not seen, and the policy-rate and macro-proxy inputs did not help.
+
+The historical pilot did not show DRL outperforming its strongest simple baseline, and the extension found no evidence that the DRL designs improve long-term profit over equal weight after costs. The HPC results demonstrate that measured resource calibration, deterministic environment checks, and storage-safe retention can strengthen reproducibility while reducing storage. The pilot's financial findings remain descriptive because they come from one validation split; smoke results establish executability, not algorithm quality.
 
 \par\medskip
 \noindent\begin{minipage}{\textwidth}
-\small\textbf{Keywords:} deep reinforcement learning, Thai stocks, portfolio allocation, high-performance computing, reproducibility, chronological validation
+\small\textbf{Keywords:} deep reinforcement learning, Thai stocks, portfolio allocation, high-performance computing, reproducibility, chronological validation, walk-forward evaluation, survivorship bias
 \end{minipage}
 
 \newpage
@@ -182,16 +184,17 @@ The selected five-stock cohort is intentionally narrow. It provides an observed-
 
 \section{Research Questions}
 
-This paper addresses three questions using only completed experiments:
+This paper addresses four questions using only completed experiments:
 \begin{enumerate}
   \item On the completed real-OHLCV validation split, how did PPO and A2C compare with equal-weight, mean-variance, and buy-and-hold baselines?
   \item How did the number of parallel vector environments affect observed training throughput and process-tree memory on BistKA?
   \item Could the five implemented DRL algorithms execute through a deterministic, storage-safe HPC path while preserving auditable final artifacts?
+  \item With a long-term objective, several data sources and the point-in-time SET50 membership, did a DRL agent earn more than equal weight and the SET50 exchange-traded fund after costs, over seven walk-forward validation years and on years it had not seen (Chapter~\ref{chap:extension})?
 \end{enumerate}
 
 \section{Scope and Contributions}
 
-The study covers five Thai equities from 4 January 2021 through 30 December 2024 and reports four completed contributions: a frozen validation comparison of PPO and A2C against transparent baselines; measured throughput and peak memory for 1, 2, 4, 8, and 16 vector environments; matching 549-step trajectories from two fixed-seed subprocesses; and a five-algorithm storage-safe smoke with a measured returned-output reduction. Financial and engineering findings remain separate: validation evaluates portfolio behavior, whereas calibration, replay, and smoke evaluate computational behavior.
+The pilot covers five Thai equities from 4 January 2021 through 30 December 2024 and reports four completed contributions: a frozen validation comparison of PPO and A2C against transparent baselines; measured throughput and peak memory for 1, 2, 4, 8, and 16 vector environments; matching 549-step trajectories from two fixed-seed subprocesses; and a five-algorithm storage-safe smoke with a measured returned-output reduction. Financial and engineering findings remain separate: validation evaluates portfolio behavior, whereas calibration, replay, and smoke evaluate computational behavior. Chapter~\ref{chap:extension} widens the financial scope. It covers 2012--2024 data, the point-in-time SET50 membership, a long-term reward, five algorithms trained on BistKA, a design-selection rule fixed in advance, and single evaluations on the 2023--2024 test years and on a sealed holdout from 2025 to 4 November 2026.
 
 \FloatBarrier
 
@@ -234,6 +237,7 @@ The literature supplies portfolio baselines, continuous-control algorithms, temp
 
 % -----------------------------------------------------------------------------
 \chapter{METHODOLOGY}
+\label{chap:methodology}
 
 \section{Completed Experimental Design}
 
@@ -350,7 +354,11 @@ Storage was measured from complete returned file inventories. The checkpoint-wri
 \FloatBarrier
 
 % -----------------------------------------------------------------------------
+\input{docs/report_drafts/results_title_alignment_20261106}
+
 \chapter{DISCUSSION}
+
+This chapter discusses the July pilot and the HPC experiments of Chapter~\ref{chap:methodology}. The extension's results are interpreted in Section~\ref{sec:ext-interpretation}, and its limitations are listed in Section~\ref{sec:ext-limitations}.
 
 \section{Summary of Completed Observations}
 
@@ -512,9 +520,13 @@ The completed real-OHLCV pilot did not show PPO or A2C outperforming the stronge
 
 The HPC experiments produced clear engineering findings. One vector environment delivered the highest median throughput and the lowest measured process-tree memory among the five settings. Two independent subprocesses generated identical 549-step environment trajectory hashes. A single storage-safe job then completed PPO, A2C, DDPG, TD3, and SAC with five complete manifests, five final models, five checksum-bound retention receipts, and zero periodic checkpoint paths. Compared with the checkpoint-writing smoke, returned output fell by 49.94\%.
 
+The extension (Chapter~\ref{chap:extension}) tested the title's claim over longer and less biased evidence. The long-term reward removed the overtrading of the one-day objective. On the point-in-time SET50, the agent came to hold close to equal weight with less trading. No design beat equal weight of its own universe on the seven validation years, so the selection rule fixed in advance favoured equal weight. Its top DRL designs were evaluated anyway. On the 2023--2024 test years, the point-in-time design was ahead of equal weight but not significantly, and it trailed the SET50 exchange-traded fund. On the sealed holdout from 2025 to 4 November 2026, it matched equal weight in a falling year and trailed it in a rising one, in which it held cash up to its 20\% cap. Over the holdout its Sharpe shortfall against equal weight was significant. On the five starter stocks, A2C trailed equal weight of the same stocks in both evaluations. Training three times longer did not help, and neither did the policy-rate or macro-proxy inputs.
+
 \section{Scientific Conclusion}
 
 For the completed five-stock pilot, added DRL complexity did not produce superior validation performance relative to the strongest buy-and-hold baseline. The evidence is limited to one chronological validation split and therefore supports a pilot-level negative finding rather than a general statement about Thai equities or DRL.
+
+The extension supports the same conclusion on stronger evidence. With a long-term objective, a survivorship-aware universe, seven walk-forward years and two single evaluations on unseen years, the DRL designs did not improve long-term profit over equal weight after costs, and they did not beat the market fund. The data remain exploratory: Yahoo prices, no licensed fundamentals or historical news, and the 2024 SET50 list held fixed for the holdout. A positive claim would need a policy that adds value over equal weight after costs, licensed survivorship-free data and the missing sources, tested on years this work has not used.
 
 HPC was nevertheless scientifically significant. Its main contribution was not raw parallelism: excessive vectorization made the tested workload slower and more memory-intensive. Its contribution was controlled measurement and auditability. BistKA enabled repeatable resource calibration, independent environment replay, scheduler accounting, and artifact-preserving execution across five DRL algorithms. The study therefore demonstrates that careful HPC design can strengthen the reproducibility and storage efficiency of financial machine-learning experiments even when the observed investment result is negative.
 
@@ -577,6 +589,18 @@ G. K. Sandve, A. Nekrutenko, J. Taylor, and E. Hovig, “Ten Simple Rules for Re
 \bibitem{henderson2018drl}
 P. Henderson, R. Islam, P. Bachman, J. Pineau, D. Precup, and D. Meger, “Deep Reinforcement Learning That Matters,” \emph{Proceedings of the AAAI Conference on Artificial Intelligence}, vol. 32, no. 1, 2018. \href{https://doi.org/10.1609/aaai.v32i1.11694}{doi:10.1609/aaai.v32i1.11694}.
 
+% Cited by the extension chapter (docs/report_drafts/references_additions_20261106.tex).
+\bibitem{moody2001drl}
+J.~Moody and M.~Saffell, ``Learning to trade via direct reinforcement,'' \emph{IEEE Transactions on Neural Networks}, vol.~12, no.~4, pp.~875--889, 2001.
+
+\bibitem{politis1994stationary}
+D.~N. Politis and J.~P. Romano, ``The stationary bootstrap,'' \emph{Journal of the American Statistical Association}, vol.~89, no.~428, pp.~1303--1313, 1994.
+
+\bibitem{bailey2012sharpe}
+D.~H. Bailey and M.~L{\'o}pez de Prado, ``The Sharpe ratio efficient frontier,'' \emph{Journal of Risk}, vol.~15, no.~2, pp.~3--44, 2012.
+
+\bibitem{bailey2014deflated}
+D.~H. Bailey and M.~L{\'o}pez de Prado, ``The deflated Sharpe ratio: Correcting for selection bias, backtest overfitting, and non-normality,'' \emph{Journal of Portfolio Management}, vol.~40, no.~5, pp.~94--107, 2014.
 \end{thebibliography}
 
 \end{document}

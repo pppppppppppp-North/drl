@@ -1,12 +1,22 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces Completed experimental components included in this paper.}}{6}{table.caption.3}%
-\contentsline {table}{\numberline {3.2}{\ignorespaces Observed-market cohort used by the completed experiments.}}{7}{table.caption.4}%
-\contentsline {table}{\numberline {3.3}{\ignorespaces Descriptive portfolio metrics used in the completed pilot.}}{9}{table.caption.6}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces Completed experimental components included in this paper.}}{7}{table.caption.3}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces Observed-market cohort used by the completed experiments.}}{8}{table.caption.4}%
+\contentsline {table}{\numberline {3.3}{\ignorespaces Descriptive portfolio metrics used in the completed pilot.}}{10}{table.caption.6}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces Summary of completed observations.}}{11}{table.caption.7}%
-\contentsline {table}{\numberline {4.2}{\ignorespaces Real-OHLCV pilot results on one chronological validation split. Returns are decimals.}}{12}{table.caption.8}%
-\contentsline {table}{\numberline {4.3}{\ignorespaces BistKA vector-environment calibration with three repeats per setting.}}{14}{table.caption.10}%
-\contentsline {table}{\numberline {4.4}{\ignorespaces Observed scheduler accounting and artifact validation for the five-algorithm smoke.}}{15}{table.caption.12}%
+\contentsline {table}{\numberline {4.1}{\ignorespaces Reward and rebalancing designs, validation 2020--2022 (mean $\pm $ s.d. over three seeds). Max DD is maximum drawdown, turnover is per session, and costs are commission plus slippage summed over the period as a share of portfolio value.}}{13}{table.caption.7}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces Walk-forward validation 2016--2022: mean over seven annual folds (DRL: five seeds per fold).}}{14}{table.caption.8}%
+\contentsline {table}{\numberline {4.3}{\ignorespaces Data-source ablation over the seven walk-forward years (three seeds per arm).}}{15}{table.caption.10}%
+\contentsline {table}{\numberline {4.4}{\ignorespaces Algorithm comparison on the five starter stocks over the seven walk-forward years, 300{,}000 timesteps and five seeds per fold, same reward, model and inputs. Costs are the annual cost drag in percentage points, turnover is the sum of absolute weight changes over a year, cash is the average cash weight, and hours are the training time per model on one BistKA CPU.}}{17}{table.caption.12}%
+\contentsline {table}{\numberline {4.5}{\ignorespaces Point-in-time SET50 walk-forward, validation 2016--2022: mean over seven annual folds (DRL: three seeds per fold at 100{,}000 timesteps; five seeds for the two 300{,}000-timestep rows, Section~\ref {sec:budget}). Equal-weight portfolios rebalance monthly, and all strategies pay the same costs. The point-in-time DRL rows differ only in the slot order, the policy head, whether a no-trade band applies in training, whether the BOT policy rate or the daily macro proxies are inputs, whether cash is capped at 20\% and, for the seed ensembles, how the trained models are combined and traded (see text). Rows without a universe in parentheses are on the point-in-time SET50.}}{19}{table.caption.14}%
+\contentsline {table}{\numberline {4.6}{\ignorespaces Return before costs, cost drag, and trading: means over the seven validation years. Turnover is the sum of absolute weight changes over a year, including the initial purchase; cash is the average cash weight. Rows without a universe in parentheses are on the point-in-time SET50.}}{21}{table.caption.15}%
+\contentsline {table}{\numberline {4.7}{\ignorespaces Training for 100{,}000 against 300{,}000 timesteps, validation 2016--2022: means over seven annual folds. Cash is the average cash weight; Sharpe ratios are on chained daily returns of the seed-mean curve, and the last column is the paired difference between the two budgets with its 95\% interval. Both budgets have five seeds: seeds 45 and 46 of the 100{,}000-timestep A2C and point-in-time designs were trained afterwards, and a rerun reproduced an earlier model exactly. The cash-capped rows come from the second job, run after the test evaluation on the validation years only.}}{27}{table.caption.18}%
+\contentsline {table}{\numberline {4.8}{\ignorespaces The single evaluation on the test years 2023--2024: annual returns, the value of one baht chained over both years, the Sharpe ratio on the chained daily returns, and the worse of the two annual maximum drawdowns. DRL rows without ``ensemble'' are the mean over seeds. The ETF row applies to both universes. All strategies pay the same costs.}}{30}{table.caption.20}%
+\contentsline {table}{\numberline {4.9}{\ignorespaces The single evaluation on the sealed holdout, 2025 to 4 November 2026: returns in each fold, the value of one baht chained over both, the Sharpe ratio on the chained daily returns, and the worse of the two maximum drawdowns. DRL rows without ``ensemble'' are the mean over seeds. The ETF row applies to both universes. All strategies pay the same costs.}}{33}{table.caption.22}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {5.1}{\ignorespaces Summary of completed observations.}}{37}{table.caption.24}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Real-OHLCV pilot results on one chronological validation split. Returns are decimals.}}{38}{table.caption.25}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces BistKA vector-environment calibration with three repeats per setting.}}{40}{table.caption.27}%
+\contentsline {table}{\numberline {5.4}{\ignorespaces Observed scheduler accounting and artifact validation for the five-algorithm smoke.}}{41}{table.caption.29}%
 \addvspace {10\p@ }

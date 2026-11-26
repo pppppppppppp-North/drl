@@ -13,6 +13,7 @@
 % sealed holdout in docs/holdout_stage_20261126.md and docs/holdout_results_20261126.md.
 
 \chapter{LONG-TERM, MULTI-SOURCE EXTENSION}
+\label{chap:extension}
 
 This chapter reports experiments that align the implementation with the project title: a
 \emph{long-term} objective, \emph{multi-source} inputs, and multi-year out-of-sample evaluation.
@@ -704,6 +705,7 @@ Ridge forecast, top two (baseline) & $+1.9\%$ & $+21.7\%$ & 1.240 & 0.59 & $-32.
 \end{figure}
 
 \section{Interpretation}
+\label{sec:ext-interpretation}
 
 On the five starter stocks, the long-term DRL design fixed the overtrading failure of the V2 objective.
 Over seven years it roughly matched the SET50 market with the lowest drawdown of any strategy tested.
@@ -744,6 +746,7 @@ investor flow, and further point-in-time official macro data), evaluated once on
 has not yet used.
 
 \section{Limitations of the Extension}
+\label{sec:ext-limitations}
 
 \begin{enumerate}
   \item \textbf{Exploratory data tier.} Prices, the ETF series, and the macro proxies come from Yahoo Finance, not from the licensed SETSMART package requested for the project. Yahoo prices are adjusted for splits and dividends but carry no trading-status, suspension, or corporate-action records, so a suspended stock and a missing price look the same. On many real trading days of 2024, Yahoo also repeats the previous price with zero volume, which affects the 2024 test year (Section~\ref{sec:test}).
