@@ -59,10 +59,11 @@ class SlotSetExtractor(AssetTemporalExtractor):
         feature_mean: Sequence[float] | None = None,
         feature_std: Sequence[float] | None = None,
         clip: float = 10.0,
+        temporal_encoder: str = "lstm",
     ) -> None:
         super().__init__(observation_space, lookback, num_assets, num_features, market_feature_indices,
                          hidden_size=hidden_size, fusion_size=fusion_size, bidirectional=bidirectional,
-                         dropout=dropout)
+                         dropout=dropout, temporal_encoder=temporal_encoder)
         self.fusion_size = int(fusion_size)
         self._features_dim = self.num_assets * self.fusion_size + self.num_assets + 1
         if valid_feature_index is not None and not 0 <= int(valid_feature_index) < self.num_features:

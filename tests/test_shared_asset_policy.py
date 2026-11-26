@@ -267,3 +267,31 @@ def test_ppo_trains_saves_and_reloads_with_the_shared_actor(tmp_path) -> None:
     loaded = PPO.load(tmp_path / "shared", device="cpu")
     assert isinstance(loaded.policy, SharedAssetPolicy)
     np.testing.assert_allclose(loaded.predict(obs, deterministic=True)[0], action, atol=1e-6)
+
+
+def test_shared_actor_with_the_mlp_encoder_does_not_depend_on_the_slot_order() -> None:
+    torch.manual_seed(0)
+    policy = SharedAssetPolicy(*_spaces(), lambda _: 3e-4, net_arch=[8, 8], features_extractor_class=SlotSetExtractor,
+                               features_extractor_kwargs=dict(EXTRACTOR, valid_feature_index=VALID,
+                                                              feature_mean=MEAN.tolist(), feature_std=STD.tolist(),
+                                                              temporal_encoder="mlp"))
+    for layer in policy.mlp_extractor.output_layers():
+        torch.nn.init.normal_(layer.weight)
+    assert not isinstance(policy.features_extractor.asset_encoder, torch.nn.LSTM)
+    window, weights, cash = _observation()
+    perm = np.array([3, 0, 4, 2, 1])
+    mean, value = _outputs(policy, _flat(window, weights, cash))
+    mean_perm, value_perm = _outputs(policy, _flat(window[:, perm], weights[perm], cash))
+    assert mean[:N].abs().max() > 0.1
+    assert torch.allclose(mean_perm[:N], mean[:N][perm], atol=1e-5)
+    assert torch.allclose(mean_perm[N], mean[N], atol=1e-5) and torch.allclose(value_perm, value, atol=1e-5)
+
+
+def test_policy_from_config_passes_the_temporal_encoder_to_the_shared_actor() -> None:
+    columns = ["s1", "s2", "m1", "slot_valid"]
+    stats = {"s1": (0.0, 1.0), "s2": (0.0, 1.0), "m1": (0.0, 1.0)}
+    _, kwargs = policy_from_config({"actor": "shared_asset", "features_extractor": "asset_lstm",
+                                    "market_feature_columns": ["m1"], "temporal_encoder": "mlp"},
+                                   lookback=L, num_assets=N, feature_columns=columns, feature_stats=stats)
+    assert kwargs["features_extractor_class"] is SlotSetExtractor
+    assert kwargs["features_extractor_kwargs"]["temporal_encoder"] == "mlp"
