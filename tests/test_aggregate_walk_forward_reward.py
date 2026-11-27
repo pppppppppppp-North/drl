@@ -87,5 +87,5 @@ def test_plot_draws_every_learned_variant(tmp_path):
 
 def test_plot_refuses_to_drop_variants_silently(tmp_path):
     pytest.importorskip("matplotlib")
-    with pytest.raises(ValueError, match="9 learned variants"):
-        agg.plot(_chained(9), tmp_path / "chained.png")
+    with pytest.raises(ValueError, match="13 learned variants"):
+        agg.plot(_chained(13), tmp_path / "chained.png")

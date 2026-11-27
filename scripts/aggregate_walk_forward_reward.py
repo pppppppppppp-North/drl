@@ -148,7 +148,8 @@ def plot(chained: pd.DataFrame, output: Path, labels: dict[str, str] | None = No
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    palette = ["#d1495b", "#00798c", "#edae49", "#30638e", "#66a182", "#8e6c8a", "#b5651d", "#2e4057"]
+    palette = ["#d1495b", "#00798c", "#edae49", "#30638e", "#66a182", "#8e6c8a", "#b5651d", "#2e4057",
+               "#e07a9f", "#4fb3bf", "#9c6b30", "#5e60ce"]
     baselines = {
         BENCHMARK: ("SET50 ETF buy & hold (TDEX)", "#111111", "-"),
         "ridge_forecast_top2_monthly": ("Ridge forecast top-2, monthly", "#7a7a7a", "--"),
