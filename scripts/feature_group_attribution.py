@@ -21,10 +21,16 @@ from src.evaluation.attribution import default_feature_groups, permutation_attri
 
 
 def load_policy(run_dir: Path, env):
-    from stable_baselines3 import PPO
+    import json
+
+    import stable_baselines3 as sb3
     from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 
-    model = PPO.load(run_dir / "ppo_model.zip", device="cpu")
+    from scripts.run_reward_variant_experiment import SB3_ALGORITHMS
+
+    info = run_dir / "model_info.json"
+    algo = json.loads(info.read_text())["algo"] if info.exists() else "ppo"
+    model = getattr(sb3, SB3_ALGORITHMS[algo]).load(run_dir / f"{algo}_model.zip", device="cpu")
     normalizer = None
     stats = run_dir / "vecnormalize.pkl"
     if stats.exists():
@@ -58,7 +64,7 @@ def main() -> None:
     run_root = Path(args.run_dir)
     rows = []
     for model_dir in sorted(run_root.glob(f"fold_*/{args.variant}_seed*/runs/{args.variant}_seed*")):
-        if not (model_dir / "ppo_model.zip").exists():
+        if not any(model_dir.glob("*_model.zip")):
             continue
         year = int(model_dir.parts[-4].split("_")[1])
         seed = int(model_dir.name.rsplit("seed", 1)[1])

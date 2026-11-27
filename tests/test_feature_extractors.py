@@ -88,3 +88,57 @@ def test_ppo_trains_with_fusion_extractor_and_softmax_actions() -> None:
     model.learn(total_timesteps=64)
     action, _ = model.predict(env.reset()[0], deterministic=True)
     assert action.shape == (4,)
+
+
+def _space(lookback: int, n: int, f: int):
+    import gymnasium as gym
+
+    return gym.spaces.Box(-np.inf, np.inf, shape=(lookback * n * f + n + 1,), dtype=np.float32)
+
+
+def test_lstm_stays_the_default_temporal_encoder() -> None:
+    space = _space(4, 3, 3)
+    kwargs = dict(lookback=4, num_assets=3, num_features=3, market_feature_indices=[2], hidden_size=6, fusion_size=5)
+    torch.manual_seed(0)
+    default = AssetTemporalExtractor(space, **kwargs)
+    torch.manual_seed(0)
+    explicit = AssetTemporalExtractor(space, **kwargs, temporal_encoder="lstm")
+    assert isinstance(default.asset_encoder, torch.nn.LSTM) and isinstance(default.market_encoder, torch.nn.LSTM)
+    assert list(default.state_dict()) == list(explicit.state_dict())
+    assert all(torch.equal(a, b) for a, b in zip(default.state_dict().values(), explicit.state_dict().values()))
+    obs = torch.randn(2, 4 * 3 * 3 + 3 + 1)
+    assert torch.equal(default(obs), explicit(obs))
+
+
+def test_mlp_temporal_encoder_has_the_same_output_and_stays_permutation_equivariant() -> None:
+    torch.manual_seed(0)
+    lookback, n, f = 4, 3, 3
+    ext = AssetTemporalExtractor(_space(lookback, n, f), lookback=lookback, num_assets=n, num_features=f,
+                                 market_feature_indices=[2], hidden_size=6, fusion_size=5, temporal_encoder="mlp")
+    assert not isinstance(ext.asset_encoder, torch.nn.LSTM)
+    assert ext.asset_encoder[0].in_features == lookback * 2 and ext.market_encoder[0].in_features == lookback * 1
+    window = torch.randn(1, lookback, n, f)
+    window[:, :, :, 2] = window[:, :, :1, 2]  # market column identical across assets, as in the environment
+    weights, cash = torch.tensor([[0.2, 0.3, 0.1]]), torch.tensor([[0.4]])
+    obs = torch.cat([window.reshape(1, -1), weights, cash], dim=1)
+    perm = [2, 0, 1]
+    obs_perm = torch.cat([window[:, :, perm, :].reshape(1, -1), weights[:, perm], cash], dim=1)
+    out, out_perm = ext(obs), ext(obs_perm)
+    assert out.shape == (1, n * 5 + 5 + 1)
+    assert torch.allclose(out[:, : n * 5].reshape(n, 5)[perm], out_perm[:, : n * 5].reshape(n, 5), atol=1e-6)
+    # The encoder reads the whole window: changing the oldest session changes the embedding.
+    older = window.clone()
+    older[:, 0, 0, 0] += 1.0
+    obs_older = torch.cat([older.reshape(1, -1), weights, cash], dim=1)
+    assert not torch.allclose(ext(obs_older)[:, :5], out[:, :5])
+
+
+def test_temporal_encoder_option_is_checked() -> None:
+    kwargs = build_policy_kwargs({"features_extractor": "asset_lstm", "temporal_encoder": "mlp"}, lookback=4,
+                                 num_assets=3, feature_columns=["a", "b"])
+    assert kwargs["features_extractor_kwargs"]["temporal_encoder"] == "mlp"
+    with pytest.raises(ValueError, match="unknown temporal_encoder"):
+        AssetTemporalExtractor(_space(4, 3, 2), lookback=4, num_assets=3, num_features=2, temporal_encoder="gru")
+    with pytest.raises(ValueError, match="bidirectional"):
+        AssetTemporalExtractor(_space(4, 3, 2), lookback=4, num_assets=3, num_features=2, bidirectional=True,
+                               temporal_encoder="mlp")

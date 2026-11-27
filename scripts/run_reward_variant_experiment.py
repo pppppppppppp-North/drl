@@ -143,25 +143,54 @@ def baseline_curves(config: dict, features: pd.DataFrame, train_features: pd.Dat
     return curves
 
 
+SB3_ALGORITHMS = {"ppo": "PPO", "a2c": "A2C", "sac": "SAC", "td3": "TD3", "ddpg": "DDPG"}
+
+
 def train_variant(config: dict, train_features: pd.DataFrame, seed: int, out_dir: Path):
+    """Train one variant with the algorithm in ``training.algo`` (default PPO).
+
+    Off-policy algorithms (SAC/TD3/DDPG) take replay settings through ``training`` (``buffer_size``,
+    ``learning_starts``, ``batch_size``, ``train_freq``, ``gradient_steps`` ...). TD3 and DDPG are
+    deterministic, so ``training.action_noise_sigma`` adds Gaussian exploration noise on the action.
+    """
+
+    import stable_baselines3 as sb3
+
     from src.train import _algorithm_kwargs
     from src.train_long_term import build_long_term_training_env, policy_kwargs_from_config
-    from stable_baselines3 import PPO
 
     training = config["training"]
+    algo = str(training.get("algo", "ppo")).lower()
+    if algo not in SB3_ALGORITHMS:
+        raise ValueError(f"training.algo must be one of {sorted(SB3_ALGORITHMS)}; got {algo!r}")
+    model_cls = getattr(sb3, SB3_ALGORITHMS[algo])
     env = build_long_term_training_env(config, train_features, seed)
-    kwargs = _algorithm_kwargs("ppo", int(training["total_timesteps"]), training)
+    kwargs = _algorithm_kwargs(algo, int(training["total_timesteps"]), training)
     policy_kwargs = policy_kwargs_from_config(config, train_features)
     if policy_kwargs:
         kwargs["policy_kwargs"] = policy_kwargs
-    model = PPO("MlpPolicy", env, seed=seed, verbose=int(training.get("verbose", 0)), device="cpu", **kwargs)
+    if algo in {"sac", "td3", "ddpg"}:
+        # Replay buffers hold buffer_size x observation floats; with optimize_memory_usage each
+        # observation is stored once (about 1 GB for 100k x 2,406 float32), not twice.
+        if "optimize_memory_usage" in training:
+            kwargs["optimize_memory_usage"] = bool(training["optimize_memory_usage"])
+        if "replay_buffer_kwargs" in training:
+            kwargs["replay_buffer_kwargs"] = dict(training["replay_buffer_kwargs"])
+    sigma = training.get("action_noise_sigma")
+    if sigma and algo in {"td3", "ddpg"}:
+        from stable_baselines3.common.noise import NormalActionNoise
+
+        dim = env.action_space.shape[0]
+        kwargs["action_noise"] = NormalActionNoise(mean=np.zeros(dim), sigma=float(sigma) * np.ones(dim))
+    model = model_cls("MlpPolicy", env, seed=seed, verbose=int(training.get("verbose", 0)), device="cpu", **kwargs)
     model.learn(total_timesteps=int(training["total_timesteps"]))
     normalizer = None
     if hasattr(env, "obs_rms"):
         env.training = False
         normalizer = env.normalize_obs
     out_dir.mkdir(parents=True, exist_ok=True)
-    model.save(out_dir / "ppo_model")
+    model.save(out_dir / f"{algo}_model")
+    (out_dir / "model_info.json").write_text(json.dumps({"algo": algo, "timesteps": int(training["total_timesteps"])}) + "\n")
     if hasattr(env, "save"):
         env.save(str(out_dir / "vecnormalize.pkl"))
     return model, normalizer

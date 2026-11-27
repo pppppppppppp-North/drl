@@ -35,7 +35,7 @@ Do they hold up year after year? Do they beat the market and simple supervised a
 | Ridge forecast, top 2 monthly | 12.8% | +5.6% | 5/7 | −7.8% | −16.8% | 2.7% | — |
 | Equal weight, monthly | 10.1% | +3.0% | 4/7 | −4.0% | −13.9% | 0.3% | — |
 | Equal weight, buy and hold | 9.8% | +2.6% | 3/7 | −3.7% | −14.0% | 0.2% | — |
-| **DRL: plan reward + LSTM model** | 7.7% | +0.5% | 3/7 | −5.6% | **−11.1%** | 0.8% | 2.6% |
+| **DRL: plan reward + LSTM model** | 7.6% | +0.5% | 3/7 | −5.6% | **−11.1%** | 0.8% | 2.6% |
 | SET50 ETF buy and hold | 7.1% | — | — | — | −11.3% | 0.0% | — |
 | DRL: log reward, MLP | 5.0% | −2.2% | 2/7 | −8.8% | −14.2% | 5.3% | 6.5% |
 

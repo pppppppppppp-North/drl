@@ -1,0 +1,19 @@
+# Local pool of 2026-11-25, evening (milestone M6): seeds 45 and 46 of the locked point-in-time design,
+# pit_plan_weekly_lstm_shared_cashcap, at 100k timesteps (seeds 42-44 are in pit_walk_forward_cash_cap_20261119),
+# so it can be set against the same design at 300k with seeds 42-46 (BistKA job 4518); validation years only.
+# Run from the repository root with run dirs beside it (~/drl_runs): bash scripts/run_task_pool.sh slurm/pools/local_20261125b.tasks 3
+# Columns: run-dir runner config timesteps fold-year variant seed
+../pit_walk_forward_cash_cap_100k_s4546_20261125 scripts.run_pit_walk_forward config/pit_walk_forward_experiment.yaml 100000 2016 pit_plan_weekly_lstm_shared_cashcap 45
+../pit_walk_forward_cash_cap_100k_s4546_20261125 scripts.run_pit_walk_forward config/pit_walk_forward_experiment.yaml 100000 2016 pit_plan_weekly_lstm_shared_cashcap 46
+../pit_walk_forward_cash_cap_100k_s4546_20261125 scripts.run_pit_walk_forward config/pit_walk_forward_experiment.yaml 100000 2017 pit_plan_weekly_lstm_shared_cashcap 45
+../pit_walk_forward_cash_cap_100k_s4546_20261125 scripts.run_pit_walk_forward config/pit_walk_forward_experiment.yaml 100000 2017 pit_plan_weekly_lstm_shared_cashcap 46
+../pit_walk_forward_cash_cap_100k_s4546_20261125 scripts.run_pit_walk_forward config/pit_walk_forward_experiment.yaml 100000 2018 pit_plan_weekly_lstm_shared_cashcap 45
+../pit_walk_forward_cash_cap_100k_s4546_20261125 scripts.run_pit_walk_forward config/pit_walk_forward_experiment.yaml 100000 2018 pit_plan_weekly_lstm_shared_cashcap 46
+../pit_walk_forward_cash_cap_100k_s4546_20261125 scripts.run_pit_walk_forward config/pit_walk_forward_experiment.yaml 100000 2019 pit_plan_weekly_lstm_shared_cashcap 45
+../pit_walk_forward_cash_cap_100k_s4546_20261125 scripts.run_pit_walk_forward config/pit_walk_forward_experiment.yaml 100000 2019 pit_plan_weekly_lstm_shared_cashcap 46
+../pit_walk_forward_cash_cap_100k_s4546_20261125 scripts.run_pit_walk_forward config/pit_walk_forward_experiment.yaml 100000 2020 pit_plan_weekly_lstm_shared_cashcap 45
+../pit_walk_forward_cash_cap_100k_s4546_20261125 scripts.run_pit_walk_forward config/pit_walk_forward_experiment.yaml 100000 2020 pit_plan_weekly_lstm_shared_cashcap 46
+../pit_walk_forward_cash_cap_100k_s4546_20261125 scripts.run_pit_walk_forward config/pit_walk_forward_experiment.yaml 100000 2021 pit_plan_weekly_lstm_shared_cashcap 45
+../pit_walk_forward_cash_cap_100k_s4546_20261125 scripts.run_pit_walk_forward config/pit_walk_forward_experiment.yaml 100000 2021 pit_plan_weekly_lstm_shared_cashcap 46
+../pit_walk_forward_cash_cap_100k_s4546_20261125 scripts.run_pit_walk_forward config/pit_walk_forward_experiment.yaml 100000 2022 pit_plan_weekly_lstm_shared_cashcap 45
+../pit_walk_forward_cash_cap_100k_s4546_20261125 scripts.run_pit_walk_forward config/pit_walk_forward_experiment.yaml 100000 2022 pit_plan_weekly_lstm_shared_cashcap 46

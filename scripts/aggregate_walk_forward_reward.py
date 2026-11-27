@@ -10,9 +10,15 @@ where each ``<part>`` holds baselines or one DRL variant for that validation yea
 - ``walk_forward_fold_returns.csv``: seed-averaged annual return per fold x variant;
 - ``walk_forward_summary.csv``: across-fold summary per variant (mean return, mean excess vs the SET50
   ETF, folds beating the ETF, worst-fold excess, mean drawdown and turnover, seed dispersion);
-- ``walk_forward_chained_equity.png``: out-of-sample equity chained across validation years.
+- ``walk_forward_chained_equity.png``: out-of-sample equity chained across validation years;
+- ``walk_forward_significance_vs_<reference>.csv``: Sharpe significance of every series against the SET50
+  ETF, the equal-weight references present, and any variant named with ``--references``.
 
     python -m scripts.aggregate_walk_forward_reward --run-dir results/walk_forward_reward_20261106
+
+Two runs of the same variant (for example 100k and 300k timesteps) would collide on their policy names,
+and only the first run's curves would be kept. ``--rename <run dir>:<old>=<new>`` renames a variant in
+one run folder only (its seed tags are kept), so both runs can be compared and tested against each other.
 """
 from __future__ import annotations
 
@@ -33,6 +39,33 @@ def load_fold(fold_dir: Path) -> pd.DataFrame:
     if not frames:
         raise FileNotFoundError(f"no validation_equity_curves.csv under {fold_dir}")
     return pd.concat(frames, ignore_index=True).drop_duplicates(["date", "policy"], keep="first")
+
+
+def parse_renames(items: list[str]) -> dict[Path, dict[str, str]]:
+    """``<run dir>:<old variant>=<new variant>`` items, as {resolved run dir: {old: new}}."""
+
+    renames: dict[Path, dict[str, str]] = {}
+    for item in items:
+        folder, sep, mapping = item.rpartition(":")
+        old, eq, new = mapping.partition("=")
+        if not (sep and folder and eq and old and new):
+            raise SystemExit(f"--rename expects <run dir>:<old>=<new>, got {item!r}")
+        renames.setdefault(Path(folder).resolve(), {})[old] = new
+    return renames
+
+
+def rename_variants(curves: pd.DataFrame, mapping: dict[str, str]) -> pd.DataFrame:
+    """Rename variants (seeded or not), keeping each policy's ``_seed<N>`` tag."""
+
+    if not mapping:
+        return curves
+    variant = curves["policy"].str.replace(r"_seed\d+$", "", regex=True)
+    tag = curves["policy"].str.extract(r"(_seed\d+)$")[0].fillna("")
+    new = variant.map(mapping)
+    hit = new.notna()
+    curves = curves.copy()
+    curves.loc[hit, "policy"] = new[hit] + tag[hit]
+    return curves
 
 
 def fold_metrics(curves: pd.DataFrame, year: int) -> pd.DataFrame:
@@ -115,19 +148,31 @@ def plot(chained: pd.DataFrame, output: Path, labels: dict[str, str] | None = No
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    palette = ["#d1495b", "#00798c", "#edae49", "#30638e", "#66a182"]
+    palette = ["#d1495b", "#00798c", "#edae49", "#30638e", "#66a182", "#8e6c8a", "#b5651d", "#2e4057",
+               "#e07a9f", "#4fb3bf", "#9c6b30", "#5e60ce"]
     baselines = {
         BENCHMARK: ("SET50 ETF buy & hold (TDEX)", "#111111", "-"),
         "ridge_forecast_top2_monthly": ("Ridge forecast top-2, monthly", "#7a7a7a", "--"),
         "equal_weight_monthly": ("Equal weight, monthly", "#7a7a7a", ":"),
+        "pit_equal_weight_monthly": ("Point-in-time SET50 equal weight, monthly", "#7a7a7a", "-."),
+        "pit_ridge_forecast_top10_monthly": ("Point-in-time ridge forecast top-10, monthly", "#7a7a7a", "--"),
+        "hindsight_set50_equal_weight_monthly": ("Hindsight: 2024 SET50 names, equal weight", "#b07aa1", ":"),
+        "starter5_equal_weight_monthly": ("Five starter stocks, equal weight", "#b07aa1", "-."),
     }
     fig, ax = plt.subplots(figsize=(10, 5.5), dpi=150)
-    learned = [v for v in chained["variant"].unique() if v not in baselines and chained.loc[chained["variant"] == v, "policy"].str.contains("_seed").any()]
+    # Seeded variants are drawn as a seed mean with a min-max band; an unseeded learned policy (for
+    # example a seed ensemble) is drawn as one line when it is given a label.
+    learned = [v for v in chained["variant"].unique() if v not in baselines and (
+        chained.loc[chained["variant"] == v, "policy"].str.contains("_seed").any() or v in (labels or {}))]
+    if len(learned) > len(palette):
+        raise ValueError(f"{len(learned)} learned variants to draw but only {len(palette)} colours: {learned}")
     for color, variant in zip(palette, learned):
         wide = chained[chained["variant"] == variant].pivot_table(index="date", columns="policy", values="value")
-        ax.fill_between(wide.index, wide.min(axis=1), wide.max(axis=1), color=color, alpha=0.15, linewidth=0)
         name = (labels or {}).get(variant, variant)
-        ax.plot(wide.index, wide.mean(axis=1), color=color, linewidth=1.6, label=f"{name} (mean of {wide.shape[1]} seeds)")
+        if wide.shape[1] > 1:
+            ax.fill_between(wide.index, wide.min(axis=1), wide.max(axis=1), color=color, alpha=0.15, linewidth=0)
+            name = f"{name} (mean of {wide.shape[1]} seeds)"
+        ax.plot(wide.index, wide.mean(axis=1), color=color, linewidth=1.6, label=name)
     for policy, (label, color, style) in baselines.items():
         part = chained[chained["policy"] == policy]
         if not part.empty:
@@ -151,9 +196,19 @@ def main() -> None:
     parser.add_argument("--output-dir", default=None, help="where to write results (default: --run-dir)")
     parser.add_argument("--labels", nargs="*", default=[], help="legend labels as variant=label")
     parser.add_argument("--title", default=None, help="figure title")
+    parser.add_argument("--references", nargs="*", default=[],
+                        help="more variants to test the others against, for example an earlier DRL run")
+    parser.add_argument("--drop", nargs="*", default=[],
+                        help="variants to leave out, for example baselines that another run folder brings in")
+    parser.add_argument("--rename", nargs="*", default=[],
+                        help="<run dir>:<old>=<new>: rename a variant in that run folder only, before merging")
     args = parser.parse_args()
 
     run_dirs = [Path(args.run_dir)] + [Path(d) for d in args.extra_run_dirs]
+    renames = parse_renames(args.rename)
+    unknown = set(renames) - {d.resolve() for d in run_dirs}
+    if unknown:
+        raise SystemExit(f"--rename names run folders that are not aggregated: {sorted(map(str, unknown))}")
     run_dir = Path(args.output_dir or args.run_dir)
     run_dir.mkdir(parents=True, exist_ok=True)
     years = sorted({int(p.name.split("_")[1]) for d in run_dirs for p in d.glob("fold_*") if p.is_dir()})
@@ -161,7 +216,8 @@ def main() -> None:
         raise SystemExit(f"no fold_<year> directories under {[str(d) for d in run_dirs]}")
     fold_curves = {}
     for year in years:
-        parts = [load_fold(d / f"fold_{year}") for d in run_dirs if (d / f"fold_{year}").is_dir()]
+        parts = [rename_variants(load_fold(d / f"fold_{year}"), renames.get(d.resolve(), {}))
+                 for d in run_dirs if (d / f"fold_{year}").is_dir()]
         curves = pd.concat(parts, ignore_index=True).drop_duplicates(["date", "policy"], keep="first")
         seeded = curves["policy"].str.contains(r"_seed\d+$", regex=True)
         variant = curves["policy"].str.replace(r"_seed\d+$", "", regex=True)
@@ -173,6 +229,7 @@ def main() -> None:
             keep |= seeded
         if args.seeds is not None:
             keep &= ~seeded | seed.isin(args.seeds)
+        keep &= ~variant.isin(args.drop)
         fold_curves[year] = curves[keep].reset_index(drop=True)
     metrics = pd.concat([fold_metrics(curves, year) for year, curves in fold_curves.items()], ignore_index=True)
     metrics.to_csv(run_dir / "walk_forward_metrics.csv", index=False)
@@ -183,7 +240,7 @@ def main() -> None:
     chained.to_csv(run_dir / "walk_forward_chained_equity.csv", index=False)
     labels = dict(item.split("=", 1) for item in args.labels)
     plot(chained, run_dir / "walk_forward_chained_equity.png", labels=labels, title=args.title)
-    for reference in (BENCHMARK, "equal_weight_monthly"):
+    for reference in (BENCHMARK, "equal_weight_monthly", "pit_equal_weight_monthly", *args.references):
         if reference in set(chained["variant"]):
             sig = chained_significance(chained, reference, n_trials=args.n_trials)
             sig.to_csv(run_dir / f"walk_forward_significance_vs_{reference}.csv", index=False)

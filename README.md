@@ -25,6 +25,8 @@ The project now includes a checksum-bound official SET50/SET100 constituent and 
 - 138 unique tickers in an acquisition-only union; and
 - 23 canonical sectors with dated changes preserved.
 
+**Extended to 2012 (2026-11-07):** `data/reference/set50_set100_membership_2012_2024.csv` adds 24 lists for 2012–2020 from 25 more official SET files (Excel 2012–2014, PDF 2015–2020). The result is 34 continuous lists, 3,400 rows and 227 tickers. The 2021–2024 rows are byte-identical to the archive above. Every printed Inclusion/Exclusion note matches the list changes (93/93). Rebuild with `pip install -r requirements-data-extensions.txt` and then `python -m src.data.ingest_set_constituent_history_extended`. See [`docs/point_in_time_universe_2012_2024_20261107.md`](docs/point_in_time_universe_2012_2024_20261107.md). The DRL walk-forward on this point-in-time SET50 membership is reported in [`docs/pit_walk_forward_20261107.md`](docs/pit_walk_forward_20261107.md).
+
 Rebuild and validate it with:
 
 ```bash
@@ -150,12 +152,23 @@ These extensions live in new modules, so no file in the manifest-locked V2 relea
 - `src/envs/long_term_env.py`: `LongTermTradingEnv`; with default options it is bit-identical to `ThaiStockTradingEnv`.
 - `src/train_long_term.py`: the training entrypoint for the options below (`python -m src.train_long_term --config <config>`).
 - `src/models/feature_extractors.py`: the `asset_lstm` fusion extractor.
+- `src/models/shared_asset_policy.py`: `SharedAssetPolicy`, an actor-critic whose actor scores every asset with the same weights and whose features are standardized with statistics shared by all assets, so allocations do not depend on slot order (`training.policy.actor: shared_asset`; the point-in-time runner only).
 - `src/evaluation/benchmark_metrics.py` and `src/evaluation/significance.py`: benchmark-relative metrics and Sharpe significance.
 - `src/features/fundamental_flags.py`, `src/features/investor_flow_context.py`, `src/data/ingest_investor_flow.py`, `src/sentiment/score_news.py` (GPU job: `slurm/sentiment_embeddings_gpu.sbatch`): multi-source inputs.
 - `src/agents/predictive_baselines.py`: ridge and LSTM (Bi-LSTM over the past window) forecast-then-allocate baselines.
 - `src/data/ingest_bot_policy_rate.py` and `src/features/policy_rate_context.py`: the official BOT policy-rate decision history as a point-in-time macro source.
 - `src/evaluation/attribution.py`: permutation attribution of data-source groups for trained agents.
 - `src/envs/thai_costs.py`: the published Thai cost schedule (about 0.176% per side including VAT).
+- `src/data/point_in_time_panel.py` and `src/envs/point_in_time_env.py`: the 2012–2024 point-in-time SET50 session mask and feature panel, and `PointInTimeSlotEnv`, which trades the index membership of each session through 50 masked slots (`universe.slot_order: traded_value | sticky`). `environment.max_cash_weight` caps the cash target (default 1 = off).
+- `scripts/run_pit_walk_forward.py`, `scripts/pit_universe_baselines.py` and `scripts/walk_forward_agent_diagnostics.py`: the point-in-time walk-forward, its survivorship baselines, and cost, turnover and concentration diagnostics for any walk-forward agent.
+- `scripts/check_slot_order_invariance.py`: rolls a trained point-in-time model out under sticky and traded-value slot orders and reports how far apart the two equity curves end.
+- `scripts/pit_heuristic_baselines.py`: momentum, inverse-volatility and minimum-variance benchmarks on the point-in-time SET50, on the same sessions, costs and accounting as the walk-forward.
+- `scripts/evaluate_pit_seed_ensemble.py`: evaluates trained point-in-time models as a seed ensemble (the mean of the seeds' target weights) and with a no-trade band (`environment.no_trade_band`), without training. It first replays every model against its saved validation curve.
+- `scripts/pit_lstm_forecast_baseline.py`: the LSTM forecast-then-allocate benchmark on the point-in-time SET50. A Bi-LSTM fitted per fold on the training years buys its ten best positive 21-session forecasts every month; it also records the forecasts' information coefficient.
+- `scripts/build_member_price_map.py`: maps every point-in-time list member to the price series to use (own symbol, current symbol after a rename, or none), from the downloads' coverage files; `--check` verifies the existing map.
+- `scripts/pit_feature_group_attribution.py`: re-runs each trained point-in-time model with one input group (technical, market, policy rate, macro) shuffled across sessions or held at its training mean, and reports how far its portfolio, return and cash move.
+- `scripts/pit_cash_cap_binding.py`: for a cash-capped point-in-time variant, replays each trained model and reports how often the policy's own cash weight was above the cap.
+- `scripts/build_slim_results_archive.py`: a verified tar.gz of code, configs, documents, input receipts and run outputs, without trained models, worker logs or price files ([runbook](docs/reproduce_20261111.md)).
 
 Config options read by `src.train_long_term` and the experiment scripts:
 
@@ -177,6 +190,7 @@ training:
   policy:
     features_extractor: asset_lstm
     market_feature_columns: [set50_etf_return_1d, set50_etf_volatility_20d]
+    # actor: shared_asset          # point-in-time runner: shared-weight actor; needs normalize_observations: false
 ```
 
 ```bash
@@ -197,6 +211,52 @@ python -m scripts.feature_group_attribution --config config/long_term_reward_exp
 # Data-source ablation (technical / +market / +macro)
 CONFIG=config/source_ablation_experiment.yaml VARIANTS="src_technical src_technical_market_macro" SEEDS="42 43 44" scripts/run_walk_forward_reward.sh results/<ablation-run> 5 100000
 python -m scripts.aggregate_walk_forward_reward --run-dir results/<ablation-run> --extra-run-dirs results/<wf-run> --variants src_technical plan_main_weekly_lstm src_technical_market_macro --seeds 42 43 44 --output-dir results/<ablation-combined>
+# Algorithm per variant: training.algo = ppo | a2c | sac | td3 | ddpg (see config/algorithm_comparison_experiment.yaml)
+# Scale any walk-forward on BistKA as a SLURM array (one task per year x variant x seed, 1 CPU each)
+CONFIG=config/algorithm_comparison_experiment.yaml VARIANTS="algo_sac algo_td3 algo_ddpg" SEEDS="42 43 44" RUN_NAME=algorithm_comparison \
+  sbatch --export=ALL --array=0-62%16 slurm/walk_forward_reward_array.sbatch
+# Point-in-time SET50 walk-forward (2012-2024 official membership; see docs/pit_walk_forward_20261107.md)
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm SEEDS="42 43 44" \
+  scripts/run_walk_forward_reward.sh results/<pit-run> 7 100000
+python -m scripts.pit_universe_baselines --config config/pit_walk_forward_experiment.yaml --run-dir results/<pit-run> --years 2016 2017 2018 2019 2020 2021 2022
+python -m scripts.aggregate_walk_forward_reward --run-dir results/<pit-run> --n-trials 6
+python -m scripts.walk_forward_agent_diagnostics --run-dir results/<pit-run> --variant pit_plan_weekly_lstm --pit-config config/pit_walk_forward_experiment.yaml
+# Sticky slot order, aggregated with the run above (whose baselines it reuses) and tested against it
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm_sticky SEEDS="42 43 44" \
+  scripts/run_walk_forward_reward.sh results/<pit-sticky-run> 3 100000
+python -m scripts.aggregate_walk_forward_reward --run-dir results/<pit-sticky-run> --extra-run-dirs results/<pit-run> --n-trials 7 --references pit_plan_weekly_lstm --output-dir results/<pit-combined>
+python -m scripts.walk_forward_agent_diagnostics --run-dir results/<pit-sticky-run> --variant pit_plan_weekly_lstm_sticky --pit-config config/pit_walk_forward_experiment.yaml
+# Shared-weight actor (sticky slots), aggregated with both runs above and tested against both
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm_shared SEEDS="42 43 44" \
+  scripts/run_walk_forward_reward.sh results/<pit-shared-run> 3 100000
+python -m scripts.aggregate_walk_forward_reward --run-dir results/<pit-shared-run> --extra-run-dirs results/<pit-sticky-run> results/<pit-run> --n-trials 8 --references pit_plan_weekly_lstm_sticky pit_plan_weekly_lstm --output-dir results/<pit-combined-shared>
+python -m scripts.walk_forward_agent_diagnostics --run-dir results/<pit-shared-run> --variant pit_plan_weekly_lstm_shared --pit-config config/pit_walk_forward_experiment.yaml
+python -m scripts.check_slot_order_invariance --config config/pit_walk_forward_experiment.yaml --fold-year 2019 --run-dirs results/<pit-shared-run>/fold_2019/pit_plan_weekly_lstm_shared_seed42/runs/pit_plan_weekly_lstm_shared_seed42
+# Seed ensemble and a 0.5-point no-trade band on the trained shared-weight models (no training), aggregated with that run
+python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_experiment.yaml --source-run results/<pit-shared-run> --variant pit_plan_weekly_lstm_shared --output-dir results/<pit-ensemble> --band 0.005
+python -m scripts.aggregate_walk_forward_reward --run-dir results/<pit-ensemble> --extra-run-dirs results/<pit-shared-run> --n-trials 13 --references pit_plan_weekly_lstm_shared --output-dir results/<pit-ensemble-combined>
+# Heuristic benchmarks (momentum, inverse volatility, minimum variance) on the point-in-time SET50
+python -m scripts.pit_heuristic_baselines --config config/pit_walk_forward_experiment.yaml --run-dir results/<pit-heuristics> --years 2016 2017 2018 2019 2020 2021 2022
+# LSTM forecast-then-allocate benchmark (Bi-LSTM per fold, ten best forecasts monthly) on the point-in-time SET50
+python -m scripts.pit_lstm_forecast_baseline --config config/pit_walk_forward_experiment.yaml --run-dir results/<pit-lstm-forecast> --years 2016 2017 2018 2019 2020 2021 2022
+# Slim archive of code, configs, receipts and run outputs, without models (see docs/reproduce_20261111.md)
+python -m scripts.build_slim_results_archive --output results/<slim-archive>.tar.gz --run-dir results/<run> --run-dir results/<another-run>
+# Shared-weight actor trained with the no-trade band, and its seed ensemble (in its own environment, band included)
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm_shared_band SEEDS="42 43 44" \
+  scripts/run_walk_forward_reward.sh results/<pit-band-run> 3 100000
+python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_experiment.yaml --source-run results/<pit-band-run> --variant pit_plan_weekly_lstm_shared_band --output-dir results/<pit-band-ensemble> --modes ensemble
+# Source arm: the shared-weight agent plus the BOT policy rate, its seed ensemble with the band, and the input attribution
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_policy_rate.yaml VARIANTS=pit_plan_weekly_lstm_shared_policy SEEDS="42 43 44" \
+  scripts/run_walk_forward_reward.sh results/<pit-policy-run> 3 100000
+python -m scripts.evaluate_pit_seed_ensemble --config config/pit_walk_forward_policy_rate.yaml --source-run results/<pit-policy-run> --variant pit_plan_weekly_lstm_shared_policy --output-dir results/<pit-policy-ensemble> --band 0.005 --modes ensemble_band
+python -m scripts.pit_feature_group_attribution --config config/pit_walk_forward_policy_rate.yaml --run-dir results/<pit-policy-run> --variant pit_plan_weekly_lstm_shared_policy
+# The same for the daily macro proxies (config/pit_walk_forward_macro.yaml, variant pit_plan_weekly_lstm_shared_macro)
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_macro.yaml VARIANTS=pit_plan_weekly_lstm_shared_macro SEEDS="42 43 44" \
+  scripts/run_walk_forward_reward.sh results/<pit-macro-run> 3 100000
+# Shared-weight agent with its cash target capped at 20% (variant pit_plan_weekly_lstm_shared_cashcap), and how often the cap bound
+RUNNER=scripts.run_pit_walk_forward CONFIG=config/pit_walk_forward_experiment.yaml VARIANTS=pit_plan_weekly_lstm_shared_cashcap SEEDS="42 43 44" \
+  scripts/run_walk_forward_reward.sh results/<pit-cash-cap-run> 3 100000
+python -m scripts.pit_cash_cap_binding --config config/pit_walk_forward_experiment.yaml --run-dir results/<pit-cash-cap-run> --variant pit_plan_weekly_lstm_shared_cashcap
 # Official BOT policy-rate history
 python -m src.data.ingest_bot_policy_rate --input data/external/original/bot_policy_rate_mpc_table_asof_20261028.xlsx --output data/external/bot_policy_rate_history.csv --source-url <url> --retrieved-at <utc>
 ```

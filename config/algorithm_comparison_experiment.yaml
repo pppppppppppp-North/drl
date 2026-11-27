@@ -1,0 +1,97 @@
+# Milestone M6, RQ1/RQ4: which DRL algorithm is most effective and stable for this problem?
+# Exploratory tier: Yahoo data, five starter tickers. Everything except the algorithm is held at
+# the best design so far (plan reward, weekly decisions, shared per-asset LSTM extractor, technical +
+# SET50 market inputs). PPO is plan_main_weekly_lstm from the reward walk-forward (same seeds), so
+# it is reused rather than retrained. Walk-forward folds come from --fold-year (2016-2022); the
+# 2023-2024 test years and the sealed holdouts are never read.
+#
+# Compute note: SAC/TD3/DDPG with the LSTM extractor take about an hour per 100k-step run on one
+# core and about 1 GB of replay memory each. Run them on BistKA with slurm/walk_forward_reward_array.sbatch,
+# not as several parallel jobs on an 8 GB laptop. A2C takes about 4 minutes.
+project:
+  name: algorithm_comparison_experiment
+  seed: 42
+
+data:
+  prices: data/raw/extended/prices_starter5_2012_2024.csv
+  index: data/raw/extended/index_set50_etf_2012_2024.csv
+  index_name: set50_etf
+  drop_all_zero_volume_dates: true
+
+splits:
+  train_end: "2019-12-31"
+  validation_start: "2020-01-01"
+  validation_end: "2022-12-30"
+
+features:
+  lookback: 30
+  columns:
+    - return_1d
+    - return_5d
+    - return_20d
+    - volatility_20d
+    - ma_ratio_10
+    - ma_ratio_30
+    - rsi_14
+    - macd
+    - bollinger_z
+    - atr_14
+    - volume_ratio_20
+    - set50_etf_return_1d
+    - set50_etf_return_5d
+    - set50_etf_return_20d
+    - set50_etf_volatility_20d
+    - set50_etf_ma_ratio_20
+
+base:
+  environment:
+    initial_cash: 1000000.0
+    transaction_cost: 0.0015
+    slippage: 0.0005
+    accounting: self_financing
+    action_transform: softmax
+    rebalance_every: 5
+    train_random_start: true
+    train_episode_length: 504
+    reward:
+      type: plan_main
+      sharpe_weight: 0.1
+      sharpe_eta: 0.01
+      drawdown_penalty: 0.5
+      drawdown_mode: increment
+      turnover_penalty: 0.0
+      scale: 100.0
+  training:
+    total_timesteps: 100000
+    num_envs: 1
+    gamma: 0.99
+    normalize_observations: true
+    verbose: 0
+    policy:
+      features_extractor: asset_lstm
+      market_feature_columns: [set50_etf_return_1d, set50_etf_return_5d, set50_etf_return_20d, set50_etf_volatility_20d, set50_etf_ma_ratio_20]
+      hidden_size: 32
+      fusion_size: 16
+      net_arch: [64, 64]
+
+seeds: [42, 43, 44]
+
+variants:
+  - name: algo_a2c
+    description: "A2C (synchronous advantage actor-critic), on-policy"
+    training: {algo: a2c, n_steps: 128, learning_rate: 0.0007, ent_coef: 0.0}
+  - name: algo_sac
+    description: "SAC (soft actor-critic), off-policy with automatic entropy tuning"
+    training: {algo: sac, learning_rate: 0.0003, buffer_size: 100000, optimize_memory_usage: true,
+               replay_buffer_kwargs: {handle_timeout_termination: false}, learning_starts: 2000, batch_size: 256,
+               train_freq: 4, gradient_steps: 1, tau: 0.005, ent_coef: auto}
+  - name: algo_td3
+    description: "TD3 (twin delayed DDPG), off-policy, Gaussian exploration noise on the logits"
+    training: {algo: td3, learning_rate: 0.0003, buffer_size: 100000, optimize_memory_usage: true,
+               replay_buffer_kwargs: {handle_timeout_termination: false}, learning_starts: 2000, batch_size: 256,
+               train_freq: 4, gradient_steps: 1, tau: 0.005, action_noise_sigma: 0.3}
+  - name: algo_ddpg
+    description: "DDPG, off-policy, Gaussian exploration noise on the logits"
+    training: {algo: ddpg, learning_rate: 0.0003, buffer_size: 100000, optimize_memory_usage: true,
+               replay_buffer_kwargs: {handle_timeout_termination: false}, learning_starts: 2000, batch_size: 256,
+               train_freq: 4, gradient_steps: 1, tau: 0.005, action_noise_sigma: 0.3}

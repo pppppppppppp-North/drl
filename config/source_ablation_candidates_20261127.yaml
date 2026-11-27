@@ -1,0 +1,29 @@
+# The data-source ablation of the locked point-in-time design (BistKA job 4528): the locked shared-weight LSTM with the
+# 20% cash cap, given technical inputs only, or the five SET50 ETF market inputs plus the Bank of Thailand policy-rate
+# inputs, the macro proxies, or both. 100k timesteps, five seeds, scored by the decision-7 rule on the validation years
+# only (scripts/rank_final_candidates.py; docs/source_ablation_20261127.md). A check made after the test and holdout
+# stages, not a new selection: the locked design and its results stay as recorded. Run folders are relative to --base.
+universes:
+  point_in_time: {reference: pit_equal_weight_monthly, benchmark: set50_etf_buy_hold}
+
+candidates:
+  - {id: pit_cash_cap_100k_5seeds, universe: point_in_time, label: "Technical + ETF market (locked), 100k (5 seeds)", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_cashcap, seeds: [42, 43, 44, 45, 46], runs: [pit_walk_forward_cash_cap_100k_5seeds_20261125]}
+  - {id: pit_cash_cap_100k_ensemble_band_5seeds, universe: point_in_time, label: "Technical + ETF market (locked), ensemble + band", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_cashcap_ensemble_band, runs: [pit_cash_cap_ensemble_100k_5seeds_20261125]}
+  - {id: pit_src_technical_100k_5seeds, universe: point_in_time, label: "Technical only, 100k (5 seeds)", timesteps: 100000,
+     policy: pit_cashcap_src_technical, seeds: [42, 43, 44, 45, 46], runs: [pit_source_ablation_cashcap_bistka_20261126]}
+  - {id: pit_src_technical_100k_ensemble_band_5seeds, universe: point_in_time, label: "Technical only, ensemble + band", timesteps: 100000,
+     policy: pit_cashcap_src_technical_ensemble_band, runs: [pit_src_technical_ensemble_20261127]}
+  - {id: pit_src_policy_100k_5seeds, universe: point_in_time, label: "Technical + ETF market + policy rate, 100k (5 seeds)", timesteps: 100000,
+     policy: pit_cashcap_src_policy, seeds: [42, 43, 44, 45, 46], runs: [pit_source_ablation_cashcap_bistka_20261126]}
+  - {id: pit_src_policy_100k_ensemble_band_5seeds, universe: point_in_time, label: "Technical + ETF market + policy rate, ensemble + band", timesteps: 100000,
+     policy: pit_cashcap_src_policy_ensemble_band, runs: [pit_src_policy_ensemble_20261127]}
+  - {id: pit_src_macro_100k_5seeds, universe: point_in_time, label: "Technical + ETF market + macro, 100k (5 seeds)", timesteps: 100000,
+     policy: pit_cashcap_src_macro, seeds: [42, 43, 44, 45, 46], runs: [pit_source_ablation_cashcap_bistka_20261126]}
+  - {id: pit_src_macro_100k_ensemble_band_5seeds, universe: point_in_time, label: "Technical + ETF market + macro, ensemble + band", timesteps: 100000,
+     policy: pit_cashcap_src_macro_ensemble_band, runs: [pit_src_macro_ensemble_20261127]}
+  - {id: pit_src_all_100k_5seeds, universe: point_in_time, label: "All sources, 100k (5 seeds)", timesteps: 100000,
+     policy: pit_cashcap_src_all, seeds: [42, 43, 44, 45, 46], runs: [pit_source_ablation_cashcap_bistka_20261126]}
+  - {id: pit_src_all_100k_ensemble_band_5seeds, universe: point_in_time, label: "All sources, ensemble + band", timesteps: 100000,
+     policy: pit_cashcap_src_all_ensemble_band, runs: [pit_src_all_ensemble_20261127]}

@@ -1,14 +1,109 @@
 # Final Methodology And Results
 
-Last updated: 2026-05-31
+Last updated: 2026-11-26. The May 2026 pilot write-up is kept unchanged as an appendix at the end.
 
-## Objective
+This is the short account of what was built, how it was evaluated and what it found. The numbers come from the dated reports linked in each section. The report chapter `docs/report_drafts/results_title_alignment_20261106.tex` has the same results with tables and figures, and [the research-question answers](research_question_answers_20261111.md) take each question in turn.
+
+**Evidence tier: exploratory.** Prices, the market series and the macro proxies come from Yahoo Finance, not the licensed SETSMART package the project requested. The SET50 membership is official.
+
+## Question
+
+Can a deep reinforcement learning agent with a long-term objective and several data sources earn more over years than simple benchmarks, after costs, on the Thai stock market?
+
+## Data and universes
+
+- **Five starter stocks** (ADVANC, AOT, CPALL, KBANK, PTT), 2012–2024 for development. They were chosen with hindsight: today's large caps.
+- **Point-in-time SET50:** on every session, the official SET50 members of that session (archive 2012–2024), restricted to members with Yahoo prices. Between 39 and 48 members are tradable a session; 13% of member-sessions have no prices, mostly delisted or merged names ([universe](point_in_time_universe_2012_2024_20261107.md)).
+- **Market series:** the SET50 ETF (TDEX), also the investable benchmark.
+- **Other sources tried:** SET50 market context, the Bank of Thailand policy rate (point-in-time decisions), daily macro proxies (USD/THB, oil, gold, US 10-year yield). Fundamentals, news sentiment and investor flow are built as code paths but lack historical data inside the modelling window, so they are not in any result.
+- **Splits:** validation years 2016–2022 as seven walk-forward folds; test years 2023–2024; a sealed holdout from 2025 to 4 November 2026, written and hashed at download and opened once.
+
+## Method
+
+- **Environment:** daily data, weekly decisions, long-only weights with cash, 0.15% commission plus 0.05% slippage per side, one-session information lag ([environment and reward](long_term_reward_experiment_20261106.md)).
+- **Reward ("plan" reward):** log wealth growth, plus a small differential-Sharpe term, minus half of each new drawdown. It replaced the one-day reward of the earlier pilot, which overtraded.
+- **Policy:** PPO with a per-asset LSTM encoder. On the point-in-time universe, a shared-weight actor scores every member with the same weights, so the slot order does not matter.
+- **Variants on the point-in-time universe:** sticky slots; the shared-weight actor; a seed ensemble (the mean of the seeds' target weights); a 0.5-point no-trade band; training with the band; the policy rate; the macro proxies; and the cash weight capped at 20%.
+- **Algorithms (five stocks):** PPO, A2C, SAC, TD3 and DDPG with the same reward, model and inputs.
+- **Benchmarks:** equal weight of the same universe (monthly), the SET50 ETF, momentum, inverse volatility, minimum variance, and ridge and LSTM forecast-then-allocate strategies.
+- **Statistics:** Sharpe ratios on chained daily returns, paired stationary-bootstrap 95% intervals, and the deflated Sharpe ratio for the number of designs tried ([formulas](evaluation_metric_formulas_20261110.md)).
+- **Choosing the design:** a rule fixed before the test years: the median over the validation years of the annualised log return above equal weight of the same universe, averaged over seeds. If no design scores above zero, it selects equal weight ([decision](final_design_decision_20261125.md)).
+- **Single evaluations:** the chosen designs, their seeds and statistics were fixed in lock files approved before each run. Run-once gates refuse a changed config, uncommitted code or a second run, and write receipts and a ledger: `scripts/run_final_test_evaluation.py` (test years) and `scripts/run_holdout_evaluation.py` (holdout).
+
+## Results on the validation years (2016–2022)
+
+| Design or benchmark | Universe | Annual return | Note |
+| --- | --- | ---: | --- |
+| PPO, plan reward, 100k timesteps | Five stocks | 7.6% | five seeds |
+| A2C, 100k / 300k | Five stocks | 7.5% / 8.7% | best algorithm; not significantly better than PPO |
+| PPO, 300k | Five stocks | 4.4% | held 39% cash; significantly worse than at 100k |
+| SAC, TD3, DDPG, 300k | Five stocks | 0.3%, −0.9%, −1.4% | about 30× turnover a year |
+| Equal weight / ETF | Five stocks | 10.1% / 7.1% | |
+| DRL, slots by traded value | Point-in-time | −1.1% | overtraded as the slot order changed |
+| DRL, sticky slots | Point-in-time | 3.7% | |
+| DRL, shared-weight actor (5 seeds) | Point-in-time | 4.5% | |
+| Seed ensemble + band (5 seeds) | Point-in-time | 5.2% | 5.5% with three seeds |
+| **Cash-capped ensemble + band (locked)** | Point-in-time | **5.0%** | same with five seeds; 4.9% at 300k |
+| Shared actor at 300k, ensemble + band | Point-in-time | 3.9% | 41% cash, smaller drawdown |
+| Equal weight / ETF | Point-in-time | 5.6% / 7.1% | |
+| Momentum, inverse volatility, minimum variance | Point-in-time | 5.3%, 5.0%, 4.0% | |
+
+- **Survivorship:** equal weight over today's SET50 names made 12.2% a year over the same years, against 5.6% over each session's actual members ([report](pit_walk_forward_20261107.md)).
+- **What the point-in-time agent learned:** close to equal weight (daily correlation 0.998 for the seed ensemble).
+- **Sources:** adding the policy rate or the macro proxies lowered the point-in-time return. Only SET50 market context helped, borderline and on five stocks ([ablation](source_ablation_20261106.md)).
+- **Training budget:** 300k timesteps never beat 100k significantly. Without a cap, PPO drifted to cash; with the 20% cap, 10 of 35 models still sat near it ([300k](bistka_300k_results_20261125.md), [cash cap](cash_cap_5seeds_300k_20261126.md)).
+- **Selection:** no DRL design scored above zero against equal weight in either universe, so the rule as written selects equal weight. The top DRL designs were then evaluated anyway: the point-in-time cash-capped ensemble with the band (score −0.01) and five-stock A2C at 300k (−0.16).
+
+## Results on the test years (2023–2024) and the sealed holdout (2025 to 4 November 2026)
+
+| Policy | 2023 | 2024 | 2025 | 2026 to 4 Nov | Test, chained | Holdout, chained |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| **Point-in-time DRL (locked)** | −11.4% | −6.7% | −8.8% | +23.7% | 0.827 | 1.128 |
+| Point-in-time equal weight | −13.5% | −7.6% | −8.8% | +29.7% | 0.799 | 1.183 |
+| **Five-stock A2C, 300k** | −1.9% | +4.4% | +0.7% | +14.3% | 1.026 | 1.153 |
+| Five-stock equal weight | −3.6% | +10.1% | +6.0% | +20.8% | 1.061 | 1.281 |
+| SET50 ETF | −9.1% | +8.2% | −2.8% | +24.9% | 0.984 | 1.214 |
+
+- **Test years** ([results](final_test_results_20261125.md)): the point-in-time design was ahead of equal weight in both years (Sharpe difference +0.06, −0.06 to +0.17, not significant) and behind the ETF. Five-stock A2C trailed equal weight. Yahoo's 2024 prices turned out to have stale rows on 17.5% of stock rows; the results stand as locked and the defect is disclosed.
+- **Holdout** ([results](holdout_results_20261126.md)): the point-in-time design matched equal weight in 2025 and trailed it in 2026, holding up to its 20% cash cap through a rally. Its Sharpe shortfall against equal weight is significant: −0.12 (−0.23 to −0.01). Five-stock A2C trailed equal weight and the ETF, not significantly. The point-in-time stage's first attempt stopped at loading before any training and was rerun once with the authors' approval. Stale prices are rare from 2025 on (0.2–1.8% of rows).
+
+## Conclusion
+
+The long-term reward fixed the overtrading of the earlier one-day objective, and on the point-in-time SET50 the agent came to hold close to equal weight at lower turnover. No design beat equal weight of its own universe on the validation years. The design chosen by a fixed rule was slightly ahead of equal weight in the test years and significantly behind it, by Sharpe ratio, on the sealed holdout. Neither DRL design beat the SET50 ETF on years it had not seen. Neither extra source tried on the point-in-time universe (the policy rate, the macro proxies) helped. The evidence does not support a claim that this DRL design improves long-term profit in the Thai stock market. It does support the protocol: a survivorship-aware universe, walk-forward folds, a selection rule fixed in advance, and locked single evaluations that report a negative result as it came.
+
+## Limitations
+
+- **Data tier:** Yahoo prices carry no trading-status or corporate-action records; 13% of point-in-time member-sessions have no prices; 2024 has stale rows.
+- **Membership after 2024:** the holdout holds the 2024 H2 SET50 list fixed, so the 2025–2026 index revisions are ignored.
+- **Costs:** 0.20% per side, with no market impact, spreads, board lots or price limits.
+- **Sources:** fundamentals, news sentiment and investor flow have no historical data in the modelling window, so the multi-source claim rests on price, technical, market, macro-proxy and policy-rate inputs.
+- **Selection:** many designs were tried on the validation years; the deflated Sharpe corrects for this only in part.
+- **Budget and settings:** most models trained for 100k timesteps; the algorithms' settings were not tuned.
+
+## Reproducing
+
+[`reproduce_20261111.md`](reproduce_20261111.md) gives one command block per stage, including the HPC runs, the design choice, the test years and the holdout. The slim archive (`scripts/build_slim_results_archive.py`) holds the configs, receipts and metrics without trained models or price files.
+
+## What remains
+
+- Licensed SETSMART data (prices with trading status, corporate actions, fundamentals) and a historical news source, then the multi-source ablation on them.
+- Investor-flow features from SET's daily trading value by investor type.
+- The authors' choice of title wording ([title check](title_check_draft_20261110.md)), the advisor's review of the locks and decisions, and inserting the chapter into `kvis_final_research_report.tex`.
+- Any new claim needs years this work has not used.
+
+---
+
+# Appendix: the May 2026 pilot (as written on 2026-05-31)
+
+The text below is the earlier version of this document, unchanged except that its headings are one level lower. It describes the five-stock pilot and the data scaffolds before the work above.
+
+### Objective
 
 This project builds a reproducible pilot pipeline for deep reinforcement learning portfolio allocation in Thai stocks. The current implementation focuses on a five-stock Thai OHLCV starter universe and a synthetic pilot universe, with the same environment, metrics, and chronological train/validation/test split logic used for both.
 
 The current results are pilot results. They are useful for validating the experimental workflow, but they should not be interpreted as a complete Thai-market performance claim because only starter SET index, sector-context, daily macro-proxy, and Yahoo statement fundamental features are integrated with overlapping history. Sentiment and official macro ingestion/merge scaffolding are implemented, but the available Yahoo latest-news probe and BOT web-table probe do not overlap the 2021-2024 modeling window. Historical official macro releases, licensed fundamentals, historical sentiment, and a broader Thai universe remain incomplete.
 
-## Data
+### Data
 
 The real-data starter run uses Yahoo Finance OHLCV data for:
 
@@ -38,11 +133,11 @@ The generated data-quality report is written to:
 /lustrefs/project/25sfcs03/drl_thai_stock/reports/data_quality/real_ohlcv_data_quality.md
 ```
 
-## Features
+### Features
 
 The active technical feature set includes 1-day, 5-day, and 20-day returns; 20-day volatility; 10-day and 30-day moving-average ratios; RSI; MACD; Bollinger z-score; volume ratio; and ATR. The expanded pilot feature tables add SET index features, sector-context features, daily macro-proxy features, and lagged Yahoo statement fundamentals. Sentiment and official macro feature tables are also buildable through no-lookahead merge scaffolds, but current Yahoo latest-news and BOT web-table rows are outside the historical validation window.
 
-## Environment
+### Environment
 
 The trading environment is a Gymnasium-compatible long-only portfolio allocator. Actions are continuous portfolio weights over the stock universe. The environment applies transaction costs, tracks cash, portfolio value, net return, turnover, drawdown, and per-ticker weights, and exposes a fixed lookback observation tensor.
 
@@ -54,7 +149,7 @@ reward = return_weight * return - turnover_penalty * turnover - drawdown_penalty
 
 The current real-data configs use `return_weight=1.0`, `turnover_penalty=0.05`, and `drawdown_penalty=0.1`.
 
-## Models And Baselines
+### Models And Baselines
 
 Implemented DRL models:
 
@@ -73,7 +168,7 @@ Implemented baselines:
 
 Hyperparameter search uses SLURM job arrays and the trial runner in `src/experiments/run_trial.py`. The search space covers learning rate, gamma, GAE lambda, entropy coefficient, rollout length, PPO clip range, and PPO batch size.
 
-## Verified Runs
+### Verified Runs
 
 | purpose | HPC path | status |
 | --- | --- | --- |
@@ -87,7 +182,7 @@ Hyperparameter search uses SLURM job arrays and the trial runner in `src/experim
 
 Run `2854` was invalidated because an earlier training entrypoint regenerated synthetic data into real-data paths. Run `2858` was invalidated because the pre-fix sampler repeated parameters across repeated algorithm trials.
 
-## Synthetic Pilot Results
+### Synthetic Pilot Results
 
 The latest valid split-aware synthetic comparison is `algo_compare_2853`.
 
@@ -102,7 +197,7 @@ The latest valid split-aware synthetic comparison is `algo_compare_2853`.
 
 The synthetic result confirms that the pipeline can run end-to-end, but the synthetic generator creates simplified market structure and should not be used for market conclusions.
 
-## Real OHLCV Validation Results
+### Real OHLCV Validation Results
 
 The latest valid real-OHLCV comparison is `real_ohlcv_compare_2855`.
 
@@ -117,7 +212,7 @@ The latest valid real-OHLCV comparison is `real_ohlcv_compare_2855`.
 
 On this validation split, the best policy was buy-and-hold `PTT.BK`. PPO and A2C underperformed equal weight and the strongest single-stock buy-and-hold baselines. PPO did have a smaller max drawdown than A2C and equal weight in the comparison run.
 
-## Hyperparameter Search Results
+### Hyperparameter Search Results
 
 The fixed five-task Optuna search is `optuna_search_fixed_2863`.
 
@@ -137,7 +232,7 @@ The best short search trial was PPO trial `4`. A longer 20000-timestep run using
 
 This means the tuned PPO parameters are not yet robust. The short trial improved validation Sharpe, but the longer run regressed and should be treated as evidence that more tuning, walk-forward validation, and broader data are needed before making a model-performance claim.
 
-## Walk-Forward Extension
+### Walk-Forward Extension
 
 Walk-forward window generation is now implemented in `src/data/splits.py`. The starter real-OHLCV config uses 504 training dates, 126 validation dates, 126 test dates, and a 126-date step size. This creates rolling windows for future one-job-per-window SLURM runs and out-of-sample aggregation.
 
@@ -157,7 +252,7 @@ Mean test-window results from the pilot:
 | equal_weight | 2 | 0.021133 | 0.066667 | 0.633491 | -0.068208 |
 | ppo | 2 | 0.004260 | 0.011669 | 0.057644 | -0.026071 |
 
-## Ablation Pilot
+### Ablation Pilot
 
 The first real-OHLCV ablation pilot is `results/ablation_pilot_2871`. It ran three short 1000-timestep PPO ablations through a SLURM array:
 
@@ -182,7 +277,7 @@ PPO ablation summary:
 
 The best policy in each pilot ablation comparison remained `buy_hold_PTT.BK`, with validation Sharpe `0.405480`. This means the ablation machinery is now verified, but stronger claims should wait for broader sector, official macro, sentiment, and fundamentals features.
 
-## Regime And Stress Tests
+### Regime And Stress Tests
 
 The first real-OHLCV regime/stress test is `results/regime_tests_real_ohlcv_20260531`. It evaluates baselines plus the saved PPO/A2C models from `results/real_ohlcv_compare_2855` across named slices and two auto-selected 63-trading-date high-volatility windows.
 
@@ -206,7 +301,7 @@ Best policy by evaluated regime:
 | test_period | buy_hold_ADVANC.BK | 0.483925 | 0.833957 | 3.681822 | -0.074324 |
 | validation_period | buy_hold_PTT.BK | 0.043523 | 0.067653 | 0.405480 | -0.103448 |
 
-## SET Market-Context Features
+### SET Market-Context Features
 
 The first verified market-context feature extension uses Yahoo Finance symbol `^SET.BK` for the SET index. The ingestion output is `data/raw/prices_market_indices.csv`, with 965 rows from 2021-01-04 to 2024-12-30 and no missing values. The merged feature table is `data/processed/features_real_ohlcv_market.parquet`, with 4,840 stock rows and 26 columns.
 
@@ -229,7 +324,7 @@ It also replaces the placeholder `market_return_1d` with the SET index daily ret
 
 This verifies the real SET-index feature path end to end. It does not yet satisfy sector-relative features because the Yahoo SET50/SET100 candidates probed from HPC did not return usable rows; a more reliable sector-index source is still needed.
 
-## Sector Context Features
+### Sector Context Features
 
 Because Yahoo SET50/SET100 and sector-index candidates were not reliable through the HPC yfinance check, the first sector extension uses a static pilot mapping from SET public listed-company and index constituent classifications. The mapping file is `data/reference/sector_mapping_thai_pilot.csv` and covers the five starter tickers:
 
@@ -254,7 +349,7 @@ The first short 1000-timestep validation run is `results/real_ohlcv_sector_pilot
 
 The sector-context PPO pilot improves over the SET-market-context PPO pilot on cumulative return, Sharpe, and max drawdown, but it still does not beat the PTT buy-and-hold baseline.
 
-## Macro Proxy Features
+### Macro Proxy Features
 
 The first macro extension uses daily Yahoo Finance proxy series rather than official release-date macroeconomic data. The raw macro proxy file is `data/raw/prices_macro_yahoo.csv`, with 5,059 rows across:
 
@@ -277,7 +372,7 @@ The first short 1000-timestep validation run is `results/real_ohlcv_macro_pilot_
 
 The macro-proxy PPO pilot improves over the sector-context PPO pilot and beats equal weight on this short validation run. It still does not beat the PTT or ADVANC buy-and-hold baselines, so it remains a pipeline validation result rather than a model-performance claim.
 
-## Fundamentals Features
+### Fundamentals Features
 
 The first fundamentals extension uses Yahoo Finance annual and quarterly financial statements. Quarterly statements are preferred when both annual and quarterly rows exist for the same ticker, period, and metric; annual statements provide older fallback coverage. Features are available only after a 60-day reporting lag.
 
@@ -294,7 +389,7 @@ The first short 1000-timestep validation run is `results/real_ohlcv_fundamentals
 
 The fundamentals PPO pilot has lower max drawdown than equal weight and nearly identical Sharpe, but it still does not beat the PTT or ADVANC buy-and-hold baselines. It also underperforms the macro-proxy-only pilot, so these fundamentals should be treated as a pipeline validation source until a broader licensed history is available.
 
-## Official Macro Scaffold
+### Official Macro Scaffold
 
 The official macro extension now has a Bank of Thailand source probe and release-date-aware feature merge:
 
@@ -306,7 +401,7 @@ The source probe targets the BOTWEBSTAT `EC_EI_002_S2` Leading Economic Indicato
 
 Because of that date mismatch, no official macro model-performance claim is made from this probe. The code path is verified by 40 passing HPC tests, but a historical BOT export/API source or downloaded historical file is still required before running a valid official macro ablation.
 
-## Sentiment Scaffold
+### Sentiment Scaffold
 
 The sentiment extension now has source probing, daily scoring, and feature merging paths:
 
@@ -319,11 +414,11 @@ The merge is backward-only by ticker/date with a seven-day maximum news age. Thi
 
 Because of that date mismatch, no sentiment model-performance claim is made from this source. The code path is verified by 38 passing HPC tests, but a licensed or otherwise accessible historical Thai news/disclosure source is still required before running a valid sentiment ablation.
 
-## Current Conclusion
+### Current Conclusion
 
 The implementation is now strong enough for a reproducible pilot: ingestion, feature building, leakage checks, chronological splits, DRL training, baselines, plots, hyperparameter arrays, result aggregation, sentiment merge scaffolding, and official macro release-date merge scaffolding all run on BistKA. The current real-data results do not show PPO or A2C beating the strongest simple buy-and-hold baseline. This is a useful research outcome because it sets a realistic baseline and shows that the next work should focus on data coverage, multi-source features, and walk-forward validation rather than only increasing training time.
 
-## Remaining Work
+### Remaining Work
 
 - Expand the universe beyond five starter `.BK` tickers.
 - Replace pilot sector mapping with a broader, licensed sector-index or constituent source.

@@ -19,7 +19,7 @@ if [[ "${1:-}" == "--task" ]]; then
   mkdir -p "$RUN_DIR/locks"
   if ! mkdir "$lock" 2>/dev/null; then echo "busy $y $v $s (locked by another launcher; remove $lock if stale)"; exit 0; fi
   trap 'rmdir "$lock" 2>/dev/null' EXIT
-  if "$PYTHON" -c "import torch; torch.set_num_threads(1); import runpy, sys; sys.argv=['x','--config','$CONFIG','--output-dir','$out','--variants','$v','--seeds','$s','--fold-year','$y','--timesteps','$TIMESTEPS']; runpy.run_module('scripts.run_reward_variant_experiment', run_name='__main__')" \
+  if "$PYTHON" -c "import torch; torch.set_num_threads(1); import runpy, sys; sys.argv=['x','--config','$CONFIG','--output-dir','$out','--variants','$v','--seeds','$s','--fold-year','$y','--timesteps','$TIMESTEPS']; runpy.run_module('$RUNNER', run_name='__main__')" \
       > "$RUN_DIR/logs/fold${y}_${v}_seed${s}.log" 2>&1; then
     echo "done $y $v $s"
   else
@@ -33,6 +33,8 @@ WORKERS=${2:-4}
 TIMESTEPS=${3:-100000}
 PYTHON=${PYTHON:-python}
 CONFIG=${CONFIG:-config/long_term_reward_experiment.yaml}
+# RUNNER=scripts.run_pit_walk_forward runs the point-in-time SET50 walk-forward instead.
+RUNNER=${RUNNER:-scripts.run_reward_variant_experiment}
 YEARS=(${=YEARS:-2016 2017 2018 2019 2020 2021 2022})
 VARIANTS=(${=VARIANTS:-plan_main_weekly_lstm log_weekly})
 SEEDS=(${=SEEDS:-42 43 44 45 46})
@@ -46,6 +48,6 @@ for v in "${VARIANTS[@]}"; do for y in "${YEARS[@]}"; do for s in "${SEEDS[@]}";
 done; done; done
 echo "$(wc -l < "$tasks" | tr -d ' ') tasks, $WORKERS workers, $TIMESTEPS timesteps each"
 
-export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 RUN_DIR CONFIG PYTHON TIMESTEPS
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 RUN_DIR CONFIG PYTHON TIMESTEPS RUNNER
 xargs -P "$WORKERS" -L 1 zsh "$0" --task < "$tasks"
 echo "all tasks finished"

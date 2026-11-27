@@ -1,0 +1,131 @@
+# Source ablation on the point-in-time SET50 (milestones M4 and M6): the shared-weight agent of
+# config/pit_walk_forward_experiment.yaml (variant pit_plan_weekly_lstm_shared) plus the eight daily
+# macro-proxy inputs of the five-stock source ablation (config/source_ablation_experiment.yaml, arm
+# src_technical_market_macro): the 5- and 20-session returns of USD/THB, Brent and gold, and the 1-session
+# change and 20-session return of the US 10-year yield (src/features/macro_context.py). They are market
+# prices, so they are point-in-time. Prices after splits.validation_end are dropped before the merge, and a
+# decision reads only the sessions before it. Everything else, including data, splits, base settings and
+# seeds, is generated from pit_walk_forward_experiment.yaml and must stay identical to it, so the
+# comparison with the shared run changes only the inputs.
+project:
+  name: pit_walk_forward_macro
+  seed: 42
+data:
+  membership: data/reference/set50_set100_membership_2012_2024.csv
+  price_map: data/raw/extended/set100_2012_2024_additions/member_price_map_2012_2024.csv
+  prices:
+  - data/raw/extended/prices_set100_union_2012_2024.csv.gz
+  - data/raw/extended/set100_2012_2024_additions/prices_set100_2012_2024_additions.csv.gz
+  index: data/raw/extended/index_set50_etf_2012_2024.csv
+  index_name: set50_etf
+  universe: set50
+  macro: data/raw/extended/macro_proxies_2012_2024.csv
+  macro_names:
+    USDTHB=X: usdthb
+    BZ=F: brent
+    CL=F: wti
+    GC=F: gold
+    ^TNX: us10y
+splits:
+  validation_end: '2022-12-30'
+universe:
+  num_slots: 50
+  min_history_sessions: 60
+features:
+  lookback: 30
+  stock_columns:
+  - return_1d
+  - return_5d
+  - return_20d
+  - volatility_20d
+  - ma_ratio_10
+  - ma_ratio_30
+  - rsi_14
+  - macd
+  - bollinger_z
+  - atr_14
+  - volume_ratio_20
+  market_columns:
+  - set50_etf_return_1d
+  - set50_etf_return_5d
+  - set50_etf_return_20d
+  - set50_etf_volatility_20d
+  - set50_etf_ma_ratio_20
+base:
+  environment:
+    initial_cash: 1000000.0
+    transaction_cost: 0.0015
+    slippage: 0.0005
+    rebalance_every: 5
+    train_random_start: true
+    train_episode_length: 504
+    reward:
+      type: plan_main
+      sharpe_weight: 0.1
+      sharpe_eta: 0.01
+      drawdown_penalty: 0.5
+      drawdown_mode: increment
+      turnover_penalty: 0.0
+      scale: 100.0
+  training:
+    algo: ppo
+    total_timesteps: 100000
+    gamma: 0.99
+    normalize_observations: true
+    verbose: 0
+    policy:
+      features_extractor: asset_lstm
+      market_feature_columns:
+      - set50_etf_return_1d
+      - set50_etf_return_5d
+      - set50_etf_return_20d
+      - set50_etf_volatility_20d
+      - set50_etf_ma_ratio_20
+      hidden_size: 32
+      fusion_size: 16
+      net_arch:
+      - 64
+      - 64
+seeds:
+- 42
+- 43
+- 44
+variants:
+- name: pit_plan_weekly_lstm_shared_macro
+  description: As pit_plan_weekly_lstm_shared, plus eight daily macro-proxy inputs
+    (USD/THB, Brent, gold, US 10-year yield) as market inputs
+  universe:
+    slot_order: sticky
+  features:
+    market_columns:
+    - set50_etf_return_1d
+    - set50_etf_return_5d
+    - set50_etf_return_20d
+    - set50_etf_volatility_20d
+    - set50_etf_ma_ratio_20
+    - usdthb_return_5d
+    - usdthb_return_20d
+    - brent_return_5d
+    - brent_return_20d
+    - gold_return_5d
+    - gold_return_20d
+    - us10y_change_1d
+    - us10y_return_20d
+  training:
+    normalize_observations: false
+    policy:
+      actor: shared_asset
+      market_feature_columns:
+      - set50_etf_return_1d
+      - set50_etf_return_5d
+      - set50_etf_return_20d
+      - set50_etf_volatility_20d
+      - set50_etf_ma_ratio_20
+      - usdthb_return_5d
+      - usdthb_return_20d
+      - brent_return_5d
+      - brent_return_20d
+      - gold_return_5d
+      - gold_return_20d
+      - us10y_change_1d
+      - us10y_return_20d

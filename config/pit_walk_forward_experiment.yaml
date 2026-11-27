@@ -1,0 +1,125 @@
+# Milestone M3: walk-forward on the point-in-time SET50 universe, 2012-2022 validation years.
+# Exploratory tier: official SET membership (2012-2024 archive) but Yahoo prices, so 13% of
+# SET50 member-sessions (mostly delisted or merged names) have no prices and cannot be traded.
+# The design copies the best five-stock walk-forward design (plan reward, weekly decisions,
+# shared per-asset LSTM, technical + SET50 market inputs, 0.20% cost per side). The only change
+# is that the universe is the index membership of each session, in 50 slots ordered by trailing
+# traded value. Folds come from --fold-year; the 2023-2024 test years and the sealed holdouts are
+# never read.
+project:
+  name: pit_walk_forward_experiment
+  seed: 42
+
+data:
+  membership: data/reference/set50_set100_membership_2012_2024.csv
+  price_map: data/raw/extended/set100_2012_2024_additions/member_price_map_2012_2024.csv
+  prices:
+    - data/raw/extended/prices_set100_union_2012_2024.csv.gz
+    - data/raw/extended/set100_2012_2024_additions/prices_set100_2012_2024_additions.csv.gz
+  index: data/raw/extended/index_set50_etf_2012_2024.csv
+  index_name: set50_etf
+  universe: set50
+
+splits:
+  validation_end: "2022-12-30"
+
+universe:
+  num_slots: 50
+  min_history_sessions: 60
+
+features:
+  lookback: 30
+  stock_columns: [return_1d, return_5d, return_20d, volatility_20d, ma_ratio_10, ma_ratio_30, rsi_14, macd,
+                  bollinger_z, atr_14, volume_ratio_20]
+  market_columns: [set50_etf_return_1d, set50_etf_return_5d, set50_etf_return_20d, set50_etf_volatility_20d,
+                   set50_etf_ma_ratio_20]
+
+base:
+  environment:
+    initial_cash: 1000000.0
+    transaction_cost: 0.0015
+    slippage: 0.0005
+    rebalance_every: 5
+    train_random_start: true
+    train_episode_length: 504
+    reward:
+      type: plan_main
+      sharpe_weight: 0.1
+      sharpe_eta: 0.01
+      drawdown_penalty: 0.5
+      drawdown_mode: increment
+      turnover_penalty: 0.0
+      scale: 100.0
+  training:
+    algo: ppo
+    total_timesteps: 100000
+    gamma: 0.99
+    normalize_observations: true
+    verbose: 0
+    policy:
+      features_extractor: asset_lstm
+      market_feature_columns: [set50_etf_return_1d, set50_etf_return_5d, set50_etf_return_20d,
+                               set50_etf_volatility_20d, set50_etf_ma_ratio_20]
+      hidden_size: 32
+      fusion_size: 16
+      net_arch: [64, 64]
+
+seeds: [42, 43, 44]
+
+variants:
+  - name: pit_plan_weekly_lstm
+    description: "Plan reward, weekly decisions, shared per-asset LSTM over 50 point-in-time SET50 slots"
+  # Follow-up after the first run's diagnostics: members that changed slot (re-ordered by traded value)
+  # caused most of the turnover. Here a member keeps its slot while it stays tradable.
+  - name: pit_plan_weekly_lstm_sticky
+    description: "As pit_plan_weekly_lstm, but each member keeps its slot while it stays tradable"
+    universe:
+      slot_order: sticky
+  # M5, after the sticky run: the dense actor still scores slot positions, and VecNormalize keeps
+  # separate statistics for every slot. Here the actor scores every member with the same weights
+  # (src/models/shared_asset_policy.py), and features are standardized with one mean and standard
+  # deviation per feature from the training years, so allocations do not depend on the slot order.
+  # Slots stay sticky, as in the run it is compared with.
+  - name: pit_plan_weekly_lstm_shared
+    description: "As pit_plan_weekly_lstm_sticky, but a shared-weight actor and shared feature standardization"
+    universe:
+      slot_order: sticky
+    training:
+      normalize_observations: false
+      policy:
+        actor: shared_asset
+  # After the shared-weight run: the policy still turned over 3.4x a year after its initial purchase,
+  # against 0.9x for equal weight, and extra costs were half of its 1.0-point gap to equal weight. Here a
+  # holding is traded only when the policy's target differs from its current weight by more than 0.5
+  # percentage points, about a fifth of an equal-weight position (a 25% relative band at 44 holdings
+  # would be 0.57 points); smaller changes are not traded, and cash takes up the difference. The band
+  # applies in training and validation, and its width was fixed before the run, not tuned.
+  - name: pit_plan_weekly_lstm_shared_band
+    description: "As pit_plan_weekly_lstm_shared, with a 0.5-point no-trade band on every holding"
+    environment:
+      no_trade_band: 0.005
+    universe:
+      slot_order: sticky
+    training:
+      normalize_observations: false
+      policy:
+        actor: shared_asset
+  # After the band and source-arm runs (2026-11-11): cash was the agents' main weakness. Some seeds held
+  # 36-94% cash through whole validation years, and the attribution showed it was a near-constant learned
+  # output, not a response to the inputs. Here the target never holds more than 20% cash: when the policy's
+  # cash weight is above it, its stock weights are scaled up in proportion. The 20% mirrors Thai equity
+  # funds, which commit to holding at least 80% of their net assets in shares on average over the accounting
+  # year; a cap at every decision is stricter than that yearly average. The cap applies in training and
+  # validation, and it was fixed before the run, not tuned. It changes only the cash rule of
+  # pit_plan_weekly_lstm_shared (no band). With its seed ensemble and band, it is designs 18 and 19 in the
+  # deflated Sharpe ratio.
+  - name: pit_plan_weekly_lstm_shared_cashcap
+    description: "As pit_plan_weekly_lstm_shared, with the cash target capped at 20% of the portfolio"
+    environment:
+      max_cash_weight: 0.2
+    universe:
+      slot_order: sticky
+    training:
+      normalize_observations: false
+      policy:
+        actor: shared_asset

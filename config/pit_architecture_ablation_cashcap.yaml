@@ -1,0 +1,102 @@
+# Architecture ablation on the locked point-in-time design (milestone M5 exit criterion), 2026-11-26.
+# The locked design (pit_plan_weekly_lstm_shared_cashcap of config/pit_walk_forward_experiment.yaml) encodes each
+# member's 30-session window, and the SET50 ETF market window, with shared LSTMs. This arm replaces both LSTMs
+# with two-layer MLPs over the flattened window (src/models/feature_extractors.py, temporal_encoder: mlp): the
+# same inputs, shared weights across members, embedding size, fusion layers, shared-weight actor and 20% cash
+# cap, so the comparison changes only the temporal encoder. The M5 criterion asked for MLP against the fusion
+# encoder with five or more seeds on the broader universe; the five-stock version (three seeds, 2020-2022)
+# gave the fusion encoder +1.9% and the MLP -8.8%. Data, splits, base settings and the rest of the variant are
+# generated from pit_walk_forward_experiment.yaml and must stay identical to it
+# (tests/test_pit_architecture_ablation_config.py). Validation years 2016-2022 only; the test years and the
+# sealed holdout are never read, and the locked design and its results cannot change.
+project:
+  name: pit_architecture_ablation_cashcap
+  seed: 42
+data:
+  membership: data/reference/set50_set100_membership_2012_2024.csv
+  price_map: data/raw/extended/set100_2012_2024_additions/member_price_map_2012_2024.csv
+  prices:
+  - data/raw/extended/prices_set100_union_2012_2024.csv.gz
+  - data/raw/extended/set100_2012_2024_additions/prices_set100_2012_2024_additions.csv.gz
+  index: data/raw/extended/index_set50_etf_2012_2024.csv
+  index_name: set50_etf
+  universe: set50
+splits:
+  validation_end: '2022-12-30'
+universe:
+  num_slots: 50
+  min_history_sessions: 60
+features:
+  lookback: 30
+  stock_columns:
+  - return_1d
+  - return_5d
+  - return_20d
+  - volatility_20d
+  - ma_ratio_10
+  - ma_ratio_30
+  - rsi_14
+  - macd
+  - bollinger_z
+  - atr_14
+  - volume_ratio_20
+  market_columns:
+  - set50_etf_return_1d
+  - set50_etf_return_5d
+  - set50_etf_return_20d
+  - set50_etf_volatility_20d
+  - set50_etf_ma_ratio_20
+base:
+  environment:
+    initial_cash: 1000000.0
+    transaction_cost: 0.0015
+    slippage: 0.0005
+    rebalance_every: 5
+    train_random_start: true
+    train_episode_length: 504
+    reward:
+      type: plan_main
+      sharpe_weight: 0.1
+      sharpe_eta: 0.01
+      drawdown_penalty: 0.5
+      drawdown_mode: increment
+      turnover_penalty: 0.0
+      scale: 100.0
+  training:
+    algo: ppo
+    total_timesteps: 100000
+    gamma: 0.99
+    normalize_observations: true
+    verbose: 0
+    policy:
+      features_extractor: asset_lstm
+      market_feature_columns:
+      - set50_etf_return_1d
+      - set50_etf_return_5d
+      - set50_etf_return_20d
+      - set50_etf_volatility_20d
+      - set50_etf_ma_ratio_20
+      hidden_size: 32
+      fusion_size: 16
+      net_arch:
+      - 64
+      - 64
+seeds:
+- 42
+- 43
+- 44
+- 45
+- 46
+variants:
+- name: pit_cashcap_arch_mlp
+  description: Locked cash-capped design with MLP temporal encoders over the flattened 30-session window instead
+    of LSTMs
+  environment:
+    max_cash_weight: 0.2
+  universe:
+    slot_order: sticky
+  training:
+    normalize_observations: false
+    policy:
+      actor: shared_asset
+      temporal_encoder: mlp

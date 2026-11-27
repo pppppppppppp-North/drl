@@ -1,0 +1,41 @@
+# Local pool of 2026-11-26, night (milestone M5 exit criterion; validation years 2016-2022 only): the locked
+# point-in-time design with MLP temporal encoders instead of LSTMs (config/pit_architecture_ablation_cashcap.yaml,
+# variant pit_cashcap_arch_mlp), at 100k timesteps, seeds 42-46. The locked LSTM design's five seeds at 100k are in
+# ~/drl_runs/pit_walk_forward_cash_cap_100k_5seeds_20261125. Runs beside BistKA job 4528.
+# Run from the repository root with run dirs beside it (~/drl_runs): bash scripts/run_task_pool.sh slurm/pools/local_20261126.tasks 3
+# Columns: run-dir runner config timesteps fold-year variant seed
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2016 pit_cashcap_arch_mlp 42
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2017 pit_cashcap_arch_mlp 42
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2018 pit_cashcap_arch_mlp 42
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2019 pit_cashcap_arch_mlp 42
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2020 pit_cashcap_arch_mlp 42
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2021 pit_cashcap_arch_mlp 42
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2022 pit_cashcap_arch_mlp 42
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2016 pit_cashcap_arch_mlp 43
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2017 pit_cashcap_arch_mlp 43
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2018 pit_cashcap_arch_mlp 43
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2019 pit_cashcap_arch_mlp 43
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2020 pit_cashcap_arch_mlp 43
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2021 pit_cashcap_arch_mlp 43
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2022 pit_cashcap_arch_mlp 43
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2016 pit_cashcap_arch_mlp 44
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2017 pit_cashcap_arch_mlp 44
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2018 pit_cashcap_arch_mlp 44
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2019 pit_cashcap_arch_mlp 44
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2020 pit_cashcap_arch_mlp 44
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2021 pit_cashcap_arch_mlp 44
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2022 pit_cashcap_arch_mlp 44
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2016 pit_cashcap_arch_mlp 45
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2017 pit_cashcap_arch_mlp 45
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2018 pit_cashcap_arch_mlp 45
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2019 pit_cashcap_arch_mlp 45
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2020 pit_cashcap_arch_mlp 45
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2021 pit_cashcap_arch_mlp 45
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2022 pit_cashcap_arch_mlp 45
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2016 pit_cashcap_arch_mlp 46
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2017 pit_cashcap_arch_mlp 46
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2018 pit_cashcap_arch_mlp 46
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2019 pit_cashcap_arch_mlp 46
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2020 pit_cashcap_arch_mlp 46
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2021 pit_cashcap_arch_mlp 46
+../pit_walk_forward_arch_mlp_cashcap_20261126 scripts.run_pit_walk_forward config/pit_architecture_ablation_cashcap.yaml 100000 2022 pit_cashcap_arch_mlp 46

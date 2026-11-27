@@ -1,0 +1,2417 @@
+{
+  "base_archive_2021_2024": {
+    "path": "data/reference/set50_set100_membership_2021_2024.csv",
+    "rows": 1000,
+    "sha256": "96ea9924830e94ce702f8cd2062dd66670e262a5627774fab5e3b27a4a02c074",
+    "unchanged": true
+  },
+  "change_checks": [
+    {
+      "computed": [
+        "JAS",
+        "KK",
+        "TTW"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "JAS",
+        "KK",
+        "TTW"
+      ],
+      "record_id": "set_2013_h1",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "DCC",
+        "HEMRAJ",
+        "TPIPL"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "DCC",
+        "HEMRAJ",
+        "TPIPL"
+      ],
+      "record_id": "set_2013_h1",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "AAV",
+        "ROJNA",
+        "SPCG",
+        "SSI",
+        "THRE",
+        "WORK"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "AAV",
+        "ROJNA",
+        "SPCG",
+        "SSI",
+        "THRE",
+        "WORK"
+      ],
+      "record_id": "set_2013_h1",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "ASP",
+        "HANA",
+        "KBS",
+        "KGI",
+        "LHBANK",
+        "MCOT"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "ASP",
+        "HANA",
+        "KBS",
+        "KGI",
+        "LHBANK",
+        "MCOT"
+      ],
+      "record_id": "set_2013_h1",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "CENTEL",
+        "CK",
+        "GLOBAL"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "CENTEL",
+        "CK",
+        "GLOBAL"
+      ],
+      "record_id": "set_2013_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "ESSO",
+        "SPALI",
+        "TISCO"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "ESSO",
+        "SPALI",
+        "TISCO"
+      ],
+      "record_id": "set_2013_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "DEMCO",
+        "GOLD",
+        "KCE",
+        "MBK",
+        "MCOT",
+        "MDX",
+        "RS",
+        "SRICHA",
+        "UV",
+        "VGI",
+        "WHA"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "DEMCO",
+        "GOLD",
+        "KCE",
+        "MBK",
+        "MCOT",
+        "MDX",
+        "RS",
+        "SRICHA",
+        "UV",
+        "VGI",
+        "WHA"
+      ],
+      "record_id": "set_2013_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "AJ",
+        "GFPT",
+        "KSL",
+        "LANNA",
+        "PTL",
+        "RML",
+        "SGP",
+        "SVI",
+        "TASCO",
+        "TICON",
+        "WORK"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "AJ",
+        "GFPT",
+        "KSL",
+        "LANNA",
+        "PTL",
+        "RML",
+        "SGP",
+        "SVI",
+        "TASCO",
+        "TICON",
+        "WORK"
+      ],
+      "record_id": "set_2013_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "THCOM",
+        "VGI"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "THCOM",
+        "VGI"
+      ],
+      "record_id": "set_2014_h1",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "KKP",
+        "MAKRO"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "KKP",
+        "MAKRO"
+      ],
+      "record_id": "set_2014_h1",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "ASP",
+        "BMCL",
+        "CHG",
+        "ERW",
+        "GFPT",
+        "JMART",
+        "N-PARK",
+        "SVI",
+        "TASCO",
+        "TFD",
+        "TICON"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "ASP",
+        "BMCL",
+        "CHG",
+        "ERW",
+        "GFPT",
+        "JMART",
+        "N-PARK",
+        "SVI",
+        "TASCO",
+        "TFD",
+        "TICON"
+      ],
+      "record_id": "set_2014_h1",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "DEMCO",
+        "GOLD",
+        "GSTEL",
+        "MAKRO",
+        "MALEE",
+        "MDX",
+        "PF",
+        "ROJNA",
+        "SAMTEL",
+        "SAT",
+        "TVO"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "DEMCO",
+        "GOLD",
+        "GSTEL",
+        "MAKRO",
+        "MALEE",
+        "MDX",
+        "PF",
+        "ROJNA",
+        "SAMTEL",
+        "SAT",
+        "TVO"
+      ],
+      "record_id": "set_2014_h1",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "KKP",
+        "M"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "KKP",
+        "M"
+      ],
+      "record_id": "set_2014_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "CK",
+        "THAI"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "CK",
+        "THAI"
+      ],
+      "record_id": "set_2014_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BJCHI",
+        "EARTH",
+        "M",
+        "MC",
+        "MEGA",
+        "NOK",
+        "NYT",
+        "PSL",
+        "THREL"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "BJCHI",
+        "EARTH",
+        "M",
+        "MC",
+        "MEGA",
+        "NOK",
+        "NYT",
+        "PSL",
+        "THREL"
+      ],
+      "record_id": "set_2014_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "ASP",
+        "CHG",
+        "JMART",
+        "MBK",
+        "N-PARK",
+        "SC",
+        "SF",
+        "SSI",
+        "TFD"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "ASP",
+        "CHG",
+        "JMART",
+        "MBK",
+        "N-PARK",
+        "SC",
+        "SF",
+        "SSI",
+        "TFD"
+      ],
+      "record_id": "set_2014_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BLA",
+        "GLOBAL",
+        "KKP",
+        "THCOM"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "BLA",
+        "GLOBAL",
+        "KKP",
+        "THCOM"
+      ],
+      "record_id": "set_2015_h1_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "HEMRAJ"
+      ],
+      "index": "SET50",
+      "kind": "named_exclusions",
+      "match": true,
+      "printed": [
+        "HEMRAJ"
+      ],
+      "record_id": "set_2015_h1_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "THCOM"
+      ],
+      "index": "SET50",
+      "kind": "inclusions_named_starred_or_reserve",
+      "match": true,
+      "printed": [
+        "THCOM"
+      ],
+      "record_id": "set_2015_h1_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "HEMRAJ"
+      ],
+      "index": "SET100",
+      "kind": "named_exclusions",
+      "match": true,
+      "printed": [
+        "HEMRAJ"
+      ],
+      "record_id": "set_2015_h1_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "IFEC"
+      ],
+      "index": "SET100",
+      "kind": "inclusions_named_starred_or_reserve",
+      "match": true,
+      "printed": [
+        "IFEC"
+      ],
+      "record_id": "set_2015_h1_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BA",
+        "BMCL",
+        "CBG",
+        "ITD",
+        "SAWAD",
+        "TPIPL",
+        "WHA"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "BA",
+        "BMCL",
+        "CBG",
+        "ITD",
+        "SAWAD",
+        "TPIPL",
+        "WHA"
+      ],
+      "record_id": "set_2015_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BAY",
+        "BIGC",
+        "BJC",
+        "KTIS",
+        "SCCC",
+        "SPALI",
+        "VGI"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "BAY",
+        "BIGC",
+        "BJC",
+        "KTIS",
+        "SCCC",
+        "SPALI",
+        "VGI"
+      ],
+      "record_id": "set_2015_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "ASP",
+        "BA",
+        "BEAUTY",
+        "CBG",
+        "CKP",
+        "LHBANK",
+        "MONO",
+        "RS",
+        "S",
+        "SAPPE",
+        "U",
+        "UNIQ",
+        "WHA"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "ASP",
+        "BA",
+        "BEAUTY",
+        "CBG",
+        "CKP",
+        "LHBANK",
+        "MONO",
+        "RS",
+        "S",
+        "SAPPE",
+        "U",
+        "UNIQ",
+        "WHA"
+      ],
+      "record_id": "set_2015_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BAY",
+        "BCH",
+        "BIGC",
+        "BJC",
+        "IFEC",
+        "KTIS",
+        "MEGA",
+        "NOK",
+        "PTG",
+        "SCCC",
+        "SIM",
+        "STA",
+        "THREL"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "BAY",
+        "BCH",
+        "BIGC",
+        "BJC",
+        "IFEC",
+        "KTIS",
+        "MEGA",
+        "NOK",
+        "PTG",
+        "SCCC",
+        "SIM",
+        "STA",
+        "THREL"
+      ],
+      "record_id": "set_2015_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BLA",
+        "SCCC",
+        "TASCO"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "BLA",
+        "SCCC",
+        "TASCO"
+      ],
+      "record_id": "set_2016_h1_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BMCL",
+        "RATCH",
+        "THCOM"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "BMCL",
+        "RATCH",
+        "THCOM"
+      ],
+      "record_id": "set_2016_h1_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BLA",
+        "CHG",
+        "EPG",
+        "GL",
+        "GPSC",
+        "PLANB",
+        "PLAT",
+        "PTG",
+        "SAMTEL",
+        "SCCC",
+        "SCN",
+        "TASCO",
+        "VNG",
+        "WORK"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "BLA",
+        "CHG",
+        "EPG",
+        "GL",
+        "GPSC",
+        "PLANB",
+        "PLAT",
+        "PTG",
+        "SAMTEL",
+        "SCCC",
+        "SCN",
+        "TASCO",
+        "VNG",
+        "WORK"
+      ],
+      "record_id": "set_2016_h1_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "ASP",
+        "DEMCO",
+        "ERW",
+        "GFPT",
+        "GLOBAL",
+        "LOXLEY",
+        "MC",
+        "MONO",
+        "PSL",
+        "RATCH",
+        "SAPPE",
+        "SF",
+        "SGP",
+        "U"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "ASP",
+        "DEMCO",
+        "ERW",
+        "GFPT",
+        "GLOBAL",
+        "LOXLEY",
+        "MC",
+        "MONO",
+        "PSL",
+        "RATCH",
+        "SAPPE",
+        "SF",
+        "SGP",
+        "U"
+      ],
+      "record_id": "set_2016_h1_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [],
+      "index": "SET50",
+      "kind": "named_exclusions",
+      "match": true,
+      "printed": [],
+      "record_id": "set_2016_h1_revised",
+      "stale_notes_ignored": true
+    },
+    {
+      "computed": [],
+      "index": "SET50",
+      "kind": "inclusions_named_starred_or_reserve",
+      "match": true,
+      "printed": [],
+      "record_id": "set_2016_h1_revised",
+      "stale_notes_ignored": true
+    },
+    {
+      "computed": [],
+      "index": "SET100",
+      "kind": "named_exclusions",
+      "match": true,
+      "printed": [],
+      "record_id": "set_2016_h1_revised",
+      "stale_notes_ignored": true
+    },
+    {
+      "computed": [
+        "SGP"
+      ],
+      "index": "SET100",
+      "kind": "inclusions_named_starred_or_reserve",
+      "match": true,
+      "printed": [
+        "SGP"
+      ],
+      "record_id": "set_2016_h1_revised",
+      "stale_notes_ignored": true
+    },
+    {
+      "computed": [
+        "BEM",
+        "GPSC",
+        "KCE",
+        "MTLS"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "BEM",
+        "GPSC",
+        "KCE",
+        "MTLS"
+      ],
+      "record_id": "set_2016_h2_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "ITD",
+        "JAS",
+        "M",
+        "SCCC"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "ITD",
+        "JAS",
+        "M",
+        "SCCC"
+      ],
+      "record_id": "set_2016_h2_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BCH",
+        "COM7",
+        "ERW",
+        "GLOBAL",
+        "IFEC",
+        "JWD",
+        "MTLS",
+        "TRC",
+        "TVO"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "BCH",
+        "COM7",
+        "ERW",
+        "GLOBAL",
+        "IFEC",
+        "JWD",
+        "MTLS",
+        "TRC",
+        "TVO"
+      ],
+      "record_id": "set_2016_h2_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "EARTH",
+        "JAS",
+        "M",
+        "PLAT",
+        "SAMTEL",
+        "SCCC",
+        "SCN",
+        "TICON",
+        "UV"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "EARTH",
+        "JAS",
+        "M",
+        "PLAT",
+        "SAMTEL",
+        "SCCC",
+        "SCN",
+        "TICON",
+        "UV"
+      ],
+      "record_id": "set_2016_h2_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "PS"
+      ],
+      "index": "SET50",
+      "kind": "named_exclusions",
+      "match": true,
+      "printed": [
+        "PS"
+      ],
+      "record_id": "set_2016_h2_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "PSH"
+      ],
+      "index": "SET50",
+      "kind": "inclusions_named_starred_or_reserve",
+      "match": true,
+      "printed": [
+        "PSH"
+      ],
+      "record_id": "set_2016_h2_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "PS"
+      ],
+      "index": "SET100",
+      "kind": "named_exclusions",
+      "match": true,
+      "printed": [
+        "PS"
+      ],
+      "record_id": "set_2016_h2_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "PSH"
+      ],
+      "index": "SET100",
+      "kind": "inclusions_named_starred_or_reserve",
+      "match": true,
+      "printed": [
+        "PSH"
+      ],
+      "record_id": "set_2016_h2_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "GLOBAL",
+        "KKP",
+        "PTG",
+        "SPRC",
+        "THAI"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "GLOBAL",
+        "KKP",
+        "PTG",
+        "SPRC",
+        "THAI"
+      ],
+      "record_id": "set_2017_h1",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BEC",
+        "MTLS",
+        "SAWAD",
+        "TASCO",
+        "TTW"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "BEC",
+        "MTLS",
+        "SAWAD",
+        "TASCO",
+        "TTW"
+      ],
+      "record_id": "set_2017_h1",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BIG",
+        "KAMART",
+        "SCN",
+        "SPRC",
+        "SUPER",
+        "THANI",
+        "TKN",
+        "VIBHA"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "BIG",
+        "KAMART",
+        "SCN",
+        "SPRC",
+        "SUPER",
+        "THANI",
+        "TKN",
+        "VIBHA"
+      ],
+      "record_id": "set_2017_h1",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "ANAN",
+        "BJCHI",
+        "ERW",
+        "GL",
+        "JWD",
+        "SVI",
+        "TRC",
+        "WORK"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "ANAN",
+        "BJCHI",
+        "ERW",
+        "GL",
+        "JWD",
+        "SVI",
+        "TRC",
+        "WORK"
+      ],
+      "record_id": "set_2017_h1",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BJC",
+        "BPP",
+        "EA",
+        "MTLS",
+        "RATCH",
+        "SCCC",
+        "TISCO"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "BJC",
+        "BPP",
+        "EA",
+        "MTLS",
+        "RATCH",
+        "SCCC",
+        "TISCO"
+      ],
+      "record_id": "set_2017_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BA",
+        "BCP",
+        "CENTEL",
+        "CK",
+        "PTG",
+        "THAI",
+        "WHA"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "BA",
+        "BCP",
+        "CENTEL",
+        "CK",
+        "PTG",
+        "THAI",
+        "WHA"
+      ],
+      "record_id": "set_2017_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "ANAN",
+        "BCPG",
+        "BJC",
+        "BPP",
+        "EA",
+        "GFPT",
+        "MALEE",
+        "MEGA",
+        "MONO",
+        "PTL",
+        "RATCH",
+        "SCCC",
+        "WORK"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "ANAN",
+        "BCPG",
+        "BJC",
+        "BPP",
+        "EA",
+        "GFPT",
+        "MALEE",
+        "MEGA",
+        "MONO",
+        "PTL",
+        "RATCH",
+        "SCCC",
+        "WORK"
+      ],
+      "record_id": "set_2017_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "HANA",
+        "ICHI",
+        "IFEC",
+        "KAMART",
+        "RS",
+        "SAMART",
+        "SCN",
+        "SGP",
+        "SPCG",
+        "TTCL",
+        "TTW",
+        "VIBHA",
+        "VNG"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "HANA",
+        "ICHI",
+        "IFEC",
+        "KAMART",
+        "RS",
+        "SAMART",
+        "SCN",
+        "SGP",
+        "SPCG",
+        "TTCL",
+        "TTW",
+        "VIBHA",
+        "VNG"
+      ],
+      "record_id": "set_2017_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BCP",
+        "BEAUTY",
+        "CENTEL",
+        "SAWAD",
+        "TPIPP",
+        "WHA"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "BCP",
+        "BEAUTY",
+        "CENTEL",
+        "SAWAD",
+        "TPIPP",
+        "WHA"
+      ],
+      "record_id": "set_2018_h1",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BLA",
+        "DELTA",
+        "GLOW",
+        "RATCH",
+        "SCCC",
+        "TPIPL"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "BLA",
+        "DELTA",
+        "GLOW",
+        "RATCH",
+        "SCCC",
+        "TPIPL"
+      ],
+      "record_id": "set_2018_h1",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "ESSO",
+        "GGC",
+        "HANA",
+        "JMART",
+        "JWD",
+        "MC",
+        "ORI",
+        "PSL",
+        "SGP",
+        "STA",
+        "TPIPP",
+        "UV",
+        "WHAUP"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "ESSO",
+        "GGC",
+        "HANA",
+        "JMART",
+        "JWD",
+        "MC",
+        "ORI",
+        "PSL",
+        "SGP",
+        "STA",
+        "TPIPP",
+        "UV",
+        "WHAUP"
+      ],
+      "record_id": "set_2018_h1",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BLA",
+        "DELTA",
+        "GLOW",
+        "LHBANK",
+        "MALEE",
+        "PLANB",
+        "PTL",
+        "RATCH",
+        "S",
+        "SCCC",
+        "STPI",
+        "THANI",
+        "VGI"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "BLA",
+        "DELTA",
+        "GLOW",
+        "LHBANK",
+        "MALEE",
+        "PLANB",
+        "PTL",
+        "RATCH",
+        "S",
+        "SCCC",
+        "STPI",
+        "THANI",
+        "VGI"
+      ],
+      "record_id": "set_2018_h1",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BGRIM",
+        "DELTA",
+        "GLOW",
+        "KTC",
+        "RATCH",
+        "TOA"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "BGRIM",
+        "DELTA",
+        "GLOW",
+        "KTC",
+        "RATCH",
+        "TOA"
+      ],
+      "record_id": "set_2018_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BCP",
+        "KCE",
+        "PSH",
+        "SAWAD",
+        "TPIPP",
+        "WHA"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "BCP",
+        "KCE",
+        "PSH",
+        "SAWAD",
+        "TPIPP",
+        "WHA"
+      ],
+      "record_id": "set_2018_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BGRIM",
+        "BLA",
+        "DELTA",
+        "ERW",
+        "GLOW",
+        "PRM",
+        "RATCH",
+        "RS",
+        "THANI",
+        "TOA",
+        "TTW"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "BGRIM",
+        "BLA",
+        "DELTA",
+        "ERW",
+        "GLOW",
+        "PRM",
+        "RATCH",
+        "RS",
+        "THANI",
+        "TOA",
+        "TTW"
+      ],
+      "record_id": "set_2018_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "ANAN",
+        "BA",
+        "BEC",
+        "BIG",
+        "JMART",
+        "JWD",
+        "MC",
+        "MONO",
+        "THCOM",
+        "TTA",
+        "UNIQ"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "ANAN",
+        "BA",
+        "BEC",
+        "BIG",
+        "JMART",
+        "JWD",
+        "MC",
+        "MONO",
+        "THCOM",
+        "TTA",
+        "UNIQ"
+      ],
+      "record_id": "set_2018_h2",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "GULF",
+        "WHA"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "GULF",
+        "WHA"
+      ],
+      "record_id": "set_2019_h1_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BEAUTY",
+        "CBG"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "BEAUTY",
+        "CBG"
+      ],
+      "record_id": "set_2019_h1_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "AEONTS",
+        "ANAN",
+        "GOLD",
+        "GULF",
+        "MBK",
+        "PLANB"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "AEONTS",
+        "ANAN",
+        "GOLD",
+        "GULF",
+        "MBK",
+        "PLANB"
+      ],
+      "record_id": "set_2019_h1_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BLA",
+        "GGC",
+        "ITD",
+        "LPN",
+        "TPIPL",
+        "UV"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "BLA",
+        "GGC",
+        "ITD",
+        "LPN",
+        "TPIPL",
+        "UV"
+      ],
+      "record_id": "set_2019_h1_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "GLOW"
+      ],
+      "index": "SET50",
+      "kind": "named_exclusions",
+      "match": true,
+      "printed": [
+        "GLOW"
+      ],
+      "record_id": "set_2019_h1_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "CBG"
+      ],
+      "index": "SET50",
+      "kind": "inclusions_named_starred_or_reserve",
+      "match": true,
+      "printed": [
+        "CBG"
+      ],
+      "record_id": "set_2019_h1_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "GLOW"
+      ],
+      "index": "SET100",
+      "kind": "named_exclusions",
+      "match": true,
+      "printed": [
+        "GLOW"
+      ],
+      "record_id": "set_2019_h1_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BEC"
+      ],
+      "index": "SET100",
+      "kind": "inclusions_named_starred_or_reserve",
+      "match": true,
+      "printed": [
+        "BEC"
+      ],
+      "record_id": "set_2019_h1_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "OSP",
+        "SAWAD"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "OSP",
+        "SAWAD"
+      ],
+      "record_id": "set_2019_h2_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "CENTEL",
+        "SPRC"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "CENTEL",
+        "SPRC"
+      ],
+      "record_id": "set_2019_h2_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "JAS",
+        "JMT",
+        "OSP"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "JAS",
+        "JMT",
+        "OSP"
+      ],
+      "record_id": "set_2019_h2_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "GOLD",
+        "WHAUP",
+        "WORK"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "GOLD",
+        "WHAUP",
+        "WORK"
+      ],
+      "record_id": "set_2019_h2_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "AWC"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "AWC"
+      ],
+      "record_id": "set_2019_h2_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "KKP"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "KKP"
+      ],
+      "record_id": "set_2019_h2_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "AWC"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "AWC"
+      ],
+      "record_id": "set_2019_h2_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BEAUTY"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "BEAUTY"
+      ],
+      "record_id": "set_2019_h2_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "VGI"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "VGI"
+      ],
+      "record_id": "set_2020_h1_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "ROBINS"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "ROBINS"
+      ],
+      "record_id": "set_2020_h1_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BGC",
+        "STPI",
+        "THG",
+        "TQM",
+        "VGI"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "BGC",
+        "STPI",
+        "THG",
+        "TQM",
+        "VGI"
+      ],
+      "record_id": "set_2020_h1_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "ANAN",
+        "BLAND",
+        "ROBINS",
+        "SIRI",
+        "TVO"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "ANAN",
+        "BLAND",
+        "ROBINS",
+        "SIRI",
+        "TVO"
+      ],
+      "record_id": "set_2020_h1_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "CRC"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "CRC"
+      ],
+      "record_id": "set_2020_h1_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BPP"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "BPP"
+      ],
+      "record_id": "set_2020_h1_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "CRC"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "CRC"
+      ],
+      "record_id": "set_2020_h1_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "AAV"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "AAV"
+      ],
+      "record_id": "set_2020_h1_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BPP",
+        "TTW"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "BPP",
+        "TTW"
+      ],
+      "record_id": "set_2020_h2_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BANPU",
+        "DELTA"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "BANPU",
+        "DELTA"
+      ],
+      "record_id": "set_2020_h2_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "AAV",
+        "ACE",
+        "DOHOME",
+        "RBF",
+        "SIRI",
+        "TVO",
+        "WHAUP"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "AAV",
+        "ACE",
+        "DOHOME",
+        "RBF",
+        "SIRI",
+        "TVO",
+        "WHAUP"
+      ],
+      "record_id": "set_2020_h2_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BGC",
+        "DELTA",
+        "MBK",
+        "PSL",
+        "STPI",
+        "THAI",
+        "THG"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "BGC",
+        "DELTA",
+        "MBK",
+        "PSL",
+        "STPI",
+        "THAI",
+        "THG"
+      ],
+      "record_id": "set_2020_h2_original",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "SCGP"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "SCGP"
+      ],
+      "record_id": "set_2020_h2_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "TCAP"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "TCAP"
+      ],
+      "record_id": "set_2020_h2_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "SCGP"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "SCGP"
+      ],
+      "record_id": "set_2020_h2_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "ERW"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "ERW"
+      ],
+      "record_id": "set_2020_h2_revised",
+      "stale_notes_ignored": false
+    },
+    {
+      "computed": [
+        "BAM",
+        "COM7",
+        "DELTA"
+      ],
+      "index": "SET50",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "BAM",
+        "COM7",
+        "DELTA"
+      ],
+      "record_id": "set_2021_h1_original"
+    },
+    {
+      "computed": [
+        "BPP",
+        "IRPC",
+        "WHA"
+      ],
+      "index": "SET50",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "BPP",
+        "IRPC",
+        "WHA"
+      ],
+      "record_id": "set_2021_h1_original"
+    },
+    {
+      "computed": [
+        "BAM",
+        "DELTA",
+        "JMART",
+        "MBK"
+      ],
+      "index": "SET100",
+      "kind": "inclusion",
+      "match": true,
+      "printed": [
+        "BAM",
+        "DELTA",
+        "JMART",
+        "MBK"
+      ],
+      "record_id": "set_2021_h1_original"
+    },
+    {
+      "computed": [
+        "AAV",
+        "PSH",
+        "SGP",
+        "SIRI"
+      ],
+      "index": "SET100",
+      "kind": "exclusion",
+      "match": true,
+      "printed": [
+        "AAV",
+        "PSH",
+        "SGP",
+        "SIRI"
+      ],
+      "record_id": "set_2021_h1_original"
+    }
+  ],
+  "corporate_actions": [
+    {
+      "first_record_with_new_symbol": "set_2013_h1",
+      "kind": "symbol_change",
+      "new_company_name": "BANGKOK CHAIN HOSPITAL PUBLIC COMPANY LIMITED",
+      "new_symbol": "BCH",
+      "note": "Bangkok Chain Hospital changed its symbol",
+      "old_company_name": "BANGKOK CHAIN HOSPITAL PUBLIC COMPANY LIMITED",
+      "old_symbol": "KH"
+    },
+    {
+      "first_record_with_new_symbol": "set_2013_h2",
+      "kind": "symbol_change",
+      "new_company_name": "G STEEL PUBLIC COMPANY LIMITED",
+      "new_symbol": "GSTEL",
+      "note": "G Steel changed its symbol",
+      "old_company_name": "G STEEL PUBLIC COMPANY LIMITED",
+      "old_symbol": "GSTEEL"
+    },
+    {
+      "first_record_with_new_symbol": "set_2014_h1",
+      "kind": "symbol_change",
+      "new_company_name": "\u0e18\u0e19\u0e32\u0e04\u0e32\u0e23\u0e40\u0e01\u0e35\u0e22\u0e23\u0e15\u0e34\u0e19\u0e32\u0e04\u0e34\u0e19 \u0e08\u0e4d\u0e32\u0e01\u0e31\u0e14 (\u0e21\u0e2b\u0e32\u0e0a\u0e19)",
+      "new_symbol": "KKP",
+      "note": "Kiatnakin Bank changed its symbol; the 2014 H1 notes already use KKP",
+      "old_company_name": "KIATNAKIN BANK PUBLIC COMPANY LIMITED",
+      "old_symbol": "KK"
+    },
+    {
+      "first_record_with_new_symbol": "set_2015_h2",
+      "kind": "symbol_change",
+      "new_company_name": "BANGKOK DUSIT MEDICAL SERVICES PCL.",
+      "new_symbol": "BDMS",
+      "note": "Bangkok Dusit Medical Services changed its symbol",
+      "old_company_name": "BANGKOK DUSIT MEDICAL SERVICES PUBLIC COMPANY LIMITED",
+      "old_symbol": "BGH"
+    },
+    {
+      "first_record_with_new_symbol": "set_2016_h1_original",
+      "kind": "symbol_change",
+      "new_company_name": "THAI UNION GROUP PCL.",
+      "new_symbol": "TU",
+      "note": "Thai Union Frozen Products became Thai Union Group",
+      "old_company_name": "THAI UNION FROZEN PRODUCTS PUBLIC COMPANY LIMITED",
+      "old_symbol": "TUF"
+    },
+    {
+      "first_record_with_new_symbol": "set_2016_h1_revised",
+      "kind": "merger",
+      "new_company_name": "BANGKOK EXPRESSWAY AND METRO PCL.",
+      "new_symbol": "BEM",
+      "note": "Bangkok Expressway and Bangkok Metro amalgamated into Bangkok Expressway and Metro",
+      "old_company_name": "BANGKOK EXPRESSWAY PUBLIC COMPANY LIMITED",
+      "old_symbol": "BECL"
+    },
+    {
+      "first_record_with_new_symbol": "set_2016_h1_revised",
+      "kind": "merger",
+      "new_company_name": "BANGKOK EXPRESSWAY AND METRO PCL.",
+      "new_symbol": "BEM",
+      "note": "Bangkok Expressway and Bangkok Metro amalgamated into Bangkok Expressway and Metro",
+      "old_company_name": "\u0e1a\u0e23\u0e34\u0e29\u0e31\u0e17 \u0e23\u0e16\u0e44\u0e1f\u0e1f\u0e49\u0e32\u0e01\u0e23\u0e38\u0e07\u0e40\u0e17\u0e1e \u0e08\u0e4d\u0e32\u0e01\u0e31\u0e14 (\u0e21\u0e2b\u0e32\u0e0a\u0e19)",
+      "old_symbol": "BMCL"
+    },
+    {
+      "first_record_with_new_symbol": "set_2018_h2",
+      "kind": "symbol_change",
+      "new_company_name": "MUANGTHAI CAPITAL PCL.",
+      "new_symbol": "MTC",
+      "note": "Muangthai Leasing became Muangthai Capital",
+      "old_company_name": "MUANGTHAI LEASING PCL.",
+      "old_symbol": "MTLS"
+    }
+  ],
+  "coverage": {
+    "effective_from": "2012-01-01",
+    "effective_to_exclusive": "2025-01-01",
+    "extended_interval_count": 24,
+    "interval_count": 34,
+    "normalized_rows": 3400,
+    "raw_bytes": 8940553,
+    "raw_file_count": 25,
+    "sector_count": 25,
+    "unique_tickers": 227
+  },
+  "eligibility": {
+    "model_input_eligible": false,
+    "point_in_time_membership_eligible": true,
+    "publication_grade_performance_claims_eligible": false,
+    "static_union_model_eligible": false
+  },
+  "inferred_ranks": {
+    "set_2015_h1_revised": [
+      "SET100 70 SAMART"
+    ]
+  },
+  "limitations": [
+    "Between-review revisions state no separate exchange-effective date, so they apply from their publication date. The 2016 H1 merger list was published before the period began and replaces the original list for the whole period.",
+    "The 2012-2013 workbooks state no publication date. published_at is set to the period start, the latest date by which the list was public, because the index used it from that day. The SET archive offers no between-review update files for 2012-2014, so any replacement inside those periods is not reflected.",
+    "Company names for 2014 are in Thai because the 2014 workbooks have Thai sheets only. Sectors are mapped to English with the SET's own summary tables.",
+    "Tickers are the symbols printed in each list. Renamed securities (for example KK to KKP, TUF to TU, PS to PSH) appear under each historical symbol and are not linked.",
+    "The union file is for price acquisition only. Using it as a static model universe would reintroduce survivorship and future-membership bias."
+  ],
+  "milestone": "M3 point-in-time universe, 2012-2024",
+  "outputs": {
+    "acquisition_universe": {
+      "bytes": 24794,
+      "path": "data/reference/set50_or_set100_universe_2012_2024.csv",
+      "rows": 227,
+      "sha256": "2de19ccff845fe1e4525bd2ee4fbef3bc3155fb0defa714bfac0874672ed21ed"
+    },
+    "interval_profile": {
+      "bytes": 2706,
+      "path": "data/reference/set_constituent_interval_profile_2012_2020.csv",
+      "rows": 24,
+      "sha256": "581971c1d909da668dcba1e3333da9b03a23fb60b3c0259e28f634c1c29f930e"
+    },
+    "membership_history": {
+      "bytes": 1376977,
+      "path": "data/reference/set50_set100_membership_2012_2024.csv",
+      "rows": 3400,
+      "sha256": "0568cf5c7dc93a82c0de40ae0e65bde920c59729d853a7cffd58581a09ffbfe6"
+    },
+    "symbol_changes": {
+      "bytes": 1533,
+      "path": "data/reference/set_symbol_changes_2012_2020.csv",
+      "rows": 8,
+      "sha256": "a8ee656ef90fc781ceab2492541c14b594eaecbbfa3981745d4499dc3036c2a0"
+    }
+  },
+  "prefix_matched_sectors": {
+    "set_2015_h1_original": [
+      "ADVANC",
+      "DTAC",
+      "INTUCH",
+      "JAS",
+      "TRUE"
+    ],
+    "set_2015_h1_revised": [
+      "ADVANC",
+      "DTAC",
+      "INTUCH",
+      "JAS",
+      "THCOM",
+      "TRUE"
+    ],
+    "set_2015_h2": [
+      "ADVANC",
+      "DTAC",
+      "INTUCH",
+      "JAS",
+      "THCOM",
+      "TRUE"
+    ],
+    "set_2016_h1_original": [
+      "ADVANC",
+      "DTAC",
+      "INTUCH",
+      "JAS",
+      "TRUE"
+    ],
+    "set_2016_h1_revised": [
+      "ADVANC",
+      "DTAC",
+      "INTUCH",
+      "JAS",
+      "TRUE"
+    ],
+    "set_2016_h2_original": [
+      "ADVANC",
+      "DTAC",
+      "INTUCH",
+      "TRUE"
+    ],
+    "set_2016_h2_revised": [
+      "ADVANC",
+      "DTAC",
+      "INTUCH",
+      "TRUE"
+    ],
+    "set_2017_h1": [
+      "ADVANC",
+      "DTAC",
+      "INTUCH",
+      "TRUE"
+    ]
+  },
+  "printed_change_checks": {
+    "checked": 93,
+    "matched": 93,
+    "records_without_printed_changes": [
+      "set_2012_h1",
+      "set_2012_h2"
+    ]
+  },
+  "quality_gates": {
+    "base_archive_byte_identical": true,
+    "continuous_intervals_2012_2025": true,
+    "exactly_100_set100_per_interval": true,
+    "exactly_50_set50_per_interval": true,
+    "no_duplicate_interval_symbols": true,
+    "pdf_lists_in_printed_alphabetical_order": true,
+    "printed_changes_match_list_differences": true,
+    "printed_publication_dates_match_manifest": true,
+    "revisions_not_applied_before_publication": true,
+    "seam_2020_2021_matches_printed_notes": true,
+    "set50_subset_of_set100": true,
+    "source_bytes_match_manifest": true,
+    "source_hashes_match_manifest": true
+  },
+  "raw_files": [
+    {
+      "bytes": 156160,
+      "period_label": "2012 H1",
+      "record_id": "set_2012_h1",
+      "retrieved_at_utc": "2026-11-06T23:12:51Z",
+      "sha256": "d54edfa03e6bcc4a4a38aa77d5ae26bbdb9ae344211794cb909b11ff79c7fe07",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H1_2012.xls",
+      "source_format": "xls_en_sheets",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H1_2012.xls",
+      "units": 2
+    },
+    {
+      "bytes": 154624,
+      "period_label": "2012 H2",
+      "record_id": "set_2012_h2",
+      "retrieved_at_utc": "2026-11-06T23:12:53Z",
+      "sha256": "81ebc20d86e002ff02cccd964b2d610955c78d3e8fb4a9bbb8db13af9e550714",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H2_2012-TH.xls",
+      "source_format": "xls_en_sheets",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H2_2012-TH.xls",
+      "units": 2
+    },
+    {
+      "bytes": 142336,
+      "period_label": "2013 H1",
+      "record_id": "set_2013_h1",
+      "retrieved_at_utc": "2026-11-06T23:12:54Z",
+      "sha256": "7a0b7ad03c6a1509c9251344e2c03a17233393cab66a8bda5854f0475d9762ca",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H1_2013-TH-v1.xls",
+      "source_format": "xls_en_sheets",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H1_2013-TH-v1.xls",
+      "units": 2
+    },
+    {
+      "bytes": 143360,
+      "period_label": "2013 H2",
+      "record_id": "set_2013_h2",
+      "retrieved_at_utc": "2026-11-06T23:12:55Z",
+      "sha256": "066004c733d2ab0b340c0ff4921f70e2837dbdd6dac157eff06cc6483e999a57",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H2_2013-TH-v3.xls",
+      "source_format": "xls_en_sheets",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H2_2013-TH-v3.xls",
+      "units": 2
+    },
+    {
+      "bytes": 48128,
+      "period_label": "2014 H1",
+      "record_id": "set_2014_h1",
+      "retrieved_at_utc": "2026-11-06T23:12:57Z",
+      "sha256": "98c239152b19627a87a748ad3c8ac25cfe7eb07103fe34ad09695d802c041840",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H1_2014-TH_v2.xls",
+      "source_format": "xls_th_set100_marker",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H1_2014-TH_v2.xls",
+      "units": 1
+    },
+    {
+      "bytes": 55808,
+      "period_label": "2014 H2",
+      "record_id": "set_2014_h2",
+      "retrieved_at_utc": "2026-11-06T23:12:58Z",
+      "sha256": "2fbe482f0e6696a355a523b0e8e86b23fe73f1d342cb0a94d5601ece9ab9d147",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H2_2014-TH_v2.xls",
+      "source_format": "xls_th_sheets",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H2_2014-TH_v2.xls",
+      "units": 2
+    },
+    {
+      "bytes": 1067624,
+      "period_label": "2015 H1 original",
+      "record_id": "set_2015_h1_original",
+      "retrieved_at_utc": "2026-11-06T23:12:59Z",
+      "sha256": "664768e2634a8cf41bda62d7f5be22c9e80820144212d7a4b8e4f04f79911b45",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H1_2015.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H1_2015.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 557212,
+      "period_label": "2015 H1 revised",
+      "record_id": "set_2015_h1_revised",
+      "retrieved_at_utc": "2026-11-06T23:13:01Z",
+      "sha256": "4104ae7690b93440eb36248869e6e05f95b11231c85759785647438311273b4f",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H1_2015-Update-HEMRAJ-Out.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H1_2015-Update-HEMRAJ-Out.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 400377,
+      "period_label": "2015 H2",
+      "record_id": "set_2015_h2",
+      "retrieved_at_utc": "2026-11-06T23:13:02Z",
+      "sha256": "4eeca70c9a7f6c32be29bf826012cc8ae0853d92e2d1104cefb543bd2c6ca6d4",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H2_2015.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H2_2015.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 401586,
+      "period_label": "2016 H1 original",
+      "record_id": "set_2016_h1_original",
+      "retrieved_at_utc": "2026-11-06T23:13:03Z",
+      "sha256": "9fabdbf92426214bfe3f328e60333a9cf176ab6f535ae59039590669b9feec24",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H1_2016.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H1_2016.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 401230,
+      "period_label": "2016 H1 revised",
+      "record_id": "set_2016_h1_revised",
+      "retrieved_at_utc": "2026-11-06T23:13:04Z",
+      "sha256": "3d0cc22c17fbe193e4afb6a45b54ec96cd103d832f95be7ac16efad7b3532911",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H1_2016-Merger.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H1_2016-Merger.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 471230,
+      "period_label": "2016 H2 original",
+      "record_id": "set_2016_h2_original",
+      "retrieved_at_utc": "2026-11-06T23:13:06Z",
+      "sha256": "88b9aa50e4a71a86d6db2cd208f2958177ffdbfa363395915cacded210fcec95",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H2_2016.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H2_2016.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 492277,
+      "period_label": "2016 H2 revised",
+      "record_id": "set_2016_h2_revised",
+      "retrieved_at_utc": "2026-11-06T23:13:07Z",
+      "sha256": "87ee0a3475c180fec36c02e4121778736127cfd44380f667bf5985b039e8667a",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H2_2016-PSH.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H2_2016-PSH.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 327210,
+      "period_label": "2017 H1",
+      "record_id": "set_2017_h1",
+      "retrieved_at_utc": "2026-11-06T23:13:09Z",
+      "sha256": "7a6d661187ea387b66e756454a626d9c72f574d538f230ab44b7b609560f9171",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H1_2017_v2.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H1_2017_v2.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 358730,
+      "period_label": "2017 H2",
+      "record_id": "set_2017_h2",
+      "retrieved_at_utc": "2026-11-06T23:13:10Z",
+      "sha256": "a22c7a7841202f2ff4a209dcc6e2b9a34d658bdf678c9a0219a0b8fb7ba39165",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H2_2017.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H2_2017.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 357693,
+      "period_label": "2018 H1",
+      "record_id": "set_2018_h1",
+      "retrieved_at_utc": "2026-11-06T23:13:12Z",
+      "sha256": "6af0b1b9370c55c7d96ec4d76847e3a82c79f01721bb88df1bd795092a921fdd",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H1_2018.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H1_2018.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 365193,
+      "period_label": "2018 H2",
+      "record_id": "set_2018_h2",
+      "retrieved_at_utc": "2026-11-06T23:13:13Z",
+      "sha256": "a4d43c00a8d0dee769840eb19cd9748ad094211bed397983648e3be75f87d754",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H2_2018.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H2_2018.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 480340,
+      "period_label": "2019 H1 original",
+      "record_id": "set_2019_h1_original",
+      "retrieved_at_utc": "2026-11-06T23:13:14Z",
+      "sha256": "c8574cb3708db00c3565900d4014b5e630747a00a57cc15fe55f6540cc1d18dd",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H1_2019.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H1_2019.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 350600,
+      "period_label": "2019 H1 revised",
+      "record_id": "set_2019_h1_revised",
+      "retrieved_at_utc": "2026-11-06T23:13:16Z",
+      "sha256": "76620d49a71e1077f7d27b1b48d98570cbf616091aa4b05af724ff2176871276",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H1_2019_revised.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H1_2019_revised.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 340692,
+      "period_label": "2019 H2 original",
+      "record_id": "set_2019_h2_original",
+      "retrieved_at_utc": "2026-11-06T23:13:17Z",
+      "sha256": "f80d67b2652a118db09539742a128acbead43d5ce5173a9a8116d5b48f2fb4ee",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H2_2019.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H2_2019.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 340724,
+      "period_label": "2019 H2 revised",
+      "record_id": "set_2019_h2_revised",
+      "retrieved_at_utc": "2026-11-06T23:13:18Z",
+      "sha256": "7b5a46eaa836a5e959a298fbdecf2beed5443b992dbec66ec24e28e363dd1b92",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H2_2019_revised.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2021/Dec/SET50_100_H2_2019_revised.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 335718,
+      "period_label": "2020 H1 original",
+      "record_id": "set_2020_h1_original",
+      "retrieved_at_utc": "2026-11-06T23:13:20Z",
+      "sha256": "df1174414c67bf743af14ff1afe84133e570d4ebdb58f4e9227288c7001c27bb",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H1_2020-27082646.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2022/Apr/SET50_100_H1_2020-27082646.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 336773,
+      "period_label": "2020 H1 revised",
+      "record_id": "set_2020_h1_revised",
+      "retrieved_at_utc": "2026-11-06T23:13:21Z",
+      "sha256": "221ba32e0d8a43ee3f94a2e2880e028c0c310f5725ec1013ff988b38d9ec1b8d",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H1_2020_revised-27082541.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2022/Apr/SET50_100_H1_2020_revised-27082541.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 331567,
+      "period_label": "2020 H2 original",
+      "record_id": "set_2020_h2_original",
+      "retrieved_at_utc": "2026-11-06T23:13:23Z",
+      "sha256": "e129c9a18f979a298843f62db7494c22a82f4b6fb7fc716edd3b018e041a2b35",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H2_2020-27082452.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2022/Apr/SET50_100_H2_2020-27082452.pdf",
+      "units": 2
+    },
+    {
+      "bytes": 523361,
+      "period_label": "2020 H2 revised",
+      "record_id": "set_2020_h2_revised",
+      "retrieved_at_utc": "2026-11-06T23:13:24Z",
+      "sha256": "69b1295d712837674c447f88f3db0f0d52371d071f87b419094c0f56f11e4ae6",
+      "source_file_path": "data/external/original/set_constituent_history/SET50_100_H2_2020_revised-27082322.pdf",
+      "source_format": "pdf_two_column",
+      "source_url": "https://media.set.or.th/set/Documents/2022/Apr/SET50_100_H2_2020_revised-27082322.pdf",
+      "units": 2
+    }
+  ],
+  "schema_version": 1,
+  "source": "Stock Exchange of Thailand official SET50/SET100 constituent archive",
+  "source_archive_page": "https://www.set.or.th/en/market/information/securities-list/constituents-list-set50-set100",
+  "source_manifest": {
+    "bytes": 9837,
+    "path": "data/external/set_constituent_source_manifest_2012_2020.csv",
+    "rows": 25,
+    "sha256": "1644d7a9c643244fdceda20079bf17e0b5c920c7eea33fb686b7357b5a67f896"
+  },
+  "superseded_before_effective": [
+    {
+      "nominal_period_start": "2016-01-01",
+      "published_at": "2015-12-14",
+      "record_id": "set_2016_h1_original",
+      "superseded_by": "set_2016_h1_revised"
+    }
+  ],
+  "turnover_summary": {
+    "max_set50_additions_per_list": 8,
+    "median_set50_additions_per_list": 2.0,
+    "seam_2020_to_2021": {
+      "SET100 exclusion": [
+        "AAV",
+        "PSH",
+        "SGP",
+        "SIRI"
+      ],
+      "SET100 inclusion": [
+        "BAM",
+        "DELTA",
+        "JMART",
+        "MBK"
+      ],
+      "SET50 exclusion": [
+        "BPP",
+        "IRPC",
+        "WHA"
+      ],
+      "SET50 inclusion": [
+        "BAM",
+        "COM7",
+        "DELTA"
+      ]
+    }
+  }
+}

@@ -1,0 +1,228 @@
+ticker,symbol,usage,first_effective_from,last_effective_to_exclusive,sector,sector_history_consistent,set100_intervals,set50_intervals
+AAV.BK,AAV,acquisition_only_not_static_model_membership,2013-01-01,2025-01-01,Transportation & Logistics,True,27,0
+ACE.BK,ACE,acquisition_only_not_static_model_membership,2020-07-01,2024-01-02,Energy & Utilities,True,10,0
+ADVANC.BK,ADVANC,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Information & Communication Technology,True,34,34
+AEONTS.BK,AEONTS,acquisition_only_not_static_model_membership,2019-01-01,2025-01-01,Finance & Securities,True,15,0
+AJ.BK,AJ,acquisition_only_not_static_model_membership,2012-01-01,2013-07-01,Packaging,True,3,0
+AMATA.BK,AMATA,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Property Development,True,34,0
+ANAN.BK,ANAN,acquisition_only_not_static_model_membership,2015-01-01,2020-01-01,Property Development,True,12,0
+AOT.BK,AOT,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Transportation & Logistics,True,34,34
+AP.BK,AP,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Property Development,True,34,0
+ASP.BK,ASP,acquisition_only_not_static_model_membership,2012-01-01,2016-01-01,Finance & Securities,True,4,0
+AURA.BK,AURA,acquisition_only_not_static_model_membership,2023-07-01,2024-07-01,Fashion,True,2,0
+AWC.BK,AWC,acquisition_only_not_static_model_membership,2019-10-10,2025-01-01,Property Development,True,14,14
+BA.BK,BA,acquisition_only_not_static_model_membership,2015-07-01,2025-01-01,Transportation & Logistics,True,8,5
+BAM.BK,BAM,acquisition_only_not_static_model_membership,2021-01-01,2025-01-01,Finance & Securities,True,10,2
+BANPU.BK,BANPU,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Energy & Utilities,True,34,28
+BAY.BK,BAY,acquisition_only_not_static_model_membership,2012-01-01,2015-07-01,Banking,True,8,8
+BBL.BK,BBL,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Banking,True,34,34
+BCH.BK,BCH,acquisition_only_not_static_model_membership,2013-01-01,2025-01-01,Health Care Services,True,30,0
+BCP.BK,BCP,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Energy & Utilities,True,34,15
+BCPG.BK,BCPG,acquisition_only_not_static_model_membership,2017-07-01,2025-01-01,Energy & Utilities,True,21,0
+BDMS.BK,BDMS,acquisition_only_not_static_model_membership,2015-07-01,2025-01-01,Health Care Services,True,26,26
+BEAUTY.BK,BEAUTY,acquisition_only_not_static_model_membership,2015-07-01,2019-10-10,Commerce,True,11,2
+BEC.BK,BEC,acquisition_only_not_static_model_membership,2012-01-01,2023-07-01,Media & Publishing,True,29,12
+BECL.BK,BECL,acquisition_only_not_static_model_membership,2012-01-01,2016-01-01,Transportation & Logistics,True,9,0
+BEM.BK,BEM,acquisition_only_not_static_model_membership,2016-01-01,2025-01-01,Transportation & Logistics,True,25,24
+BGC.BK,BGC,acquisition_only_not_static_model_membership,2020-01-01,2020-07-01,Packaging,True,2,0
+BGH.BK,BGH,acquisition_only_not_static_model_membership,2012-01-01,2015-07-01,Health Care Services,True,8,8
+BGRIM.BK,BGRIM,acquisition_only_not_static_model_membership,2018-07-01,2025-01-01,Energy & Utilities,True,19,19
+BH.BK,BH,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Health Care Services,True,34,34
+BIG.BK,BIG,acquisition_only_not_static_model_membership,2017-01-01,2018-07-01,Commerce,True,3,0
+BIGC.BK,BIGC,acquisition_only_not_static_model_membership,2012-01-01,2015-07-01,Commerce,True,8,8
+BJC.BK,BJC,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Commerce,True,23,23
+BJCHI.BK,BJCHI,acquisition_only_not_static_model_membership,2014-07-01,2017-01-01,Construction Services,True,7,0
+BLA.BK,BLA,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Insurance,True,19,12
+BLAND.BK,BLAND,acquisition_only_not_static_model_membership,2012-01-01,2020-01-01,Property Development,True,20,0
+BMCL.BK,BMCL,acquisition_only_not_static_model_membership,2014-01-01,2016-01-01,Transportation & Logistics,True,5,1
+BPP.BK,BPP,acquisition_only_not_static_model_membership,2017-07-01,2022-07-01,Energy & Utilities,True,14,10
+BSRC.BK,BSRC,acquisition_only_not_static_model_membership,2024-01-02,2025-01-01,Energy & Utilities,True,2,0
+BTG.BK,BTG,acquisition_only_not_static_model_membership,2023-07-01,2025-01-01,Food & Beverage,True,3,0
+BTS.BK,BTS,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Transportation & Logistics,True,34,34
+BYD.BK,BYD,acquisition_only_not_static_model_membership,2023-01-01,2024-07-01,Finance & Securities,True,4,0
+CBG.BK,CBG,acquisition_only_not_static_model_membership,2015-07-01,2025-01-01,Food & Beverage,True,26,25
+CENTEL.BK,CENTEL,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Tourism & Leisure,True,34,19
+CHG.BK,CHG,acquisition_only_not_static_model_membership,2014-01-01,2025-01-01,Health Care Services,True,26,0
+CK.BK,CK,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Construction Services,False,34,9
+CKP.BK,CKP,acquisition_only_not_static_model_membership,2015-07-01,2025-01-01,Energy & Utilities,True,25,0
+COM7.BK,COM7,acquisition_only_not_static_model_membership,2016-07-01,2025-01-01,Commerce,True,24,8
+CPALL.BK,CPALL,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Commerce,True,34,34
+CPF.BK,CPF,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Food & Beverage,True,34,34
+CPN.BK,CPN,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Property Development,True,34,34
+CRC.BK,CRC,acquisition_only_not_static_model_membership,2020-02-20,2025-01-01,Commerce,True,13,13
+DCC.BK,DCC,acquisition_only_not_static_model_membership,2012-01-01,2015-01-01,Construction Materials,True,6,2
+DELTA.BK,DELTA,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Electronic Components,True,29,29
+DEMCO.BK,DEMCO,acquisition_only_not_static_model_membership,2013-07-01,2016-01-01,Energy & Utilities,True,4,0
+DOHOME.BK,DOHOME,acquisition_only_not_static_model_membership,2020-07-01,2025-01-01,Commerce,True,12,0
+DTAC.BK,DTAC,acquisition_only_not_static_model_membership,2012-01-01,2023-04-07,Information & Communication Technology,True,30,30
+EA.BK,EA,acquisition_only_not_static_model_membership,2017-07-01,2025-01-01,Energy & Utilities,True,21,21
+EARTH.BK,EARTH,acquisition_only_not_static_model_membership,2014-07-01,2016-07-01,Energy & Utilities,True,5,0
+EGCO.BK,EGCO,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Energy & Utilities,True,34,34
+EPG.BK,EPG,acquisition_only_not_static_model_membership,2016-01-01,2023-07-01,Construction Materials,True,21,0
+ERW.BK,ERW,acquisition_only_not_static_model_membership,2014-01-01,2025-01-01,Tourism & Leisure,True,18,0
+ESSO.BK,ESSO,acquisition_only_not_static_model_membership,2012-01-01,2024-01-02,Energy & Utilities,True,24,3
+FORTH.BK,FORTH,acquisition_only_not_static_model_membership,2022-07-01,2024-07-01,Information & Communication Technology,True,5,0
+GFPT.BK,GFPT,acquisition_only_not_static_model_membership,2012-01-01,2021-07-01,Agribusiness,True,21,0
+GGC.BK,GGC,acquisition_only_not_static_model_membership,2018-01-01,2019-01-01,Petrochemicals & Chemicals,True,2,0
+GL.BK,GL,acquisition_only_not_static_model_membership,2016-01-01,2017-01-01,Finance & Securities,True,3,0
+GLOBAL.BK,GLOBAL,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Commerce,True,33,25
+GLOW.BK,GLOW,acquisition_only_not_static_model_membership,2012-01-01,2019-05-28,Energy & Utilities,True,16,16
+GOLD.BK,GOLD,acquisition_only_not_static_model_membership,2013-07-01,2019-07-01,Property Development,True,3,0
+GPSC.BK,GPSC,acquisition_only_not_static_model_membership,2016-01-01,2025-01-01,Energy & Utilities,True,25,24
+GSTEEL.BK,GSTEEL,acquisition_only_not_static_model_membership,2012-01-01,2013-07-01,Steel,True,3,0
+GSTEL.BK,GSTEL,acquisition_only_not_static_model_membership,2013-07-01,2014-01-01,Steel,True,1,0
+GULF.BK,GULF,acquisition_only_not_static_model_membership,2019-01-01,2025-01-01,Energy & Utilities,True,18,18
+GUNKUL.BK,GUNKUL,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Energy & Utilities,True,34,0
+HANA.BK,HANA,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Electronic Components,True,29,0
+HEMRAJ.BK,HEMRAJ,acquisition_only_not_static_model_membership,2012-01-01,2015-04-29,Property Development,True,7,2
+HMPRO.BK,HMPRO,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Commerce,True,34,34
+ICHI.BK,ICHI,acquisition_only_not_static_model_membership,2015-01-01,2025-01-01,Food & Beverage,True,10,0
+IFEC.BK,IFEC,acquisition_only_not_static_model_membership,2015-04-29,2017-07-01,Energy & Utilities,False,4,0
+INTUCH.BK,INTUCH,acquisition_only_not_static_model_membership,2012-07-01,2025-01-01,Information & Communication Technology,True,33,33
+IRPC.BK,IRPC,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Energy & Utilities,True,34,27
+ITC.BK,ITC,acquisition_only_not_static_model_membership,2024-01-02,2025-01-01,Food & Beverage,True,2,1
+ITD.BK,ITD,acquisition_only_not_static_model_membership,2012-01-01,2019-01-01,Construction Services,False,16,2
+IVL.BK,IVL,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Petrochemicals & Chemicals,True,34,34
+JAS.BK,JAS,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Information & Communication Technology,True,22,8
+JMART.BK,JMART,acquisition_only_not_static_model_membership,2014-01-01,2025-01-01,Information & Communication Technology,True,12,3
+JMT.BK,JMT,acquisition_only_not_static_model_membership,2019-07-01,2025-01-01,Finance & Securities,True,16,3
+JWD.BK,JWD,acquisition_only_not_static_model_membership,2016-07-01,2018-07-01,Transportation & Logistics,True,3,0
+KAMART.BK,KAMART,acquisition_only_not_static_model_membership,2017-01-01,2017-07-01,Commerce,True,1,0
+KBANK.BK,KBANK,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Banking,True,34,34
+KBS.BK,KBS,acquisition_only_not_static_model_membership,2012-01-01,2013-01-01,Food & Beverage,True,2,0
+KCE.BK,KCE,acquisition_only_not_static_model_membership,2013-07-01,2025-01-01,Electronic Components,True,31,9
+KEX.BK,KEX,acquisition_only_not_static_model_membership,2022-01-01,2023-07-01,Transportation & Logistics,True,4,0
+KGI.BK,KGI,acquisition_only_not_static_model_membership,2012-07-01,2013-01-01,Finance & Securities,True,1,0
+KH.BK,KH,acquisition_only_not_static_model_membership,2012-01-01,2013-01-01,Health Care Services,True,2,0
+KK.BK,KK,acquisition_only_not_static_model_membership,2012-01-01,2014-01-01,Banking,True,4,2
+KKP.BK,KKP,acquisition_only_not_static_model_membership,2014-01-01,2025-01-01,Banking,True,30,8
+KSL.BK,KSL,acquisition_only_not_static_model_membership,2012-01-01,2013-07-01,Food & Beverage,True,3,0
+KTB.BK,KTB,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Banking,True,34,34
+KTC.BK,KTC,acquisition_only_not_static_model_membership,2012-07-01,2025-01-01,Finance & Securities,True,33,19
+KTIS.BK,KTIS,acquisition_only_not_static_model_membership,2015-01-01,2015-07-01,Food & Beverage,True,2,2
+LANNA.BK,LANNA,acquisition_only_not_static_model_membership,2012-01-01,2013-07-01,Energy & Utilities,True,3,0
+LH.BK,LH,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Property Development,True,34,34
+LHBANK.BK,LHBANK,acquisition_only_not_static_model_membership,2012-01-01,2018-01-01,Banking,True,8,0
+LOXLEY.BK,LOXLEY,acquisition_only_not_static_model_membership,2012-01-01,2016-01-01,Commerce,True,9,0
+LPN.BK,LPN,acquisition_only_not_static_model_membership,2012-01-01,2019-01-01,Property Development,True,16,0
+M.BK,M,acquisition_only_not_static_model_membership,2014-07-01,2025-01-01,Food & Beverage,True,7,5
+MAJOR.BK,MAJOR,acquisition_only_not_static_model_membership,2012-01-01,2023-01-01,Media & Publishing,True,29,0
+MAKRO.BK,MAKRO,acquisition_only_not_static_model_membership,2012-01-01,2014-01-01,Commerce,True,4,4
+MALEE.BK,MALEE,acquisition_only_not_static_model_membership,2012-07-01,2018-01-01,Food & Beverage,True,4,0
+MBK.BK,MBK,acquisition_only_not_static_model_membership,2013-07-01,2025-01-01,Property Development,True,12,0
+MC.BK,MC,acquisition_only_not_static_model_membership,2014-07-01,2018-07-01,Commerce,True,5,0
+MCOT.BK,MCOT,acquisition_only_not_static_model_membership,2012-01-01,2015-01-01,Media & Publishing,True,5,0
+MCS.BK,MCS,acquisition_only_not_static_model_membership,2012-01-01,2012-07-01,Steel,True,1,0
+MDX.BK,MDX,acquisition_only_not_static_model_membership,2013-07-01,2014-01-01,Energy & Utilities,True,1,0
+MEGA.BK,MEGA,acquisition_only_not_static_model_membership,2014-07-01,2025-01-01,Commerce,True,24,0
+MINT.BK,MINT,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Tourism & Leisure,False,34,34
+MONO.BK,MONO,acquisition_only_not_static_model_membership,2015-07-01,2018-07-01,Media & Publishing,True,3,0
+MOSHI.BK,MOSHI,acquisition_only_not_static_model_membership,2024-01-02,2024-07-01,Commerce,True,1,0
+MTC.BK,MTC,acquisition_only_not_static_model_membership,2018-07-01,2025-01-01,Finance & Securities,True,19,19
+MTLS.BK,MTLS,acquisition_only_not_static_model_membership,2016-07-01,2018-07-01,Finance & Securities,True,5,4
+N-PARK.BK,N-PARK,acquisition_only_not_static_model_membership,2014-01-01,2014-07-01,Property Development,True,1,0
+NEX.BK,NEX,acquisition_only_not_static_model_membership,2023-01-01,2024-07-01,Automotive,False,4,0
+NOK.BK,NOK,acquisition_only_not_static_model_membership,2014-07-01,2015-07-01,Transportation & Logistics,True,3,0
+NRF.BK,NRF,acquisition_only_not_static_model_membership,2021-07-01,2022-01-01,Food & Beverage,True,1,0
+NYT.BK,NYT,acquisition_only_not_static_model_membership,2014-07-01,2015-01-01,Transportation & Logistics,True,1,0
+ONEE.BK,ONEE,acquisition_only_not_static_model_membership,2022-07-01,2023-07-01,Media & Publishing,True,3,0
+OR.BK,OR,acquisition_only_not_static_model_membership,2021-02-11,2025-01-01,Energy & Utilities,True,9,9
+ORI.BK,ORI,acquisition_only_not_static_model_membership,2018-01-01,2024-07-01,Property Development,True,19,0
+OSP.BK,OSP,acquisition_only_not_static_model_membership,2019-07-01,2025-01-01,Food & Beverage,True,16,16
+PF.BK,PF,acquisition_only_not_static_model_membership,2012-07-01,2014-01-01,Property Development,True,3,0
+PHATRA.BK,PHATRA,acquisition_only_not_static_model_membership,2012-01-01,2012-07-01,Finance & Securities,True,1,0
+PLANB.BK,PLANB,acquisition_only_not_static_model_membership,2016-01-01,2025-01-01,Media & Publishing,True,23,0
+PLAT.BK,PLAT,acquisition_only_not_static_model_membership,2016-01-01,2016-07-01,Property Development,True,1,0
+PRM.BK,PRM,acquisition_only_not_static_model_membership,2018-07-01,2025-01-01,Transportation & Logistics,True,13,0
+PS.BK,PS,acquisition_only_not_static_model_membership,2012-01-01,2016-12-01,Property Development,True,11,11
+PSH.BK,PSH,acquisition_only_not_static_model_membership,2016-12-01,2021-01-01,Property Development,True,13,4
+PSL.BK,PSL,acquisition_only_not_static_model_membership,2012-01-01,2024-01-02,Transportation & Logistics,True,18,0
+PTG.BK,PTG,acquisition_only_not_static_model_membership,2015-01-01,2024-01-02,Energy & Utilities,True,25,1
+PTL.BK,PTL,acquisition_only_not_static_model_membership,2012-01-01,2022-01-01,Packaging,True,5,0
+PTT.BK,PTT,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Energy & Utilities,True,34,34
+PTTEP.BK,PTTEP,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Energy & Utilities,True,34,34
+PTTGC.BK,PTTGC,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Petrochemicals & Chemicals,True,34,34
+QH.BK,QH,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Property Development,True,32,0
+RATCH.BK,RATCH,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Energy & Utilities,True,29,28
+RBF.BK,RBF,acquisition_only_not_static_model_membership,2020-07-01,2025-01-01,Food & Beverage,True,11,0
+RCL.BK,RCL,acquisition_only_not_static_model_membership,2022-01-01,2025-01-01,Transportation & Logistics,True,7,0
+RML.BK,RML,acquisition_only_not_static_model_membership,2012-07-01,2013-07-01,Property Development,True,2,0
+ROBINS.BK,ROBINS,acquisition_only_not_static_model_membership,2012-01-01,2020-01-01,Commerce,True,20,20
+ROJNA.BK,ROJNA,acquisition_only_not_static_model_membership,2013-01-01,2014-01-01,Property Development,True,2,0
+RS.BK,RS,acquisition_only_not_static_model_membership,2013-07-01,2022-07-01,Commerce,False,21,0
+S.BK,S,acquisition_only_not_static_model_membership,2015-07-01,2018-01-01,Property Development,True,6,0
+SABUY.BK,SABUY,acquisition_only_not_static_model_membership,2023-01-01,2024-01-02,Commerce,True,3,0
+SAMART.BK,SAMART,acquisition_only_not_static_model_membership,2012-01-01,2017-07-01,Information & Communication Technology,True,13,0
+SAMTEL.BK,SAMTEL,acquisition_only_not_static_model_membership,2012-01-01,2016-07-01,Information & Communication Technology,True,5,0
+SAPPE.BK,SAPPE,acquisition_only_not_static_model_membership,2015-07-01,2025-01-01,Food & Beverage,True,3,0
+SAT.BK,SAT,acquisition_only_not_static_model_membership,2012-01-01,2014-01-01,Automotive,True,4,0
+SAWAD.BK,SAWAD,acquisition_only_not_static_model_membership,2015-01-01,2025-01-01,Finance & Securities,True,28,19
+SC.BK,SC,acquisition_only_not_static_model_membership,2012-01-01,2014-07-01,Property Development,True,5,0
+SCB.BK,SCB,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Banking,True,34,34
+SCC.BK,SCC,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Construction Materials,True,34,34
+SCCC.BK,SCCC,acquisition_only_not_static_model_membership,2012-01-01,2018-01-01,Construction Materials,True,10,10
+SCGP.BK,SCGP,acquisition_only_not_static_model_membership,2020-10-22,2025-01-01,Packaging,True,11,11
+SCN.BK,SCN,acquisition_only_not_static_model_membership,2016-01-01,2017-07-01,Energy & Utilities,True,2,0
+SF.BK,SF,acquisition_only_not_static_model_membership,2012-01-01,2016-01-01,Property Development,True,8,0
+SGP.BK,SGP,acquisition_only_not_static_model_membership,2012-01-01,2021-01-01,Energy & Utilities,True,20,0
+SIM.BK,SIM,acquisition_only_not_static_model_membership,2015-01-01,2015-07-01,Information & Communication Technology,True,2,0
+SINGER.BK,SINGER,acquisition_only_not_static_model_membership,2021-07-01,2023-07-01,Commerce,True,5,0
+SIRI.BK,SIRI,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Property Development,True,27,0
+SISB.BK,SISB,acquisition_only_not_static_model_membership,2024-01-02,2025-01-01,Professional Services,True,2,0
+SJWD.BK,SJWD,acquisition_only_not_static_model_membership,2023-04-07,2025-01-01,Transportation & Logistics,True,4,0
+SKY.BK,SKY,acquisition_only_not_static_model_membership,2024-07-01,2025-01-01,Information & Communication Technology,True,1,0
+SMT.BK,SMT,acquisition_only_not_static_model_membership,2012-01-01,2012-07-01,Electronic Components,True,1,0
+SNNP.BK,SNNP,acquisition_only_not_static_model_membership,2023-07-01,2024-07-01,Food & Beverage,True,2,0
+SPALI.BK,SPALI,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Property Development,True,34,5
+SPCG.BK,SPCG,acquisition_only_not_static_model_membership,2013-01-01,2017-07-01,Energy & Utilities,True,11,0
+SPRC.BK,SPRC,acquisition_only_not_static_model_membership,2017-01-01,2025-01-01,Energy & Utilities,True,22,6
+SRICHA.BK,SRICHA,acquisition_only_not_static_model_membership,2013-07-01,2015-01-01,Construction Services,False,3,0
+SSI.BK,SSI,acquisition_only_not_static_model_membership,2012-01-01,2014-07-01,Steel,True,4,0
+STA.BK,STA,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Agribusiness,True,28,2
+STARK.BK,STARK,acquisition_only_not_static_model_membership,2022-01-01,2023-04-07,Industrial Materials & Machinery,True,3,0
+STEC.BK,STEC,acquisition_only_not_static_model_membership,2012-01-01,2024-01-02,Construction Services,False,30,0
+STGT.BK,STGT,acquisition_only_not_static_model_membership,2021-07-01,2025-01-01,Personal Products & Pharmaceuticals,True,8,2
+STPI.BK,STPI,acquisition_only_not_static_model_membership,2012-01-01,2020-07-01,Construction Services,False,16,0
+SUPER.BK,SUPER,acquisition_only_not_static_model_membership,2017-01-01,2023-01-01,Energy & Utilities,True,17,0
+SVI.BK,SVI,acquisition_only_not_static_model_membership,2012-01-01,2017-01-01,Electronic Components,True,11,0
+SYNEX.BK,SYNEX,acquisition_only_not_static_model_membership,2021-07-01,2023-01-01,Information & Communication Technology,True,3,0
+TASCO.BK,TASCO,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Construction Materials,True,28,3
+TCAP.BK,TCAP,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Banking,True,34,23
+TFD.BK,TFD,acquisition_only_not_static_model_membership,2014-01-01,2014-07-01,Property Development,True,1,0
+THAI.BK,THAI,acquisition_only_not_static_model_membership,2012-01-01,2020-07-01,Transportation & Logistics,True,22,6
+THANI.BK,THANI,acquisition_only_not_static_model_membership,2017-01-01,2024-01-02,Finance & Securities,True,19,0
+THCOM.BK,THCOM,acquisition_only_not_static_model_membership,2012-01-01,2018-07-01,Information & Communication Technology,True,15,4
+THG.BK,THG,acquisition_only_not_static_model_membership,2020-01-01,2024-07-01,Health Care Services,True,6,0
+THRE.BK,THRE,acquisition_only_not_static_model_membership,2013-01-01,2015-01-01,Insurance,True,4,0
+THREL.BK,THREL,acquisition_only_not_static_model_membership,2014-07-01,2015-07-01,Insurance,True,3,0
+TICON.BK,TICON,acquisition_only_not_static_model_membership,2012-01-01,2016-07-01,Property Development,True,9,0
+TIDLOR.BK,TIDLOR,acquisition_only_not_static_model_membership,2022-01-01,2025-01-01,Finance & Securities,True,7,6
+TIPH.BK,TIPH,acquisition_only_not_static_model_membership,2022-07-01,2025-01-01,Insurance,True,5,0
+TISCO.BK,TISCO,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Banking,True,34,24
+TKN.BK,TKN,acquisition_only_not_static_model_membership,2017-01-01,2024-07-01,Food & Beverage,True,15,0
+TLI.BK,TLI,acquisition_only_not_static_model_membership,2023-07-01,2025-01-01,Insurance,True,3,3
+TMB.BK,TMB,acquisition_only_not_static_model_membership,2012-01-01,2021-07-01,Banking,True,26,26
+TOA.BK,TOA,acquisition_only_not_static_model_membership,2018-07-01,2025-01-01,Construction Materials,True,13,11
+TOP.BK,TOP,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Energy & Utilities,True,34,34
+TPC.BK,TPC,acquisition_only_not_static_model_membership,2012-01-01,2012-07-01,Petrochemicals & Chemicals,True,1,1
+TPIPL.BK,TPIPL,acquisition_only_not_static_model_membership,2012-01-01,2019-01-01,Construction Materials,True,16,8
+TPIPP.BK,TPIPP,acquisition_only_not_static_model_membership,2018-01-01,2021-07-01,Energy & Utilities,True,12,1
+TQM.BK,TQM,acquisition_only_not_static_model_membership,2020-01-01,2024-01-02,Insurance,True,12,0
+TRC.BK,TRC,acquisition_only_not_static_model_membership,2016-07-01,2017-01-01,Construction Services,True,2,0
+TRUE.BK,TRUE,acquisition_only_not_static_model_membership,2012-01-01,2025-01-01,Information & Communication Technology,True,34,34
+TTA.BK,TTA,acquisition_only_not_static_model_membership,2012-01-01,2023-01-01,Transportation & Logistics,True,17,0
+TTB.BK,TTB,acquisition_only_not_static_model_membership,2021-07-01,2025-01-01,Banking,True,8,8
+TTCL.BK,TTCL,acquisition_only_not_static_model_membership,2012-01-01,2017-07-01,Construction Services,False,13,0
+TTW.BK,TTW,acquisition_only_not_static_model_membership,2012-01-01,2021-07-01,Energy & Utilities,True,24,13
+TU.BK,TU,acquisition_only_not_static_model_membership,2016-01-01,2025-01-01,Food & Beverage,True,25,25
+TUF.BK,TUF,acquisition_only_not_static_model_membership,2012-01-01,2016-01-01,Food & Beverage,True,9,9
+TVO.BK,TVO,acquisition_only_not_static_model_membership,2012-01-01,2022-07-01,Food & Beverage,True,20,0
+U.BK,U,acquisition_only_not_static_model_membership,2015-07-01,2016-01-01,Property Development,True,1,0
+UNIQ.BK,UNIQ,acquisition_only_not_static_model_membership,2015-07-01,2018-07-01,Construction Services,True,7,0
+UV.BK,UV,acquisition_only_not_static_model_membership,2013-07-01,2019-01-01,Property Development,True,9,0
+VGI.BK,VGI,acquisition_only_not_static_model_membership,2013-07-01,2025-01-01,Media & Publishing,True,25,10
+VIBHA.BK,VIBHA,acquisition_only_not_static_model_membership,2017-01-01,2017-07-01,Health Care Services,True,1,0
+VNG.BK,VNG,acquisition_only_not_static_model_membership,2016-01-01,2017-07-01,Construction Materials,True,4,0
+WHA.BK,WHA,acquisition_only_not_static_model_membership,2013-07-01,2025-01-01,Property Development,True,29,17
+WHAUP.BK,WHAUP,acquisition_only_not_static_model_membership,2018-01-01,2021-07-01,Energy & Utilities,True,8,0
+WORK.BK,WORK,acquisition_only_not_static_model_membership,2013-01-01,2019-07-01,Media & Publishing,True,9,0

@@ -9,6 +9,10 @@ time or of assets sharing structure. ``AssetTemporalExtractor`` instead:
 2. encodes market-wide features (index, macro, investor flow, ...) once with a separate encoder;
 3. fuses each asset embedding with the market embedding and the asset's current weight; and
 4. returns per-asset embeddings plus a pooled cross-asset summary and the cash weight.
+
+``temporal_encoder: mlp`` replaces both recurrent encoders with two-layer MLPs over the flattened past
+window (same shared weights across assets, same output size), for the architecture ablation; ``lstm``
+is the default and builds exactly the modules it always did.
 """
 from __future__ import annotations
 
@@ -19,6 +23,18 @@ import numpy as np
 import torch
 from torch import nn
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
+
+TEMPORAL_ENCODERS = ("lstm", "mlp")
+
+
+def _window_mlp(lookback: int, num_inputs: int, hidden_size: int) -> nn.Sequential:
+    """Encodes a flattened ``lookback x num_inputs`` past window; tanh output, like an LSTM's hidden state."""
+    return nn.Sequential(
+        nn.Linear(lookback * num_inputs, hidden_size),
+        nn.ReLU(),
+        nn.Linear(hidden_size, hidden_size),
+        nn.Tanh(),
+    )
 
 
 class AssetTemporalExtractor(BaseFeaturesExtractor):
@@ -33,7 +49,12 @@ class AssetTemporalExtractor(BaseFeaturesExtractor):
         fusion_size: int = 32,
         bidirectional: bool = False,
         dropout: float = 0.0,
+        temporal_encoder: str = "lstm",
     ) -> None:
+        if temporal_encoder not in TEMPORAL_ENCODERS:
+            raise ValueError(f"unknown temporal_encoder {temporal_encoder!r}; choose from {list(TEMPORAL_ENCODERS)}")
+        if temporal_encoder == "mlp" and bidirectional:
+            raise ValueError("bidirectional applies only to temporal_encoder: lstm")
         market = sorted({int(i) for i in (market_feature_indices or [])})
         if any(i < 0 or i >= num_features for i in market):
             raise ValueError("market_feature_indices must index the feature columns")
@@ -55,15 +76,20 @@ class AssetTemporalExtractor(BaseFeaturesExtractor):
         self.register_buffer("asset_index", torch.as_tensor(asset_indices, dtype=torch.long), persistent=False)
         self.register_buffer("market_index", torch.as_tensor(market, dtype=torch.long), persistent=False)
         directions = 2 if bidirectional else 1
+        self.temporal_encoder = temporal_encoder
 
-        self.asset_encoder = nn.LSTM(
-            input_size=len(asset_indices), hidden_size=hidden_size, batch_first=True, bidirectional=bidirectional
-        )
-        self.market_encoder = (
-            nn.LSTM(input_size=len(market), hidden_size=hidden_size, batch_first=True, bidirectional=bidirectional)
-            if market
-            else None
-        )
+        if temporal_encoder == "lstm":
+            self.asset_encoder = nn.LSTM(
+                input_size=len(asset_indices), hidden_size=hidden_size, batch_first=True, bidirectional=bidirectional
+            )
+            self.market_encoder = (
+                nn.LSTM(input_size=len(market), hidden_size=hidden_size, batch_first=True, bidirectional=bidirectional)
+                if market
+                else None
+            )
+        else:
+            self.asset_encoder = _window_mlp(self.lookback, len(asset_indices), hidden_size)
+            self.market_encoder = _window_mlp(self.lookback, len(market), hidden_size) if market else None
         market_dim = hidden_size * directions if market else 0
         self.fusion = nn.Sequential(
             nn.Linear(hidden_size * directions + market_dim + 1, fusion_size),
@@ -80,6 +106,12 @@ class AssetTemporalExtractor(BaseFeaturesExtractor):
         directions = 2 if encoder.bidirectional else 1
         return torch.cat([hidden[-d] for d in range(directions, 0, -1)], dim=-1)
 
+    def _encode(self, encoder: nn.Module, sequence: torch.Tensor) -> torch.Tensor:
+        """``sequence``: (batch, lookback, inputs), oldest session first."""
+        if isinstance(encoder, nn.LSTM):
+            return self._last_state(encoder, sequence)
+        return encoder(sequence.reshape(sequence.shape[0], -1))
+
     def forward(self, observations: torch.Tensor) -> torch.Tensor:
         batch = observations.shape[0]
         window_size = self.lookback * self.num_assets * self.num_features
@@ -89,13 +121,13 @@ class AssetTemporalExtractor(BaseFeaturesExtractor):
 
         asset_seq = window.index_select(-1, self.asset_index)  # (B, L, N, Fa)
         asset_seq = asset_seq.permute(0, 2, 1, 3).reshape(batch * self.num_assets, self.lookback, -1)
-        asset_state = self._last_state(self.asset_encoder, asset_seq).reshape(batch, self.num_assets, -1)
+        asset_state = self._encode(self.asset_encoder, asset_seq).reshape(batch, self.num_assets, -1)
 
         parts = [asset_state]
         if self.market_encoder is not None:
             # Market-wide columns are identical across assets; read them from the first asset slot.
             market_seq = window[:, :, 0, :].index_select(-1, self.market_index)
-            market_state = self._last_state(self.market_encoder, market_seq)
+            market_state = self._encode(self.market_encoder, market_seq)
             parts.append(market_state.unsqueeze(1).expand(-1, self.num_assets, -1))
         parts.append(weights.unsqueeze(-1))
         fused = self.fusion(torch.cat(parts, dim=-1))  # (B, N, fusion)
@@ -150,7 +182,7 @@ def build_policy_kwargs(
         "num_features": len(feature_columns),
         "market_feature_indices": [list(feature_columns).index(c) for c in market_columns],
     }
-    allowed = {"hidden_size", "fusion_size", "bidirectional", "dropout"}
+    allowed = {"hidden_size", "fusion_size", "bidirectional", "dropout", "temporal_encoder"}
     extra = set(config) - allowed
     if extra:
         raise ValueError(f"unknown features_extractor options: {sorted(extra)}")
