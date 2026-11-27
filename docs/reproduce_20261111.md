@@ -290,10 +290,16 @@ python -m scripts.build_slim_results_archive --output results/slim_archive_20261
 - **Verified:** the build reopened the archive and checked every file against the manifest.
 - **Left out:** the first long-term-reward experiment (`results/long_term_reward_experiment_20261106/`, superseded by the walk-forward). Two of its files exist only in iCloud, and macOS refused to download them (`Errno 81`).
 
-**Next rebuild (after 2026-11-26).** The run folders since 2026-11-20, in the project's `results/`, are:
-- **BistKA and five seeds:** `algorithm_comparison_bistka_20261122`, `walk_forward_reward_bistka_20261122`, `pit_walk_forward_bistka_20261122`, `pit_walk_forward_cash_cap_bistka_20261125` and their combined and ensemble folders;
-- **Design choice:** `final_candidate_ranking_20261125`;
-- **Test years:** `final_test_point_in_time`, `final_test_five_stock`;
-- **Holdout:** `holdout_point_in_time`, `holdout_point_in_time_attempt1_failed`, `holdout_five_stock`.
+**Rebuilt 2026-11-27** from every run folder in the project's `results/` (73) plus `~/drl_runs/logs_src_20261127/` (the source ablation's analysis logs), after the source ablation, at code commit `9fb7f77`, built in the clone `~/drl_runs/drl_refactor` (the project folder's checkout stays on `main`):
 
-The archive now also takes the ledger (`results/FINAL_TEST_LEDGER.jsonl`) and leaves out the holdout stages' price copies (`holdout_data/`), like every other price file.
+```bash
+R=/Users/nathawat/Documents/03_FINAL_PROJECT/final_project_plan/results
+python -m scripts.build_slim_results_archive --output results/slim_archive_20261127.tar.gz \
+  $(for d in $R/*/; do echo --run-dir ${d%/}; done) --run-dir ~/drl_runs/logs_src_20261127
+```
+
+- **Archive:** `results/slim_archive_20261127.tar.gz`, 145.4 MB (730 MB unpacked, 8,194 files, 74 run folders), SHA-256 `0843cbea11c7…`, with its receipt next to it. The two earlier builds are kept with their receipts.
+- **New since 2026-11-20:** the BistKA runs (five algorithms and the point-in-time designs at 300k, the cash cap at 300k, the source ablation), the five-seed runs at 100k, the design choice (`final_candidate_ranking_20261125`), the test years and the holdout (`final_test_*`, `holdout_*`, the failed first attempt, and the ledger), the architecture ablation, the HPC smoke runs of the pilot (`screening_smoke_3543`, `screening_storage_safe_smoke_3550`), and the first long-term-reward experiment, whose files can now be read.
+- **Price receipts:** all seven receipts under `data/raw/extended/`; the clone lacked two (the SET50 ETF and the five starter stocks), copied from the project folder after their price files' SHA-256 matched.
+- **Verified:** the build reopened the archive and checked every file against the manifest, and a second check found no models (`*.zip`, `*.pkl`), price files, `logs/`, `locks/`, `holdout_data/` or sealed-holdout files in it. The copy in the project's `results/` has the same SHA-256.
+- **Left out:** the link-only folders of `~/drl_runs` (`*_5seeds_20261125`, which point at seeds archived under their own folders) and the set-aside copy of the rerun MLP task (`~/drl_runs/arch_mlp_aside_20261127/`, byte-identical to the rerun).
