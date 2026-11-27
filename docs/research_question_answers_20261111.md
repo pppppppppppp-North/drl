@@ -1,7 +1,12 @@
 # Answers to the Research Questions (draft)
 
-Date: 2026-11-11; cash-cap arm added 2026-11-20; BistKA 300k-timestep runs (RQ1, RQ4, RQ6) added 2026-11-25; the single test-year evaluation added 2026-11-25 (evening); the cash-capped design at five seeds and 300k (RQ1, RQ6) and the sealed holdout added 2026-11-26
+Date: 2026-11-11; cash-cap arm added 2026-11-20; BistKA 300k-timestep runs (RQ1, RQ4, RQ6) added 2026-11-25; the single test-year evaluation added 2026-11-25 (evening); the cash-capped design at five seeds and 300k (RQ1, RQ6) and the sealed holdout added 2026-11-26; the checks after the holdout (RQ2, RQ3, RQ6 and the encoder) added 2026-11-27
 Status: **draft** for the M8 item "answer each research question explicitly, including negative results". It answers the six questions of the implementation plan (`implementation_plan.md`, section 2.2) from the evidence in the repository today. Each answer links the report it comes from.
+
+> **Checks after the holdout, 2026-11-27 (validation years 2016–2022 only; they cannot change the locked design or its results):**
+> - **Data sources** ([report](source_ablation_20261127.md); BistKA job 4528, the locked cash-capped design, 5 seeds): technical inputs alone, + the ETF market inputs (the locked design), + the policy rate, + the macro proxies, and all of them. No source changed the Sharpe ratio significantly; against technical inputs alone in the same run, the single models' differences are +0.009 (policy rate), −0.011 (macro) and +0.019 (all), and the ETF inputs add +0.001. The all-sources ensemble with the band made 5.5% a year (Sharpe 0.41), level with equal weight, but not significantly ahead of the technical-only ensemble (+0.038, −0.023 to +0.085); its lead came from cash. Under the cap, the earlier policy-rate shortfall is gone.
+> - **Encoder** ([report](architecture_ablation_20261127.md)): an MLP over the 30-session window did as well as the locked LSTM (single models 4.4% against 4.6% a year; ensembles 5.1% against 5.0%; neither difference significant) and trained about seven times faster.
+> - **Retrain on BistKA:** the locked design with seed 42 made 4.8% a year there against 5.0% on the Mac (Sharpe 0.347 against 0.351). The models differ (not byte-identical), but by about half as much as two seeds do.
 
 > **Sealed holdout, 2026-11-26:** the same two designs were evaluated once on 2025 to 4 November 2026 ([results](holdout_results_20261126.md)).
 > - **Point-in-time design:** it matched equal weight in 2025 (−8.8% each) and trailed it in 2026 (+23.7% against +29.7%), holding up to its 20% cash cap. Chained 1.128 against 1.183 for equal weight and 1.214 for the ETF. Its Sharpe shortfall against equal weight, −0.12 (−0.23 to −0.01), is significant. The first attempt failed at loading before any training and was rerun once with approval.
@@ -15,17 +20,17 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 
 **Limits that apply to every answer:**
 - **Data tier:** exploratory. Prices are Yahoo's, and 13% of point-in-time SET50 member-sessions have none.
-- **Years:** validation years only (2016–2022). The 2023–2024 test years and the sealed 2025+ holdout are unread.
+- **Years:** validation years (2016–2022) unless a section says otherwise. The 2023–2024 test years and the sealed holdout were each read once (above); nothing below reads them again.
 - **Statistics:** every Sharpe comparison is a paired stationary bootstrap on chained daily returns (1,699 sessions); "significant" means its 95% interval excludes zero.
 
 | # | Question (abridged) | Short answer | Evidence |
 | --- | --- | --- | --- |
 | 1 | Can a continuous-action DRL agent learn profitable long-term allocation for Thai equities? | **Profitable, but no better than simple benchmarks.** | Strong for the negative part |
-| 2 | Does multi-source data beat price-only and technical-only agents? | **Only market-index context helped, and only borderline.** On the point-in-time index, both the official policy rate and the daily macro proxies lowered the return. | Weak, with the data available |
-| 3 | Which data sources contribute most? | **Market-index context, among the sources tested.** The agent leans on the macro proxies, to its cost; most planned sources have no historical data. | Weak, incomplete |
+| 2 | Does multi-source data beat price-only and technical-only agents? | **No measurable gain.** Market-index context helped only on five stocks, borderline. On the point-in-time index, with the cash cap and five seeds, no input set (policy rate, macro proxies, ETF market inputs, or all) changed the result measurably; without the cap the policy rate and macro proxies had lowered it. | Moderate for the negative part, with the data available |
+| 3 | Which data sources contribute most? | **None measurably on the point-in-time index;** technical inputs carry the agent. Market-index context helped only on five stocks, borderline; most planned sources have no historical data. | Weak, incomplete |
 | 4 | Which DRL algorithm is most stable? | **On-policy (A2C, PPO) over off-policy (SAC, TD3, DDPG),** which overtrade and are significantly worse than the benchmarks; A2C is best, but not significantly better than PPO or the benchmarks. | Moderate (five stocks only) |
 | 5 | Does the policy generalize across regimes, including COVID-19? | **Its behaviour is stable across regimes, but it shows no regime skill;** its crash-year gains came from cash that depended on the seed. | Moderate |
-| 6 | Can BistKA HPC be used efficiently and reproducibly? | **Yes for training:** one 32-CPU job trained 210 models (1,776 task-hours) in 56 hours for about 2,465 SHr, and its models replay exactly on the Mac. Tuning and sentiment extraction have not run there. | Moderate |
+| 6 | Can BistKA HPC be used efficiently and reproducibly? | **Yes for training:** one 32-CPU job trained 210 models (1,776 task-hours) in 56 hours for about 2,465 SHr, and BistKA's models replay on the Mac to within 10⁻⁸. A retrain there reproduces the result but not the files. Tuning and sentiment extraction have not run there. | Moderate |
 
 ## RQ1. Can a continuous-action DRL agent learn profitable long-term portfolio allocation policies for Thai equities?
 
@@ -46,13 +51,14 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
   - **Three times the training, five seeds (BistKA, 2026-11-25):** 3.2% a year, and 3.9% as a seed ensemble with the band ([report](bistka_300k_results_20261125.md)). 17 of the 35 models held 45–98% cash all year, so the return fell while the drawdown shrank (−7.0% against −11.3% a year on average; −12.0% for the 100k ensemble with five seeds, which made 5.2% a year). The ensemble's Sharpe ratio, 0.47, is level with the ETF's 0.50; its deflated Sharpe is 0.25 at 21 designs. On five stocks, PPO trained three times longer also turned to cash and made 4.4% a year against 7.6%, significantly worse. More training did not lift any agent above the benchmarks.
   - **The locked cash-capped design, five seeds and 300k (2026-11-26, validation years only):** with five seeds at 100k its ensemble with the band made 5.0% a year, as with three, and it stayed the best-scoring DRL design under the selection rule (−0.16, still below zero). At 300k the cap held average cash at 8.7% (41% without it), but 10 of 35 models averaged 19% cash or more, near the cap, and the ensemble made 4.9% a year (Sharpe 0.35 against 0.36 at 100k, not significant). 100k is enough for this design ([report](cash_cap_5seeds_300k_20261126.md)).
 - **What it learned:** close to equal weight. Its daily correlation with equal weight is 0.998, with 43.9 effective holdings out of 44.5 tradable members.
+- **Encoder (checked after the holdout, 2026-11-27):** replacing the locked design's LSTMs with an MLP over the same 30-session window made no measurable difference (single models 4.4% against 4.6% a year, Sharpe difference −0.006, −0.040 to +0.022; ensembles 5.1% against 5.0%) ([report](architecture_ablation_20261127.md)).
 - **Other benchmarks on the same universe:** none is significantly better or worse than the agent.
   - **Heuristics:** momentum 5.3%, inverse volatility 5.0% and minimum variance 4.0%.
   - **Forecasters:** ridge 5.7%; LSTM 8.1%, through one rally in late 2020.
 
 ## RQ2. Does adding multi-source data improve out-of-sample performance compared with price-only and technical-indicator-only agents?
 
-**Answer:** only weakly, and only for market-index context. The daily macro proxies did not help on five stocks. On the point-in-time index, both the official policy rate and the daily macro proxies lowered the return. The other sources have not been tested, because their historical data is missing.
+**Answer:** no measurable gain. Market-index context helped only on five stocks, borderline, and the daily macro proxies did not help there. On the point-in-time index without a cash cap, the official policy rate and the daily macro proxies lowered the return; with the locked design's 20% cash cap and five seeds, no input set changed the result measurably (2026-11-27, below). The other sources have not been tested, because their historical data is missing.
 
 - **Five stocks** ([source ablation](source_ablation_20261106.md); 7 folds × 3 seeds per arm, everything else fixed):
 
@@ -76,17 +82,30 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
   - **Why:** the trained models barely use the new inputs. So the shortfall reflects how training turned out with them, chiefly cash that depended on the seed, not information in the rate.
   - **Macro proxies** ([report](pit_walk_forward_20261107.md#follow-up-daily-macro-proxies-as-an-input-2026-11-11)): the shortfall is not significant (single models −0.05, −0.18 to +0.09). But the models read these inputs heavily, and removing their information raised the return of 15 of the 21 models, by 0.5 points a year on average.
   - **Best inputs:** on the point-in-time index, the technical and SET50 market inputs alone.
+- **Point-in-time SET50 with the cash cap** ([report](source_ablation_20261127.md); checked after the holdout, 2026-11-27; the locked design, 7 folds × 5 seeds, only the inputs changed; BistKA job 4528 except the locked row):
+
+  | Inputs | Single models | Seed ensemble + band | Single-model Sharpe difference vs technical only (95% CI) |
+  | --- | ---: | ---: | --- |
+  | Technical only | 4.5% | 5.2% | — |
+  | + SET50 market context (the locked design, trained on the Mac) | 4.6% | 5.0% | +0.001 (−0.028 to +0.028) |
+  | + market + BOT policy rate | 4.6% | 5.2% | +0.009 (−0.027 to +0.048) |
+  | + market + daily macro proxies | 4.4% | 5.0% | −0.011 (−0.051 to +0.033) |
+  | + market + policy rate + macro proxies | 4.6% | 5.5% | +0.019 (−0.027 to +0.062) |
+
+  - **No source helps:** none of these differences is significant, and the ensembles' differences against the technical-only ensemble are not significant either (all sources +0.038, −0.023 to +0.085).
+  - **All sources, ensemble:** 5.5% a year (Sharpe 0.41), level with equal weight (5.6%, 0.38); its edge came from more cash (12 of its 35 models above 15%), mostly in 2020. It is the best of eight new designs; a lead to test on new years, not a finding.
+  - **The policy-rate shortfall is gone under the cap,** which supports the reading that it came from cash that depended on the seed.
 
 ## RQ3. Which data sources contribute most to performance?
 
-**Answer:** among the sources tested, market-index context; technical indicators carry the agent. Fundamentals, news sentiment, sector context and investor flow have not been tested, because the historical data is missing.
+**Answer:** none measurably on the point-in-time index; technical indicators carry the agent. Market-index context helped only on five stocks, borderline, and added nothing on the point-in-time index (2026-11-27). Fundamentals, news sentiment, sector context and investor flow have not been tested, because the historical data is missing.
 
 | Source | Status | Finding |
 | --- | --- | --- |
 | Technical indicators | Tested (every arm) | The base of every agent; on its own, 6.8% a year on five stocks |
-| Market index context (SET50 ETF) | Tested | +1.4 points a year and +0.10 Sharpe on five stocks, borderline |
-| Daily macro proxies (USD/THB, oil, gold, US 10-year yield) | Tested on five stocks and the point-in-time index | **Five stocks:** no gain. Shuffling them moves the weights by 2.9%, against 1.9% for market context, and changes the return by 0.25 points or less. **Point-in-time:** 3.9% against 4.6% a year (seed ensemble 4.3% against 5.5%, not significant). The agent leans on them: shuffling moves its weights by 3.8%, against 2.1% for market context and 4.5% for the technical inputs. Removing their information raised the return of 15 of 21 models |
-| Official BOT policy rate | Tested on the point-in-time index | Lowered the return: 4.1% against 4.6% a year, and 4.5% against 5.5% for the seed ensemble with the band (Sharpe −0.06, significant). The agent barely reads it: shuffling it moves the weights by 0.7%, against 0.9% for market context and 3.5% for the technical inputs |
+| Market index context (SET50 ETF) | Tested | +1.4 points a year and +0.10 Sharpe on five stocks, borderline. On the point-in-time index with the cash cap: +0.001 Sharpe over technical inputs alone (2026-11-27) |
+| Daily macro proxies (USD/THB, oil, gold, US 10-year yield) | Tested on five stocks and the point-in-time index | **With the cash cap and five seeds (2026-11-27):** no measurable effect (−0.011 Sharpe for single models). **Five stocks:** no gain. Shuffling them moves the weights by 2.9%, against 1.9% for market context, and changes the return by 0.25 points or less. **Point-in-time:** 3.9% against 4.6% a year (seed ensemble 4.3% against 5.5%, not significant). The agent leans on them: shuffling moves its weights by 3.8%, against 2.1% for market context and 4.5% for the technical inputs. Removing their information raised the return of 15 of 21 models |
+| Official BOT policy rate | Tested on the point-in-time index | With the cash cap and five seeds (2026-11-27): no measurable effect (+0.009 Sharpe for single models, ensemble 5.2% a year as with technical inputs alone). Without the cap, it lowered the return: 4.1% against 4.6% a year, and 4.5% against 5.5% for the seed ensemble with the band (Sharpe −0.06, significant). The agent barely reads it: shuffling it moves the weights by 0.7%, against 0.9% for market context and 3.5% for the technical inputs |
 | Financial statements | Not tested | Five stocks and recent years only; no shares outstanding for P/E and P/BV |
 | Thai news sentiment | Not tested | The scorer exists; there is no historical news for 2014–2024 |
 | Sector context | Not tested | Implemented for the V3 universe; not switched on in the point-in-time runs |
@@ -149,7 +168,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 
 ## RQ6. Can BistKA HPC be used efficiently for reproducible training, hyperparameter tuning and sentiment feature extraction?
 
-**Answer:** for training, yes. In November one 32-CPU job trained the 210 models of the algorithm comparison and the point-in-time design at 300k timesteps, a second trained the 35 models of the locked cash-capped design, and the trained models replay on the development Mac to within 10⁻⁸ of their curves. Hyperparameter tuning and sentiment extraction have not run there.
+**Answer:** for training, yes. In November one 32-CPU job trained the 210 models of the algorithm comparison and the point-in-time design at 300k timesteps, a second trained the 35 models of the locked cash-capped design, a third the 147 models of the source ablation, and the trained models replay on the development Mac to within 10⁻⁸ of their curves. Retraining on BistKA reproduces the result but not the files. Hyperparameter tuning and sentiment extraction have not run there.
 
 - **Job 4409, November 2026** ([report](bistka_300k_results_20261125.md#compute-rq6); [HPC record](../hpc/hpc_sync_status.md)):
   - **Layout:** one job with a pool of 210 tasks, one worker per CPU (`slurm/walk_forward_pool.sbatch`), instead of a 210-element array. The project's QOS allows 32 CPUs at once across all its jobs.
@@ -159,6 +178,10 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
   - **Estimate versus measurement:** the job was estimated at 12–13 hours from Mac timings and took 56. Its progress was measured while it ran, without touching it (`hpc/buffer_rate.py`, `hpc/rollout_period.py`).
   - **Reproducibility across machines:** the 35 point-in-time models, trained with torch 2.10 and pandas 3.0 on BistKA, replayed on the Mac (torch 2.15, pandas 2.3) to within 6 × 10⁻⁹ of their saved validation curves.
 - **Job 4518, November 2026** ([report](cash_cap_5seeds_300k_20261126.md); [HPC record](../hpc/hpc_sync_status.md)): the 35 cash-capped models at 300k in 11.2 hours for 450 SHr (32 CPUs, 80 GB; about 7,064 SHr remain). With 32 models at once each took 8.9 hours; the last three, with the other CPUs idle, took 2.3 hours. The models replayed on the Mac to within 1.0 × 10⁻⁸.
+- **Job 4528, November 2026** ([report](source_ablation_20261127.md#the-retrain-on-bistka); [HPC record](../hpc/hpc_sync_status.md)): the 140 models of the source ablation and 7 retrained models of the locked design in 14.0 hours for 561 SHr (about 6,503 SHr remain). With 32 at once a point-in-time model took about 3 hours (about 36 minutes on the Mac with three workers).
+  - **Same seed, another machine:** the locked design retrained with seed 42 made 4.8% a year on BistKA against 5.0% on the Mac (Sharpe 0.347 against 0.351). The models differ from the first update, as expected for floating-point training on different hardware and libraries, but the gap in a fold's final value (0.6 points on average) is about half the gap between two seeds on the Mac (1.1 points).
+  - **Same machine:** a model retrained on the Mac after its process exited with an error gave byte-identical curves and holdings ([report](architecture_ablation_20261127.md#compute-and-one-task-rerun)).
+  - **Inference:** the Mac replays BistKA's models to within 4 × 10⁻⁸.
 
 - **Calibration on BistKA, July 2026** (`reports/bistka_calibration_execution_20260715.md` in the project folder; `reports/` is not tracked by git):
   - **Job 3530:** 7 min 46 s on 18 CPUs.
@@ -174,7 +197,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 
 ## What would change these answers
 
-- **RQ1, RQ5:** the single evaluation of the final configuration on the 2023–2024 test years and the sealed 2025+ holdout, after the design is locked. Licensed SETSMART data would remove the survivorship gap.
+- **RQ1, RQ5:** both single evaluations are done (test years and holdout, above); a new claim needs years after 4 November 2026. Licensed SETSMART data would remove the survivorship gap.
 - **RQ2, RQ3:** historical news, investor flow and point-in-time fundamentals, which first need data.
 - **RQ4:** the algorithms on the point-in-time index, and off-policy settings that limit trading (a turnover penalty or a no-trade band), which this comparison did not try.
 - **RQ6:** hyperparameter tuning or sentiment extraction run on BistKA.

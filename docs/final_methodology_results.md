@@ -1,6 +1,6 @@
 # Final Methodology And Results
 
-Last updated: 2026-11-26. The May 2026 pilot write-up is kept unchanged as an appendix at the end.
+Last updated: 2026-11-27. The May 2026 pilot write-up is kept unchanged as an appendix at the end.
 
 This is the short account of what was built, how it was evaluated and what it found. The numbers come from the dated reports linked in each section. The report chapter `docs/report_drafts/results_title_alignment_20261106.tex` has the same results with tables and figures, and [the research-question answers](research_question_answers_20261111.md) take each question in turn.
 
@@ -50,7 +50,7 @@ Can a deep reinforcement learning agent with a long-term objective and several d
 
 - **Survivorship:** equal weight over today's SET50 names made 12.2% a year over the same years, against 5.6% over each session's actual members ([report](pit_walk_forward_20261107.md)).
 - **What the point-in-time agent learned:** close to equal weight (daily correlation 0.998 for the seed ensemble).
-- **Sources:** adding the policy rate or the macro proxies lowered the point-in-time return. Only SET50 market context helped, borderline and on five stocks ([ablation](source_ablation_20261106.md)).
+- **Sources:** without a cash cap, adding the policy rate or the macro proxies lowered the point-in-time return; with the locked design's cap and five seeds, no input set changed it measurably (below). Only SET50 market context ever helped, borderline and on five stocks ([ablation](source_ablation_20261106.md)).
 - **Training budget:** 300k timesteps never beat 100k significantly. Without a cap, PPO drifted to cash; with the 20% cap, 10 of 35 models still sat near it ([300k](bistka_300k_results_20261125.md), [cash cap](cash_cap_5seeds_300k_20261126.md)).
 - **Selection:** no DRL design scored above zero against equal weight in either universe, so the rule as written selects equal weight. The top DRL designs were then evaluated anyway: the point-in-time cash-capped ensemble with the band (score −0.01) and five-stock A2C at 300k (−0.16).
 
@@ -67,9 +67,26 @@ Can a deep reinforcement learning agent with a long-term objective and several d
 - **Test years** ([results](final_test_results_20261125.md)): the point-in-time design was ahead of equal weight in both years (Sharpe difference +0.06, −0.06 to +0.17, not significant) and behind the ETF. Five-stock A2C trailed equal weight. Yahoo's 2024 prices turned out to have stale rows on 17.5% of stock rows; the results stand as locked and the defect is disclosed.
 - **Holdout** ([results](holdout_results_20261126.md)): the point-in-time design matched equal weight in 2025 and trailed it in 2026, holding up to its 20% cash cap through a rally. Its Sharpe shortfall against equal weight is significant: −0.12 (−0.23 to −0.01). Five-stock A2C trailed equal weight and the ETF, not significantly. The point-in-time stage's first attempt stopped at loading before any training and was rerun once with the authors' approval. Stale prices are rare from 2025 on (0.2–1.8% of rows).
 
+## Checks after the holdout (validation years only, 2026-11-27)
+
+These used the validation years 2016–2022 only, after both single evaluations, so they cannot change the locked design or its results.
+
+| Design (5 seeds, 100k) | Single models | Ensemble + band | Single-model Sharpe difference (95% CI) |
+| --- | ---: | ---: | --- |
+| Locked: LSTM encoder, technical + ETF market inputs | 4.6% | 5.0% | — |
+| MLP encoder | 4.4% | 5.1% | −0.006 vs locked (−0.040 to +0.022) |
+| Technical inputs only | 4.5% | 5.2% | −0.001 vs locked (−0.028 to +0.028) |
+| + policy rate | 4.6% | 5.2% | +0.009 vs technical only (−0.027 to +0.048) |
+| + macro proxies | 4.4% | 5.0% | −0.011 vs technical only (−0.051 to +0.033) |
+| + policy rate + macro proxies | 4.6% | 5.5% | +0.019 vs technical only (−0.027 to +0.062) |
+
+- **Encoder** ([report](architecture_ablation_20261127.md)): the MLP did as well as the LSTM and trained about seven times faster.
+- **Sources** ([report](source_ablation_20261127.md)): no source changed the result measurably. The all-sources ensemble (5.5%, Sharpe 0.41) is level with equal weight and not significantly ahead of the technical-only ensemble; its lead came from cash.
+- **Retrain on BistKA:** the same seed gave a different model with the same result (4.8% against 5.0% a year); inference carries across machines to within 4 × 10⁻⁸.
+
 ## Conclusion
 
-The long-term reward fixed the overtrading of the earlier one-day objective, and on the point-in-time SET50 the agent came to hold close to equal weight at lower turnover. No design beat equal weight of its own universe on the validation years. The design chosen by a fixed rule was slightly ahead of equal weight in the test years and significantly behind it, by Sharpe ratio, on the sealed holdout. Neither DRL design beat the SET50 ETF on years it had not seen. Neither extra source tried on the point-in-time universe (the policy rate, the macro proxies) helped. The evidence does not support a claim that this DRL design improves long-term profit in the Thai stock market. It does support the protocol: a survivorship-aware universe, walk-forward folds, a selection rule fixed in advance, and locked single evaluations that report a negative result as it came.
+The long-term reward fixed the overtrading of the earlier one-day objective, and on the point-in-time SET50 the agent came to hold close to equal weight at lower turnover. No design beat equal weight of its own universe on the validation years. The design chosen by a fixed rule was slightly ahead of equal weight in the test years and significantly behind it, by Sharpe ratio, on the sealed holdout. Neither DRL design beat the SET50 ETF on years it had not seen. Neither extra source tried on the point-in-time universe (the policy rate, the macro proxies) helped, with or without the cash cap, and a simpler encoder did as well as the LSTM. The evidence does not support a claim that this DRL design improves long-term profit in the Thai stock market. It does support the protocol: a survivorship-aware universe, walk-forward folds, a selection rule fixed in advance, and locked single evaluations that report a negative result as it came.
 
 ## Limitations
 
@@ -82,13 +99,13 @@ The long-term reward fixed the overtrading of the earlier one-day objective, and
 
 ## Reproducing
 
-[`reproduce_20261111.md`](reproduce_20261111.md) gives one command block per stage, including the HPC runs, the design choice, the test years and the holdout. The slim archive (`scripts/build_slim_results_archive.py`) holds the configs, receipts and metrics without trained models or price files.
+[`reproduce_20261111.md`](reproduce_20261111.md) gives one command block per stage, including the HPC runs, the design choice, the test years and the holdout. The slim archive (`scripts/build_slim_results_archive.py`; latest `slim_archive_20261127.tar.gz`, 74 run folders) holds the configs, receipts and metrics without trained models or price files.
 
 ## What remains
 
 - Licensed SETSMART data (prices with trading status, corporate actions, fundamentals) and a historical news source, then the multi-source ablation on them.
 - Investor-flow features from SET's daily trading value by investor type.
-- The authors' choice of title wording ([title check](title_check_draft_20261110.md)), the advisor's review of the locks and decisions, and inserting the chapter into `kvis_final_research_report.tex`.
+- The authors' choice of title wording ([title check](title_check_draft_20261110.md)), the advisor's review of the locks and decisions, and the Beamer deck and posters (the chapter is in `kvis_final_research_report.tex`).
 - Any new claim needs years this work has not used.
 
 ---
