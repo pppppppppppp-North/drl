@@ -17,8 +17,8 @@ Code: `temporal_encoder` in `src/models/feature_extractors.py` (commit `43f5bc4`
 
 | Policy | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | Mean a year | Chained | Sharpe |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| MLP encoder, single models (mean of 5 seeds) | 19.3% | 13.6% | −10.2% | 5.7% | −6.8% | 9.7% | −0.6% | 4.4% | 1.305 | 0.33 |
-| LSTM encoder (locked), single models | 19.6% | 14.8% | −10.3% | 6.0% | −7.5% | 9.6% | −0.2% | 4.6% | 1.332 | 0.33 |
+| MLP encoder, single models (mean of 5 seeds) | 19.3% | 13.6% | −10.2% | 5.7% | −6.8% | 9.7% | −0.6% | 4.4% | 1.308 | 0.33 |
+| LSTM encoder (locked), single models | 19.6% | 14.8% | −10.3% | 6.0% | −7.5% | 9.6% | −0.2% | 4.6% | 1.319 | 0.33 |
 | MLP encoder, ensemble + band | 20.0% | 14.7% | −9.2% | 7.0% | −7.4% | 10.3% | 0.4% | 5.1% | 1.372 | 0.37 |
 | LSTM encoder (locked), ensemble + band | 19.9% | 15.8% | −10.0% | 7.4% | −8.7% | 10.0% | 0.7% | 5.0% | 1.357 | 0.36 |
 | Equal weight, monthly | 22.2% | 16.5% | −10.0% | 6.5% | −8.5% | 11.9% | 0.7% | 5.6% | 1.407 | 0.38 |
