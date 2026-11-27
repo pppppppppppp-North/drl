@@ -5,7 +5,7 @@ Last full remote evidence: 2026-07-26
 Latest connection probe: 2026-07-31
 Latest connection and code copy: 2026-11-26 (three files; see job 4528)
 
-Latest job check: 2026-11-26
+Latest job check: 2026-11-27
 
 ## 2026-11-22 Connection And Code Copy
 
@@ -43,6 +43,10 @@ Latest job check: 2026-11-26
 - **Job `4528`, source ablation on the locked point-in-time design (operator-requested, submitted 23:11 on 2026-11-26; "continue the main progress, submit one job overnight"):** `sbatch --mem=80G --time=2-00:00:00 --job-name=drl_pool_src --export=ALL,PROJECT_DIR=$PWD,POOL=slurm/pools/bistka_20261126.tasks slurm/walk_forward_pool.sbatch` in `/lustrefs/project/25sfcs03/drl_thai_stock_20261122`, on `bistka-compute-01` with 32 CPUs. The user signed in again in the Terminal panel (new control-master session). Cluster idle before submission; 176,178 of 600,000 billing minutes used (about 7,064 SHr left).
   - **Files copied first** with `rsync` over the control-master session: `config/pit_source_ablation_cashcap.yaml`, `slurm/pools/bistka_20261126.tasks` and `scripts/run_pit_walk_forward.py` (the holdout stage's optional `data.end`, default unchanged; the replaced file is in `logs/replaced_20261126/scripts/`). Afterwards the SHA-256 of 21 files (the two configs, the pool file, the runner, the pool scripts, the environments, the panel, the models, the macro and policy-rate features, and every input file the arms read) matched the clone at `f1f440a`.
   - **Tasks:** 147 at 100k timesteps, folds 2016–2022: four source arms (technical only, + policy rate, + macro proxies, + both) × seeds 42–46, and the locked design with seed 42 as a cross-platform check against the Mac.
+  - **Finished** at 13:12 on 2026-11-27 (`COMPLETED`, exit 0, 14 h 01 min from 23:11:37; peak memory about 39.9 GiB of the 80 GB requested; 417.8 CPU-hours used of 448.5 allocated). The smoke stage (5 tasks at 3,000 steps) passed in two minutes; then all 147 tasks finished, none `FAILED`, and `pool_4528.err` is empty. With 32 tasks at once a task took about 3.0 hours (10,693 s for the locked design's seed 42).
+  - **Cost:** 561 SHr (14.02 h at 40 SHr an hour). `scontrol show assoc_mgr flags=qos qos=25sfcs03` shows 209,818 of 600,000 billing minutes used, so about 6,503 SHr are left.
+  - **Connection:** the control-master session ended at 07:22 while the job ran (the job did not need it); the user signed in again at about 16:10 and the results were checked then.
+  - **Copied to the Mac** with `rsync`, model files included (1,470 files: 7 and 140 curves with their `ppo_model.zip`), into `~/drl_runs/pit_cash_cap_100k_replication_bistka_20261126/` and `~/drl_runs/pit_source_ablation_cashcap_bistka_20261126/`. The SHA-256 of every file matched BistKA's. Analysis: [report](../docs/source_ablation_20261127.md).
 
 ## 2026-07-31 Connection And Sync Boundary
 
