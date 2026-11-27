@@ -17,7 +17,7 @@
 \subtitle{Comprehensive Project Progress, Literature Review, Methodology, Results, and References}
 \author{Final Project Progress Report}
 \institute{BistKA HPC Project: \texttt{/lustrefs/project/25sfcs03/drl\_thai\_stock}}
-\date{June 28, 2026}
+\date{June 28, 2026; updated November 27, 2026}
 
 \begin{document}
 
@@ -33,7 +33,7 @@
 \begin{itemize}
   \item This deck explains what has been built, tested, and learned.
   \item It uses simple language first, then adds technical details.
-  \item The results are pilot results, not final market-performance claims.
+  \item The July pilot results are descriptive; the extension section adds the long-term, point-in-time results and the final evaluations.
   \item The deck is organized from motivation to data, model, results, and next steps.
 \end{itemize}
 \end{frame}
@@ -71,21 +71,21 @@
 % 6
 \begin{frame}{Final Status At A Glance}
 \begin{itemize}
-  \item Local repository scaffold is complete.
-  \item HPC project directory and conda environment are complete.
-  \item Latest full local validation passed with 53 tests on Python 3.11.
-  \item External data handoff, intake, and validation gates are implemented.
-  \item Latest documentation and validation artifacts are synced to BistKA.
+  \item Pilot pipeline, HPC setup and storage-safe smoke completed (July).
+  \item Extension completed: long-term reward, point-in-time SET50 (2012--2024), seven walk-forward folds, five algorithms on BistKA.
+  \item The locked design was evaluated once on the 2023--2024 test years and once on a sealed 2025--2026 holdout.
+  \item Report rebuilt with the extension chapter; code and documents on GitHub \texttt{main}.
+  \item Result: no DRL design beat equal weight or the SET50 ETF on unseen years.
 \end{itemize}
 \end{frame}
 
 % 7
 \begin{frame}{Important Caveat}
 \begin{itemize}
-  \item The current real-data experiments use a five-stock starter universe.
-  \item These results validate the pipeline, not the whole Thai market.
-  \item Historical sentiment and official macro data do not yet overlap the 2021-2024 model window.
-  \item Stronger performance claims require broader and licensed data.
+  \item The pilot used a five-stock starter universe; the extension uses each session's actual SET50 members.
+  \item Prices come from Yahoo Finance (exploratory tier); 13\% of point-in-time member-sessions have no prices.
+  \item Historical sentiment, investor flow and point-in-time fundamentals are still missing.
+  \item Stronger performance claims require licensed data and years this work has not used.
 \end{itemize}
 \end{frame}
 
@@ -926,6 +926,8 @@ Validation period & PTT buy-hold & 0.405 \\
 \end{frame}
 
 % 78
+\input{docs/report_drafts/beamer_extension_20261127}
+
 \section{Validation And Artifacts}
 
 \begin{frame}{Testing Strategy}
@@ -966,20 +968,20 @@ Ticker-universe CSV support & 53 \\
 % 81
 \begin{frame}{Final Archive}
 \begin{itemize}
-  \item Latest archive folder: \texttt{final\_archive/}.
-  \item Latest ticker-universe archive was created on 2026-05-31.
-  \item It contains source, configs, tests, docs, selected data, reports, and selected result outputs.
-  \item It intentionally excludes large training caches and TensorBoard event files.
+  \item Latest slim archive: \texttt{slim\_archive\_20261127.tar.gz} (74 run folders, 8{,}194 files, 145 MB).
+  \item It holds code, configs, documents, receipts and run outputs, with a verified SHA-256 manifest.
+  \item It leaves out trained models, price files and the sealed holdout data.
+  \item The runbook \texttt{docs/reproduce\_20261111.md} gives one command per stage.
 \end{itemize}
 \end{frame}
 
 % 82
 \begin{frame}{GitHub Progress}
 \begin{itemize}
-  \item Project was pushed to GitHub.
-  \item Recent synced work includes full external config, provider request, intake checklist, and intake validator.
-  \item BistKA was refreshed from the pushed GitHub \texttt{main} archive on 2026-06-09.
-  \item Remote branch: \texttt{main}.
+  \item Repository: \texttt{github.com/pppppppppppp-North/drl}.
+  \item The extension (80 commits) was merged into \texttt{main} on 2026-11-27.
+  \item Run folders and trained models stay outside git; the slim archive and receipts identify them.
+  \item BistKA ran each job from a SHA-256-checked copy of a recorded commit.
 \end{itemize}
 \end{frame}
 
@@ -1098,80 +1100,77 @@ Ticker-universe CSV support & 53 \\
 
 \begin{frame}{How To Explain The Result Simply}
 \begin{itemize}
-  \item The system works.
-  \item The model is not yet better than simple buy-and-hold.
-  \item The experiment is honest about this.
-  \item The next improvement should focus on better and broader data.
+  \item The system works and its runs are reproducible.
+  \item On the actual SET50, the agent learned something close to equal weight, with less trading.
+  \item It did not beat equal weight or the market ETF on years it had not seen.
+  \item Extra data sources did not help measurably; the honest result is negative.
 \end{itemize}
 \end{frame}
 
 % 93
 \begin{frame}{Recommended Next Step 1}
 \begin{itemize}
-  \item Replace the five-ticker starter universe with a broader curated list.
-  \item Save it at \texttt{data/reference/set50\_or\_set100\_universe.csv}.
-  \item Run source-readiness and intake-validation gates.
-  \item Only then rebuild OHLCV and feature tables.
+  \item Obtain the licensed SETSMART package (trading status, corporate actions, delisted names).
+  \item Rerun the point-in-time evaluation on it to close the 13\% price gap.
+  \item Check whether the negative result holds on publication-grade data.
+  \item The request is prepared in \texttt{requests/setsmart\_v3\_20260901/}.
 \end{itemize}
 \end{frame}
 
 % 94
 \begin{frame}{Recommended Next Step 2}
 \begin{itemize}
-  \item Replace pilot sector mapping with a complete sector or constituent source.
-  \item Then rebuild sector-relative features.
-  \item This will make sector-relative signals more meaningful.
-  \item It will also support broader universe experiments.
+  \item Collect historical Thai news or disclosures for 2014--2024.
+  \item Score them with the sentiment scorer that already exists.
+  \item Add investor-flow data (trading value by investor type) and point-in-time fundamentals.
+  \item Then repeat the source ablation on the locked design.
 \end{itemize}
 \end{frame}
 
 % 95
 \begin{frame}{Recommended Next Step 3}
 \begin{itemize}
-  \item Obtain historical official macro data with release dates.
-  \item Use the official macro CSV importer.
-  \item Rebuild official macro feature tables.
-  \item Only then run official macro ablations.
+  \item Any new performance claim needs years this work has not used (after 4 November 2026).
+  \item Lock the design and statistics before looking, as for the test years and the holdout.
+  \item Report the result as it comes out.
 \end{itemize}
 \end{frame}
 
 % 96
 \begin{frame}{Recommended Next Step 4}
 \begin{itemize}
-  \item Obtain historical Thai news, disclosures, or sentiment scores.
-  \item Use the historical sentiment CSV importer.
-  \item Build daily ticker-level sentiment.
-  \item Re-run sentiment feature merge and ablations.
+  \item Look for a policy that adds value over equal weight after costs.
+  \item Candidates: the algorithms on the point-in-time index, and off-policy settings that limit trading.
+  \item Count every design tried; correct with the deflated Sharpe ratio.
 \end{itemize}
 \end{frame}
 
 % 97
 \begin{frame}{Recommended Next Step 5}
 \begin{itemize}
-  \item Follow \texttt{docs/full\_external\_rebuild.md}.
-  \item Produce CSV and Markdown intake-validation reports.
-  \item Run broader ablations, walk-forward validation, and regime tests.
-  \item Report average, per-window stability, and failure cases.
+  \item Choose the final title wording to match the evidence (see \texttt{docs/title\_check\_draft\_20261110.md}).
+  \item Advisor review of the locks and decisions; signatures.
+  \item Add the team photo and the approved member paragraphs to the deck and posters.
 \end{itemize}
 \end{frame}
 
 % 98
 \begin{frame}{Final Takeaway}
 \begin{itemize}
-  \item The project now has a working, tested, reproducible pilot pipeline.
-  \item It includes data ingestion, features, DRL training, baselines, and evaluation.
-  \item Current DRL results do not beat the strongest simple baseline.
-  \item This is a strong foundation for the next data-driven experiment.
+  \item The project has a tested, reproducible pipeline from data to locked evaluation.
+  \item With a long-term objective and a survivorship-aware universe, DRL matched but did not beat equal weight on validation.
+  \item On unseen years it did not beat equal weight or the SET50 ETF; on the holdout it trailed equal weight significantly.
+  \item The contribution is the protocol and an honest negative result.
 \end{itemize}
 \end{frame}
 
 % 99
 \begin{frame}{What To Say In A Presentation}
 \begin{itemize}
-  \item "We built the full experimental system first."
-  \item "We tested it on synthetic data and real Thai starter data."
-  \item "We compared DRL with simple but strong baselines."
-  \item "The honest result is that better data is needed before claiming DRL superiority."
+  \item ``We built the full experimental system first, and ran it on HPC.''
+  \item ``We moved from five hand-picked stocks to the actual SET50 members of each day.''
+  \item ``We fixed the design and the statistics before looking at the test years and the holdout.''
+  \item ``The honest result: DRL did not beat simple equal weighting after costs.''
 \end{itemize}
 \end{frame}
 
