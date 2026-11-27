@@ -9,8 +9,9 @@ year with one group of inputs changed and the model unchanged:
 - ``mean``: the group is held at its training-window mean, which the shared-weight actor standardizes to
   zero, so the model gets no information from it. This also removes values outside the training range.
 
-Groups follow the column prefixes: ``technical`` (every stock column), ``market`` (``set50_etf_``),
-``policy_rate`` (``bot_``) and ``macro`` (``usdthb_``, ``brent_``, ``wti_``, ``gold_``, ``us10y_``).
+Groups follow the column prefixes: ``technical`` (every stock column except the sector ones), ``sector``
+(``sector_``, from ``src.features.pit_sector_context``), ``market`` (``set50_etf_``), ``policy_rate`` (``bot_``)
+and ``macro`` (``usdthb_``, ``brent_``, ``wti_``, ``gold_``, ``us10y_``).
 Only groups among the variant's inputs are tested. Each row compares a changed run with the intact one:
 
 - ``action_shift``: mean half-L1 distance between the intact and changed stock weights at each decision,
@@ -50,7 +51,11 @@ MODES = ("shuffle", "mean")
 def input_groups(stock_columns: list[str], market_columns: list[str]) -> dict[str, tuple[str, list[int]]]:
     """Group name -> (``stock`` or ``market`` tensor, column positions in that tensor)."""
 
-    groups: dict[str, tuple[str, list[int]]] = {"technical": ("stock", list(range(len(stock_columns))))}
+    sector = [i for i, column in enumerate(stock_columns) if column.startswith("sector_")]
+    groups: dict[str, tuple[str, list[int]]] = {
+        "technical": ("stock", [i for i in range(len(stock_columns)) if i not in sector])}
+    if sector:
+        groups["sector"] = ("stock", sector)
     rules = (
         ("market", lambda c: c.startswith("set50_etf_")),
         ("policy_rate", lambda c: c.startswith("bot_")),

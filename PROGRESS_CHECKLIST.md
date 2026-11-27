@@ -1,6 +1,6 @@
 # Project Progress Checklist
 
-Last updated: 2026-11-27
+Last updated: 2026-11-28
 
 Use this file as the single running checklist for what has been completed and what remains. Update it whenever code, data, HPC jobs, results, or report artifacts change.
 
@@ -88,6 +88,13 @@ Details: [`hpc/hpc_sync_status.md`](hpc/hpc_sync_status.md). Both jobs were subm
   - **Cross-platform retrain:** the locked design with seed 42 made 4.8% a year on BistKA (Sharpe 0.347) against 5.0% on the Mac (0.351). The trained weights differ from the first update (not byte-identical), but the gap (0.6 points a fold) is about half the gap between two seeds (1.1). The Mac replays BistKA's models to within 4 × 10⁻⁸.
   - **Analysis code:** `scripts/aggregate_walk_forward_reward.py` now has twelve figure colours (the run has ten learned designs); `config/source_ablation_candidates_20261127.yaml` holds the decision-7 inputs.
   - **Correction found on the way:** `docs/architecture_ablation_20261127.md` gave the single models' chained values from seed 46's curve instead of the seed mean (MLP 1.305 and LSTM 1.332; corrected to 1.308 and 1.319). Earlier reports quote the seed means and are unaffected.
+- `[x]` **Sector inputs for the locked design, local (2026-11-27 19:30 to 2026-11-28 04:28, three workers; milestone M4 sector item; [report](docs/sector_inputs_20261127.md)).** New module `src/features/pit_sector_context.py` (5 tests) and runner option `data.sector: true`. They give four inputs from the archive's dated SET sectors: the 5- and 20-session return relative to SET100 sector peers, the peers' 20-session return, and a peer flag. One arm, `pit_cashcap_src_sector` in `config/pit_sector_ablation_cashcap.yaml` (3 config tests), is the locked variant plus these inputs; pool `slurm/pools/local_20261127_sector.tasks`, 35 tasks, seeds 42–46, folds 2016–2022.
+  - **First pool stopped:** zero-filled warm-up returns of new series entered the peer means. It ran about 15 minutes and is set aside in `~/drl_runs/sector_aborted_warmup_peers_20261127/`. A peer now counts towards a horizon only once its series is longer than the horizon (with a test).
+  - **Run:** all 35 tasks `done`, none `FAILED`; the ensemble's replays matched to 2 × 10⁻¹⁶, and equal weight and the ETF match the locked run on every fold.
+  - **Result (validation years only):** no measurable gain. Single models 4.5% a year against 4.6% for the locked design (Sharpe −0.005, −0.033 to +0.027); ensembles with the band 5.1% against 5.0% (+0.010, −0.020 to +0.043). Against technical only: −0.003 and −0.002. Decision-7: the sector ensemble −0.157 points a year, the locked ensemble −0.160; equal weight is still selected.
+  - **Attribution:** `scripts/pit_feature_group_attribution.py` now treats `sector_` columns as their own group (1 new test). Shuffled, the sector inputs move the portfolio by 2.4%, the ETF inputs 1.5% and the technical inputs 4.1%. With the sector inputs at their training mean, the return changes by +0.06 points a year (19 of 35 models higher).
+  - **Coverage table (2026-11-27):** `scripts/source_coverage_table.py` (2 tests) and [docs/source_coverage_20261127.md](docs/source_coverage_20261127.md) give each source's coverage over 2012–2022. Fundamentals, news, investor flow and CPI have none.
+  - **Outputs:** `~/drl_runs/pit_walk_forward_sector_cashcap_20261127/`, `pit_src_sector_ensemble_20261127/`, `pit_walk_forward_combined_sector_20261127/`, `pit_attribution_sector_20261128/`, `source_coverage_20261127/`; decision-7 inputs `config/sector_candidates_20261127.yaml`.
 
 ## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07, sticky slots 2026-11-09, shared-weight actor, seed ensemble and no-trade band 2026-11-10, training with the band 2026-11-11, cash cap 2026-11-19
 

@@ -56,6 +56,12 @@ def test_groups_follow_the_column_prefixes() -> None:
                       "macro": ("market", [2]), "other_market": ("market", [3])}
 
 
+def test_sector_columns_form_their_own_stock_group() -> None:
+    groups = input_groups(["return_1d", "sector_relative_return_5d", "rsi_14", "sector_peers_available"],
+                          ["set50_etf_return_1d"])
+    assert groups == {"technical": ("stock", [0, 2]), "sector": ("stock", [1, 3]), "market": ("market", [0])}
+
+
 def test_decisions_are_recorded_only_on_decision_days() -> None:
     make = _make(_panel())
     curve, targets = run_once(make, RateReader(), None)

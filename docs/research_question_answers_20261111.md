@@ -1,6 +1,6 @@
 # Answers to the Research Questions (draft)
 
-Date: 2026-11-11; cash-cap arm added 2026-11-20; BistKA 300k-timestep runs (RQ1, RQ4, RQ6) added 2026-11-25; the single test-year evaluation added 2026-11-25 (evening); the cash-capped design at five seeds and 300k (RQ1, RQ6) and the sealed holdout added 2026-11-26; the checks after the holdout (RQ2, RQ3, RQ6 and the encoder) added 2026-11-27
+Date: 2026-11-11; cash-cap arm added 2026-11-20; BistKA 300k-timestep runs (RQ1, RQ4, RQ6) added 2026-11-25; the single test-year evaluation added 2026-11-25 (evening); the cash-capped design at five seeds and 300k (RQ1, RQ6) and the sealed holdout added 2026-11-26; the checks after the holdout (RQ2, RQ3, RQ6 and the encoder) added 2026-11-27; the sector arm (RQ2, RQ3) added 2026-11-28
 Status: **draft** for the M8 item "answer each research question explicitly, including negative results". It answers the six questions of the implementation plan (`implementation_plan.md`, section 2.2) from the evidence in the repository today. Each answer links the report it comes from.
 
 > **Checks after the holdout, 2026-11-27 (validation years 2016–2022 only; they cannot change the locked design or its results):**
@@ -58,7 +58,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 
 ## RQ2. Does adding multi-source data improve out-of-sample performance compared with price-only and technical-indicator-only agents?
 
-**Answer:** no measurable gain. Market-index context helped only on five stocks, borderline, and the daily macro proxies did not help there. On the point-in-time index without a cash cap, the official policy rate and the daily macro proxies lowered the return; with the locked design's 20% cash cap and five seeds, no input set changed the result measurably (2026-11-27, below). The other sources have not been tested, because their historical data is missing.
+**Answer:** no measurable gain. Market-index context helped only on five stocks, borderline, and the daily macro proxies did not help there. On the point-in-time index without a cash cap, the official policy rate and the daily macro proxies lowered the return; with the locked design's 20% cash cap and five seeds, no input set changed the result measurably (2026-11-27, below), and neither did the sector (2026-11-28). Fundamentals, news and investor flow have not been tested, because their historical data is missing.
 
 - **Five stocks** ([source ablation](source_ablation_20261106.md); 7 folds × 3 seeds per arm, everything else fixed):
 
@@ -82,7 +82,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
   - **Why:** the trained models barely use the new inputs. So the shortfall reflects how training turned out with them, chiefly cash that depended on the seed, not information in the rate.
   - **Macro proxies** ([report](pit_walk_forward_20261107.md#follow-up-daily-macro-proxies-as-an-input-2026-11-11)): the shortfall is not significant (single models −0.05, −0.18 to +0.09). But the models read these inputs heavily, and removing their information raised the return of 15 of the 21 models, by 0.5 points a year on average.
   - **Best inputs:** on the point-in-time index, the technical and SET50 market inputs alone.
-- **Point-in-time SET50 with the cash cap** ([report](source_ablation_20261127.md); checked after the holdout, 2026-11-27; the locked design, 7 folds × 5 seeds, only the inputs changed; BistKA job 4528 except the locked row):
+- **Point-in-time SET50 with the cash cap** ([report](source_ablation_20261127.md); checked after the holdout, 2026-11-27; the locked design, 7 folds × 5 seeds, only the inputs changed; BistKA job 4528 except the locked and sector rows):
 
   | Inputs | Single models | Seed ensemble + band | Single-model Sharpe difference vs technical only (95% CI) |
   | --- | ---: | ---: | --- |
@@ -91,14 +91,16 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
   | + market + BOT policy rate | 4.6% | 5.2% | +0.009 (−0.027 to +0.048) |
   | + market + daily macro proxies | 4.4% | 5.0% | −0.011 (−0.051 to +0.033) |
   | + market + policy rate + macro proxies | 4.6% | 5.5% | +0.019 (−0.027 to +0.062) |
+  | + market + sector (4 stock inputs; trained on the Mac, 2026-11-28) | 4.5% | 5.1% | −0.003 (−0.034 to +0.030) |
 
   - **No source helps:** none of these differences is significant, and the ensembles' differences against the technical-only ensemble are not significant either (all sources +0.038, −0.023 to +0.085).
   - **All sources, ensemble:** 5.5% a year (Sharpe 0.41), level with equal weight (5.6%, 0.38); its edge came from more cash (12 of its 35 models above 15%), mostly in 2020. It is the best of eight new designs; a lead to test on new years, not a finding.
   - **The policy-rate shortfall is gone under the cap,** which supports the reading that it came from cash that depended on the seed.
+  - **Sector** ([report](sector_inputs_20261127.md)): against the locked design on the same platform, −0.005 for the single models (−0.033 to +0.027) and +0.010 for the ensembles (−0.020 to +0.043). Decision-7 puts its ensemble level with the locked one (−0.157 against −0.160 points a year).
 
 ## RQ3. Which data sources contribute most to performance?
 
-**Answer:** none measurably on the point-in-time index; technical indicators carry the agent. Market-index context helped only on five stocks, borderline, and added nothing on the point-in-time index (2026-11-27). Fundamentals, news sentiment, sector context and investor flow have not been tested, because the historical data is missing.
+**Answer:** none measurably on the point-in-time index; technical indicators carry the agent. Market-index context helped only on five stocks, borderline, and added nothing on the point-in-time index (2026-11-27). The sector, tested on 2026-11-28, is read by the models but adds nothing. Fundamentals, news sentiment and investor flow have not been tested, because the historical data is missing.
 
 | Source | Status | Finding |
 | --- | --- | --- |
@@ -108,7 +110,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 | Official BOT policy rate | Tested on the point-in-time index | With the cash cap and five seeds (2026-11-27): no measurable effect (+0.009 Sharpe for single models, ensemble 5.2% a year as with technical inputs alone). Without the cap, it lowered the return: 4.1% against 4.6% a year, and 4.5% against 5.5% for the seed ensemble with the band (Sharpe −0.06, significant). The agent barely reads it: shuffling it moves the weights by 0.7%, against 0.9% for market context and 3.5% for the technical inputs |
 | Financial statements | Not tested | Five stocks and recent years only; no shares outstanding for P/E and P/BV |
 | Thai news sentiment | Not tested | The scorer exists; there is no historical news for 2014–2024 |
-| Sector context | Not tested | Implemented for the V3 universe; not switched on in the point-in-time runs |
+| Sector context (dated SET sectors) | Tested on the point-in-time index with the cash cap (2026-11-28) | No measurable effect: −0.005 Sharpe for the single models and +0.010 for the ensembles against the locked design. The agent reads it: shuffling the four inputs moves the weights by 2.4%, against 1.5% for market context and 4.1% for the technical inputs. Holding them at their training mean changes the return by +0.06 points a year (19 of 35 models higher) |
 | Investor flow | Not tested | The importer exists; there is no data |
 
 ## RQ4. Which DRL algorithm is most stable under high noise and limited compute: PPO, A2C, DDPG, TD3 or SAC?
