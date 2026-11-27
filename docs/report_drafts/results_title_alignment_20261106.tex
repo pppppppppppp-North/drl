@@ -10,7 +10,8 @@
 % runs on BistKA (2026-11-25), docs/bistka_300k_results_20261125.md and, for the cash-capped design at five
 % seeds and 300k (2026-11-26), docs/cash_cap_5seeds_300k_20261126.md; the selection rule and the test
 % evaluation are in docs/final_design_decision_20261125.md and docs/final_test_results_20261125.md, and the
-% sealed holdout in docs/holdout_stage_20261126.md and docs/holdout_results_20261126.md.
+% sealed holdout in docs/holdout_stage_20261126.md and docs/holdout_results_20261126.md. The checks after
+% the holdout are in docs/architecture_ablation_20261127.md and docs/source_ablation_20261127.md.
 
 \chapter{LONG-TERM, MULTI-SOURCE EXTENSION}
 \label{chap:extension}
@@ -46,6 +47,7 @@ set to 0.15\% commission plus 0.05\% slippage per side. That covers the publishe
 about 0.176\% per side: a 0.157\% internet commission, SET, TSD, and SEC fees, and 7\% VAT.
 
 \section{Reward and Rebalancing Designs (2020--2022)}
+\label{sec:reward-designs}
 
 Six designs were trained with PPO for 100{,}000 timesteps and three seeds on 2012--2019. They were
 evaluated on 2020--2022, which includes the COVID-19 crash, under self-financing accounting
@@ -704,6 +706,111 @@ Ridge forecast, top two (baseline) & $+1.9\%$ & $+21.7\%$ & 1.240 & 0.59 & $-32.
 \label{fig:holdout}
 \end{figure}
 
+\section{Checks After the Holdout}
+\label{sec:post-checks}
+
+After both single evaluations, three questions were checked on the validation years 2016--2022 only.
+The test years and the holdout were not read again, so these checks cannot change the locked design or
+its results; they add designs to the count that the deflated Sharpe ratio corrects for, 34 in all. Each
+check used five seeds at 100{,}000 timesteps and kept the rest of the locked design: the shared-weight
+actor, the sticky slot order, the 20\% cash cap, and the no-trade band for the seed ensemble.
+Table~\ref{tab:post-checks} summarizes them.
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Checks after the holdout, point-in-time SET50, validation 2016--2022: means over seven annual folds, five seeds per fold. Cash is the average cash weight. Sharpe ratios are on chained daily returns (1{,}699 sessions), and the last column is the paired difference from the locked design of the same kind (single models or seed ensemble), with its 95\% interval. The locked design uses the LSTM encoder with the technical and the five ETF inputs; the other rows change only the encoder or the market-level inputs. The locked design and the perceptron encoder were trained on the development machine, the four input sets on the cluster.}
+\label{tab:post-checks}
+\begin{tabularx}{\textwidth}{@{}Yrrrrl@{}}
+\toprule
+Design & Annual return & Cash & Max DD & Sharpe & $-$ locked design \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{Single models (mean of five seeds)}} \\
+Locked design & 4.6\% & 5.1\% & $-12.5\%$ & 0.33 & \\
+Perceptron encoder & 4.4\% & 6.4\% & $-12.4\%$ & 0.33 & $-0.006$ ($-0.040$, $0.022$) \\
+Technical inputs only & 4.5\% & 6.0\% & $-12.4\%$ & 0.33 & $-0.001$ ($-0.028$, $0.028$) \\
++ policy rate & 4.6\% & 6.6\% & $-12.2\%$ & 0.34 & $+0.007$ ($-0.026$, $0.047$) \\
++ macro proxies & 4.4\% & 5.2\% & $-12.5\%$ & 0.32 & $-0.012$ ($-0.052$, $0.030$) \\
++ policy rate + macro proxies & 4.6\% & 9.5\% & $-11.7\%$ & 0.35 & $+0.018$ ($-0.018$, $0.052$) \\
+\addlinespace
+\multicolumn{6}{@{}l}{\emph{Seed ensemble + no-trade band}} \\
+Locked design & 5.0\% & 5.4\% & $-12.2\%$ & 0.36 & \\
+Perceptron encoder & 5.1\% & 6.5\% & $-12.0\%$ & 0.37 & $+0.012$ ($-0.027$, $0.043$) \\
+Technical inputs only & 5.2\% & 5.7\% & $-12.2\%$ & 0.37 & $+0.013$ ($-0.021$, $0.048$) \\
++ policy rate & 5.2\% & 6.8\% & $-12.0\%$ & 0.38 & $+0.017$ ($-0.031$, $0.065$) \\
++ macro proxies & 5.0\% & 5.2\% & $-12.1\%$ & 0.36 & $-0.001$ ($-0.046$, $0.038$) \\
++ policy rate + macro proxies & 5.5\% & 9.1\% & $-11.4\%$ & 0.41 & $+0.051$ ($0.002$, $0.089$) \\
+\addlinespace
+Equal weight, monthly & 5.6\% & 0.7\% & $-12.7\%$ & 0.38 & \\
+SET50 ETF buy-and-hold & 7.1\% & -- & $-11.2\%$ & 0.50 & \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Encoder.} The locked design encodes each member's 30-session window, and the ETF's, with LSTMs
+whose weights are shared across members. Replacing both with two-layer perceptrons over the flattened
+window, with the same weight sharing and embedding size, made no measurable difference: the single
+models made 4.4\% a year against 4.6\%, and the seed ensembles 5.1\% against 5.0\%, and neither Sharpe
+difference is significant. The perceptron trained about seven times faster, 290 seconds a model against
+1{,}960 on the development machine, but traded more: 5.4 times its capital a year after the first
+purchase, against 3.3. In Section~\ref{sec:reward-designs}, the per-stock LSTM encoder gave the only
+design that was positive on every seed, but it was compared there with a flat perceptron over the whole
+observation, without weights shared across stocks. This check suggests that the gain came from the
+shared per-stock structure rather than from recurrence, though it was made only on the point-in-time
+index.
+
+\paragraph{Data sources.} Four input sets were trained on the cluster in one job: the stocks' technical
+inputs alone; with the five policy-rate inputs; with the eight daily macro proxies; and with both, the
+last three beside the five ETF inputs of the locked design. Everything else was the locked design.
+Within that job, where the models differ only in their inputs, no source changed the Sharpe ratio
+significantly. Against technical inputs alone, the single models' differences were $+0.009$ for the
+policy rate ($-0.027$ to $0.048$), $-0.011$ for the macro proxies ($-0.051$ to $0.033$) and $+0.019$ for
+both ($-0.027$ to $0.062$), and the ETF inputs of the locked design added $+0.001$ ($-0.028$ to $0.028$).
+The market context that had helped on the five starter stocks (Table~\ref{tab:ablation}) therefore did
+not help on the point-in-time index. Every design again stayed close to equal weight: its daily returns
+correlated 0.994--0.998 with equal weight, its models spread over 43 to 44 of the 44 or so tradable
+members, and the largest single weight was about 3\%.
+
+The ensemble with all sources made 5.5\% a year with a Sharpe ratio of 0.41, the highest of the DRL
+designs and level with equal weight ($+0.029$, $-0.021$ to $0.071$). It was significantly ahead of the
+locked ensemble ($+0.051$, $0.002$ to $0.089$), but that comparison crosses machines; against the
+technical-only ensemble from the same job, the difference was $+0.038$ ($-0.023$ to $0.085$). Its single
+models were not ahead, it was the best of eight new designs, and, counting 34 designs, its deflated
+Sharpe ratio was 0.15, against 0.13 for equal weight. Its edge came from cash: 12 of its 35 models held
+more than 15\% cash over their year, against 3 of the locked design's 35. That helped in 2020, when the
+ensemble held 15\% cash and lost 6.4\%, against 8.7\% for the locked ensemble, but it also held 11\% cash
+in 2016, a rising year, and trailed equal weight by 2.5 points. It is a lead to test on new years, not a
+finding.
+
+Under the cap, the policy rate no longer lowered the return. Without the cap and with three seeds, it
+had cut the seed ensemble's Sharpe ratio significantly (Section~\ref{sec:pit}); with the cap and five
+seeds, the policy-rate ensemble made 5.2\% a year, level with the technical-only ensemble ($+0.004$,
+$-0.046$ to $0.059$). This supports the earlier reading that the shortfall came from cash that depended
+on the seed, which the cap bounds. Under the selection rule no design scored above zero, and the locked
+ensemble was still the best DRL design ($-0.16$ points a year), ahead of the macro-proxy ($-0.20$) and
+all-sources ($-0.41$) ensembles. Figure~\ref{fig:post-sources} shows the five ensembles.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{docs/figures/pit_source_ablation_ensembles_chained_equity_20261127.png}
+\caption{Point-in-time SET50, validation 2016--2022, checks after the holdout: chained value of the seed ensemble with the no-trade band for each input set (five seeds each), with the ETF and equal weight. ``Technical + ETF market (locked)'' is the locked design. Each year uses models trained only on earlier years; net of costs.}
+\label{fig:post-sources}
+\end{figure}
+
+\paragraph{Retraining on the cluster.} The same job retrained the locked design with seed 42 on every
+validation fold. On the cluster it made 4.8\% a year with a Sharpe ratio of 0.347, against 5.0\% and
+0.351 on the development machine. The two sets of models are not identical: their validation curves
+differ from the first session, and their trained weights by 38--57\% of their norm, as expected when
+floating-point training runs on different hardware and library versions. The difference in a fold's
+final value averaged 0.6 percentage points, about half the average difference between two seeds on the
+development machine (1.1 points). Results from the two machines can therefore be pooled as further
+seeds, but retraining on another machine reproduces the result rather than the files. On the same
+machine the training was exact: a perceptron model whose process had exited with an error after
+writing its results was retrained, and its curve and holdings were byte-identical. Inference also
+carried across machines: the development machine replayed all 140 models of the input-set arms to within
+$4\times10^{-8}$ of the curves saved on the cluster. The job trained 147 models in 14.0 hours on 32 CPUs,
+for 561 service hours.
+
 \section{Interpretation}
 \label{sec:ext-interpretation}
 
@@ -724,7 +831,7 @@ order entirely, halved turnover again, and raised the return to 4.6\% a year. Wh
 however, was close to equal weight, and it remained below both references, though no longer
 significantly. Averaging the three seeds and adding a no-trade band then brought it level with equal
 weight, with less trading, but not significantly ahead of it. Training with the band instead of adding
-it afterwards also cut trading, but the agent learned to hold more cash and did no better. Adding the
+it afterwards also cut trading, but the agent learned to hold more cash and did no better. Without the cash cap, adding the
 official policy rate or the daily macro proxies as inputs lowered the return: the trained models
 barely used the policy rate, and they used the macro proxies to their cost. Capping the cash at 20\%
 removed the cash-heavy models but did not raise the return either: the remaining gap to equal weight
@@ -739,6 +846,9 @@ ahead of equal weight in both years, but not significantly. It lost money over 2
 the market ETF. On the five starter stocks, A2C trailed equal weight. On the sealed holdout the design
 matched equal weight in a falling year and trailed it in a rising one, in which it held cash up to its
 cap, and over the two folds its Sharpe shortfall against equal weight was significant.
+Checks made afterwards on the validation years agree. A perceptron encoder did as well as the LSTM,
+and under the cash cap no input set, from the technical inputs alone to all the sources, changed the
+result measurably; the earlier loss from the policy rate disappeared (Section~\ref{sec:post-checks}).
 The evidence therefore does not support a claim that this DRL design improves long-term profit in the
 Thai stock market. Such a claim would need a policy that adds value over equal weight after costs,
 survivorship-free licensed data, and the remaining data sources (fundamentals, news sentiment,
@@ -752,8 +862,8 @@ has not yet used.
   \item \textbf{Exploratory data tier.} Prices, the ETF series, and the macro proxies come from Yahoo Finance, not from the licensed SETSMART package requested for the project. Yahoo prices are adjusted for splits and dividends but carry no trading-status, suspension, or corporate-action records, so a suspended stock and a missing price look the same. On many real trading days of 2024, Yahoo also repeats the previous price with zero volume, which affects the 2024 test year (Section~\ref{sec:test}).
   \item \textbf{Survivorship.} The point-in-time membership is official, but 38 of its 227 tickers, mostly delisted or merged companies, have no prices. They account for 13\% of SET50 member-sessions. The missing names bias the results in both directions: failed companies that Yahoo dropped would have lowered an equal-weight return, and companies taken over at a premium would have raised it. Only the ETF benchmark is free of this gap. Results on fixed stock lists are biased in a known direction: choosing today's SET50 members with hindsight added 6.6 percentage points a year to equal weight (Section~\ref{sec:pit}).
   \item \textbf{Cost model.} Every trade pays 0.15\% commission plus 0.05\% slippage per side, which covers the published explicit cost of about 0.176\%. Market impact, the wider bid--ask spreads of smaller members, board lots, daily price limits, and the minimum tick are not modelled. The costs of high-turnover policies are therefore, if anything, understated.
-  \item \textbf{Macro and alternative data.} The daily macro proxies are market prices and therefore point-in-time; on the point-in-time agent they lowered the return (Section~\ref{sec:pit}). The Bank of Thailand macro history, however, is a current revised vintage, so it was kept out of the models. The official policy-rate decision history is point-in-time; added to the point-in-time agent, it lowered the return, and the trained models barely used it (Section~\ref{sec:pit}). Fundamentals cover only recent years for the five starter stocks, and news sentiment and investor flow are implemented without historical data. The \emph{multi-source} claim therefore rests on price, technical, market, macro-proxy, and policy-rate inputs only. Of these, only market context helped, borderline and only on the five starter stocks.
-  \item \textbf{Selection on validation years.} Designs were compared and chosen on the validation years, so the chosen design's validation performance is optimistic. The sticky slot order, the shared-weight actor, the seed ensemble, the no-trade band, the cash cap and the training budget, for example, were chosen after seeing earlier point-in-time runs. The deflated Sharpe ratio corrects for this only in part. The test years were read once, after the designs were locked, but two years are too few to separate the leading strategies. The sealed holdout (2025 to 4 November 2026) was then read once for each design; the point-in-time stage needed a second attempt after its first stopped while loading the data, before any model was trained. For the holdout, the point-in-time membership is the 2024 H2 list held fixed, so the index revisions of 2025 and 2026 are ignored.
+  \item \textbf{Macro and alternative data.} The daily macro proxies are market prices and therefore point-in-time; on the uncapped point-in-time agent they lowered the return (Section~\ref{sec:pit}), and with the cash cap they made no measurable difference (Section~\ref{sec:post-checks}). The Bank of Thailand macro history, however, is a current revised vintage, so it was kept out of the models. The official policy-rate decision history is point-in-time; added to the uncapped point-in-time agent, it lowered the return, and the trained models barely used it (Section~\ref{sec:pit}); with the cap it made no difference (Section~\ref{sec:post-checks}). Fundamentals cover only recent years for the five starter stocks, and news sentiment and investor flow are implemented without historical data. The \emph{multi-source} claim therefore rests on price, technical, market, macro-proxy, and policy-rate inputs only. Of these, only market context helped, borderline and only on the five starter stocks; on the point-in-time index it added nothing over the technical inputs.
+  \item \textbf{Selection on validation years.} Designs were compared and chosen on the validation years, so the chosen design's validation performance is optimistic. The sticky slot order, the shared-weight actor, the seed ensemble, the no-trade band, the cash cap and the training budget, for example, were chosen after seeing earlier point-in-time runs. The deflated Sharpe ratio corrects for this only in part. The test years were read once, after the designs were locked, but two years are too few to separate the leading strategies. The sealed holdout (2025 to 4 November 2026) was then read once for each design; the point-in-time stage needed a second attempt after its first stopped while loading the data, before any model was trained. For the holdout, the point-in-time membership is the 2024 H2 list held fixed, so the index revisions of 2025 and 2026 are ignored. The checks of Section~\ref{sec:post-checks} came after both evaluations and used the validation years only; they raise the count of designs to 34.
   \item \textbf{Training budget, seeds and settings.} Most models trained for 100{,}000 timesteps with three seeds on the 8~GB development machine. Only the five algorithms on the five starter stocks and the shared-weight point-in-time design were trained for 300{,}000 timesteps with five seeds, on the HPC cluster, and longer training mainly raised the cash holding (Section~\ref{sec:budget}). The budget was not tuned, and neither were the algorithms' settings: the off-policy algorithms ran with fixed replay and batch settings and no limit on weekly weight changes, and were compared on the five starter stocks only.
   \item \textbf{Slot order and turnover.} With the dense policy head, the agent scores slot positions rather than stocks, so any change in the slot order changes portfolio weights. The sticky slot order removes almost all of these changes, and the shared-weight actor removes the dependence entirely, as checked on all 21 of its trained models. Neither limits the policy's own week-to-week reweighting: after the initial purchase, the shared-weight agent still turned over 3.4 times its capital a year, against 0.9 for equal weight. A 0.5-point no-trade band cut this to 0.7 times a year in the seed ensemble. Its width was not tuned, and part of its gain, in 2020, came from cash it happened to leave in place. Training with the band cut turnover as well, but doubled the average cash holding, to 19\%.
 \end{enumerate}
