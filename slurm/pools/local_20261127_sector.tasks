@@ -1,0 +1,42 @@
+# Local pool of 2026-11-27, evening (milestones M4 and M6, RQ2/RQ3; validation years 2016-2022 only): the locked
+# point-in-time design plus four sector-relative stock inputs from the archive's dated SET sectors
+# (config/pit_sector_ablation_cashcap.yaml, variant pit_cashcap_src_sector), at 100k timesteps, seeds 42-46. The
+# locked design's five seeds at 100k are in ~/drl_runs/pit_walk_forward_cash_cap_100k_5seeds_20261125, and the
+# other source arms (technical only, policy rate, macro proxies, all) in BistKA job 4528's copy.
+# Run from the repository root with run dirs beside it (~/drl_runs): bash scripts/run_task_pool.sh slurm/pools/local_20261127_sector.tasks 3
+# Columns: run-dir runner config timesteps fold-year variant seed
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2016 pit_cashcap_src_sector 42
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2017 pit_cashcap_src_sector 42
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2018 pit_cashcap_src_sector 42
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2019 pit_cashcap_src_sector 42
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2020 pit_cashcap_src_sector 42
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2021 pit_cashcap_src_sector 42
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2022 pit_cashcap_src_sector 42
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2016 pit_cashcap_src_sector 43
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2017 pit_cashcap_src_sector 43
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2018 pit_cashcap_src_sector 43
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2019 pit_cashcap_src_sector 43
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2020 pit_cashcap_src_sector 43
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2021 pit_cashcap_src_sector 43
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2022 pit_cashcap_src_sector 43
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2016 pit_cashcap_src_sector 44
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2017 pit_cashcap_src_sector 44
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2018 pit_cashcap_src_sector 44
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2019 pit_cashcap_src_sector 44
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2020 pit_cashcap_src_sector 44
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2021 pit_cashcap_src_sector 44
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2022 pit_cashcap_src_sector 44
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2016 pit_cashcap_src_sector 45
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2017 pit_cashcap_src_sector 45
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2018 pit_cashcap_src_sector 45
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2019 pit_cashcap_src_sector 45
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2020 pit_cashcap_src_sector 45
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2021 pit_cashcap_src_sector 45
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2022 pit_cashcap_src_sector 45
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2016 pit_cashcap_src_sector 46
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2017 pit_cashcap_src_sector 46
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2018 pit_cashcap_src_sector 46
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2019 pit_cashcap_src_sector 46
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2020 pit_cashcap_src_sector 46
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2021 pit_cashcap_src_sector 46
+../pit_walk_forward_sector_cashcap_20261127 scripts.run_pit_walk_forward config/pit_sector_ablation_cashcap.yaml 100000 2022 pit_cashcap_src_sector 46

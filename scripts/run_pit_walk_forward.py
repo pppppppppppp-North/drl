@@ -12,7 +12,9 @@ archive, restricted to members with Yahoo prices. Baselines on the same sessions
 With ``data.policy_rate`` set, the official BOT policy-rate features are added as market-level
 inputs (see ``add_policy_rate``); a variant uses them by listing them in its market columns. With
 ``data.macro`` set, the daily macro proxies (USD/THB, oil, gold, the US 10-year yield) are added the
-same way (see ``add_macro_proxies``).
+same way (see ``add_macro_proxies``). With ``data.sector: true``, four sector-relative stock inputs from
+the archive's dated SET sectors are added (``src.features.pit_sector_context``); a variant uses them by
+listing them in its stock columns.
 
 Validation never reads past ``splits.validation_end`` (2022-12-30), so the 2023-2024 test years
 and the sealed 2025+ holdouts are never loaded. The output layout matches
@@ -59,6 +61,13 @@ def load_inputs(spec: dict, root: Path) -> tuple[pd.DataFrame, pd.DataFrame, dic
         # (scripts/run_holdout_evaluation.py). Every other run keeps the 2024-12-31 default.
         end=str(data.get("end", "2024-12-31")),
     )
+    if data.get("sector"):
+        # Peers come from the full SET100 list of each session, so this runs before the SET50 filter.
+        from src.features.pit_sector_context import add_sector_context
+
+        membership = pd.read_csv(root / data["membership"], dtype=str, keep_default_na=False)
+        panel = add_sector_context(panel, mask, membership)
+        receipt = {**receipt, "sector": f"dated SET sectors from {data['membership']}"}
     if data.get("universe", "set50") == "set50":
         mask = mask[mask["in_set50"]]
     if data.get("policy_rate"):
