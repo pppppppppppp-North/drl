@@ -1,0 +1,384 @@
+# Leave-one-source-out on the locked point-in-time design (milestones M4 and M6, RQ2/RQ3), 2026-11-28.
+# The locked design is pit_plan_weekly_lstm_shared_cashcap of config/pit_walk_forward_experiment.yaml: the
+# shared-weight actor, sticky slots, the 20% cash cap, and the eleven stock technical inputs plus five SET50 ETF
+# market inputs. The project has five input sources beyond each stock's daily return: the ten technical
+# indicators, the SET50 ETF inputs, the BOT policy rate (src/features/policy_rate_context.py), the eight daily
+# macro proxies (src/features/macro_context.py) and the four dated-sector inputs (src/features/pit_sector_context.py).
+# Five arms: all five sources, and all but one of the ETF, the policy rate, the macro proxies and the technical
+# indicators (the daily return stays). All but the sector is pit_cashcap_src_all of
+# config/pit_source_ablation_cashcap.yaml (BistKA job 4528), so with it the arms give a complete
+# leave-one-source-out on one platform. Data, splits, base settings and the rest of each variant are generated
+# from pit_source_ablation_cashcap.yaml and must stay identical to it (tests/test_pit_source_loo_config.py).
+# Validation years 2016-2022 only: policy-rate decisions and macro prices after splits.validation_end are dropped
+# before the merge, the sector labels come from the lists in force on each session, and the test years and the
+# sealed holdout are never read. Every test and holdout result was already used once, so these arms inform the
+# report's discussion of the sources; they cannot change the locked design or its results.
+project:
+  name: pit_source_loo_cashcap
+  seed: 42
+data:
+  membership: data/reference/set50_set100_membership_2012_2024.csv
+  price_map: data/raw/extended/set100_2012_2024_additions/member_price_map_2012_2024.csv
+  prices:
+  - data/raw/extended/prices_set100_union_2012_2024.csv.gz
+  - data/raw/extended/set100_2012_2024_additions/prices_set100_2012_2024_additions.csv.gz
+  index: data/raw/extended/index_set50_etf_2012_2024.csv
+  index_name: set50_etf
+  universe: set50
+  policy_rate: data/external/bot_policy_rate_history.csv
+  macro: data/raw/extended/macro_proxies_2012_2024.csv
+  macro_names:
+    USDTHB=X: usdthb
+    BZ=F: brent
+    CL=F: wti
+    GC=F: gold
+    ^TNX: us10y
+  sector: true
+splits:
+  validation_end: '2022-12-30'
+universe:
+  num_slots: 50
+  min_history_sessions: 60
+features:
+  lookback: 30
+  stock_columns:
+  - return_1d
+  - return_5d
+  - return_20d
+  - volatility_20d
+  - ma_ratio_10
+  - ma_ratio_30
+  - rsi_14
+  - macd
+  - bollinger_z
+  - atr_14
+  - volume_ratio_20
+  market_columns:
+  - set50_etf_return_1d
+  - set50_etf_return_5d
+  - set50_etf_return_20d
+  - set50_etf_volatility_20d
+  - set50_etf_ma_ratio_20
+base:
+  environment:
+    initial_cash: 1000000.0
+    transaction_cost: 0.0015
+    slippage: 0.0005
+    rebalance_every: 5
+    train_random_start: true
+    train_episode_length: 504
+    reward:
+      type: plan_main
+      sharpe_weight: 0.1
+      sharpe_eta: 0.01
+      drawdown_penalty: 0.5
+      drawdown_mode: increment
+      turnover_penalty: 0.0
+      scale: 100.0
+  training:
+    algo: ppo
+    total_timesteps: 100000
+    gamma: 0.99
+    normalize_observations: true
+    verbose: 0
+    policy:
+      features_extractor: asset_lstm
+      market_feature_columns:
+      - set50_etf_return_1d
+      - set50_etf_return_5d
+      - set50_etf_return_20d
+      - set50_etf_volatility_20d
+      - set50_etf_ma_ratio_20
+      hidden_size: 32
+      fusion_size: 16
+      net_arch:
+      - 64
+      - 64
+seeds:
+- 42
+- 43
+- 44
+- 45
+- 46
+variants:
+- name: pit_cashcap_src_all_sector
+  description: 'Locked cash-capped design with all five sources: technical inputs,
+    SET50 ETF, BOT policy rate, macro proxies and sector'
+  environment:
+    max_cash_weight: 0.2
+  universe:
+    slot_order: sticky
+  features:
+    stock_columns:
+    - return_1d
+    - return_5d
+    - return_20d
+    - volatility_20d
+    - ma_ratio_10
+    - ma_ratio_30
+    - rsi_14
+    - macd
+    - bollinger_z
+    - atr_14
+    - volume_ratio_20
+    - sector_relative_return_5d
+    - sector_relative_return_20d
+    - sector_peer_return_20d
+    - sector_peers_available
+    market_columns:
+    - set50_etf_return_1d
+    - set50_etf_return_5d
+    - set50_etf_return_20d
+    - set50_etf_volatility_20d
+    - set50_etf_ma_ratio_20
+    - bot_policy_rate
+    - bot_policy_rate_change_1y
+    - bot_last_change_bp
+    - bot_years_since_change
+    - bot_last_dissent_share
+    - usdthb_return_5d
+    - usdthb_return_20d
+    - brent_return_5d
+    - brent_return_20d
+    - gold_return_5d
+    - gold_return_20d
+    - us10y_change_1d
+    - us10y_return_20d
+  training:
+    normalize_observations: false
+    policy:
+      actor: shared_asset
+      market_feature_columns:
+      - set50_etf_return_1d
+      - set50_etf_return_5d
+      - set50_etf_return_20d
+      - set50_etf_volatility_20d
+      - set50_etf_ma_ratio_20
+      - bot_policy_rate
+      - bot_policy_rate_change_1y
+      - bot_last_change_bp
+      - bot_years_since_change
+      - bot_last_dissent_share
+      - usdthb_return_5d
+      - usdthb_return_20d
+      - brent_return_5d
+      - brent_return_20d
+      - gold_return_5d
+      - gold_return_20d
+      - us10y_change_1d
+      - us10y_return_20d
+- name: pit_cashcap_src_loo_etf
+  description: Locked cash-capped design with all sources except the SET50 ETF inputs
+  environment:
+    max_cash_weight: 0.2
+  universe:
+    slot_order: sticky
+  features:
+    stock_columns:
+    - return_1d
+    - return_5d
+    - return_20d
+    - volatility_20d
+    - ma_ratio_10
+    - ma_ratio_30
+    - rsi_14
+    - macd
+    - bollinger_z
+    - atr_14
+    - volume_ratio_20
+    - sector_relative_return_5d
+    - sector_relative_return_20d
+    - sector_peer_return_20d
+    - sector_peers_available
+    market_columns:
+    - bot_policy_rate
+    - bot_policy_rate_change_1y
+    - bot_last_change_bp
+    - bot_years_since_change
+    - bot_last_dissent_share
+    - usdthb_return_5d
+    - usdthb_return_20d
+    - brent_return_5d
+    - brent_return_20d
+    - gold_return_5d
+    - gold_return_20d
+    - us10y_change_1d
+    - us10y_return_20d
+  training:
+    normalize_observations: false
+    policy:
+      actor: shared_asset
+      market_feature_columns:
+      - bot_policy_rate
+      - bot_policy_rate_change_1y
+      - bot_last_change_bp
+      - bot_years_since_change
+      - bot_last_dissent_share
+      - usdthb_return_5d
+      - usdthb_return_20d
+      - brent_return_5d
+      - brent_return_20d
+      - gold_return_5d
+      - gold_return_20d
+      - us10y_change_1d
+      - us10y_return_20d
+- name: pit_cashcap_src_loo_policy
+  description: Locked cash-capped design with all sources except the BOT policy rate
+  environment:
+    max_cash_weight: 0.2
+  universe:
+    slot_order: sticky
+  features:
+    stock_columns:
+    - return_1d
+    - return_5d
+    - return_20d
+    - volatility_20d
+    - ma_ratio_10
+    - ma_ratio_30
+    - rsi_14
+    - macd
+    - bollinger_z
+    - atr_14
+    - volume_ratio_20
+    - sector_relative_return_5d
+    - sector_relative_return_20d
+    - sector_peer_return_20d
+    - sector_peers_available
+    market_columns:
+    - set50_etf_return_1d
+    - set50_etf_return_5d
+    - set50_etf_return_20d
+    - set50_etf_volatility_20d
+    - set50_etf_ma_ratio_20
+    - usdthb_return_5d
+    - usdthb_return_20d
+    - brent_return_5d
+    - brent_return_20d
+    - gold_return_5d
+    - gold_return_20d
+    - us10y_change_1d
+    - us10y_return_20d
+  training:
+    normalize_observations: false
+    policy:
+      actor: shared_asset
+      market_feature_columns:
+      - set50_etf_return_1d
+      - set50_etf_return_5d
+      - set50_etf_return_20d
+      - set50_etf_volatility_20d
+      - set50_etf_ma_ratio_20
+      - usdthb_return_5d
+      - usdthb_return_20d
+      - brent_return_5d
+      - brent_return_20d
+      - gold_return_5d
+      - gold_return_20d
+      - us10y_change_1d
+      - us10y_return_20d
+- name: pit_cashcap_src_loo_macro
+  description: Locked cash-capped design with all sources except the macro proxies
+  environment:
+    max_cash_weight: 0.2
+  universe:
+    slot_order: sticky
+  features:
+    stock_columns:
+    - return_1d
+    - return_5d
+    - return_20d
+    - volatility_20d
+    - ma_ratio_10
+    - ma_ratio_30
+    - rsi_14
+    - macd
+    - bollinger_z
+    - atr_14
+    - volume_ratio_20
+    - sector_relative_return_5d
+    - sector_relative_return_20d
+    - sector_peer_return_20d
+    - sector_peers_available
+    market_columns:
+    - set50_etf_return_1d
+    - set50_etf_return_5d
+    - set50_etf_return_20d
+    - set50_etf_volatility_20d
+    - set50_etf_ma_ratio_20
+    - bot_policy_rate
+    - bot_policy_rate_change_1y
+    - bot_last_change_bp
+    - bot_years_since_change
+    - bot_last_dissent_share
+  training:
+    normalize_observations: false
+    policy:
+      actor: shared_asset
+      market_feature_columns:
+      - set50_etf_return_1d
+      - set50_etf_return_5d
+      - set50_etf_return_20d
+      - set50_etf_volatility_20d
+      - set50_etf_ma_ratio_20
+      - bot_policy_rate
+      - bot_policy_rate_change_1y
+      - bot_last_change_bp
+      - bot_years_since_change
+      - bot_last_dissent_share
+- name: pit_cashcap_src_loo_technical
+  description: Locked cash-capped design with all sources except the ten technical
+    indicators (the daily return stays)
+  environment:
+    max_cash_weight: 0.2
+  universe:
+    slot_order: sticky
+  features:
+    stock_columns:
+    - return_1d
+    - sector_relative_return_5d
+    - sector_relative_return_20d
+    - sector_peer_return_20d
+    - sector_peers_available
+    market_columns:
+    - set50_etf_return_1d
+    - set50_etf_return_5d
+    - set50_etf_return_20d
+    - set50_etf_volatility_20d
+    - set50_etf_ma_ratio_20
+    - bot_policy_rate
+    - bot_policy_rate_change_1y
+    - bot_last_change_bp
+    - bot_years_since_change
+    - bot_last_dissent_share
+    - usdthb_return_5d
+    - usdthb_return_20d
+    - brent_return_5d
+    - brent_return_20d
+    - gold_return_5d
+    - gold_return_20d
+    - us10y_change_1d
+    - us10y_return_20d
+  training:
+    normalize_observations: false
+    policy:
+      actor: shared_asset
+      market_feature_columns:
+      - set50_etf_return_1d
+      - set50_etf_return_5d
+      - set50_etf_return_20d
+      - set50_etf_volatility_20d
+      - set50_etf_ma_ratio_20
+      - bot_policy_rate
+      - bot_policy_rate_change_1y
+      - bot_last_change_bp
+      - bot_years_since_change
+      - bot_last_dissent_share
+      - usdthb_return_5d
+      - usdthb_return_20d
+      - brent_return_5d
+      - brent_return_20d
+      - gold_return_5d
+      - gold_return_20d
+      - us10y_change_1d
+      - us10y_return_20d
