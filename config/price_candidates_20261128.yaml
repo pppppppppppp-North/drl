@@ -1,0 +1,22 @@
+# The price-only arm of the locked point-in-time design (local pool of 2026-11-28): the locked shared-weight LSTM
+# with the 20% cash cap and the daily return as its only input, beside the locked design (technical + ETF inputs)
+# and technical inputs only (BistKA job 4528). 100k timesteps, five seeds, scored by the decision-7 rule on the
+# validation years only (scripts/rank_final_candidates.py; docs/price_only_20261128.md). A check made after the
+# test and holdout stages, not a new selection: the locked design and its results stay as recorded. Run folders
+# are relative to --base.
+universes:
+  point_in_time: {reference: pit_equal_weight_monthly, benchmark: set50_etf_buy_hold}
+
+candidates:
+  - {id: pit_cash_cap_100k_5seeds, universe: point_in_time, label: "Technical + ETF market (locked), 100k (5 seeds)", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_cashcap, seeds: [42, 43, 44, 45, 46], runs: [pit_walk_forward_cash_cap_100k_5seeds_20261125]}
+  - {id: pit_cash_cap_100k_ensemble_band_5seeds, universe: point_in_time, label: "Technical + ETF market (locked), ensemble + band", timesteps: 100000,
+     policy: pit_plan_weekly_lstm_shared_cashcap_ensemble_band, runs: [pit_cash_cap_ensemble_100k_5seeds_20261125]}
+  - {id: pit_src_price_100k_5seeds, universe: point_in_time, label: "Daily return only, 100k (5 seeds)", timesteps: 100000,
+     policy: pit_cashcap_src_price, seeds: [42, 43, 44, 45, 46], runs: [pit_walk_forward_price_cashcap_20261128]}
+  - {id: pit_src_price_100k_ensemble_band_5seeds, universe: point_in_time, label: "Daily return only, ensemble + band", timesteps: 100000,
+     policy: pit_cashcap_src_price_ensemble_band, runs: [pit_src_price_ensemble_20261128]}
+  - {id: pit_src_technical_100k_5seeds, universe: point_in_time, label: "Technical only, 100k (5 seeds)", timesteps: 100000,
+     policy: pit_cashcap_src_technical, seeds: [42, 43, 44, 45, 46], runs: [pit_source_ablation_cashcap_bistka_20261126]}
+  - {id: pit_src_technical_100k_ensemble_band_5seeds, universe: point_in_time, label: "Technical only, ensemble + band", timesteps: 100000,
+     policy: pit_cashcap_src_technical_ensemble_band, runs: [pit_src_technical_ensemble_20261127]}

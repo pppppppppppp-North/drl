@@ -1,6 +1,6 @@
 # Answers to the Research Questions (draft)
 
-Date: 2026-11-11; cash-cap arm added 2026-11-20; BistKA 300k-timestep runs (RQ1, RQ4, RQ6) added 2026-11-25; the single test-year evaluation added 2026-11-25 (evening); the cash-capped design at five seeds and 300k (RQ1, RQ6) and the sealed holdout added 2026-11-26; the checks after the holdout (RQ2, RQ3, RQ6 and the encoder) added 2026-11-27; the sector arm (RQ2, RQ3) added 2026-11-28
+Date: 2026-11-11; cash-cap arm added 2026-11-20; BistKA 300k-timestep runs (RQ1, RQ4, RQ6) added 2026-11-25; the single test-year evaluation added 2026-11-25 (evening); the cash-capped design at five seeds and 300k (RQ1, RQ6) and the sealed holdout added 2026-11-26; the checks after the holdout (RQ2, RQ3, RQ6 and the encoder) added 2026-11-27; the sector and price-only arms (RQ2, RQ3) added 2026-11-28
 Status: **draft** for the M8 item "answer each research question explicitly, including negative results". It answers the six questions of the implementation plan (`implementation_plan.md`, section 2.2) from the evidence in the repository today. Each answer links the report it comes from.
 
 > **Checks after the holdout, 2026-11-27 (validation years 2016–2022 only; they cannot change the locked design or its results):**
@@ -58,7 +58,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 
 ## RQ2. Does adding multi-source data improve out-of-sample performance compared with price-only and technical-indicator-only agents?
 
-**Answer:** no measurable gain. Market-index context helped only on five stocks, borderline, and the daily macro proxies did not help there. On the point-in-time index without a cash cap, the official policy rate and the daily macro proxies lowered the return; with the locked design's 20% cash cap and five seeds, no input set changed the result measurably (2026-11-27, below), and neither did the sector (2026-11-28). Fundamentals, news and investor flow have not been tested, because their historical data is missing.
+**Answer:** no measurable gain. Market-index context helped only on five stocks, borderline, and the daily macro proxies did not help there. On the point-in-time index without a cash cap, the official policy rate and the daily macro proxies lowered the return; with the locked design's 20% cash cap and five seeds, no input set changed the result measurably (2026-11-27, below), and neither did the sector (2026-11-28). A price-only agent, which sees only each stock's daily returns, did as well as every multi-source agent (2026-11-28). Fundamentals, news and investor flow have not been tested, because their historical data is missing.
 
 - **Five stocks** ([source ablation](source_ablation_20261106.md); 7 folds × 3 seeds per arm, everything else fixed):
 
@@ -69,7 +69,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
   | + market + daily macro proxies | 7.1% | −0.08 vs + market (−0.20 to +0.05) |
 
   The market-context gain is borderline. Its interval touches zero, and three comparisons were made.
-- **Not run:** a price-only arm. Technical-only is the lowest arm.
+- **Price-only arm:** not run on the five stocks, where technical-only is the lowest arm. On the point-in-time SET50 it was run with the cash cap (2026-11-28, below).
 - **Point-in-time SET50** ([report](pit_walk_forward_20261107.md#follow-up-bot-policy-rate-as-an-input-2026-11-11); the shared-weight agent, 7 folds × 3 seeds, only the inputs changed):
 
   | Inputs | Mean annual return | Seed ensemble + band | Ensemble Sharpe difference (95% CI) |
@@ -86,6 +86,7 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
 
   | Inputs | Single models | Seed ensemble + band | Single-model Sharpe difference vs technical only (95% CI) |
   | --- | ---: | ---: | --- |
+  | Daily return only (no indicators, no market inputs; trained on the Mac, 2026-11-28) | 4.8% | 5.4% | +0.007 (−0.019 to +0.034) |
   | Technical only | 4.5% | 5.2% | — |
   | + SET50 market context (the locked design, trained on the Mac) | 4.6% | 5.0% | +0.001 (−0.028 to +0.028) |
   | + market + BOT policy rate | 4.6% | 5.2% | +0.009 (−0.027 to +0.048) |
@@ -97,14 +98,15 @@ Status: **draft** for the M8 item "answer each research question explicitly, inc
   - **All sources, ensemble:** 5.5% a year (Sharpe 0.41), level with equal weight (5.6%, 0.38); its edge came from more cash (12 of its 35 models above 15%), mostly in 2020. It is the best of eight new designs; a lead to test on new years, not a finding.
   - **The policy-rate shortfall is gone under the cap,** which supports the reading that it came from cash that depended on the seed.
   - **Sector** ([report](sector_inputs_20261127.md)): against the locked design on the same platform, −0.005 for the single models (−0.033 to +0.027) and +0.010 for the ensembles (−0.020 to +0.043). Decision-7 puts its ensemble level with the locked one (−0.157 against −0.160 points a year).
+  - **Price only** ([report](price_only_20261128.md)): the daily return alone did as well. Against the locked design on the same platform, the Sharpe difference is +0.006 for the single models (−0.013 to +0.028) and +0.016 for the ensembles (−0.007 to +0.046). It stays closer to equal weight, with less cash (3.3% against 5.1%) and less trading, but its ensemble still does not beat equal weight (−0.006, −0.035 to +0.033).
 
 ## RQ3. Which data sources contribute most to performance?
 
-**Answer:** none measurably on the point-in-time index; technical indicators carry the agent. Market-index context helped only on five stocks, borderline, and added nothing on the point-in-time index (2026-11-27). The sector, tested on 2026-11-28, is read by the models but adds nothing. Fundamentals, news sentiment and investor flow have not been tested, because the historical data is missing.
+**Answer:** none measurably on the point-in-time index. The agent's information comes from the stocks' own price histories, and there the ten technical indicators add nothing over the daily returns (2026-11-28). Market-index context helped only on five stocks, borderline, and added nothing on the point-in-time index (2026-11-27). The sector, tested on 2026-11-28, is read by the models but adds nothing. Fundamentals, news sentiment and investor flow have not been tested, because the historical data is missing.
 
 | Source | Status | Finding |
 | --- | --- | --- |
-| Technical indicators | Tested (every arm) | The base of every agent; on its own, 6.8% a year on five stocks |
+| Technical indicators | Tested (every arm) | The base of every agent; on its own, 6.8% a year on five stocks. On the point-in-time index with the cash cap, an agent with the daily returns only did as well (+0.007 Sharpe over technical inputs for the single models, not significant; 2026-11-28) |
 | Market index context (SET50 ETF) | Tested | +1.4 points a year and +0.10 Sharpe on five stocks, borderline. On the point-in-time index with the cash cap: +0.001 Sharpe over technical inputs alone (2026-11-27) |
 | Daily macro proxies (USD/THB, oil, gold, US 10-year yield) | Tested on five stocks and the point-in-time index | **With the cash cap and five seeds (2026-11-27):** no measurable effect (−0.011 Sharpe for single models). **Five stocks:** no gain. Shuffling them moves the weights by 2.9%, against 1.9% for market context, and changes the return by 0.25 points or less. **Point-in-time:** 3.9% against 4.6% a year (seed ensemble 4.3% against 5.5%, not significant). The agent leans on them: shuffling moves its weights by 3.8%, against 2.1% for market context and 4.5% for the technical inputs. Removing their information raised the return of 15 of 21 models |
 | Official BOT policy rate | Tested on the point-in-time index | With the cash cap and five seeds (2026-11-27): no measurable effect (+0.009 Sharpe for single models, ensemble 5.2% a year as with technical inputs alone). Without the cap, it lowered the return: 4.1% against 4.6% a year, and 4.5% against 5.5% for the seed ensemble with the band (Sharpe −0.06, significant). The agent barely reads it: shuffling it moves the weights by 0.7%, against 0.9% for market context and 3.5% for the technical inputs |
