@@ -219,6 +219,7 @@ Technical inputs only & 4.5\% & 5.2\% & $-0.001$ \\
 + BOT policy rate & 4.6\% & 5.2\% & $+0.007$ \\
 + daily macro proxies & 4.4\% & 5.0\% & $-0.012$ \\
 + policy rate + macro proxies & 4.6\% & 5.5\% & $+0.018$ \\
++ sector inputs (dated SET sectors) & 4.5\% & 5.1\% & $-0.005$ \\
 \midrule
 Equal weight, monthly & \multicolumn{2}{r}{5.6\%} & \\
 \bottomrule
@@ -227,6 +228,7 @@ Equal weight, monthly & \multicolumn{2}{r}{5.6\%} & \\
 \begin{itemize}
   \item No change is significant. Within the BistKA run, no data source helped over technical inputs alone.
   \item The all-sources ensemble's lead (Sharpe 0.41 against 0.38 for equal weight) came from cash; not significant against the technical-only ensemble.
+  \item The models read the sector inputs (shuffling them moved the portfolio by 2.4\%) but gained nothing from them.
 \end{itemize}
 \end{frame}
 
@@ -264,7 +266,7 @@ RQ & Short answer \\
   \item \textbf{Survivorship gap:} 13\% of point-in-time member-sessions have no prices.
   \item \textbf{Costs:} 0.20\% per side; no market impact, spreads, board lots or price limits.
   \item \textbf{Sources:} fundamentals, news sentiment and investor flow have no historical data in the window.
-  \item \textbf{Selection:} 34 designs tried on the validation years; the deflated Sharpe ratio corrects only in part.
+  \item \textbf{Selection:} 35 designs tried on the validation years; the deflated Sharpe ratio corrects only in part.
   \item \textbf{Holdout membership:} the 2024 H2 SET50 list was held fixed for 2025--2026.
 \end{itemize}
 \end{frame}
