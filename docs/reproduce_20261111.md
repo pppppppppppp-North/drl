@@ -1,6 +1,6 @@
 # Reproducing the Results (M8)
 
-Date: 2026-11-11; updated 2026-11-26 with the HPC runs, the design choice, the test years and the sealed holdout (sections 9–12)
+Date: 2026-11-11; updated 2026-11-26 with the HPC runs, the design choice, the test years and the sealed holdout (sections 9–12), and 2026-11-28 with the checks after the holdout (section 15)
 Scope: every result reported since 2026-11-06 in:
 - the five-stock walk-forward;
 - the source ablation;
@@ -8,7 +8,8 @@ Scope: every result reported since 2026-11-06 in:
 - the point-in-time SET50 study ([report](pit_walk_forward_20261107.md)) and its benchmarks;
 - the longer training on BistKA and the five-seed runs ([300k](bistka_300k_results_20261125.md), [cash cap](cash_cap_5seeds_300k_20261126.md));
 - the choice of the final designs ([decision](final_design_decision_20261125.md));
-- the single evaluations on the test years ([results](final_test_results_20261125.md)) and on the sealed holdout ([results](holdout_results_20261126.md)).
+- the single evaluations on the test years ([results](final_test_results_20261125.md)) and on the sealed holdout ([results](holdout_results_20261126.md));
+- the checks after the holdout: the encoder, the data sources, the sector and the coverage of each source.
 
 It gives one command block per stage, in order, from the repository root. Each report's own "Run it" or "Reproduce" section has the same commands with more options. Run folders under `results/` are ignored by git; the reports cite them by their dated names, for example `results/pit_walk_forward_shared_20261110/`.
 
@@ -303,3 +304,26 @@ python -m scripts.build_slim_results_archive --output results/slim_archive_20261
 - **Price receipts:** all seven receipts under `data/raw/extended/`; the clone lacked two (the SET50 ETF and the five starter stocks), copied from the project folder after their price files' SHA-256 matched.
 - **Verified:** the build reopened the archive and checked every file against the manifest, and a second check found no models (`*.zip`, `*.pkl`), price files, `logs/`, `locks/`, `holdout_data/` or sealed-holdout files in it. The copy in the project's `results/` has the same SHA-256.
 - **Left out:** the link-only folders of `~/drl_runs` (`*_5seeds_20261125`, which point at seeds archived under their own folders) and the set-aside copy of the rerun MLP task (`~/drl_runs/arch_mlp_aside_20261127/`, byte-identical to the rerun).
+
+## 15. Checks after the holdout (validation years only)
+
+These read the validation years 2016–2022 only; they leave the locked design and its single evaluations as they are. Each report's "Commands" section has the full block, including the seed ensembles, diagnostics and figure labels:
+- **Encoder** ([report](architecture_ablation_20261127.md#commands)): the locked design with an MLP over the window, local, `slurm/pools/local_20261126.tasks`.
+- **Data sources** ([report](source_ablation_20261127.md#commands)): four input sets of the locked design and a seed-42 retrain, BistKA job 4528, `slurm/pools/bistka_20261126.tasks`.
+- **Sector** ([report](sector_inputs_20261127.md#commands)): the locked design plus four sector inputs, local.
+- **Coverage of each source** ([table](source_coverage_20261127.md#command)): no training.
+
+The sector arm and the coverage table, from the repository root (three workers, about 9 hours for the 35 models):
+
+```bash
+bash scripts/run_task_pool.sh slurm/pools/local_20261127_sector.tasks 3
+python -m scripts.evaluate_pit_seed_ensemble --config config/pit_sector_ablation_cashcap.yaml \
+  --source-run ../pit_walk_forward_sector_cashcap_20261127 --variant pit_cashcap_src_sector --seeds 42 43 44 45 46 \
+  --output-dir ../pit_src_sector_ensemble_20261127 --band 0.005 --modes ensemble_band
+python -m scripts.rank_final_candidates --candidates config/sector_candidates_20261127.yaml --base .. \
+  --output-dir ../pit_walk_forward_combined_sector_20261127/decision7
+python -m scripts.source_coverage_table --config config/pit_source_ablation_cashcap.yaml \
+  --output-dir ../source_coverage_20261127
+```
+
+The pool file writes its run folder next to the repository (`../`), as the other local pools do.

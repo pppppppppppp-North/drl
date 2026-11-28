@@ -95,6 +95,7 @@ Details: [`hpc/hpc_sync_status.md`](hpc/hpc_sync_status.md). Both jobs were subm
   - **Attribution:** `scripts/pit_feature_group_attribution.py` now treats `sector_` columns as their own group (1 new test). Shuffled, the sector inputs move the portfolio by 2.4%, the ETF inputs 1.5% and the technical inputs 4.1%. With the sector inputs at their training mean, the return changes by +0.06 points a year (19 of 35 models higher).
   - **Coverage table (2026-11-27):** `scripts/source_coverage_table.py` (2 tests) and [docs/source_coverage_20261127.md](docs/source_coverage_20261127.md) give each source's coverage over 2012–2022. Fundamentals, news, investor flow and CPI have none.
   - **Outputs:** `~/drl_runs/pit_walk_forward_sector_cashcap_20261127/`, `pit_src_sector_ensemble_20261127/`, `pit_walk_forward_combined_sector_20261127/`, `pit_attribution_sector_20261128/`, `source_coverage_20261127/`; decision-7 inputs `config/sector_candidates_20261127.yaml`.
+  - **Merged** as PR #4 (`216ff37`) on the operator's "Yes, merge it". **Summary documents brought up to date (2026-11-28):** the title check, `docs/final_methodology_results.md` and the runbook (new section 15, the checks after the holdout). The report chapter and the Beamer deck do not yet mention the sector arm; adding it needs approval.
 
 ## Point-in-Time SET50 Walk-Forward (M3) — 2026-11-07, sticky slots 2026-11-09, shared-weight actor, seed ensemble and no-trade band 2026-11-10, training with the band 2026-11-11, cash cap 2026-11-19
 
