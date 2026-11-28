@@ -1,0 +1,43 @@
+# Local pool of 2026-11-28 (milestones M4 and M6, RQ2; validation years 2016-2022 only): the locked point-in-time
+# design with the daily return as its only input and no market-level inputs (config/pit_price_only_cashcap.yaml,
+# variant pit_cashcap_src_price), at 100k timesteps, seeds 42-46. It is the price step of the cumulative ablation:
+# the technical-only arm is in BistKA job 4528's copy, and the locked design's five seeds at 100k are in
+# ~/drl_runs/pit_walk_forward_cash_cap_100k_5seeds_20261125. Its tradable set matches the locked design's on every
+# training and validation window.
+# Run from the repository root with run dirs beside it (~/drl_runs): bash scripts/run_task_pool.sh slurm/pools/local_20261128_price.tasks 3
+# Columns: run-dir runner config timesteps fold-year variant seed
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2016 pit_cashcap_src_price 42
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2017 pit_cashcap_src_price 42
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2018 pit_cashcap_src_price 42
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2019 pit_cashcap_src_price 42
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2020 pit_cashcap_src_price 42
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2021 pit_cashcap_src_price 42
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2022 pit_cashcap_src_price 42
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2016 pit_cashcap_src_price 43
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2017 pit_cashcap_src_price 43
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2018 pit_cashcap_src_price 43
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2019 pit_cashcap_src_price 43
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2020 pit_cashcap_src_price 43
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2021 pit_cashcap_src_price 43
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2022 pit_cashcap_src_price 43
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2016 pit_cashcap_src_price 44
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2017 pit_cashcap_src_price 44
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2018 pit_cashcap_src_price 44
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2019 pit_cashcap_src_price 44
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2020 pit_cashcap_src_price 44
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2021 pit_cashcap_src_price 44
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2022 pit_cashcap_src_price 44
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2016 pit_cashcap_src_price 45
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2017 pit_cashcap_src_price 45
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2018 pit_cashcap_src_price 45
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2019 pit_cashcap_src_price 45
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2020 pit_cashcap_src_price 45
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2021 pit_cashcap_src_price 45
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2022 pit_cashcap_src_price 45
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2016 pit_cashcap_src_price 46
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2017 pit_cashcap_src_price 46
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2018 pit_cashcap_src_price 46
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2019 pit_cashcap_src_price 46
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2020 pit_cashcap_src_price 46
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2021 pit_cashcap_src_price 46
+../pit_walk_forward_price_cashcap_20261128 scripts.run_pit_walk_forward config/pit_price_only_cashcap.yaml 100000 2022 pit_cashcap_src_price 46
