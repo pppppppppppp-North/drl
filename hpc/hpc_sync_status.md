@@ -3,9 +3,9 @@
 Last full remote evidence: 2026-07-26
 
 Latest connection probe: 2026-07-31
-Latest connection and code copy: 2026-11-26 (three files; see job 4528)
+Latest connection and code copy: 2026-11-28 (six files; see job 4609)
 
-Latest job check: 2026-11-27
+Latest job check: 2026-11-28
 
 ## 2026-11-22 Connection And Code Copy
 
@@ -47,6 +47,17 @@ Latest job check: 2026-11-27
   - **Cost:** 561 SHr (14.02 h at 40 SHr an hour). `scontrol show assoc_mgr flags=qos qos=25sfcs03` shows 209,818 of 600,000 billing minutes used, so about 6,503 SHr are left.
   - **Connection:** the control-master session ended at 07:22 while the job ran (the job did not need it); the user signed in again at about 16:10 and the results were checked then.
   - **Copied to the Mac** with `rsync`, model files included (1,470 files: 7 and 140 curves with their `ppo_model.zip`), into `~/drl_runs/pit_cash_cap_100k_replication_bistka_20261126/` and `~/drl_runs/pit_source_ablation_cashcap_bistka_20261126/`. The SHA-256 of every file matched BistKA's. Analysis: [report](../docs/source_ablation_20261127.md).
+
+- **Job `4609`, leave-one-source-out on the locked point-in-time design (operator-requested, submitted 09:14 on 2026-11-28; "continue the main progress, submit one job"):** `sbatch --mem=80G --time=2-00:00:00 --job-name=drl_pool_loo --export=ALL,PROJECT_DIR=$PWD,POOL=slurm/pools/bistka_20261128.tasks slurm/walk_forward_pool.sbatch` in `/lustrefs/project/25sfcs03/drl_thai_stock_20261122`, running on `bistka-compute-01` with 32 CPUs. The control-master session of an earlier sign-in was still open, so no new sign-in was needed. Cluster idle before submission (no project jobs; all 128 `compute-long` CPUs idle); 209,818 of 600,000 billing minutes used (about 6,503 SHr left).
+  - **Files copied first** with `rsync` over the control-master session:
+    - new: `config/pit_source_loo_cashcap.yaml`, `slurm/pools/bistka_20261128.tasks` and `src/features/pit_sector_context.py`;
+    - replaced: `scripts/run_pit_walk_forward.py` (the `data.sector` option), `src/models/feature_extractors.py` and `src/models/shared_asset_policy.py` (the encoder check's `temporal_encoder` option). The three old files are in `logs/replaced_20261128/`.
+    - **Default unchanged:** the LSTM path is unchanged. Built with job 4528's code (`f1f440a`) and with the new code under the same seed, the shared actor's extractor had identical parameters, outputs and random-number state. So the new arms compare cleanly with job 4528's.
+  - **Checked:** afterwards the SHA-256 of 44 files matched the clone at `1bf4b28`: the job's 32 Python modules (found by importing during a local run), the pool scripts, both configs, the pool file and the seven input files.
+  - **Tasks:** 175 at 100k timesteps, folds 2016–2022, seeds 42–46: five arms of `config/pit_source_loo_cashcap.yaml`.
+    - The arms: all five sources (technical indicators, SET50 ETF, BOT policy rate, macro proxies, dated sector), and all but the ETF, the policy rate, the macro proxies or the technical indicators (the daily return stays). All but the sector is job 4528's `pit_cashcap_src_all`.
+    - Checked on the Mac first: each arm's tradable set and dates matched the locked design's on all 14 training and validation windows, and a 512-step smoke of all five arms trained and evaluated.
+  - **Estimate:** about 3–3.5 hours a task with 32 at once (job 4528: 3.0 hours, observations up to 45,051 values; here up to 51,051). So about 17–19 hours, ending around 03:00–05:00 on 2026-11-29. At 40 SHr an hour that is about 700–760 SHr.
 
 ## 2026-07-31 Connection And Sync Boundary
 
